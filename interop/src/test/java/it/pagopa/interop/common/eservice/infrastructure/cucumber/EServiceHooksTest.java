@@ -11,6 +11,8 @@ import it.pagopa.interop.common.eservice.domain.EService;
 import it.pagopa.interop.common.eservice.domain.EServiceDescriptor;
 import it.pagopa.interop.common.eservice.domain.EServiceDescriptorState;
 import it.pagopa.interop.common.eservice.domain.GracePeriodDays;
+import it.pagopa.interop.common.eservice_template.domain.EServiceTemplate;
+import it.pagopa.interop.common.eservice_template.domain.EServiceTemplateInstance;
 import it.pagopa.interop.common.kernel.context.AuthSession;
 import it.pagopa.interop.common.kernel.domain.Channel;
 import it.pagopa.interop.common.kernel.domain.InteropActor;
@@ -251,11 +253,17 @@ class EServiceHooksTest {
 
     @Test
     void skipsDirectRenameForTemplateInstances() {
-        var instance = eService(PUBLISHED).toBuilder().templateInstance(true).build();
-        when(store.getAll(EService.class)).thenReturn(List.of(instance));
+        var instance = eService(PUBLISHED);
+        var ordinary = eService(PUBLISHED);
+        var template = EServiceTemplate.builder().id(UUID.randomUUID())
+                .instance(new EServiceTemplateInstance("label", instance.getRef())).build();
+        when(store.getAll(EService.class)).thenReturn(List.of(instance, ordinary));
+        when(store.getAll(EServiceTemplate.class)).thenReturn(List.of(
+                EServiceTemplate.builder().id(UUID.randomUUID()).build(), template));
         hooks.cleanUpEServices();
         verify(services).archiveEService(instance, GracePeriodDays.NUMBER_60);
-        verify(services, never()).updateEServiceMetadata(any(), any());
+        verify(services).updateEServiceMetadata(ordinary, updateCommand);
+        verify(services).archiveEService(ordinary, GracePeriodDays.NUMBER_60);
         verifyNoMoreInteractions(services);
     }
 

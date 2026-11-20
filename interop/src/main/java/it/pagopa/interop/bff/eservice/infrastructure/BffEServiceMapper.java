@@ -37,13 +37,11 @@ public interface BffEServiceMapper {
         // lo stato dei descrittori e del producerId dal vecchio EService del test
         return mapped.toBuilder()
                 .producerId(existingEService.getProducerId())
-                .templateInstance(existingEService.isTemplateInstance())
                 .descriptors(existingEService.getDescriptors() != null ? new ArrayList<>(existingEService.getDescriptors()) : new ArrayList<>())
                 .build();
     }
 
     @Mapping(target = "producerId", ignore = true)
-    @Mapping(target = "templateInstance", ignore = true)
     @Mapping(target = "descriptors", ignore = true)
     EService toEService(ProducerEServiceDetails producerEServiceDetails);
 }

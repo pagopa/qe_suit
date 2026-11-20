@@ -11,6 +11,7 @@ import it.pagopa.utils.RandomUtils;
 import it.pagopa.interop.common.eservice.domain.EService;
 import it.pagopa.interop.common.eservice.domain.EServiceDescriptorState;
 import it.pagopa.interop.common.eservice.domain.GracePeriodDays;
+import it.pagopa.interop.common.eservice_template.domain.EServiceTemplate;
 import it.pagopa.interop.common.kernel.context.AuthSession;
 import it.pagopa.interop.common.kernel.domain.Channel;
 import it.pagopa.interop.common.kernel.domain.Tenant;
@@ -19,6 +20,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 
 import java.util.UUID;
+import java.util.stream.Collectors;
 
 @Slf4j
 @RequiredArgsConstructor
@@ -42,6 +44,10 @@ public class EServiceHooks {
             return;
         }
 
+        var templateInstanceIds = entityStore.getAll(EServiceTemplate.class).stream()
+                .flatMap(template -> template.getInstances().stream())
+                .map(instance -> instance.eserviceRef().id())
+                .collect(Collectors.toSet());
         var previousUser = authSession.getActor();
         var previousTenant = authSession.getTenant();
         var previousChannel = currentChannel.getCurrentChannel();
@@ -75,13 +81,7 @@ public class EServiceHooks {
                         // literal fixture names reusable in the next scenario execution.
                         // A failed rename must not prevent retirement from being attempted.
 
-                        log.info(
-                                "CLEANUP DEBUG - eServiceId={}, name={}, templateInstance={}",
-                                eservice.getId(),
-                                eservice.getName(),
-                                eservice.isTemplateInstance()
-                        );
-                        if (eservice.isTemplateInstance()) {
+                        if (templateInstanceIds.contains(eservice.getId())) {
                             // Il nome dell'istanza viene propagato dal template padre.
                             log.info("Istanza di template {}: nessuna rinomina diretta", eservice.getId());
                         } else {

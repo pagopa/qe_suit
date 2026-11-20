@@ -29,6 +29,8 @@ public interface M2MEServiceTemplateMapper {
     @Mapping(target = "updatedAt", expression = "java(existing == null ? null : existing.getUpdatedAt())")
     @Mapping(target = "versions", expression = "java(copyVersions(existing))")
     @Mapping(target = "riskAnalyses", expression = "java(copyRiskAnalyses(existing))")
+    @Mapping(target = "instances", expression = "java(existing == null ? java.util.List.of() : existing.getInstances())")
+    @Mapping(target = "instance", ignore = true)
     EServiceTemplate toTemplate(
             it.pagopa.interop.generated.openapi.clients.m2m.v3.model.EServiceTemplate source,
             EServiceTemplate existing

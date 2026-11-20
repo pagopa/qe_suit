@@ -13,6 +13,7 @@ import it.pagopa.interop.common.eservice.domain.EServiceDescriptorState;
 import it.pagopa.interop.common.eservice_template.application.EServiceTemplateInstanceGateway;
 import it.pagopa.interop.common.eservice_template.application.command.EServiceTemplateInstanceCreationCommand;
 import it.pagopa.interop.common.eservice_template.domain.EServiceTemplate;
+import it.pagopa.interop.common.eservice_template.domain.EServiceTemplateInstance;
 import it.pagopa.interop.common.kernel.domain.Channel;
 import it.pagopa.interop.common.kernel.domain.EServiceDescriptorRef;
 import it.pagopa.interop.common.kernel.domain.EServiceRef;
@@ -20,12 +21,10 @@ import it.pagopa.interop.generated.openapi.clients.bff.model.CreatedResource;
 import it.pagopa.interop.generated.openapi.clients.bff.model.UpdateEServiceDescriptorTemplateInstanceSeed;
 import it.pagopa.interop.generated.openapi.clients.bff.model.UpdateEServiceTemplateInstanceDescriptorQuotas;
 import lombok.RequiredArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
 @Service
 @RequiredArgsConstructor
-@Slf4j
 public class BffEServiceTemplateInstanceGateway implements EServiceTemplateInstanceGateway {
     private final BffEServiceRestClient restClient;
     private final BffEServiceGateway eServiceGateway;
@@ -37,17 +36,19 @@ public class BffEServiceTemplateInstanceGateway implements EServiceTemplateInsta
         if (!(command instanceof BffEServiceTemplateInstanceCreationCommand bffCommand)) {
             throw new IllegalArgumentException("Expected BffEServiceTemplateInstanceCreationCommand");
         }
-        var created = restClient.createEServiceInstanceFromTemplate(
-                        template.getId(), bffCommand.getBffPayload()
-                )
+        var payload = bffCommand.getBffPayload();
+        String suffix = payload.getInstanceLabel();
+        var created = restClient.createEServiceInstanceFromTemplate(template.getId(), payload)
                 .withPolling(PollingStrategy.UNTIL_SUCCESS)
                 .get();
 
         EServiceRef serviceRef = EServiceRef.of(created.getId());
-        EServiceDescriptorRef descriptorRef = EServiceDescriptorRef.of(created.getDescriptorId());
+        EServiceTemplate storedTemplate = entityStore.getById(template.getId(), EServiceTemplate.class)
+                .orElse(template);
+        entityStore.upsert(storedTemplate.withUpsertedInstance(new EServiceTemplateInstance(suffix, serviceRef)));
 
-        descriptorGateway.getEServiceDescriptor(serviceRef, descriptorRef);
-        return loadAndStoreTemplateInstance(serviceRef);
+        descriptorGateway.getEServiceDescriptor(serviceRef, EServiceDescriptorRef.of(created.getDescriptorId()));
+        return eServiceGateway.getEService(serviceRef);
     }
 
     @Override
@@ -75,22 +76,7 @@ public class BffEServiceTemplateInstanceGateway implements EServiceTemplateInsta
 
         EServiceRef serviceRef = EServiceRef.of(updated.getId());
         descriptorGateway.getEServiceDescriptor(serviceRef, descriptorRef);
-        return loadAndStoreTemplateInstance(serviceRef);
-    }
-
-    private EService loadAndStoreTemplateInstance(EServiceRef serviceRef) {
-        EService marked = eServiceGateway.getEService(serviceRef).toBuilder()
-                .templateInstance(true)
-                .build();
-        entityStore.upsert(marked);
-        log.info(
-                "INSTANCE STORED - id={}, templateInstance={}",
-                marked.getId(),
-                entityStore.getById(marked.getId(), EService.class)
-                        .orElseThrow()
-                        .isTemplateInstance()
-        );
-        return marked;
+        return eServiceGateway.getEService(serviceRef);
     }
 
     @Override

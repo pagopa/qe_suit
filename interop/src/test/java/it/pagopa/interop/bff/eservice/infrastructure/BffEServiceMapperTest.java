@@ -18,16 +18,6 @@ class BffEServiceMapperTest {
     private final BffEServiceMapper mapper = Mappers.getMapper(BffEServiceMapper.class);
 
     @Test
-    void preservesTemplateMarkerWhenRefreshingFromBff() {
-        var existing = EService.builder().id(UUID.randomUUID())
-                .templateInstance(true).descriptors(List.of()).build();
-        var source = new ProducerEServiceDetails().id(existing.getId()).name("fresh");
-        var refreshed = mapper.toEServicePreservingDescriptors(source, existing);
-        org.junit.jupiter.api.Assertions.assertTrue(refreshed.isTemplateInstance());
-        org.junit.jupiter.api.Assertions.assertFalse(mapper.toEService(source).isTemplateInstance());
-    }
-
-    @Test
     void preservingDescriptors_keeps_descriptor_list_mutable() {
         EServiceDescriptor existingDescriptor = EServiceDescriptor.builder()
                 .id(UUID.randomUUID())
@@ -50,6 +40,8 @@ class BffEServiceMapperTest {
 
         EService mapped = mapper.toEServicePreservingDescriptors(source, existingEService);
 
+        assertEquals("updated-eservice", mapped.getName());
+        assertEquals(List.of(existingDescriptor), mapped.getDescriptors());
         assertDoesNotThrow(() -> mapped.upsertDescriptor(
                 EServiceDescriptor.builder()
                         .id(UUID.randomUUID())

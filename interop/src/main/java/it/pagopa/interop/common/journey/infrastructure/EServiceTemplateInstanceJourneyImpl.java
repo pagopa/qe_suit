@@ -23,10 +23,8 @@ public class EServiceTemplateInstanceJourneyImpl
         var instance = instances.createEServiceInstance(template, command);
         var storedInstance = entityStore.getById(instance.getId(), EService.class)
                 .orElseThrow(() -> new IllegalStateException("Created template instance missing from context"));
-        // Persisti il marker prima della pubblicazione, anche se questa fallisce.
-        var markedInstance = storedInstance.toBuilder().templateInstance(true).build();
-        entityStore.upsert(alias, markedInstance);
-        instances.publishEServiceInstance(template, markedInstance);
+        entityStore.upsert(alias, storedInstance);
+        instances.publishEServiceInstance(template, storedInstance);
         return this;
     }
 }
