@@ -13,15 +13,18 @@ import it.pagopa.interop.common.producer_keychain.domain.ProducerKeychainPublicK
 import it.pagopa.interop.common.producer_keychain.domain.ProducerKeychainRef;
 import it.pagopa.interop.common.producer_keychain.domain.ProducerKeysPage;
 import it.pagopa.interop.generated.openapi.clients.m2m.v3.model.ProducerKeychainAddEService;
+import it.pagopa.interop.generated.openapi.clients.m2m.v3.model.ProducerKeychainUpdateSeed;
 import it.pagopa.interop.m2m.producer_keychain.application.M2MProducerKeyCreationCommand;
 import it.pagopa.interop.m2m.producer_keychain.application.M2MProducerKeychainCreationCommand;
 import it.pagopa.kernel.security.Key;
+import it.pagopa.utils.async.PollingUtils;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
 import java.util.LinkedHashSet;
 import java.util.List;
+import java.util.Objects;
 import java.util.Set;
 
 @Service
@@ -103,7 +106,18 @@ public class M2MProducerKeychainGateway implements ProducerKeychainGateway {
 
     @Override
     public ProducerKeychain updateMetadata(ProducerKeychainRef ref, String name, String description) {
-        throw new UnsupportedOperationException("Updating producer keychain metadata is not supported on M2M v3");
+        ProducerKeychainUpdateSeed updateSeed = new ProducerKeychainUpdateSeed()
+                .name(name)
+                .description(description);
+        restClient.updateProducerKeychain(ref.id(), updateSeed)
+                .withPolling(PollingStrategy.UNTIL_SUCCESS).get();
+        return PollingUtils.pollUntil(
+                () -> getProducerKeychain(ref),
+                updatedKeychain -> (name == null || Objects.equals(name, updatedKeychain.getName()))
+                        && (description == null || Objects.equals(description, updatedKeychain.getDescription())),
+                "Metadati attesi non ancora visibili per il portachiavi %s (nome: %s, descrizione: %s)"
+                        .formatted(ref.id(), name, description)
+        );
     }
 
     @Override

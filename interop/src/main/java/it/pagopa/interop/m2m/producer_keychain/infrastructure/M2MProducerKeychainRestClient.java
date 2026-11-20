@@ -10,8 +10,11 @@ import it.pagopa.interop.generated.openapi.clients.m2m.v3.model.ProducerKey;
 import it.pagopa.interop.generated.openapi.clients.m2m.v3.model.ProducerKeychain;
 import it.pagopa.interop.generated.openapi.clients.m2m.v3.model.ProducerKeychainAddEService;
 import it.pagopa.interop.generated.openapi.clients.m2m.v3.model.ProducerKeychainSeed;
+import it.pagopa.interop.generated.openapi.clients.m2m.v3.model.ProducerKeychainUpdateSeed;
 import org.springframework.stereotype.Component;
 
+import java.util.LinkedHashMap;
+import java.util.Map;
 import java.util.UUID;
 import java.util.function.Function;
 
@@ -36,6 +39,24 @@ public class M2MProducerKeychainRestClient extends RestClient {
     public TestChain<ProducerKeychain> getProducerKeychain(UUID keychainId) {
         return execute(() -> api.getProducerKeychain().keychainIdPath(keychainId)
                 .execute(Function.identity()), ProducerKeychain.class);
+    }
+
+    public TestChain<ProducerKeychain> updateProducerKeychain(
+            UUID keychainId, ProducerKeychainUpdateSeed updateSeed) {
+        return execute(() -> {
+            Map<String, String> payload = new LinkedHashMap<>();
+            if (updateSeed.getName() != null) {
+                payload.put(ProducerKeychainUpdateSeed.JSON_PROPERTY_NAME, updateSeed.getName());
+            }
+            if (updateSeed.getDescription() != null) {
+                payload.put(ProducerKeychainUpdateSeed.JSON_PROPERTY_DESCRIPTION, updateSeed.getDescription());
+            }
+            return api.updateProducerKeychain().keychainIdPath(keychainId)
+                    .reqSpec(reqSpec -> reqSpec
+                            .setContentType("application/merge-patch+json; charset=UTF-8")
+                            .setBody(payload))
+                    .execute(Function.identity());
+        }, ProducerKeychain.class);
     }
 
     public TestChain<Void> addProducerKeychainEService(UUID keychainId, ProducerKeychainAddEService seed) {
