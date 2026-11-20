@@ -6,7 +6,8 @@ import it.pagopa.interop.common.eservice_template.domain.EServiceTemplatePrepara
 import it.pagopa.interop.common.eservice_template.infrastructure.cucumber.dto.EServiceTemplatePublicationConfiguration;
 import it.pagopa.interop.common.eservice_template.infrastructure.cucumber.dto.EServiceTemplateInstanceConfiguration;
 import it.pagopa.interop.common.infrastructure.config.TestMapperConfig;
-import it.pagopa.utils.RandomUtils;
+import it.pagopa.interop.common.infrastructure.cucumber.dto.ConfigurableText;
+import it.pagopa.interop.common.infrastructure.cucumber.dto.ConfigurableTextValueResolver;
 import org.mapstruct.*;
 
 @Mapper(config = TestMapperConfig.class)
@@ -18,16 +19,16 @@ public interface EServiceTemplateConfigurationMapper {
 
     @BeanMapping(ignoreByDefault = true)
     @Mapping(target = "technology", source = "technology")
-    @Mapping(target = "name", source = "name", qualifiedByName = "randomized")
+    @Mapping(target = "name", source = "name", qualifiedByName = "resolveConfigurableText")
     void apply(EServiceTemplatePublicationConfiguration source, @MappingTarget EServiceTemplateCreationCommand target);
 
     @BeanMapping(ignoreByDefault = true, nullValuePropertyMappingStrategy = NullValuePropertyMappingStrategy.IGNORE)
     @Mapping(target = "instanceLabel", source = "instanceLabel")
     void apply(EServiceTemplateInstanceConfiguration source, @MappingTarget EServiceTemplateInstanceCreationCommand target);
 
-    @Named("randomized")
-    default String randomized(String value) {
-        return RandomUtils.randomAlphanumericName(value);
+    @Named("resolveConfigurableText")
+    default String resolveConfigurableText(ConfigurableText text) {
+        return ConfigurableTextValueResolver.resolve(text);
     }
 
     @Named("fixturePath")

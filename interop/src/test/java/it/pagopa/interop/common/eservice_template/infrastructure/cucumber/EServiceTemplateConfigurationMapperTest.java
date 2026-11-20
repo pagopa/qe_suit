@@ -78,6 +78,16 @@ class EServiceTemplateConfigurationMapperTest {
     }
 
     @Test
+    void publicationUsesLiteralNameWhenRequested() {
+        var dto = (EServiceTemplatePublicationConfiguration) tables.transform(Map.of(
+                "alias", "TPL-1", "nome (letterale)", "Template Stampo Alfa", "tecnologia", "SOAP"),
+                EServiceTemplatePublicationConfiguration.class);
+        var command = (BffEServiceTemplateCreationCommand) factory.defaultCreationEServiceTemplateCommand();
+        mapper.apply(dto, command);
+        assertThat(command.getBffCreationPayload().getName()).isEqualTo("Template Stampo Alfa");
+    }
+
+    @Test
     void suffixMapsToSupportedInstanceLabelAndOmissionPreservesUniqueFactoryLabel() {
         var command = (BffEServiceTemplateInstanceCreationCommand) factory.defaultCreationEServiceTemplateInstanceCommand();
         String originalLabel = command.getBffPayload().getInstanceLabel();

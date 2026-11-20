@@ -9,6 +9,7 @@ import it.pagopa.interop.common.eservice.infrastructure.cucumber.dto.mapper.ESer
 import it.pagopa.interop.common.eservice.infrastructure.cucumber.dto.mapper.EServicePreparationConfigurationMapperImpl;
 import it.pagopa.interop.common.infrastructure.SharedMapper;
 import it.pagopa.interop.common.infrastructure.cucumber.dto.ConfiguredBoolean;
+import it.pagopa.interop.common.infrastructure.cucumber.dto.ConfigurableText;
 import it.pagopa.interop.common.journey.application.InteropJourney;
 import it.pagopa.interop.common.kernel.domain.Tenant;
 import it.pagopa.interop.common.kernel.domain.UserRole;
@@ -40,7 +41,7 @@ class EServicePreparationConfigurationMapperTest {
     void mapsExplicitPropertiesAndFlags() {
         var configuration = new EServicePreparationConfiguration();
         configuration.setAlias("ES-1");
-        configuration.setName("Anagrafe");
+        configuration.setName(ConfigurableText.random("Anagrafe"));
         configuration.setDescription("");
         configuration.setMode(EServiceMode.RECEIVE);
         configuration.setSignalHub(ConfiguredBoolean.ENABLED);
@@ -56,6 +57,15 @@ class EServicePreparationConfigurationMapperTest {
         verify(command).mode(EServiceMode.RECEIVE);
         verify(command).isSignalHubEnabled(true);
         verify(command).isAsync(false);
+        verifyNoMoreInteractions(command);
+    }
+
+    @Test
+    void mapsLiteralNameWithoutRandomSuffix() {
+        var configuration = new EServicePreparationConfiguration();
+        configuration.setName(ConfigurableText.literal("Nome in conflitto Milano"));
+        mapper.apply(configuration, command);
+        verify(command).name("Nome in conflitto Milano");
         verifyNoMoreInteractions(command);
     }
 

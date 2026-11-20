@@ -15,7 +15,6 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import java.lang.reflect.Type;
-import java.util.HashMap;
 import java.util.Map;
 import java.util.Set;
 
@@ -25,6 +24,7 @@ public class DataTableMapper {
     private static final ThreadLocal<Set<String>> CURRENT_GHERKIN_KEYS = new ThreadLocal<>();
 
     private final Validator validator;
+    private final ConfigurableTextNormalizer textNormalizer = new ConfigurableTextNormalizer();
 
     private final ObjectMapper objectMapper = new ObjectMapper()
             .enable(DeserializationFeature.ACCEPT_EMPTY_STRING_AS_NULL_OBJECT)
@@ -34,10 +34,12 @@ public class DataTableMapper {
 
     @DefaultDataTableEntryTransformer
     public Object transform(Map<String, String> entry, Type toValueType) {
-        Map<String, String> modifiableEntry = new HashMap<>(entry);
+        var javaType = objectMapper.constructType(toValueType);
+        Map<String, Object> modifiableEntry = textNormalizer.normalize(
+                entry, javaType.getRawClass(), objectMapper.getDeserializationConfig());
         CURRENT_GHERKIN_KEYS.set(entry.keySet());
 
-        Object dto = objectMapper.convertValue(modifiableEntry, objectMapper.constructType(toValueType));
+        Object dto = objectMapper.convertValue(modifiableEntry, javaType);
         var violations = validator.validate(dto);
         if (!violations.isEmpty()) {
             throw new ConstraintViolationException(violations);

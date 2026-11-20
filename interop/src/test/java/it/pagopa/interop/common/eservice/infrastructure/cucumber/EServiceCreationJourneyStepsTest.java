@@ -3,6 +3,7 @@ package it.pagopa.interop.common.eservice.infrastructure.cucumber;
 import it.pagopa.interop.common.eservice.infrastructure.cucumber.dto.EServicePreparationConfiguration;
 import it.pagopa.interop.common.infrastructure.cucumber.DataTableMapper;
 import it.pagopa.interop.common.infrastructure.cucumber.dto.ConfiguredBoolean;
+import it.pagopa.interop.common.infrastructure.cucumber.dto.ConfigurableText;
 import it.pagopa.interop.common.eservice.domain.EServiceMode;
 import it.pagopa.interop.common.kernel.domain.Tenant;
 import org.junit.jupiter.api.Test;
@@ -67,7 +68,7 @@ class EServiceCreationJourneyStepsTest {
 
         assertThat(configuration.getAlias()).isEqualTo("ES-1");
         assertThat(configuration.getProducer()).isEqualTo(Tenant.SOGECAP);
-        assertThat(configuration.getName()).isEqualTo("Anagrafe");
+        assertThat(configuration.getName()).isEqualTo(ConfigurableText.random("Anagrafe"));
         assertThat(configuration.getDescription()).isEqualTo("Consultazione dei dati anagrafici.");
         assertThat(configuration.getMode()).isEqualTo(EServiceMode.RECEIVE);
         assertThat(configuration.getSignalHub()).isEqualTo(ConfiguredBoolean.ENABLED);
@@ -137,7 +138,7 @@ class EServiceCreationJourneyStepsTest {
                 .isInstanceOfSatisfying(ConstraintViolationException.class, exception ->
                         assertThat(exception.getConstraintViolations())
                                 .extracting(violation -> violation.getPropertyPath().toString())
-                                .containsExactlyInAnyOrder("producer", "alias", "name"));
+                                .containsExactlyInAnyOrder("producer", "alias", "name.value"));
     }
 
     @Test
