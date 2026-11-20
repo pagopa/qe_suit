@@ -11,6 +11,7 @@ from rae_generator.matching import choose_known, find_match, fingerprint, normal
 from rae_generator.parsers import collect_reports, ReportError, parse_file
 from rae_generator.renderer import render
 from rae_generator.validator import validate, ValidationError, read_yaml
+from rae_generator.qa_confirmation import analysis_digest
 
 
 def test_yaml_writer_uses_literal_blocks_and_preserves_values(tmp_path):
@@ -438,11 +439,12 @@ def test_contract_json_bad_total_fails_closed(tmp_path):
         collect_reports(tmp_path)
 
 
-def test_contract_json_missing_fails_closed(tmp_path):
+def test_contract_json_missing_accepts_cucumber(tmp_path):
     cucumber_json(tmp_path)
     (tmp_path / 'contract-test' / 'report.json').unlink()
-    with pytest.raises(ReportError, match='Contract JSON mancante'):
-        collect_reports(tmp_path)
+    failures = collect_reports(tmp_path)
+    assert len(failures) == 1
+    assert failures[0].source == 'cucumber'
 
 
 def test_contract_json_duplicate_id_fails_closed(tmp_path):
@@ -493,7 +495,7 @@ def test_fingerprint_without_bug_remains_to_analyze(tmp_path):
     assert data['ko'][0]['procedure'] == 'historical check'
 
 
-def test_similarity_with_bug_is_known(tmp_path):
+def test_similarity_with_bug_is_proposed_pending_qa(tmp_path):
     actual = 'AssertionError: the response status was 400 instead of 200 at endpoint /api/clients'
     previous_error = 'AssertionError: the response status was 401 instead of 200 at endpoint /api/clients'
     assert fingerprint(actual) != fingerprint(previous_error)
@@ -511,9 +513,17 @@ def test_similarity_with_bug_is_known(tmp_path):
                       data_ora='2026-11-16T18:00:00Z', durata='00:01:10')
     assert data['ko_know'] == []
     assert len(data['ko']) == 1
-    assert 'matching' not in data['ko'][0]
+    matching = data['ko'][0].get('matching')
+
+    assert matching is not None
+    assert matching['status'] == 'pending_confirmation'
+    assert matching['source_rae'] == (
+        'rae_NrtStandardSuiteTest_20261116000000.yaml'
+    )
+    assert matching['source_id_test'] == 'Test A'
+    assert matching['proposed_digest'] == analysis_digest(data['ko'][0])
     for field in ('procedure', 'result', 'link_prod_bug', 'link_suite_bug'):
-        assert data['ko'][0][field] == ''
+        assert data['ko'][0][field] == candidate[field]
 
 
 def test_fingerprint_suite_bug_is_known(tmp_path):

@@ -2,6 +2,7 @@
 from __future__ import annotations
 import re
 from .qa_confirmation import is_qa_confirmed, original_entries_by_id
+from .review_evidence import render_warning  # RAE_REVIEW_PANEL_V1
 
 
 def _cell(value: object) -> str:
@@ -72,12 +73,16 @@ def render(data: dict, *, original_data: dict | None = None, qa_reviewed: bool =
         for index, item in enumerate(items, 1):
             if index > 1:
                 lines.extend(['', '---', ''])
+            lines.extend([f'### {index}. {_prose(item["id_test"])}', ''])
+            matching = item.get('matching')
+            if (isinstance(matching, dict) and matching.get('status') == 'pending_confirmation'
+                    and not is_qa_confirmed(item, original=originals.get(str(item.get('id_test', ''))),
+                                            qa_reviewed=qa_reviewed)):
+                lines.extend(render_warning(matching))
             lines.extend([
-                f'### {index}. {_prose(item["id_test"])}', '',
                 '**RESULT**', '', _prose(item['result']), '',
                 '**PROCEDURE**', '', _prose(item['procedure']), '',
             ])
-            matching = item.get('matching')
             initial = originals.get(str(item.get('id_test', '')))
             if is_qa_confirmed(item, original=initial, qa_reviewed=qa_reviewed):
                 lines.extend([
@@ -90,12 +95,6 @@ def render(data: dict, *, original_data: dict | None = None, qa_reviewed: bool =
                     '> Questa validazione rappresenta il passaggio conclusivo prima dell’automazione: '
                     '**nelle prossime esecuzioni, il KO potrà essere riconosciuto e classificato '
                     'automaticamente**, qualora si ripresenti con le medesime caratteristiche.', '',
-                ])
-            elif isinstance(matching, dict) and matching.get('status') == 'pending_confirmation':
-                lines.extend([
-                    '**MATCH PROPOSTO — CONFERMA QA RICHIESTA**', '',
-                    'Analisi precompilata dalla RAE ' + _cell(matching.get('source_rae', '')) +
-                    '. Verificarne la correttezza prima dell’approvazione.', '',
                 ])
             elif isinstance(matching, dict) and matching.get('status') == 'auto_matched':
                 lines.extend(['**MATCH AUTOMATICO CON PRECEDENTE CONFERMATO**', ''])

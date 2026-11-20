@@ -21,7 +21,11 @@ def validate_namespace(namespace: str) -> str:
 
 def namespace_dir(history_root: Path, namespace: str) -> Path:
     """Return a directory strictly confined to base/namespace."""
-    return Path(history_root) / validate_namespace(namespace)
+    folder = Path(history_root) / validate_namespace(namespace)
+    # Prevent a namespace aliasing another via a symlink (read and write).
+    if folder.is_symlink():
+        raise ValueError(f"Namespace RAE non valido: directory simbolica {folder}")
+    return folder
 
 
 def validate_output_path(history_root: Path, namespace: str, output: Path) -> Path:
