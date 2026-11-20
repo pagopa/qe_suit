@@ -31,6 +31,8 @@ public interface TenantSelectionPage extends AbstractComunePickerPage {
     default void selectComune(String tenant) {
         oneTrustBanner().ifPresent(OneTrustBanner::acceptIfShown);
         searchFor().writeAndAssert(tenant);
+        // il banner può comparire durante la ricerca, dopo il primo controllo, e coprire la riga dell'ente
+        oneTrustBanner().ifPresent(OneTrustBanner::acceptIfShown);
         tenantRow().click();
         confirmBtn().click();
         sendProductButton().click();
