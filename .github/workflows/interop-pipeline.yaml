@@ -189,7 +189,7 @@ jobs:
           python-version: '3.12'
 
       - name: Install RAE Python dependencies
-        run: python -m pip install -r generator-source/tools/rae-generator/requirements.txt
+        run: python -m pip install -r generator-source/tools/rae/rae_generator/requirements.txt
 
       - name: Download test reports
         uses: actions/download-artifact@v4
@@ -222,7 +222,7 @@ jobs:
           fi
           git checkout -b "$BRANCH"
           YAML="rae/${RAE_NAMESPACE}/rae_${RUNNER}_${TIMESTAMP}.yaml"
-          PYTHONPATH=../generator-source/tools/rae-generator python -m rae_generator generate \
+          PYTHONPATH=../generator-source/tools/rae/rae_generator python -m rae_generator generate \
             --reports /tmp/rae-test-artifacts \
             --history rae \
             --namespace "$RAE_NAMESPACE" \

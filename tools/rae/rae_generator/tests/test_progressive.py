@@ -42,9 +42,12 @@ def historical_pair():
     return first, second
 
 
-def test_stack_frames_not_used_but_exception_preserved():
-    assert error_head(log()).startswith('java.lang.AssertionError: HTTP contract')
-    assert 'MyTest.java:12' not in error_head(log())
+def test_stack_frames_preserved_with_exception():
+    result = error_head(log())
+
+    assert result.startswith('java.lang.AssertionError: HTTP contract')
+    assert 'com.example.MyTest.run' in result
+    assert 'MyTest.java:12' in result
 
 
 def test_match_signature_typed_mask_requires_variation():
