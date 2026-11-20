@@ -209,6 +209,19 @@ public class BffPurposeGateway implements PurposeGateway {
         restClient.submitRiskAnalysis(purposeRef.id(), commandFactory.riskAnalysisSubmissionRequest())
                 .withPolling(PollingStrategy.UNTIL_SUCCESS)
                 .get();
+
+        PollingUtils.pollUntil(
+                () -> {
+                    var response = restClient.getPurpose(purposeRef.id()).withoutPolling();
+                    if (!response.getRaw().isSuccess()) {
+                        throw new IllegalStateException("Risk-analysis submission read failed for purpose " + purposeRef.id());
+                    }
+                    return response.get();
+                },
+                purpose -> purpose.getReviewerWorkflow() != null
+                        && purpose.getReviewerWorkflow().getSigningState() == RiskAnalysisSigningState.SUBMITTED,
+                "Risk analysis did not become SUBMITTED for purpose " + purposeRef.id()
+        );
     }
 
     @Override

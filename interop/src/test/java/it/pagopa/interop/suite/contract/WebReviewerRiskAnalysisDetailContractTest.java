@@ -92,8 +92,7 @@ public class WebReviewerRiskAnalysisDetailContractTest {
     Stream<DynamicTest> testVerifyApprovedRiskAnalysisDetailPageContent() {
         String eServiceName = RandomUtils.randomAlphanumericName("e-service_RA_approved");
 
-        createToApproveRiskAnalysis(reviewers, eServiceName);
-        Purpose purpose = createAndSignRiskAnalysis();
+        Purpose purpose = createAndSignRiskAnalysis(reviewers, eServiceName);
         String approvedRiskAnalysisId = purpose.getId().toString();
 
         return webContractValidator
@@ -127,8 +126,7 @@ public class WebReviewerRiskAnalysisDetailContractTest {
     Stream<DynamicTest> testVerifyRejectedRiskAnalysisDetailPageContent() {
         String eServiceRejectedName = RandomUtils.randomAlphanumericName("e-service_RA_rejected");
 
-        createToApproveRiskAnalysis(reviewers, eServiceRejectedName);
-        Purpose rejectedPurpose = createAndRejectRiskAnalysis();
+        Purpose rejectedPurpose = createAndRejectRiskAnalysis(reviewers, eServiceRejectedName);
         String rejectedRiskAnalysisId = rejectedPurpose.getId().toString();
 
 
@@ -299,22 +297,21 @@ public class WebReviewerRiskAnalysisDetailContractTest {
         assertThat(value).as("%s deve essere valorizzato", description).isNotBlank();
     }
 
-    private void createToApproveRiskAnalysis(List<User> reviewers, String eServiceName) {
-        interopJourney.withConsumer(consumer, UserRole.ADMIN).setUpRiskAnalysisToApprove(
-                        eServiceName,
-                        producer,
-                        consumer,
-                        reviewers
-                );
-
+    private Purpose createAndSignRiskAnalysis(List<User> reviewers, String eServiceName) {
+        return interopJourney.withConsumer(consumer, UserRole.ADMIN).setUpRiskAnalysisToApprove(
+                eServiceName,
+                producer,
+                consumer,
+                reviewers
+        ).withConsumer(consumer, reviewer).signRiskAnalysis().get(Purpose.class);
     }
 
-    private Purpose createAndSignRiskAnalysis() {
-        return interopJourney
-                .withConsumer(consumer, reviewer).signRiskAnalysis().get(Purpose.class);
-    }
-
-    private Purpose createAndRejectRiskAnalysis() {
-        return interopJourney.withConsumer(consumer, reviewer).rejectRiskAnalysis(RISK_ANALYSIS_REJECTION_REASON).get(Purpose.class);
+    private Purpose createAndRejectRiskAnalysis(List<User> reviewers, String eServiceName) {
+        return interopJourney.withConsumer(consumer, UserRole.ADMIN).setUpRiskAnalysisToApprove(
+                eServiceName,
+                producer,
+                consumer,
+                reviewers
+        ).withConsumer(consumer, reviewer).rejectRiskAnalysis(RISK_ANALYSIS_REJECTION_REASON).get(Purpose.class);
     }
 }
