@@ -5,13 +5,14 @@ Feature: Modifica dei metadati dei client
 
   @work-item:QA-19036
   @channel:Given=BFF,When=BFF,Then=BFF
-  Scenario Outline: [CLIENT_UPDATE_METADATA_1] - L'amministratore aggiorna i metadati del client che preserva i dati non modificati, le associazioni e l'operatività
+  @channel:Given=BFF,When=M2M,Then=M2M
+  Scenario: [CLIENT_UPDATE_METADATA_1] - L'amministratore aggiorna i metadati del client e-service che preserva i dati non modificati, le associazioni e l'operatività
   Un amministratore aggiorna i metadati di un client (solo nome, solo descrizione, nome e descrizione).
   I dati modificati vengono aggiornati, quelli non modificati vengono preservati,
   le associazioni di chiavi e finalità al client vengono preservate.
   Il client permette di generare voucher garantendo la corretta operatività.
 
-    Given un client "CL-1" <tipoClient> creato dal Comune di Pozzallo in cui è presente un utente admin e una coppia di chiavi crittografiche
+    Given un client "CL-1" CONSUMER creato dal Comune di Pozzallo in cui è presente un utente admin e una coppia di chiavi crittografiche
     And un EService creato dal Comune di Milano con una richiesta di fruizione e una finalità associate dal Comune di Pozzallo
     And un admin del Comune di Pozzallo ha associato la finalità al client "CL-1"
     And i dati e le associazioni del client "CL-1" allo stato attuale appuntati come riferimento
@@ -36,14 +37,41 @@ Feature: Modifica dei metadati dei client
     Then il client "CL-1" conserva le associazioni e i dati di riferimento eccetto il nome e la descrizione
     And l'admin del Comune di Pozzallo richiede la generazione del voucher per il client e la finalità attiva
 
-    Examples:
-      | tipoClient |
-      | CONSUMER   |
-      | API        |
+  @work-item:QA-19036
+  @channel:Given=BFF,When=BFF,Then=BFF
+  @channel:Given=BFF,When=M2M,Then=M2M
+  Scenario: [CLIENT_UPDATE_METADATA_2] - L'amministratore aggiorna i metadati del client interop che preserva i dati non modificati, le associazioni e l'operatività
+  Un amministratore aggiorna i metadati di un client (solo nome, solo descrizione, nome e descrizione).
+  I dati modificati vengono aggiornati, quelli non modificati vengono preservati,
+  le associazioni di chiavi vengono preservate.
+  Il client permette di generare voucher garantendo la corretta operatività.
+
+    Given un client "CL-1" API creato dal Comune di Pozzallo in cui è presente un utente admin e una coppia di chiavi crittografiche
+    And i dati e le associazioni del client "CL-1" allo stato attuale appuntati come riferimento
+    When un admin del Comune di Pozzallo modifica i metadati del client "CL-1":
+      | campo       | valore            |
+      | nome        | primo nome        |
+    Then il client "CL-1" conserva le associazioni e i dati di riferimento eccetto il nome
+    And l'admin del Comune di Pozzallo richiede la generazione del voucher per il client interop
+
+    When i dati e le associazioni del client "CL-1" allo stato attuale appuntati come riferimento
+    And un admin del Comune di Pozzallo modifica i metadati del client "CL-1":
+      | campo       | valore            |
+      | descrizione | prima descrizione |
+    Then il client "CL-1" conserva le associazioni e i dati di riferimento eccetto la descrizione
+    And l'admin del Comune di Pozzallo richiede la generazione del voucher per il client interop
+
+    When i dati e le associazioni del client "CL-1" allo stato attuale appuntati come riferimento
+    And un admin del Comune di Pozzallo modifica i metadati del client "CL-1":
+      | campo       | valore            |
+      | nome        | nuovo nome        |
+      | descrizione | nuova descrizione |
+    Then il client "CL-1" conserva le associazioni e i dati di riferimento eccetto il nome e la descrizione
+    And l'admin del Comune di Pozzallo richiede la generazione del voucher per il client interop
 
   @work-item:QA-19036
   @channel:Given=BFF,When=M2M,Then=M2M
-  Scenario: [CLIENT_UPDATE_METADATA_2] - L'amministratore aggiorna i metadati del client e-service che preserva i dati non modificati, le associazioni e l'operatività
+  Scenario: [CLIENT_UPDATE_METADATA_3] - L'amministratore aggiorna i metadati del client e-service che preserva i dati non modificati, le associazioni e l'operatività
   Un amministratore aggiorna i metadati di un client e-service (solo nome, solo descrizione, nome e descrizione).
   I dati modificati vengono aggiornati, quelli non modificati vengono preservati,
   le associazioni di chiavi e finalità al client e-service vengono preservate.
@@ -76,7 +104,7 @@ Feature: Modifica dei metadati dei client
 
   @work-item:QA-19036
   @channel:Given=BFF,When=M2M,Then=M2M
-  Scenario: [CLIENT_UPDATE_METADATA_3] - L'amministratore aggiorna i metadati del client interop che preserva i dati non modificati, le associazioni e l'operatività
+  Scenario: [CLIENT_UPDATE_METADATA_4] - L'amministratore aggiorna i metadati del client interop che preserva i dati non modificati, le associazioni e l'operatività
   Un amministratore aggiorna i metadati di un client interop (solo nome, solo descrizione, nome e descrizione).
   La modifica richiesta viene rifiutata, i dati, le associazioni di chiavi e finalità al client vengono preservate.
   Il client interop permette di generare voucher garantendo la corretta operatività.
@@ -90,7 +118,7 @@ Feature: Modifica dei metadati dei client
       | nome        | nuovo nome        |
     Then la richiesta di modifica fallisce come operazione vietata
     And il client "CL-1" conserva le associazioni e i dati di riferimento
-    And l'admin del Comune di Pozzallo richiede la generazione del voucher per il client e la finalità attiva
+    And l'admin del Comune di Pozzallo richiede la generazione del voucher per il client interop
 
     When i dati e le associazioni del client "CL-1" allo stato attuale appuntati come riferimento
     And un admin del Comune di Pozzallo tenta di modificare i metadati del client "CL-1":
@@ -98,7 +126,7 @@ Feature: Modifica dei metadati dei client
       | descrizione | nuova descrizione |
     Then la richiesta di modifica fallisce come operazione vietata
     And il client "CL-1" conserva le associazioni e i dati di riferimento
-    And l'admin del Comune di Pozzallo richiede la generazione del voucher per il client e la finalità attiva
+    And l'admin del Comune di Pozzallo richiede la generazione del voucher per il client interop
 
     When i dati e le associazioni del client "CL-1" allo stato attuale appuntati come riferimento
     And un admin del Comune di Pozzallo tenta di modificare i metadati del client "CL-1":
@@ -107,7 +135,7 @@ Feature: Modifica dei metadati dei client
       | descrizione | nuova descrizione |
     Then la richiesta di modifica fallisce come operazione vietata
     And il client "CL-1" conserva le associazioni e i dati di riferimento
-    And l'admin del Comune di Pozzallo richiede la generazione del voucher per il client e la finalità attiva
+    And l'admin del Comune di Pozzallo richiede la generazione del voucher per il client interop
 
 # TODO I test sulla UI vanno implementati come test di integrazione
 #
