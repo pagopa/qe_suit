@@ -12,19 +12,21 @@ Feature: Propagazione dei metadati del template e-service alle istanze
   allora le istanze interessate ereditano i nuovi valori e conservano etichette e configurazioni proprie.
 
     Given i seguenti template e-service pubblicati:
-      | alias | erogatore        | nome                | tecnologia |
-      | TE-1  | Comune di Milano | Template anagrafico | REST       |
+      | alias  | erogatore        | nome                | tecnologia |
+      | TPL-1  | Comune di Milano | Template anagrafico | REST       |
     And le seguenti istanze di template e-service pubblicate:
-      | alias | template | erogatore        | suffisso |
-      | EI-1  | TE-1     | Comune di Milano | Milano   |
-      | EI-2  | TE-1     | PagoPA           | PagoPA   |
-    When un admin del Comune di Milano richiede la modifica dei metadati del template e-service "TE-1":
+      | alias | template  | erogatore        | suffisso |
+      | EI-1  | TPL-1     | Comune di Milano | Milano   |
+      | EI-2  | TPL-1     | PagoPA           | PagoPA   |
+    When un admin del Comune di Milano richiede la modifica dei metadati del template e-service "TPL-1":
       | campo       | valore                              |
       | nome        | Template anagrafico aggiornato      |
       | descrizione | Descrizione aggiornata del template |
-    Then il template e-service "TE-1" presenta i metadati richiesti
-    And le istanze "EI-1" e "EI-2" presentano i metadati ereditati dal template "TE-1"
-    And le istanze "EI-1" e "EI-2" conservano etichette, descrittori e configurazioni proprie
+    Then il template e-service presenta i metadati richiesti e conserva quelli non modificati
+    And Comune di Milano verifica che le istanze e-service presentino i metadati ereditati dal template "TPL-1":
+      | EI-1  |
+    And PagoPA verifica che le istanze e-service presentino i metadati ereditati dal template "TPL-1":
+      | EI-2  |
 
   @work-item:QA-19036
   @channel:Given=BFF,When=BFF,Then=BFF

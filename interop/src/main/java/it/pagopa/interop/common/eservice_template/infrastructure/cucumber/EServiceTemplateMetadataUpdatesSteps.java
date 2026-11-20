@@ -4,6 +4,7 @@ import io.cucumber.java.en.Given;
 import io.cucumber.java.en.Then;
 import io.cucumber.java.en.When;
 import it.pagopa.application.context.EntityStore;
+import it.pagopa.interop.common.eservice.domain.EService;
 import it.pagopa.interop.common.eservice.domain.EServiceMode;
 import it.pagopa.interop.common.eservice.domain.EServiceTechnology;
 import it.pagopa.interop.common.eservice_template.application.EServiceTemplateRequestFactory;
@@ -14,13 +15,18 @@ import it.pagopa.interop.common.eservice_template.domain.EServiceTemplateVersion
 import it.pagopa.interop.common.eservice_template.infrastructure.cucumber.dto.EServiceTemplateMetadataUpdateConfiguration;
 import it.pagopa.interop.common.eservice_template.infrastructure.cucumber.dto.mapper.EServiceTemplateMetadataUpdateConfigurationMapper;
 import it.pagopa.interop.common.journey.application.InteropJourney;
+import it.pagopa.interop.common.kernel.domain.InteropRole;
 import it.pagopa.interop.common.kernel.domain.Tenant;
 import it.pagopa.interop.common.kernel.domain.UserRole;
 import it.pagopa.utils.RandomUtils;
 import lombok.RequiredArgsConstructor;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
+import java.util.UUID;
+import java.util.stream.Collectors;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
@@ -32,6 +38,7 @@ public class EServiceTemplateMetadataUpdatesSteps {
     private final EntityStore entityStore;
     private Map<String, String> requestedMetadata = Map.of();
     private EServiceTemplate initialEServiceTemplate;
+    private Map<UUID, EService> initialTemplateInstances = Map.of();
 
     @Given("^un template e-service con versione (assenti|in bozza|pubblicata|sospesa|pubblicata e nuova bozza)$")
     public void createTemplateWithVersions(String version) {
@@ -70,6 +77,17 @@ public class EServiceTemplateMetadataUpdatesSteps {
         initialEServiceTemplate = eServiceTemplate.toBuilder()
                 // .versions(eServiceTemplate.getVersions())
                 .build();
+        initialTemplateInstances = entityStore.getAll(EService.class).stream()
+                .filter(eService -> eService.getDescriptors() != null
+                        && eService.getDescriptors().stream().anyMatch(descriptor ->
+                        descriptor.getTemplateRef() != null
+                                && descriptor.getTemplateRef().id().equals(initialEServiceTemplate.getId())))
+                .collect(Collectors.toMap(
+                        EService::getId,
+                        eService -> eService.toBuilder()
+                                .descriptors(new ArrayList<>(eService.getDescriptors()))
+                                .build()
+                ));
         UpdateEServiceTemplateCommand command = requestFactory.defaultUpdateEServiceTemplateCommand(true);
         requestedMetadata = configurationMapper.apply(metadata, command);
         interopJourney
@@ -212,5 +230,43 @@ public class EServiceTemplateMetadataUpdatesSteps {
         interopJourney
             .withProducer(producer, role)
             .tryUpdateEServiceTemplateMetadata(updateCommand);
+    }
+
+    @Then("{tenant} verifica che le istanze e-service presentino i metadati ereditati dal template {string}:")
+    public void checkMetadata(Tenant producer, String aliasTemplate, List<String> instanceAliases) {
+        interopJourney.withProducer(producer);
+        checkInstanceMetadataPropagation(aliasTemplate, instanceAliases);
+    }
+
+    @Then("le istanze presentano i metadati ereditati dal template {string}:")
+    public void checkInstanceMetadataPropagation(String templateAlias, List<String> instanceAliases) {
+        EServiceTemplate updatedTemplate = entityStore.getByAliasOrThrow(templateAlias, EServiceTemplate.class);
+
+        instanceAliases.forEach(instanceAlias -> {
+            EService instance = entityStore.getByAliasOrThrow(instanceAlias, EService.class);
+            EService initialInstance = initialTemplateInstances.get(instance.getId());
+            assertThat(initialInstance)
+                    .as("Istanza %s collegata al template %s prima della modifica", instanceAlias, templateAlias)
+                    .isNotNull();
+            assertThat(initialInstance.getName())
+                    .as("Nome iniziale dell'istanza %s derivato dal template %s", instanceAlias, templateAlias)
+                    .startsWith(initialEServiceTemplate.getName());
+
+            String instanceLabelSuffix = initialInstance.getName()
+                    .substring(initialEServiceTemplate.getName().length());
+            String expectedName = updatedTemplate.getName() + instanceLabelSuffix;
+
+            interopJourney.waitUntilEService(instanceAlias, refreshed ->
+                    expectedName.equals(refreshed.getName())
+                            && Objects.equals(updatedTemplate.getDescription(), refreshed.getDescription()));
+
+            EService refreshedInstance = entityStore.getByAliasOrThrow(instanceAlias, EService.class);
+            assertThat(refreshedInstance.getName())
+                    .as("Nome dell'istanza %s aggiornato in base al template %s, mantenendo l'etichetta", instanceAlias, templateAlias)
+                    .isEqualTo(expectedName);
+            assertThat(refreshedInstance.getDescription())
+                    .as("Descrizione dell'istanza %s ereditata dal template %s", instanceAlias, templateAlias)
+                    .isEqualTo(updatedTemplate.getDescription());
+        });
     }
 }
