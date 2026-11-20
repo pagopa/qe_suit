@@ -22,7 +22,7 @@ python -m rae_generator --help
 
 ## 2. Architettura in breve
 
-1. La suite produce report Cucumber JSON in `target/cucumber-reports/` e report contratti `target/contract-test/report.json`.
+1. La suite può produrre report Cucumber JSON in `target/cucumber-reports/`, report contratti `target/contract-test/report.json`, oppure entrambi.
 2. Il workflow carica gli artifact e genera un file `run_metadata.json` con data/ora di avvio e durata effettiva del comando Maven.
 3. Il job RAE scarica gli artifact, legge lo storico **dal checkout di `develop`** e invoca `rae_generator generate`.
 4. Il job crea `rae/<namespace>/rae_<suite>_<timestamp>.yaml` su un branch `rae/<namespace>/rae_<suite>_<timestamp>` e apre una Draft PR verso `develop`.
@@ -40,7 +40,7 @@ La pipeline Interop è un esempio reale: [`.github/workflows/interop-pipeline.ya
 
 - Assegnare un namespace distinto, per esempio `send`, diverso da `interop`.
 - Stabilire i valori di `--suite`, `--environment` (`qa`/`dev`), `--executor` e `--source-branch`.
-- Verificare che la pipeline produca **entrambi** gli input attualmente richiesti dal parser: uno o più file Cucumber JSON in `cucumber-reports/` e il JSON dei contratti in `contract-test/report.json`. Se un progetto non produce uno di questi formati, **non basta cambiare il namespace**: occorre adattare il parser e aggiungere test, altrimenti il generatore fallisce intenzionalmente.
+- La pipeline può produrre **solo Cucumber**, **solo Contract** oppure **entrambi**. Il generatore elabora tutti i JSON supportati presenti; fallisce se mancano entrambi o se uno dei file presenti è malformato. Non è richiesto `--cucumber-only`.
 - Il report contratti deve essere conforme allo schema `schemaVersion: 1` del `ContractReport` Java. Il formato JUnit XML non è più un input della RAE, anche se può restare fra gli artifact diagnostici.
 - Ogni ID test deve essere non ambiguo; il parser rifiuta duplicati fra le sorgenti.
 
@@ -50,8 +50,8 @@ Prendere a riferimento i job `run_tests` e `generate_rae` di `interop-pipeline.y
 
 1. Eseguire test e salvare i report nella cartella `target` del progetto.
 2. Registrare `data_ora` e `durata` (formato `HH:MM:SS`) **della reale esecuzione**, anche in caso di test KO. Interop utilizza `trap ... EXIT` per scrivere `target/rae/run_metadata.json`.
-3. Usare `actions/upload-artifact` con `if: always()` per pubblicare i due report JSON e il metadata; la pipeline Interop usa il nome artifact `qa-test-artifacts` e retention di **10 giorni**.
-4. Aggiungere un job generatore con `needs: run_tests` e condizione che consenta i fallimenti dei test ma non i report mancanti; usare Python e `tools/rae/rae_generator/requirements.txt`.
+3. Usare `actions/upload-artifact` con `if: always()` per pubblicare i report disponibili e il metadata; la pipeline Interop usa il nome artifact `qa-test-artifacts` e retention di **10 giorni**.
+4. Aggiungere un job generatore con `needs: run_tests` e condizione che consenta i fallimenti dei test ma non l’assenza di **tutti** i report supportati; usare Python e `tools/rae/rae_generator/requirements.txt`.
 5. Scaricare gli artifact, effettuare il checkout **di `develop` per lo storico e la creazione del branch**, chiamare `rae_generator generate` con `--namespace <namespace>` e scrivere lo YAML dentro `rae/<namespace>/`.
 6. Creare il branch `rae/<namespace>/rae_<suite>_<YYYYMMDDHHMMSS>`, effettuare commit/push e aprire una Draft PR verso `develop` con `gh pr create --draft`.
 7. Assicurarsi che le label richieste esistano: Interop usa `rae` e `interop`; una pipeline nuova può richiedere la label del proprio namespace.
@@ -78,7 +78,7 @@ Nel workflow, i job che creano PR richiedono `permissions: contents: write, pull
 - Modifica QA allo YAML → validazione e Markdown deterministico aggiornato.
 - Merge su `develop` → storico consultabile nella successiva RAE della stessa pipeline.
 - Namespace differente → nessuna contaminazione incrociata dello storico.
-- Report mancante/non valido → errore esplicito, senza RAE incompleta silenziosa.
+- Nessun report oppure report presente ma non valido → errore esplicito. L’assenza di un solo formato è consentita.
 
 Non rendere il check `rae-validate` obbligatorio nella ruleset di `develop` prima di aver verificato una PR completa di prova.
 
@@ -88,7 +88,7 @@ La CLI attuale espone `generate`, `finalize` e `check`. **Non esiste un comando 
 
 ### 4.1 Generare uno YAML da report e metadata
 
-Il percorso passato a `--reports` deve contenere le sottocartelle `cucumber-reports` e `contract-test`, e non necessariamente coincidere con `interop/target` se si stanno usando artifact scaricati.
+Il percorso passato a `--reports` deve contenere almeno uno tra `cucumber-reports/*.json` e `contract-test/report.json`; può contenere entrambi. Non deve necessariamente coincidere con `interop/target` se si usano artifact scaricati.
 
 ```bash
 cd ~/qe_suit
@@ -213,7 +213,7 @@ Leggere [RAE_MATCHING_BUSINESS.md](RAE_MATCHING_BUSINESS.md) per il processo e g
 | Sintomo | Controllo |
 | --- | --- |
 | `Missing Maven execution metadata` | Verificare `run_metadata.json` nell'artifact e il job Maven. |
-| Report Cucumber o contract JSON mancante | Verificare entrambi gli input richiesti in `--reports`. |
+| Nessun report / report non valido | Occorre almeno un formato tra Cucumber JSON e Contract JSON; ogni report presente deve essere valido. |
 | `Output RAE fuori dal namespace` | `--output` deve risiedere esattamente in `rae/<namespace>/`. |
 | RAE non usa storico atteso | Controllare checkout `develop`, namespace, suite e presenza YAML approvati. |
 | Workflow non aggiorna `.md` | Verificare `RAE_AUTOMATION_TOKEN`, permessi e log di `rae-validation.yaml`. |
@@ -228,3 +228,15 @@ Leggere [RAE_MATCHING_BUSINESS.md](RAE_MATCHING_BUSINESS.md) per il processo e g
 - Il push del renderer rifiuta di sovrascrivere modifiche QA concorrenti; un non-fast-forward non deve essere forzato.
 - Retention artifact attuale: 10 giorni. Per conservazione a 12 mesi verificare la policy e valutare storage esterno.
 - Prima di attivare una nuova pipeline: testare sia l'errore di report mancante sia il flusso completo dalla NRT alla PR e al merge.
+
+
+### Input supportati: nessun vincolo tra Cucumber e Contract
+
+Il generatore accetta **solo Cucumber**, **solo Contract** o **entrambi**.
+Cerca tutti i JSON `cucumber-reports/*.json` e l'eventuale `contract-test/report.json`
+nel percorso `--reports`. Tutti i file trovati vengono validati; un JSON invalido
+blocca la generazione anche quando l'altro formato è valido. Se nessuno dei due
+formati è presente, la generazione fallisce esplicitamente. **Zero KO è valido**
+solo quando è stato effettivamente letto almeno un report valido. I report JUnit
+XML e HTML non sostituiscono questi input. `--cucumber-only`, nelle versioni
+che ancora lo espongono, è deprecato e non filtra i report Contract.

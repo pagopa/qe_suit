@@ -439,11 +439,12 @@ def test_contract_json_bad_total_fails_closed(tmp_path):
         collect_reports(tmp_path)
 
 
-def test_contract_json_missing_fails_closed(tmp_path):
+def test_contract_json_missing_accepts_cucumber(tmp_path):
     cucumber_json(tmp_path)
     (tmp_path / 'contract-test' / 'report.json').unlink()
-    with pytest.raises(ReportError, match='Contract JSON mancante'):
-        collect_reports(tmp_path)
+    failures = collect_reports(tmp_path)
+    assert len(failures) == 1
+    assert failures[0].source == 'cucumber'
 
 
 def test_contract_json_duplicate_id_fails_closed(tmp_path):
