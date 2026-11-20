@@ -28,6 +28,31 @@ Feature: Modifica dei metadati degli e-service
       # Non è possibile archiviare un e-service in tempi accettabili.
       # | archiviata | nome        | Servizio anagrafico aggiornato      |
 
+  @work-item:QA-19036 @m2m
+  @channel:Given=BFF,When=M2M,Then=BFF
+  Scenario Outline: [ESERVICE_METADATA_1a_M2M] - Modifica di un singolo metadato indipendente dallo stato del descrittore
+  Dato un e-service non derivato da template con un descrittore nello stato previsto,
+  quando l'erogatore ne modifica soltanto il nome o la descrizione,
+  allora il sistema aggiorna il valore richiesto conservando gli altri metadati e lo stato dei descrittori.
+
+    Given i seguenti e-service in bozza:
+      | alias | erogatore        | nome                   |
+      | ES-1  | Comune di Milano | E-service Tempo Attivo |
+    And la versione 1 dell'e-service "ES-1" del Comune di Milano <stato>
+    When un sistema informatico autenticato con ruolo M2M_ADMIN per conto del Comune di Milano richiede la modifica dei metadati dell'e-service "ES-1":
+      | campo   | valore   |
+      | <campo> | <valore> |
+    Then l'e-service "ES-1" presenta i metadati richiesti e conserva quelli non modificati, le versioni, gli stati e le configurazioni dei descrittori
+
+    Examples:
+      | stato      | campo       | valore                              |
+      | in bozza   | nome        | Servizio anagrafico aggiornato      |
+      | pubblicata | descrizione | Descrizione aggiornata del servizio |
+      | sospesa    | nome        | Servizio anagrafico aggiornato      |
+      | deprecata  | descrizione | Descrizione aggiornata del servizio |
+      # Non è possibile archiviare un e-service in tempi accettabili.
+      # | archiviata | nome        | Servizio anagrafico aggiornato      |
+
   @work-item:QA-19036
   @channel:Given=BFF,When=BFF,Then=BFF
   Scenario: [ESERVICE_METADATA_1b] Modifica di un singolo metadato con lo stato del descrittore in attesa di approvazione.

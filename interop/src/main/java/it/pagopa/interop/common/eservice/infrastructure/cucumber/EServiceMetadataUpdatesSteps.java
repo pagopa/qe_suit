@@ -12,8 +12,10 @@ import it.pagopa.interop.common.eservice.domain.EServiceUpdateFailureReason;
 import it.pagopa.interop.common.eservice.infrastructure.cucumber.dto.EServiceMetadataUpdateConfiguration;
 import it.pagopa.interop.common.eservice.infrastructure.cucumber.dto.mapper.EServiceMetadataUpdateConfigurationMapper;
 import it.pagopa.interop.common.journey.application.InteropJourney;
+import it.pagopa.interop.common.kernel.domain.InteropRole;
 import it.pagopa.interop.common.kernel.domain.Tenant;
 import it.pagopa.interop.common.kernel.domain.UserRole;
+import it.pagopa.interop.m2m.kernel.domain.M2MRole;
 import it.pagopa.utils.RandomUtils;
 import lombok.RequiredArgsConstructor;
 
@@ -36,7 +38,8 @@ public class EServiceMetadataUpdatesSteps {
     private Map<String, String> requestedMetadata = Map.of();
 
     @When("un {userRole} di/del {tenant} richiede la modifica dei metadati dell'e-service {string}:")
-    public void updateMetadata(UserRole role, Tenant producer, String alias, List<EServiceMetadataUpdateConfiguration> configurations) {
+    @When("un sistema informatico autenticato con ruolo {userM2MRole} per conto del {tenant} richiede la modifica dei metadati dell'e-service {string}:")
+    public void updateMetadata(InteropRole role, Tenant producer, String alias, List<EServiceMetadataUpdateConfiguration> configurations) {
         EService currentEService = entityStore.getByAliasOrThrow(alias, EService.class);
         initialEService = currentEService.toBuilder()
                 .descriptors(new ArrayList<>(currentEService.getDescriptors()))
