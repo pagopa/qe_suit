@@ -69,9 +69,9 @@ Feature: Propagazione dei metadati del template e-service alle istanze
       | campo       | valore                              |
       | nome        | Nuovo nome in conflitto             |
       | descrizione | Descrizione valida ma non applicata |
-    #Then la modifica del template e-service "TE-1" viene rifiutata
-    #And il template e-service "TE-1" conserva tutti i metadati iniziali
-    #And l'istanza "EI-1" conserva i propri metadati e configurazioni
+    Then la modifica del template e-service "TE-1" viene rifiutata
+    And il template e-service "TE-1" conserva tutti i metadati iniziali
+    And l'istanza "EI-1" conserva i propri metadati e configurazioni
 
   @work-item:QA-19036
   @channel:Given=BFF,When=BFF,Then=BFF
