@@ -1,9 +1,18 @@
 package it.pagopa.interop.common.eservice.infrastructure.cucumber;
 
+import io.cucumber.datatable.DataTable;
+import io.cucumber.datatable.DataTableTypeRegistry;
+import io.cucumber.datatable.DataTableTypeRegistryTableConverter;
+import it.pagopa.interop.common.eservice.application.EServiceDescriptorUseCase;
+import it.pagopa.interop.common.eservice.application.EServiceRequestFactory;
+import it.pagopa.interop.common.eservice.application.command.UpdateEServiceDescriptorCommand;
+import it.pagopa.interop.common.eservice.domain.EServiceDescriptorState;
 import it.pagopa.interop.common.eservice.infrastructure.cucumber.dto.EServicePreparationConfiguration;
+import it.pagopa.interop.common.eservice.infrastructure.cucumber.dto.mapper.EServicePreparationConfigurationMapper;
 import it.pagopa.interop.common.infrastructure.cucumber.DataTableMapper;
 import it.pagopa.interop.common.infrastructure.cucumber.dto.ConfiguredBoolean;
 import it.pagopa.interop.common.eservice.domain.EServiceMode;
+import it.pagopa.interop.common.journey.application.InteropJourney;
 import it.pagopa.interop.common.kernel.domain.Tenant;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.AfterAll;
@@ -17,10 +26,16 @@ import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.ValueSource;
 
 import java.util.HashMap;
+import java.util.List;
+import java.util.Locale;
 import java.util.Map;
+import java.util.function.Consumer;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.eq;
+import static org.mockito.Mockito.*;
 
 class EServiceCreationJourneyStepsTest {
     private static final ValidatorFactory VALIDATOR_FACTORY = Validation.buildDefaultValidatorFactory();
@@ -72,6 +87,30 @@ class EServiceCreationJourneyStepsTest {
         assertThat(configuration.getMode()).isEqualTo(EServiceMode.RECEIVE);
         assertThat(configuration.getSignalHub()).isEqualTo(ConfiguredBoolean.ENABLED);
         assertThat(configuration.getAsyncExchange()).isEqualTo(ConfiguredBoolean.DISABLED);
+    }
+
+    @Test
+    void mapsBaseThresholdsFromItalianAliases() {
+        var configuration = configuration(Map.of(
+                "erogatore", "Comune di Milano",
+                "sogliaFruitore", "10",
+                "sogliaTotale", "20"
+        ));
+
+        assertThat(configuration.getConsumerThreshold()).isEqualTo(10);
+        assertThat(configuration.getTotalThreshold()).isEqualTo(20);
+    }
+
+    @Test
+    void mapsBaseThresholdsFromSpacedItalianAliases() {
+        var configuration = configuration(Map.of(
+                "erogatore", "Comune di Milano",
+                "soglia fruitore", "10",
+                "soglia totale", "20"
+        ));
+
+        assertThat(configuration.getConsumerThreshold()).isEqualTo(10);
+        assertThat(configuration.getTotalThreshold()).isEqualTo(20);
     }
 
     @Test
@@ -178,6 +217,41 @@ class EServiceCreationJourneyStepsTest {
                         DataTableMapper.clearGherkinKeys();
                     }
                 });
+    }
+
+    @Test
+    void createsEServiceWithOnlyTheConfiguredBaseThresholds() {
+        var journey = mock(InteropJourney.class, RETURNS_SELF);
+        var factory = mock(EServiceRequestFactory.class);
+        var useCase = mock(EServiceDescriptorUseCase.class);
+        var configurationMapper = mock(EServicePreparationConfigurationMapper.class);
+        var steps = new EServiceCreationJourneySteps(journey, useCase, factory, configurationMapper);
+        var command = mock(UpdateEServiceDescriptorCommand.class, RETURNS_SELF);
+        doAnswer(invocation -> {
+            Consumer<UpdateEServiceDescriptorCommand> commandConfig = invocation.getArgument(0);
+            commandConfig.accept(command);
+            return journey;
+        }).when(journey).updateDescriptor(any(Consumer.class), eq(EServiceDescriptorState.PUBLISHED));
+        DataTable baseThresholds = DataTable.create(
+                List.of(
+                        List.of("consumerThreshold", "10"),
+                        List.of("totalThreshold", "20")
+                ),
+                new DataTableTypeRegistryTableConverter(new DataTableTypeRegistry(Locale.ENGLISH))
+        );
+
+        steps.createEServiceWithBaseThresholds(
+                EServiceDescriptorState.PUBLISHED,
+                Tenant.COMUNE_DI_MILANO,
+                baseThresholds
+        );
+
+        verify(journey).withProducer(Tenant.COMUNE_DI_MILANO);
+        verify(journey).createEService(EServiceDescriptorState.DRAFT);
+        verify(journey).updateDescriptor(any(Consumer.class), eq(EServiceDescriptorState.PUBLISHED));
+        verify(command).dailyCallsPerConsumer(10);
+        verify(command).dailyCallsTotal(20);
+        verifyNoMoreInteractions(command);
     }
 
     public static class OtherConfiguration {

@@ -34,6 +34,12 @@ public class EServicePreparationConfiguration {
     @JsonAlias("descrizione")
     private String description;
 
+    @JsonAlias({"soglia fruitore", "sogliaFruitore"})
+    private Integer consumerThreshold;
+
+    @JsonAlias({"soglia totale", "sogliaTotale"})
+    private Integer totalThreshold;
+
     @JsonAlias("modalità")
     @JsonSetter(nulls = Nulls.FAIL)
     private EServiceMode mode;
