@@ -85,11 +85,12 @@ public class M2MClientGateway implements ClientGateway {
 
     @Override
     public void tryToUpdateMetadata(Client client, String name, String description) {
-        // TODO PIN-11002: dopo il rilascio in DEV o QA e l'aggiornamento dello YAML M2M V3,
-        //  invocare l'endpoint senza polling e la risposta (attesa 403) viene salvata in LastApiResponseStore.
-        throw new UnsupportedOperationException(
-                "Client metadata update attempts are not supported on M2M v3 until PIN-11002 is released in DEV or QA"
-        );
+        ClientUpdateSeed updateSeed = new ClientUpdateSeed()
+                .name(name)
+                .description(description);
+
+        restClient.updateClient(client.getId(), updateSeed)
+                .withoutPolling();
     }
 
     @Override
