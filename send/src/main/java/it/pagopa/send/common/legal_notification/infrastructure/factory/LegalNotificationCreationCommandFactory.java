@@ -2,6 +2,7 @@ package it.pagopa.send.common.legal_notification.infrastructure.factory;
 
 import it.pagopa.send.common.legal_notification.domain.FeePolicy;
 import it.pagopa.send.common.legal_notification.domain.LegalNotificationCreationCommand;
+import it.pagopa.send.common.legal_notification.domain.LegalNotificationType;
 import it.pagopa.send.common.legal_notification.domain.PhysicalCommunicationType;
 import it.pagopa.send.common.legal_notification.domain.RecipientCardinality;
 import it.pagopa.send.common.user.domain.User;
@@ -9,6 +10,7 @@ import it.pagopa.send.common.user.domain.UserType;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
 
+import java.util.HashMap;
 import java.util.Map;
 
 /**
@@ -28,6 +30,19 @@ public class LegalNotificationCreationCommandFactory {
         LegalNotificationCreationCommand command = new LegalNotificationCreationCommand().sender(sender);
         recipientOverrides.forEach((recipient, overrides) -> command.recipient(recipientSpecFactory.build(recipient, overrides)));
         return command;
+    }
+
+    /** Un destinatario con gli override della tipologia legacy. */
+    public LegalNotificationCreationCommand forLegalNotificationType(User sender, LegalNotificationType type, User recipient) {
+        return forLegalNotificationType(sender, type, recipient, Map.of());
+    }
+
+    /** Un destinatario con gli override della tipologia legacy, poi quelli indicati dallo scenario. */
+    public LegalNotificationCreationCommand forLegalNotificationType(User sender, LegalNotificationType type, User recipient,
+                                                                     Map<String, String> recipientOverrides) {
+        Map<String, String> overrides = new HashMap<>(type.recipientOverrides());
+        overrides.putAll(recipientOverrides);
+        return forExplicitRecipients(sender, Map.of(recipient, overrides));
     }
 
     /** Destinatari generati per tipo e cardinalità, con i valori di default di {@link RecipientSpecFactory}. */
