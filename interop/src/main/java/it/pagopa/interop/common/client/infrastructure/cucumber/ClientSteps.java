@@ -40,7 +40,12 @@ public class ClientSteps {
                 .filter(candidate -> candidate.getLastActiveVersion() != null)
                 .reduce((first, last) -> last)
                 .orElseThrow(() -> new NoSuchElementException("Nessuna finalita attiva presente nell'entity store"));
-        interopJourney.withProducer(tenant, role);
+
+        if (role == UserRole.ADMIN) {
+            interopJourney.withProducer(tenant);
+        } else {
+            interopJourney.withConsumer(tenant, role);
+        }
         clientUseCase.generateVoucher(client, purpose);
     }
 
@@ -48,7 +53,12 @@ public class ClientSteps {
     public void generateClientInteropVoucher(UserRole role, Tenant tenant)
             throws NoSuchAlgorithmException, JsonProcessingException {
         Client client = entityStore.getLastOrThrow(Client.class);
-        interopJourney.withProducer(tenant, role);
+
+        if (role == UserRole.ADMIN) {
+            interopJourney.withProducer(tenant);
+        } else {
+            interopJourney.withConsumer(tenant, role);
+        }
         clientUseCase.generateVoucher(client, null);
     }
 

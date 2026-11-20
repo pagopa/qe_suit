@@ -49,8 +49,12 @@ public class ClientJourneySteps {
 
     @Given("un client {clientType} creato da/dal {tenant} in cui è presente un (utente ){userRole} e una coppia di chiavi crittografiche")
     public void setupClient(ClientKind kind, Tenant consumer, UserRole userRole) {
+        if (userRole == UserRole.ADMIN) {
+            interopJourney.withConsumer(consumer);
+        } else {
+            interopJourney.withConsumer(consumer, userRole);
+        }
         interopJourney
-                .withConsumer(consumer, UserRole.ADMIN)
                 .createClient(clientConfig ->
                         clientConfig
                                 .name(RandomUtils.randomAlphanumericName("client"))
@@ -62,8 +66,12 @@ public class ClientJourneySteps {
 
     @Given("un client {string} {clientType} creato da/dal {tenant} in cui è presente un (utente ){userRole} e una coppia di chiavi crittografiche")
     public void setupClient(String alias, ClientKind kind, Tenant consumer, UserRole userRole) {
+        if (userRole == UserRole.ADMIN) {
+            interopJourney.withConsumer(consumer);
+        } else {
+            interopJourney.withConsumer(consumer, userRole);
+        }
         interopJourney
-                .withConsumer(consumer, UserRole.ADMIN)
                 .createClient(clientConfig ->
                         clientConfig
                                 .name(RandomUtils.randomAlphanumericName("client"))
