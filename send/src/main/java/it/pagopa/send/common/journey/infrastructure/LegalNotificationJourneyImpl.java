@@ -1,14 +1,14 @@
 package it.pagopa.send.common.journey.infrastructure;
 
 import it.pagopa.application.context.EntityStore;
-import it.pagopa.send.common.user.domain.User;
 import it.pagopa.send.common.journey.application.LegalNotificationJourney;
 import it.pagopa.send.common.kernel.context.CurrentUserSession;
+import it.pagopa.send.common.legal_notification.application.LegalNotificationUseCase;
 import it.pagopa.send.common.legal_notification.domain.LegalNotificationCreationCommand;
 import it.pagopa.send.common.legal_notification.domain.LegalNotificationDomain;
 import it.pagopa.send.common.legal_notification.domain.NotificationStatus;
-import it.pagopa.send.common.legal_notification.application.LegalNotificationUseCase;
 import it.pagopa.send.common.legal_notification.domain.RecipientSpec;
+import it.pagopa.send.common.user.domain.User;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
@@ -48,12 +48,6 @@ public class LegalNotificationJourneyImpl implements LegalNotificationJourney<Le
     }
 
     @Override
-    public LegalNotificationJourneyImpl prepareNotification(Map<String, String> data) {
-        legalNotificationUseCase.prepareNotification(data);
-        return this;
-    }
-
-    @Override
     public LegalNotificationJourneyImpl sendNotification(User sender, NotificationStatus targetStatus) {
         currentUserSession.setUser(sender);
         legalNotificationUseCase.sendNotification(sender, targetStatus);
@@ -62,13 +56,15 @@ public class LegalNotificationJourneyImpl implements LegalNotificationJourney<Le
     }
 
     /**
-     * Predispone la notifica dal command: mittente, dati e destinatari. Non la invia: lo stato da attendere si sceglie
+     * Predispone la notifica dal command: mittente, dati e destinatari (anche nessuno, da aggiungere poi con
+     * {@link #withRecipient}). Non la invia: lo stato da attendere si sceglie
      * con {@link #sendNotification}, per esempio ACCEPTED oppure REFUSED.
      */
     @Override
     public LegalNotificationJourneyImpl prepareNotification(LegalNotificationCreationCommand command) {
-        withSender(command.sender()).prepareNotification(command.notificationData());
-        command.recipients().forEach(this::withRecipient);
+        currentUserSession.setUser(command.sender());
+        legalNotificationUseCase.prepareNotification(command.notificationData());
+        command.recipients().forEach(legalNotificationUseCase::addRecipient);
         return this;
     }
 

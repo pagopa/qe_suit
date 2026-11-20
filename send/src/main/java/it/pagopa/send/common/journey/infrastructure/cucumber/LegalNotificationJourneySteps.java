@@ -5,6 +5,7 @@ import io.cucumber.java.en.Given;
 import io.cucumber.java.en.When;
 import it.pagopa.application.context.EntityStore;
 import it.pagopa.send.common.kernel.context.CurrentUserSession;
+import it.pagopa.send.common.legal_notification.domain.LegalNotificationCreationCommand;
 import it.pagopa.send.common.legal_notification.domain.LegalNotificationDomain;
 import it.pagopa.send.common.user.domain.User;
 import it.pagopa.send.common.user.domain.UserAlias;
@@ -18,6 +19,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 @Slf4j
@@ -34,8 +36,7 @@ public class LegalNotificationJourneySteps {
     public void createLegalNotification(LegalNotificationType type, User sender, User recipient, String targetStatus) {
         RecipientSpec recipientSpec = recipientSpecFactory.build(recipient, type.recipientOverrides());
         sendJourney
-                .prepareNotification(Map.of())
-                .withRecipient(recipientSpec)
+                .prepareNotification(new LegalNotificationCreationCommand(sender, List.of(recipientSpec)))
                 .sendNotification(sender, NotificationStatus.fromValue(targetStatus));
     }
 
@@ -43,8 +44,7 @@ public class LegalNotificationJourneySteps {
     public void createAndCancelLegalNotification(User sender, LegalNotificationType type, User recipient) {
         RecipientSpec recipientSpec = recipientSpecFactory.build(recipient, type.recipientOverrides());
         sendJourney
-                .prepareNotification(Map.of())
-                .withRecipient(recipientSpec)
+                .prepareNotification(new LegalNotificationCreationCommand(sender, List.of(recipientSpec)))
                 .sendNotification(sender, NotificationStatus.ACCEPTED)
                 .deleteNotification();
     }
@@ -73,15 +73,13 @@ public class LegalNotificationJourneySteps {
                 "F24_number", "0"
         ));
 
+        Map<String, String> data = Map.of(
+                "subject", "Comunicazione di test multi-destinatario",
+                "physicalCommunication", "REGISTERED_LETTER_890",
+                "feePolicy", "FLAT_RATE"
+        );
         sendJourney
-                .withSender(sender)
-                .prepareNotification(Map.of(
-                        "subject", "Comunicazione di test multi-destinatario",
-                        "physicalCommunication", "REGISTERED_LETTER_890",
-                        "feePolicy", "FLAT_RATE"
-                ))
-                .withRecipient(lucrezia)
-                .withRecipient(petrarca)
+                .prepareNotification(new LegalNotificationCreationCommand(sender, data, List.of(lucrezia, petrarca)))
                 .sendNotification(sender, NotificationStatus.ACCEPTED);
     }
 
@@ -100,19 +98,12 @@ public class LegalNotificationJourneySteps {
         createNotification(sender, type, recipient, overrides.asMap(String.class, String.class));
     }
 
-    @When("viene ricercata e aperta una notifica che rispetta i seguenti criteri:")
-    public void searchAndReadLegalNotification(Map<String, String> criteria) {
-        sendJourney
-                .prepareNotification(criteria)
-                .readNotification();
-    }
-
     private void createNotification(User sender, LegalNotificationType type, User recipient, Map<String, String> recipientOverrides) {
         Map<String, String> overrides = new HashMap<>(type.recipientOverrides());
         overrides.putAll(recipientOverrides);
+        RecipientSpec recipientSpec = recipientSpecFactory.build(recipient, overrides);
         sendJourney
-                .prepareNotification(Map.of())
-                .withRecipient(recipientSpecFactory.build(recipient, overrides))
+                .prepareNotification(new LegalNotificationCreationCommand(sender, List.of(recipientSpec)))
                 .sendNotification(sender, NotificationStatus.ACCEPTED);
 
         log.info("Notifica legale generata: {}", entityStore.getLastOrThrow(LegalNotificationDomain.class));

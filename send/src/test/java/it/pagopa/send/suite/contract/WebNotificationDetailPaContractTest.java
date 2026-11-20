@@ -5,6 +5,7 @@ import it.pagopa.send.TestBootApp;
 import it.pagopa.send.common.infrastructure.WebBrowserContractValidator;
 import it.pagopa.send.common.infrastructure.config.JunitContextConfig;
 import it.pagopa.send.common.journey.application.SendJourney;
+import it.pagopa.send.common.legal_notification.domain.LegalNotificationCreationCommand;
 import it.pagopa.send.common.legal_notification.domain.LegalNotificationDomain;
 import it.pagopa.send.common.legal_notification.domain.NotificationStatus;
 import it.pagopa.send.common.legal_notification.domain.RecipientSpec;
@@ -81,13 +82,11 @@ public class WebNotificationDetailPaContractTest {
         ));
 
         LegalNotificationDomain notification = sendJourney
-                .withSender(sender)
-                .prepareNotification(Map.of(
+                .prepareNotification(new LegalNotificationCreationCommand(sender, Map.of(
                         "subject", NOTIFICATION_SUBJECT,
                         "physicalCommunication", "REGISTERED_LETTER_890",
                         "feePolicy", "FLAT_RATE"
-                ))
-                .withRecipient(recipient)
+                ), List.of(recipient)))
                 .sendNotification(sender, NotificationStatus.ACCEPTED)
                 .get(LegalNotificationDomain.class);
         String iun = notification.getIun();

@@ -8,6 +8,7 @@ import it.pagopa.application.context.EntityStore;
 import it.pagopa.send.common.journey.application.SendJourney;
 import it.pagopa.send.common.kernel.context.CurrentUserSession;
 import it.pagopa.send.common.legal_notification.application.LegalNotificationUseCase;
+import it.pagopa.send.common.legal_notification.domain.LegalNotificationCreationCommand;
 import it.pagopa.send.common.legal_notification.domain.LegalNotificationDomain;
 import it.pagopa.send.common.legal_notification.domain.NotificationStatus;
 import it.pagopa.send.common.legal_notification.infrastructure.factory.RecipientSpecFactory;
@@ -35,7 +36,7 @@ public class LegalNotificationSteps {
     /** Predispone i dati base della notifica e imposta la PA indicata come mittente. */
     @Given("la PA {user} predispone una nuova notifica con i seguenti dati:")
     public void prepareNotification(User sender, Map<String, String> data) {
-        sendJourney.withSender(sender).prepareNotification(data);
+        sendJourney.prepareNotification(new LegalNotificationCreationCommand(sender, data));
     }
 
     /**

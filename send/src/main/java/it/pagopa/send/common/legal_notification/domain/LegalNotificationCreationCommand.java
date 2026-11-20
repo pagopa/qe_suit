@@ -11,4 +11,14 @@ import java.util.Map;
  */
 public record LegalNotificationCreationCommand(User sender, Map<String, String> notificationData,
                                                List<RecipientSpec> recipients) {
+
+    /** Notifica con i dati di default: solo mittente e destinatari. */
+    public LegalNotificationCreationCommand(User sender, List<RecipientSpec> recipients) {
+        this(sender, Map.of(), recipients);
+    }
+
+    /** Solo mittente e dati: i destinatari si aggiungono dopo, uno alla volta. */
+    public LegalNotificationCreationCommand(User sender, Map<String, String> notificationData) {
+        this(sender, notificationData, List.of());
+    }
 }
