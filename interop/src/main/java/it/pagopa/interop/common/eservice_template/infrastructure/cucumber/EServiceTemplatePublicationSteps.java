@@ -39,7 +39,10 @@ public class EServiceTemplatePublicationSteps {
             var template = entities.getByAliasOrThrow(configuration.getTemplate(), EServiceTemplate.class);
             var command = factory.defaultCreationEServiceTemplateInstanceCommand();
             mapper.apply(configuration, command);
-            journey.withProducer(Tenant.fromOrganizationId(template.getCreatorId()))
+            var tenant = configuration.getProducer() != null
+                    ? configuration.getProducer()
+                    : Tenant.fromOrganizationId(template.getCreatorId());
+            journey.withProducer(tenant)
                     .createPublishedEServiceTemplateInstance(template, command, configuration.getAlias());
         }
     }

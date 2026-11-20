@@ -261,7 +261,7 @@ Feature: Modifica dei metadati degli e-service
   @work-item:QA-19036
   @channel:Given=BFF,When=BFF,Then=BFF
   Scenario Outline: [ESERVICE_METADATA_AUTHORIZATION_1] - Rifiuto della modifica dei metadati per ruolo non autorizzato.
-  Dato un e-service in bozza,
+  Dato un e-service pubblicato,
   quando un operatore con ruolo non autorizzato o che non possiede la titolarità tenta la modifica dei metadati,
   allora il sistema non accetta le richiesta.
 
