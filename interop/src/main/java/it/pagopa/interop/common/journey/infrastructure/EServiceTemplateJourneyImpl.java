@@ -149,8 +149,7 @@ public class EServiceTemplateJourneyImpl implements EServiceTemplateJourney<ESer
     @Override
     public EServiceTemplateJourneyImpl createEServiceInstanceTemplate() {
         EServiceTemplate template = entityStore.getLastOrThrow(EServiceTemplate.class);
-        EService eService = eServiceTemplateInstanceUseCase.createEServiceInstance(template);
-        entityStore.upsert(eService);
+        eServiceTemplateInstanceUseCase.createEServiceInstance(template);
         return this;
     }
 
@@ -168,14 +167,9 @@ public class EServiceTemplateJourneyImpl implements EServiceTemplateJourney<ESer
                 eServiceInstance.getRef(), eServiceInstance.getLatestDescriptor().getRef(), eServiceInstance.getLatestDescriptor().getState(), command
         );
         EServiceDescriptor updatedDescriptor = updatedEService.getLatestDescriptor();
-        entityStore.upsert(updatedEService);
         switch (state) {
             case DRAFT -> {}
-            case PUBLISHED -> {
-                EServiceDescriptor publishedDescriptor = eServiceDescriptorUseCase.publishDescriptor(updatedEService, updatedDescriptor);
-                updatedEService.upsertDescriptor(publishedDescriptor);
-                entityStore.upsert(updatedEService);
-            }
+            case PUBLISHED -> eServiceDescriptorUseCase.publishDescriptor(updatedEService, updatedDescriptor);
             default -> throw new UnsupportedOperationException(String.format("La transizione allo stato %s non è ancora supportata nel Journey.", state));
         }
         return this;

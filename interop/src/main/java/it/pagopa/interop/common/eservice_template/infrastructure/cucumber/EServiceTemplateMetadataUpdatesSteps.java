@@ -21,12 +21,9 @@ import it.pagopa.interop.common.kernel.domain.UserRole;
 import it.pagopa.utils.RandomUtils;
 import lombok.RequiredArgsConstructor;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
-import java.util.UUID;
-import java.util.stream.Collectors;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
@@ -38,7 +35,6 @@ public class EServiceTemplateMetadataUpdatesSteps {
     private final EntityStore entityStore;
     private Map<String, String> requestedMetadata = Map.of();
     private EServiceTemplate initialEServiceTemplate;
-    private Map<UUID, EService> initialTemplateInstances = Map.of();
 
     @Given("^un template e-service con versione (assenti|in bozza|pubblicata|sospesa|pubblicata e nuova bozza)$")
     public void createTemplateWithVersions(String version) {
@@ -68,27 +64,20 @@ public class EServiceTemplateMetadataUpdatesSteps {
 
     @Given("un {userRole} di/del {tenant} richiede la modifica dei metadati del template e-service {string}:")
     public void updateMetadata(UserRole role, Tenant producer, String alias, List<EServiceTemplateMetadataUpdateConfiguration> metadata) {
-        updateMetadata(role, producer, entityStore.getByAliasOrThrow(alias, EServiceTemplate.class), metadata);
+        updateMetadata(role, producer, entityStore.getByAliasOrThrow(alias, EServiceTemplate.class), metadata,
+                requestFactory.defaultUpdateEServiceTemplateCommand(true).alias(alias));
     }
 
     @Given("un {userRole} di/del {tenant} richiede la modifica dei metadati dell'{currentEServiceTemplate}:")
     @Given("un {userRole} di/del {tenant} richiede la modifica dei metadati del {currentEServiceTemplate}:")
     public void updateMetadata(UserRole role, Tenant producer, EServiceTemplate eServiceTemplate, List<EServiceTemplateMetadataUpdateConfiguration> metadata) {
-        initialEServiceTemplate = eServiceTemplate.toBuilder()
-                // .versions(eServiceTemplate.getVersions())
-                .build();
-        initialTemplateInstances = entityStore.getAll(EService.class).stream()
-                .filter(eService -> eService.getDescriptors() != null
-                        && eService.getDescriptors().stream().anyMatch(descriptor ->
-                        descriptor.getTemplateRef() != null
-                                && descriptor.getTemplateRef().id().equals(initialEServiceTemplate.getId())))
-                .collect(Collectors.toMap(
-                        EService::getId,
-                        eService -> eService.toBuilder()
-                                .descriptors(new ArrayList<>(eService.getDescriptors()))
-                                .build()
-                ));
-        UpdateEServiceTemplateCommand command = requestFactory.defaultUpdateEServiceTemplateCommand(true);
+        updateMetadata(role, producer, eServiceTemplate, metadata, requestFactory.defaultUpdateEServiceTemplateCommand(true));
+    }
+
+    private void updateMetadata(UserRole role, Tenant producer, EServiceTemplate eServiceTemplate,
+                                List<EServiceTemplateMetadataUpdateConfiguration> metadata,
+                                UpdateEServiceTemplateCommand command) {
+        initialEServiceTemplate = eServiceTemplate.toBuilder().build();
         requestedMetadata = configurationMapper.apply(metadata, command);
         interopJourney
                 .withProducer(producer, role)
@@ -241,20 +230,17 @@ public class EServiceTemplateMetadataUpdatesSteps {
     @Then("le istanze presentano i metadati ereditati dal template {string}:")
     public void checkInstanceMetadataPropagation(String templateAlias, List<String> instanceAliases) {
         EServiceTemplate updatedTemplate = entityStore.getByAliasOrThrow(templateAlias, EServiceTemplate.class);
+        if (initialEServiceTemplate == null || !updatedTemplate.getId().equals(initialEServiceTemplate.getId())) {
+            throw new IllegalStateException("Nessuna modifica dei metadati registrata per il template " + templateAlias);
+        }
 
         instanceAliases.forEach(instanceAlias -> {
             EService instance = entityStore.getByAliasOrThrow(instanceAlias, EService.class);
-            EService initialInstance = initialTemplateInstances.get(instance.getId());
-            assertThat(initialInstance)
-                    .as("Istanza %s collegata al template %s prima della modifica", instanceAlias, templateAlias)
-                    .isNotNull();
-            assertThat(initialInstance.getName())
-                    .as("Nome iniziale dell'istanza %s derivato dal template %s", instanceAlias, templateAlias)
-                    .startsWith(initialEServiceTemplate.getName());
-
-            String instanceLabelSuffix = initialInstance.getName()
-                    .substring(initialEServiceTemplate.getName().length());
-            String expectedName = updatedTemplate.getName() + instanceLabelSuffix;
+            var association = initialEServiceTemplate.findInstance(instance.getId())
+                    .orElseThrow(() -> new IllegalStateException(
+                            "Istanza %s (%s) non associata al template %s prima della modifica"
+                                    .formatted(instanceAlias, instance.getId(), templateAlias)));
+            String expectedName = updatedTemplate.getName() + " - " + association.suffix();
 
             interopJourney.waitUntilEService(instanceAlias, refreshed ->
                     expectedName.equals(refreshed.getName())

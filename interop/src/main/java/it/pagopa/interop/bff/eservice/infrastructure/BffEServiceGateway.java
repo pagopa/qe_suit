@@ -82,7 +82,7 @@ public class BffEServiceGateway implements EServiceGateway {
     public void tryUpdateEServiceMetadata(EServiceRef eServiceRef, EServiceUpdateCommand command) {
         if (!(command instanceof BffEServiceUpdateCommand bffCommand))
             throw new IllegalArgumentException("Command must be an instance of BffEServiceUpdateCommand");
-        restClient.updateEService(eServiceRef.id(), bffCommand.getBffUpdatePayload())
+        restClient.updateEServiceMetadata(eServiceRef.id(), bffCommand.getBffUpdatePayload())
                 .withoutPolling()
                 .get();
     }
@@ -92,7 +92,7 @@ public class BffEServiceGateway implements EServiceGateway {
         if (!(command instanceof BffEServiceUpdateCommand bffCommand))
             throw new IllegalArgumentException("Command must be an instance of BffEServiceUpdateCommand");
 
-        restClient.updateEService(eServiceRef.id(), bffCommand.getBffUpdatePayload())
+        restClient.updateEServiceMetadata(eServiceRef.id(), bffCommand.getBffUpdatePayload())
                 .withPolling(PollingStrategy.UNTIL_SUCCESS)
                 .get();
 

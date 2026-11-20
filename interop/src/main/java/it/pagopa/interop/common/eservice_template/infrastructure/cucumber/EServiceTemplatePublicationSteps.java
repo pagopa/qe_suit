@@ -21,6 +21,7 @@ public class EServiceTemplatePublicationSteps {
     private final EServiceTemplateConfigurationMapper mapper;
     private final EntityStore entities;
 
+
     @Given("i seguenti template (di )e-service pubblicati:")
     public void publishTemplates(List<EServiceTemplatePublicationConfiguration> configurations) {
         for (var configuration : configurations) {

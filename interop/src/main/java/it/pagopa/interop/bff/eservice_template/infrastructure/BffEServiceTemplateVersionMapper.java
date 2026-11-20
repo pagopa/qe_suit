@@ -54,6 +54,8 @@ public interface BffEServiceTemplateVersionMapper {
     @Mapping(target = "version", ignore = true)
     @Mapping(target = "riskAnalyses", ignore = true)
     @Mapping(target = "riskAnalysis", ignore = true)
+    @Mapping(target = "instances", ignore = true)
+    @Mapping(target = "instance", ignore = true)
     EServiceTemplate toTemplateBase(EServiceTemplateVersionDetails source);
 
     @Mapping(target = "certified", source = "certified", qualifiedByName = "flattenAttributes")
@@ -117,6 +119,7 @@ public interface BffEServiceTemplateVersionMapper {
                 ))
                 .versions(new ArrayList<>(finalVersions))
                 .riskAnalyses(riskAnalyses)
+                .instances(existingTemplate == null ? List.of() : existingTemplate.getInstances())
                 .build();
     }
 

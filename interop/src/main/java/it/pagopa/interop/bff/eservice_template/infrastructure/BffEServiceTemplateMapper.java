@@ -39,6 +39,8 @@ public interface BffEServiceTemplateMapper {
     @Mapping(target = "version", ignore = true)
     @Mapping(target = "riskAnalyses", ignore = true)
     @Mapping(target = "riskAnalysis", ignore = true)
+    @Mapping(target = "instances", ignore = true)
+    @Mapping(target = "instance", ignore = true)
     EServiceTemplate toTemplateBase(EServiceTemplateDetails source);
 
     @Mapping(
@@ -91,6 +93,8 @@ public interface BffEServiceTemplateMapper {
     @Mapping(target = "version", ignore = true)
     @Mapping(target = "riskAnalyses", expression = "java(resolveRiskAnalyses(source, existing))")
     @Mapping(target = "riskAnalysis", ignore = true)
+    @Mapping(target = "instances", expression = "java(existing == null ? java.util.List.of() : existing.getInstances())")
+    @Mapping(target = "instance", ignore = true)
     EServiceTemplate toTemplateFromVersionDetails(EServiceTemplateVersionDetails source, EServiceTemplate existing);
 
     @Named("resolveTemplateState")
