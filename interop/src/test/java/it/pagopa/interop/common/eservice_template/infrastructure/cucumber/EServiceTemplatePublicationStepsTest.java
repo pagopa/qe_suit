@@ -12,6 +12,8 @@ import it.pagopa.interop.common.eservice_template.domain.EServiceTemplateVersion
 import it.pagopa.interop.common.eservice_template.infrastructure.cucumber.dto.EServiceTemplateInstanceConfiguration;
 import it.pagopa.interop.common.eservice_template.infrastructure.cucumber.dto.EServiceTemplatePublicationConfiguration;
 import it.pagopa.interop.common.eservice_template.infrastructure.cucumber.dto.mapper.EServiceTemplateConfigurationMapper;
+import it.pagopa.interop.common.infrastructure.cucumber.dto.ConfigurableText;
+import it.pagopa.interop.common.infrastructure.cucumber.dto.TextGenerationMode;
 import it.pagopa.interop.common.journey.application.InteropJourney;
 import it.pagopa.interop.common.kernel.domain.Tenant;
 import org.junit.jupiter.api.Test;
@@ -37,8 +39,8 @@ class EServiceTemplatePublicationStepsTest {
 
     @Test
     void aliasesAreRegisteredAndCreatorIsExplicitForEveryTemplate() {
-        var first = configuration("TPL-1", "Template Stampo Alfa", Tenant.COMUNE_DI_MILANO);
-        var second = configuration("TPL-2", "Template Stampo Beta", Tenant.SOGECAP);
+        var first = configuration("TPL-1", new ConfigurableText("Template Stampo Alfa", TextGenerationMode.RANDOM), Tenant.COMUNE_DI_MILANO);
+        var second = configuration("TPL-2", new ConfigurableText("Template Stampo Beta", TextGenerationMode.RANDOM), Tenant.SOGECAP);
         when(journey.createEServiceTemplate(any(EServiceTemplateCreationCommand.class),
                 eq(EServiceTemplateVersionState.PUBLISHED))).thenAnswer(invocation -> {
             var command = (BffEServiceTemplateCreationCommand) invocation.getArgument(0);
@@ -105,7 +107,7 @@ class EServiceTemplatePublicationStepsTest {
                 .containsExactly("le seguenti istanze di template pubblicate:", "le seguenti istanze di template e-service pubblicate:");
     }
 
-    private static EServiceTemplatePublicationConfiguration configuration(String alias, String name, Tenant creator) {
+    private static EServiceTemplatePublicationConfiguration configuration(String alias, ConfigurableText name, Tenant creator) {
         var configuration = new EServiceTemplatePublicationConfiguration();
         configuration.setAlias(alias);
         configuration.setName(name);
