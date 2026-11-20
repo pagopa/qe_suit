@@ -1,6 +1,7 @@
 package it.pagopa.send.common.login.application;
 
 import it.pagopa.send.common.user.domain.User;
+import it.pagopa.send.common.user.domain.UserType;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
@@ -43,7 +44,7 @@ public class LoginUseCase {
         loginGateway.logout();
     }
 
-    public void verifySessionEnded() {
-        loginGateway.verifySessionEnded();
+    public void verifySessionEnded(UserType portalUserType) {
+        loginGateway.verifySessionEnded(portalUserType);
     }
 }

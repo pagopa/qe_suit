@@ -2,6 +2,7 @@ package it.pagopa.send.common.login.application;
 
 import it.pagopa.send.common.kernel.domain.Channel;
 import it.pagopa.send.common.user.domain.User;
+import it.pagopa.send.common.user.domain.UserType;
 import org.springframework.plugin.core.Plugin;
 
 /**
@@ -28,5 +29,6 @@ public interface LoginGateway extends Plugin<Channel> {
 
     void logout();
 
-    void verifySessionEnded();
+    /** Verifica che la sessione sul portale del tipo di utente indicato (PT, PA o PG) sia terminata. */
+    void verifySessionEnded(UserType portalUserType);
 }
