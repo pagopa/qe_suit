@@ -3,6 +3,7 @@ package it.pagopa.interop.web.eservice.infrastructure.page.component;
 import it.frontend.e2e.framework.annotation.selector.XPath;
 import it.frontend.e2e.framework.web.domain.Component;
 import it.pagopa.infrastructure.suit.component.Alert;
+import it.pagopa.infrastructure.suit.component.Button;
 import it.pagopa.infrastructure.suit.component.Label;
 import it.pagopa.infrastructure.suit.component.RadioButton;
 
@@ -24,13 +25,16 @@ public interface PurposeTemplateRiskAnalysisStepPanel extends Component {
     @XPath(".//*[@id='answers.purpose-label']")
     Label purposeQuestionLabel();
 
+    @XPath(".//*[@id='answers.purpose-label']/ancestor::div[contains(@class,'css-1o2orqd')]//span[normalize-space()='Non modificabile']")
+    Label purposeLockedChip();
+
     @XPath(".//*[@id='answers.purpose-infoLabel']")
     Label purposeQuestionHelpText();
 
-    @XPath(".//input[@name='answers.purpose' and @value='INSTITUTIONAL']")
+    @XPath(".//label[.//input[@name='answers.purpose' and @value='INSTITUTIONAL']]")
     RadioButton institutionalPurposeRadio();
 
-    @XPath(".//input[@name='answers.purpose' and @value='OTHER']")
+    @XPath(".//label[.//input[@name='answers.purpose' and @value='OTHER']]")
     RadioButton otherPurposeRadio();
 
     // -------------------------------------------------
@@ -50,13 +54,16 @@ public interface PurposeTemplateRiskAnalysisStepPanel extends Component {
     @XPath(".//*[@id='answers.usesPersonalData-label']")
     Label usesPersonalDataLabel();
 
+    @XPath(".//*[@id='answers.usesPersonalData-label']/ancestor::div[contains(@class,'css-1o2orqd')]//span[normalize-space()='Non modificabile']")
+    Label usesPersonalDataLockedChip();
+
     @XPath(".//*[@id='answers.usesPersonalData-infoLabel']")
     Label usesPersonalDataHelpText();
 
-    @XPath(".//input[@name='answers.usesPersonalData' and @value='YES']")
+    @XPath(".//label[.//input[@name='answers.usesPersonalData' and @value='YES']]")
     RadioButton usesPersonalDataYesRadio();
 
-    @XPath(".//input[@name='answers.usesPersonalData' and @value='NO']")
+    @XPath(".//label[.//input[@name='answers.usesPersonalData' and @value='NO']]")
     RadioButton usesPersonalDataNoRadio();
 
     // -------------------------------------------------
@@ -66,10 +73,13 @@ public interface PurposeTemplateRiskAnalysisStepPanel extends Component {
     @XPath(".//*[@id='answers.usesThirdPartyPersonalData-label']")
     Label usesThirdPartyDataLabel();
 
-    @XPath(".//input[@name='answers.usesThirdPartyPersonalData' and @value='YES']")
+    @XPath(".//*[@id='answers.usesThirdPartyPersonalData-label']/ancestor::div[contains(@class,'css-1o2orqd')]//span[normalize-space()='Non modificabile']")
+    Label usesThirdPartyDataLockedChip();
+
+    @XPath(".//label[.//input[@name='answers.usesThirdPartyPersonalData' and @value='YES']]")
     RadioButton usesThirdPartyDataYesRadio();
 
-    @XPath(".//input[@name='answers.usesThirdPartyPersonalData' and @value='NO']")
+    @XPath(".//label[.//input[@name='answers.usesThirdPartyPersonalData' and @value='NO']]")
     RadioButton usesThirdPartyDataNoRadio();
 
     // -------------------------------------------------
@@ -79,9 +89,22 @@ public interface PurposeTemplateRiskAnalysisStepPanel extends Component {
     @XPath(".//*[@id='answers.isRequestOnBehalfOfThirdParties-label']")
     Label onBehalfOfThirdPartiesLabel();
 
-    @XPath(".//input[@name='answers.isRequestOnBehalfOfThirdParties' and @value='YES']")
+    @XPath(".//*[@id='answers.isRequestOnBehalfOfThirdParties-label']/ancestor::div[contains(@class,'css-1o2orqd')]//span[normalize-space()='Non modificabile']")
+    Label onBehalfOfThirdPartiesLockedChip();
+
+    @XPath(".//label[.//input[@name='answers.isRequestOnBehalfOfThirdParties' and @value='YES']]")
     RadioButton onBehalfOfThirdPartiesYesRadio();
 
-    @XPath(".//input[@name='answers.isRequestOnBehalfOfThirdParties' and @value='NO']")
+    @XPath(".//label[.//input[@name='answers.isRequestOnBehalfOfThirdParties' and @value='NO']]")
     RadioButton onBehalfOfThirdPartiesNoRadio();
+
+    // -------------------------------------------------
+    // ACTIONS
+    // -------------------------------------------------
+
+    @XPath(".//button[normalize-space()='Indietro']")
+    Button backButton();
+
+    @XPath(".//button[normalize-space()='Salva bozza e prosegui']")
+    Button saveDraftAndContinueButton();
 }

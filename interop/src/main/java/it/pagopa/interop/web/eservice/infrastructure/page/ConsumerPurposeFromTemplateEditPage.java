@@ -3,7 +3,6 @@ package it.pagopa.interop.web.eservice.infrastructure.page;
 import it.frontend.e2e.framework.annotation.location.web.Url;
 import it.frontend.e2e.framework.annotation.selector.XPath;
 import it.frontend.e2e.framework.web.capability.core.Readable;
-import it.frontend.e2e.framework.web.domain.Component;
 import it.frontend.e2e.framework.web.domain.Page;
 import it.pagopa.infrastructure.suit.component.Button;
 import it.pagopa.infrastructure.suit.component.Label;
@@ -31,19 +30,10 @@ public interface ConsumerPurposeFromTemplateEditPage extends Page {
     @XPath(".//*[@data-testid='mobileStepper']")
     Stepper stepper();
 
-    @XPath(".//button[normalize-space()='Indietro']")
-    Button backButton();
-
-    @XPath(".//button[normalize-space()='Salva bozza e prosegui']")
-    Button saveDraftAndContinueButton();
-
-    @XPath(".//button[normalize-space()='Salva bozza e prosegui']/ancestor::form")
-    Component form();
-
-    @XPath(".//section[.//h2[normalize-space()='Informazioni sulla finalità']]")
+    @XPath("//form[@novalidate]")
     PurposeTemplateGeneralStepPanel generalStepPanel();
 
-    @XPath(".//section[.//h2[normalize-space()='Analisi del rischio']]")
+    @XPath("//form[@novalidate]")
     PurposeTemplateRiskAnalysisStepPanel riskAnalysisStepPanel();
 
     @Override
