@@ -17,13 +17,13 @@ Feature: Modifica dei metadati dei portachiavi erogatore
     And i dati e le associazioni del portachiavi "K-1" allo stato attuale appuntati come riferimento
     When un admin del Comune di Milano modifica i metadati del portachiavi "K-1":
       | campo       | valore            |
-      | nome        | nuovo nome        |
+      | nome        | primo nome        |
     Then il portachiavi "K-1" conserva le associazioni e i dati di riferimento eccetto il nome
 
     When i dati e le associazioni del portachiavi "K-1" allo stato attuale appuntati come riferimento
     And un admin del Comune di Milano modifica i metadati del portachiavi "K-1":
       | campo       | valore            |
-      | descrizione | nuova descrizione |
+      | descrizione | prima descrizione |
     Then il portachiavi "K-1" conserva le associazioni e i dati di riferimento eccetto la descrizione
 
     When i dati e le associazioni del portachiavi "K-1" allo stato attuale appuntati come riferimento
