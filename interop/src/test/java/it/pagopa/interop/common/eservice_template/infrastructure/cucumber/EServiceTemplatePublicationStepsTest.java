@@ -12,15 +12,19 @@ import it.pagopa.interop.common.eservice_template.domain.EServiceTemplateVersion
 import it.pagopa.interop.common.eservice_template.infrastructure.cucumber.dto.EServiceTemplateInstanceConfiguration;
 import it.pagopa.interop.common.eservice_template.infrastructure.cucumber.dto.EServiceTemplatePublicationConfiguration;
 import it.pagopa.interop.common.eservice_template.infrastructure.cucumber.dto.mapper.EServiceTemplateConfigurationMapper;
+import it.pagopa.interop.common.eservice_template.infrastructure.cucumber.dto.mapper.EServiceTemplateConfigurationMapperImpl;
+import it.pagopa.interop.common.infrastructure.SharedMapper;
 import it.pagopa.interop.common.kernel.dto.ConfigurableText;
 import it.pagopa.interop.common.kernel.dto.TextGenerationMode;
 import it.pagopa.interop.common.journey.application.InteropJourney;
 import it.pagopa.interop.common.kernel.domain.Tenant;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.mapstruct.factory.Mappers;
 import org.mockito.ArgumentCaptor;
 import io.cucumber.cucumberexpressions.ExpressionFactory;
 import io.cucumber.cucumberexpressions.ParameterTypeRegistry;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.test.context.junit.jupiter.SpringJUnitConfig;
 
 import java.util.Arrays;
 import java.util.List;
@@ -30,12 +34,21 @@ import java.util.UUID;
 import static org.assertj.core.api.Assertions.*;
 import static org.mockito.Mockito.*;
 
+@SpringJUnitConfig(classes = {
+        EServiceTemplateConfigurationMapperImpl.class,
+        SharedMapper.class
+})
 class EServiceTemplatePublicationStepsTest {
     private final InteropJourney journey = mock(InteropJourney.class, RETURNS_SELF);
     private final InMemoryEntityStore entities = new InMemoryEntityStore();
-    private final EServiceTemplatePublicationSteps steps = new EServiceTemplatePublicationSteps(
-            journey, new BffEServiceTemplateRequestFactory(),
-            Mappers.getMapper(EServiceTemplateConfigurationMapper.class), entities);
+    @Autowired
+    private EServiceTemplateConfigurationMapper mapper;
+    private EServiceTemplatePublicationSteps steps;
+
+    @BeforeEach
+    void setUp() {
+        steps = new EServiceTemplatePublicationSteps(journey, new BffEServiceTemplateRequestFactory(), mapper, entities);
+    }
 
     @Test
     void aliasesAreRegisteredAndCreatorIsExplicitForEveryTemplate() {
