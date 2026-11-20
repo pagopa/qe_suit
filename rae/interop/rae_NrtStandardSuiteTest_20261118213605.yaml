@@ -5822,8 +5822,8 @@ ko:
     ]
     }
     '
-    link_prod_bug: ''
-    link_suite_bug: 'https://pagopa.atlassian.net/browse/QA-15512'
+    link_prod_bug: 'https://pagopa.atlassian.net/browse/PIN-11633'
+    link_suite_bug: ''
   - id_test: WebEServiceContractTest::shouldShowEServiceDetailToProducer::nome dell'e-service creato visibile all'utente
       API del Comune di Milano
     error_log: |
