@@ -188,9 +188,10 @@ public class PurposeSteps {
                 throw new IllegalArgumentException("Campo metadato finalita duplicato: " + field);
             }
 
+            String value = "%empty".equals(row.get(1)) ? "" : row.get(1);
             switch (field) {
-                case "nome" -> name = row.get(1);
-                case "descrizione" -> description = row.get(1);
+                case "nome" -> name = value;
+                case "descrizione" -> description = value;
                 default -> throw new IllegalArgumentException("Campo metadato finalita non supportato: " + field);
             }
         }

@@ -77,6 +77,24 @@ class PurposeStepsTest {
     }
 
     @Test
+    void verifiesMalformedMetadataUpdateThroughTheUseCase() {
+        steps.shouldFailToUpdatePurposeMetadataAsMalformed();
+
+        verify(useCase).shouldFailToUpdatePurposeMetadataAsMalformed();
+        verifyNoMoreInteractions(useCase);
+        verifyNoInteractions(entities, interopJourney, userSession, currentChannel);
+    }
+
+    @Test
+    void verifiesConflictingMetadataUpdateThroughTheUseCase() {
+        steps.shouldFailToUpdatePurposeMetadataAsConflict();
+
+        verify(useCase).shouldFailToUpdatePurposeMetadataAsConflict();
+        verifyNoMoreInteractions(useCase);
+        verifyNoInteractions(entities, interopJourney, userSession, currentChannel);
+    }
+
+    @Test
     void failsBeforeCreatingDraftPurposeWhenNoPublishedTemplateExists() {
         when(entities.getAll(PurposeTemplate.class)).thenReturn(List.of(
                 PurposeTemplate.builder().id(UUID.randomUUID()).state(PurposeTemplateState.DRAFT).build()));
@@ -204,6 +222,34 @@ class PurposeStepsTest {
             verify(useCase).updatePurposeMetadata(purpose, "Nuovo titolo", "Nuova descrizione");
         }
         verifyNoMoreInteractions(useCase);
+    }
+
+    @ParameterizedTest
+    @CsvSource({"DELIVER, ADMIN", "RECEIVE, ADMIN", "DELIVER, API", "RECEIVE, API"})
+    void attemptsMetadataUpdateWithoutCallingTheSuccessOperation(EServiceMode mode, UserRole role) {
+        var eService = EService.builder().id(UUID.randomUUID()).mode(mode).build();
+        var purpose = Purpose.builder().id(UUID.randomUUID()).eserviceId(eService.getId())
+                .title("Titolo iniziale").description("Descrizione iniziale").build();
+        when(entities.getLastOrThrow(Purpose.class)).thenReturn(purpose);
+        when(entities.getById(eService.getId(), EService.class)).thenReturn(Optional.of(eService));
+
+        steps.tryToUpdatePurposeMetadata(role, Tenant.COMUNE_DI_COMUN_NUOVO, DataTable.create(List.of(
+                List.of("campo", "valore"), List.of("nome", "Nuovo titolo"))));
+
+        var order = inOrder(interopJourney, useCase);
+        if (role == UserRole.ADMIN) {
+            order.verify(interopJourney).withConsumer(Tenant.COMUNE_DI_COMUN_NUOVO);
+        } else {
+            order.verify(interopJourney).withConsumer(Tenant.COMUNE_DI_COMUN_NUOVO, role);
+        }
+        if (mode == EServiceMode.RECEIVE) {
+            order.verify(useCase).tryToUpdateReversePurposeMetadata(
+                    purpose, "Nuovo titolo", "Descrizione iniziale");
+        } else {
+            order.verify(useCase).tryToUpdatePurposeMetadata(
+                    purpose, "Nuovo titolo", "Descrizione iniziale");
+        }
+        verifyNoMoreInteractions(interopJourney, useCase);
     }
 
     @ParameterizedTest
