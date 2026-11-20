@@ -19,8 +19,8 @@ from drain3.template_miner_config import TemplateMinerConfig
 
 from .matching import find_match
 from .qa_confirmation import is_qa_confirmed, analysis_digest
+from .qa_invariant_bridge import build_learning, evaluate
 
-_FRAME = re.compile(r'(?m)^\s*at\s+\S+\([^\n]*\)\s*$')
 _UUID = r'\b[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}\b'
 _TIMESTAMP = r'\b\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}(?:\.\d+)?(?:Z|[+-]\d{2}:?\d{2})?\b'
 _PLACEHOLDER = re.compile(r'(<\*>|<UUID>|<TIMESTAMP>)')
@@ -28,10 +28,8 @@ _ANALYSIS_FIELDS = ('procedure', 'result', 'link_prod_bug', 'link_suite_bug')
 
 
 def error_head(error: str) -> str:
-    """Keep the Java exception and application message, omit stack frames."""
-    found = _FRAME.search(error)
-    source = error[:found.start()] if found else error
-    return re.sub(r'\s+', ' ', source).strip()
+    """Normalize whitespace but retain the full diagnostic log, including stack frames."""
+    return re.sub(r'\s+', ' ', error).strip()
 
 
 
@@ -163,9 +161,20 @@ class ProgressiveMatcher:
             if cluster is not None:
                 self.cluster_members[cluster.cluster_id].append(row)
         self.signatures = _signatures(self.history)
+        self.qa_engine, self.qa_candidates = build_learning(self.history)
+        self.last_review_reasons = ()
 
-    def classify(self, test_id: str, error: str) -> tuple[str, dict | None]:
+    def classify(self, test_id: str, error: str, *, suite: str | None = None) -> tuple[str, dict | None]:
         """Return ('known' | 'proposed' | 'new', historical entry or None)."""
+        self.last_review_reasons = ()
+        if suite is not None:
+            qa = evaluate(self.qa_engine, self.qa_candidates, test_id, error, suite)
+            if qa is not None:
+                status, previous, reasons = qa
+                self.last_review_reasons = tuple(reasons)
+                # The explainable, QA-backed gate is authoritative: never
+                # fall through to an old, more permissive auto-known decision.
+                return status, previous
         matched = self.miner.match(error_head(error), full_search_strategy='always')
         if matched is None:
             return 'new', None
@@ -182,7 +191,9 @@ class ProgressiveMatcher:
             sig = compatible[0]
             # Prefer the newest finalized *compatible* historical analysis;
             # ticket values themselves never define defect identity.
-            eligible = [r for r in candidates if sig.matches(r['error_log'])
+            member_ids = {id(member) for member in sig.members}
+            eligible = [r for r in candidates if id(r) in member_ids
+                        and sig.matches(r['error_log'])
                         and not (isinstance(r.get('matching'), dict)
                                  and r['matching'].get('status') == 'pending_confirmation'
                                  and not is_qa_confirmed(r, approved_history=True))]

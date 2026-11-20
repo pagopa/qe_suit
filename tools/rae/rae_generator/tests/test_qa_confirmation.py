@@ -60,7 +60,7 @@ def test_renderer_shows_final_message_only_with_review_and_unchanged_analysis():
     before = deepcopy(data)
     initial = render(data)
     assert 'Validazione finale prima dell’automazione' not in initial
-    assert 'MATCH PROPOSTO' in initial
+    assert 'Corrispondenza storica da validare' in initial
     reviewed = render(data, original_data=old, qa_reviewed=True)
     assert 'Validazione finale prima dell’automazione' in reviewed
     assert 'nelle prossime esecuzioni' in reviewed

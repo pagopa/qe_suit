@@ -1,4 +1,4 @@
-"""Persistent regression tests: run with PYTHONPATH=tools/rae-generator pytest ...
+"""Persistent regression tests: run with PYTHONPATH=tools/rae/rae_generator pytest ...
 
 All synthetic data is created in tmp_path; no network, Jira, GitHub or live files.
 The historical replay uses separately bundled real YAML and is NOT part of this
@@ -82,7 +82,7 @@ def test_01_first_seen_history_proposes_not_known(monkeypatch, tmp_path):
 def test_02_no_confirmation_before_human_review(monkeypatch, tmp_path):
     _, proposal = setup_proposal(monkeypatch, tmp_path)
     before = render(proposal)
-    assert 'MATCH PROPOSTO' in before
+    assert 'Corrispondenza storica da validare' in before
     assert 'Validazione finale prima dell’automazione' not in before
     assert not is_qa_confirmed(proposal['ko'][0], original=proposal['ko'][0], qa_reviewed=False)
 
@@ -252,7 +252,7 @@ def test_17_same_test_different_exception_must_not_auto_match(monkeypatch, tmp_p
 
 def test_18_workflow_routes_to_namespace_and_validates_pr(tmp_path):
     # Check the exact production workflows, not a simulated YAML snippet.
-    repo = Path(__file__).resolve().parents[3]
+    repo = Path(__file__).resolve().parents[4]
     interop = (repo/'.github/workflows/interop-pipeline.yaml').read_text(encoding='utf-8')
     validation = (repo/'.github/workflows/rae-validation.yaml').read_text(encoding='utf-8')
     for required in ('RAE_NAMESPACE: interop', 'rae/${RAE_NAMESPACE}/rae_',
