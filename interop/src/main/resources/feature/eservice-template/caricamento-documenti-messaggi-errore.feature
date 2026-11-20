@@ -59,7 +59,7 @@ Feature: Messaggi di errore durante il caricamento di file nei template e-servic
     Given un template e-service preparato con la seguente configurazione:
       | tecnologia | stato | interfaccia               |
       | REST       | DRAFT | openapi3-riferimenti.json |
-    When l'erogatore allega il file "formato-non-rilevabile.bin" come "documento" sulla versione del template con il nome "Allegato di test"
+    When l'erogatore allega il file "formato-non-rilevabile" come "documento" sulla versione del template con il nome "Allegato di test"
     Then il messaggio di errore corrisponde al caso "ESERVICE_TEMPLATE_INVALID_CONTENT_TYPE_DETECTED" in lingua "it"
 
   @work-item:QA-18430

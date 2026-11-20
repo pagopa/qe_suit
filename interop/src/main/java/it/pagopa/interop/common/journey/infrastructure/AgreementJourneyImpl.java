@@ -36,7 +36,7 @@ public class AgreementJourneyImpl implements AgreementJourney<AgreementJourneyIm
     public AgreementJourneyImpl linkAgreement(
             EService eService,
             AgreementState agreementState,
-            @org.jspecify.annotations.Nullable Delegation delegation,
+            @Nullable Delegation delegation,
             @Nullable String alias
     ) {
         Agreement agreement = agreementUseCase.createAgreement(eService, eService.getActiveDescriptor(), delegation);
@@ -57,8 +57,8 @@ public class AgreementJourneyImpl implements AgreementJourney<AgreementJourneyIm
                         () -> agreementUseCase.rejectAgreement(submitted)
                 );
                 requireRequestedState(
-                        agreementUseCase.getAgreement(rejected),
-                        AgreementState.REJECTED
+                    agreementUseCase.awaitState(rejected, Set.of(AgreementState.REJECTED)),
+                    AgreementState.REJECTED
                 );
             }
             case SUSPENDED -> {
