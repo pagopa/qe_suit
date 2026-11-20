@@ -81,7 +81,7 @@ Feature: Modifica dei metadati dei client
       | campo       | valore            |
       | nome        | primo nome        |
     Then la richiesta di modifica fallisce come operazione vietata
-    And il client "CL-1" conserva le associazioni e i dati di riferimento eccetto il nome
+    And il client "CL-1" conserva le associazioni e i dati di riferimento
     And l'admin del Comune di Pozzallo richiede la generazione del voucher per il client interop
 
     When i dati e le associazioni del client "CL-1" allo stato attuale appuntati come riferimento
@@ -89,7 +89,7 @@ Feature: Modifica dei metadati dei client
       | campo       | valore            |
       | descrizione | prima descrizione |
     Then la richiesta di modifica fallisce come operazione vietata
-    And il client "CL-1" conserva le associazioni e i dati di riferimento eccetto la descrizione
+    And il client "CL-1" conserva le associazioni e i dati di riferimento
     And l'admin del Comune di Pozzallo richiede la generazione del voucher per il client interop
 
     When i dati e le associazioni del client "CL-1" allo stato attuale appuntati come riferimento
@@ -98,7 +98,7 @@ Feature: Modifica dei metadati dei client
       | nome        | nuovo nome        |
       | descrizione | nuova descrizione |
     Then la richiesta di modifica fallisce come operazione vietata
-    And il client "CL-1" conserva le associazioni e i dati di riferimento eccetto il nome e la descrizione
+    And il client "CL-1" conserva le associazioni e i dati di riferimento
     And l'admin del Comune di Pozzallo richiede la generazione del voucher per il client interop
 
 # TODO I test sulla UI vanno implementati come test di integrazione
