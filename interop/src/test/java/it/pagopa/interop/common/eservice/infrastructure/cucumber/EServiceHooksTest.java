@@ -5,6 +5,8 @@ import it.pagopa.infrastructure.channel.CurrentChannel;
 import it.pagopa.interop.common.eservice.application.EServiceDescriptorApprovalUseCase;
 import it.pagopa.interop.common.eservice.application.EServiceDescriptorUseCase;
 import it.pagopa.interop.common.eservice.application.EServiceUseCase;
+import it.pagopa.interop.common.eservice.application.EServiceRequestFactory;
+import it.pagopa.interop.common.eservice.application.command.EServiceUpdateCommand;
 import it.pagopa.interop.common.eservice.domain.EService;
 import it.pagopa.interop.common.eservice.domain.EServiceDescriptor;
 import it.pagopa.interop.common.eservice.domain.EServiceDescriptorState;
@@ -29,12 +31,19 @@ import static org.mockito.Mockito.*;
 class EServiceHooksTest {
     private final EntityStore store = mock(EntityStore.class);
     private final EServiceUseCase services = mock(EServiceUseCase.class);
+    private final EServiceRequestFactory factory = mock(EServiceRequestFactory.class);
+    private final EServiceUpdateCommand updateCommand = mock(EServiceUpdateCommand.class);
     private final EServiceDescriptorApprovalUseCase descriptors = mock(EServiceDescriptorApprovalUseCase.class);
     private final EServiceDescriptorUseCase reader = mock(EServiceDescriptorUseCase.class);
     private final AuthSession session = mock(AuthSession.class);
     @SuppressWarnings("unchecked")
     private final CurrentChannel<Channel> channel = mock(CurrentChannel.class);
-    private final EServiceHooks hooks = new EServiceHooks(store, services, descriptors, reader, session, channel);
+    private final EServiceHooks hooks = new EServiceHooks(store, services, factory, descriptors, reader, session, channel);
+
+    {
+        when(factory.defaultUpdateEServiceCommand()).thenReturn(updateCommand);
+        when(updateCommand.name(anyString())).thenReturn(updateCommand);
+    }
 
     @Test
     void deletesDraftEServiceAsProducerThroughBffAndRestoresContext() {
@@ -64,6 +73,7 @@ class EServiceHooksTest {
 
         hooks.cleanUpEServices();
 
+        verify(services).updateEServiceMetadata(eq(service), eq(updateCommand));
         verify(services).archiveEService(service, GracePeriodDays.NUMBER_60);
         verifyNoMoreInteractions(services);
     }
@@ -79,7 +89,8 @@ class EServiceHooksTest {
 
         hooks.cleanUpEServices();
 
-        verifyNoInteractions(services);
+        verify(services).updateEServiceMetadata(any(EService.class), eq(updateCommand));
+        verifyNoMoreInteractions(services);
         verify(session).set(previousUser, Tenant.AGID);
         verify(channel).setCurrentChannel(Channel.WEB_BROWSER);
     }
@@ -92,7 +103,8 @@ class EServiceHooksTest {
 
         hooks.cleanUpEServices();
 
-        verifyNoInteractions(services);
+        verify(services).updateEServiceMetadata(any(EService.class), eq(updateCommand));
+        verifyNoMoreInteractions(services);
     }
 
     @ParameterizedTest
@@ -103,6 +115,7 @@ class EServiceHooksTest {
 
         hooks.cleanUpEServices();
 
+        verify(services).updateEServiceMetadata(eq(service), eq(updateCommand));
         verify(services).archiveEService(service, GracePeriodDays.NUMBER_60);
         verifyNoMoreInteractions(services);
     }
@@ -116,6 +129,7 @@ class EServiceHooksTest {
         hooks.cleanUpEServices();
 
         verify(services).deleteEService(draft);
+        verify(services).updateEServiceMetadata(eq(retiring), eq(updateCommand));
         verifyNoMoreInteractions(services);
     }
 
@@ -126,6 +140,7 @@ class EServiceHooksTest {
 
         hooks.cleanUpEServices();
 
+        verify(services).updateEServiceMetadata(eq(service), eq(updateCommand));
         verify(services).archiveEService(service, GracePeriodDays.NUMBER_60);
         verifyNoMoreInteractions(services);
     }
@@ -153,6 +168,7 @@ class EServiceHooksTest {
 
         hooks.cleanUpEServices();
 
+        verify(services).updateEServiceMetadata(eq(service), eq(updateCommand));
         verify(services).archiveEService(service, GracePeriodDays.NUMBER_60);
         verifyNoMoreInteractions(services);
         verifyNoInteractions(descriptors);
@@ -186,6 +202,7 @@ class EServiceHooksTest {
 
         var order = inOrder(descriptors, services);
         order.verify(descriptors).rejectDescriptor(service, pending, "Cleanup dello scenario");
+        order.verify(services).updateEServiceMetadata(service, updateCommand);
         order.verify(services).archiveEService(service, GracePeriodDays.NUMBER_60);
         verifyNoMoreInteractions(services, descriptors);
     }

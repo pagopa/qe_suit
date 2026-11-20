@@ -7,9 +7,12 @@ import java.util.Objects;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-/** Centralized Gherkin header vocabulary, independent of DTO field names. */
+/**
+ * Centralized Gherkin header vocabulary, independent of DTO field names.
+ */
 public final class ConfigurableTextHeaderSyntax {
-    private static final Pattern MODIFIER = Pattern.compile("^(.+?)\\s+\\(([^()]*)\\)$");
+    private static final Pattern MODIFIER =
+            Pattern.compile("^(.+?)\\s*\\(([^()]*)\\)$");
 
     // Add or rename terms here; the unmodified header always means RANDOM.
     private static final Map<String, TextGenerationMode> MODES = Map.of(

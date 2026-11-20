@@ -4,6 +4,8 @@ import io.cucumber.java.After;
 import it.pagopa.application.context.EntityStore;
 import it.pagopa.infrastructure.channel.CurrentChannel;
 import it.pagopa.interop.common.eservice_template.application.EServiceTemplateUseCase;
+import it.pagopa.interop.common.eservice_template.application.EServiceTemplateRequestFactory;
+import it.pagopa.utils.RandomUtils;
 import it.pagopa.interop.common.eservice_template.application.EServiceTemplateVersionUseCase;
 import it.pagopa.interop.common.eservice_template.domain.EServiceTemplate;
 import it.pagopa.interop.common.kernel.context.AuthSession;
@@ -16,12 +18,13 @@ import lombok.RequiredArgsConstructor;
 public class EServiceTemplateHooks {
     private final EntityStore entities;
     private final EServiceTemplateUseCase templates;
+    private final EServiceTemplateRequestFactory requestFactory;
     private final EServiceTemplateVersionUseCase versions;
     private final AuthSession session;
     private final CurrentChannel<Channel> channel;
 
     // Published templates cannot be deleted/archived by BFF; suspension is the supported retirement operation.
-    @After(value = "@private-catalog", order = 90)
+    @After(value = "@private-catalog or @clean-up", order = 90)
     public void cleanUpTemplates() {
         var created = entities.getAll(EServiceTemplate.class);
         if (created.isEmpty()) return;
@@ -35,6 +38,17 @@ public class EServiceTemplateHooks {
                 try {
                     var creator = Tenant.fromOrganizationId(template.getCreatorId());
                     session.set(User.getTenantAdmin(creator), creator);
+                    var current = templates.getEServiceTemplate(template);
+                    // Rename while metadata updates are still permitted; a suspended
+                    // template still occupies its name in the producer namespace.
+                    try {
+                        var command = requestFactory.defaultUpdateEServiceTemplateCommand(true)
+                                .name(RandomUtils.randomAlphanumericName("cleanup-template", 20));
+                        templates.updateEServiceTemplateMetadata(current, command);
+                    } catch (RuntimeException | AssertionError exception) {
+                        failure.addSuppressed(exception);
+                    }
+                    // Always attempt retirement even if the rename fails.
                     versions.retireVersions(templates.getEServiceTemplate(template));
                 } catch (RuntimeException | AssertionError exception) {
                     failure.addSuppressed(exception);
