@@ -39,7 +39,6 @@ public class EServiceTemplateMetadataUpdatesSteps {
         interopJourney.createEServiceTemplate();
 
         switch (version) {
-            // case "assenti" -> {}
             case "in bozza" -> interopJourney.publishVersion(EServiceTemplateVersionState.DRAFT);
             case "pubblicata" -> interopJourney.publishVersion(EServiceTemplateVersionState.PUBLISHED);
             case "sospesa" -> {
@@ -162,5 +161,56 @@ public class EServiceTemplateMetadataUpdatesSteps {
         }
         String value = requestedMetadata.get(field);
         return value == null ? null : Enum.valueOf(enumType, value);
+    }
+
+    @When("un {userRole} di/del {tenant} tenta la modifica del campo {string} del template e-service {string} con un valore di {int} caratteri")
+    public void tryUpdateEServiceTemplateField(UserRole role, Tenant producer, String fieldName, String alias, int fieldLength) {
+        updateEServiceTemplateField(role, producer, fieldName, alias, fieldLength, true);
+    }
+
+    @When("un {userRole} di/del {tenant} richiede la modifica del campo {string} del template e-service {string} con un valore di {int} caratteri")
+    public void updateEServiceTemplateField(UserRole role, Tenant producer, String fieldName, String alias, int fieldLength) {
+        updateEServiceTemplateField(role, producer, fieldName, alias, fieldLength, false);
+    }
+
+    private void updateEServiceTemplateField(UserRole role, Tenant producer, String fieldName, String alias, int fieldLength, boolean onlyTry) {
+        if (fieldLength < 0) {
+            throw new IllegalArgumentException("La lunghezza del campo non può essere negativa: " + fieldLength);
+        }
+
+        String value = RandomUtils.randomAlphanumeric(fieldLength);
+        EServiceTemplate currentEServiceTemplate = entityStore.getByAliasOrThrow(alias, EServiceTemplate.class);
+        initialEServiceTemplate = currentEServiceTemplate.toBuilder()
+                .build();
+        String requestedField = "destinatari".equals(fieldName) ? "intendedTarget" : fieldName;
+        requestedMetadata = Map.of(requestedField, value);
+
+        UpdateEServiceTemplateCommand updateCommand = requestFactory.defaultUpdateEServiceTemplateCommand(true)
+                .alias(alias);
+        switch (fieldName) {
+            case "nome" -> updateCommand.name(value);
+            case "descrizione" -> updateCommand.description(value);
+            case "intendedTarget", "destinatari" -> updateCommand.intendedTarget(value);
+            default -> throw new IllegalArgumentException("Campo metadato del template e-service non supportato: " + fieldName);
+        }
+
+        InteropJourney journey = interopJourney.withProducer(producer, role);
+        if (onlyTry) {
+            journey.tryUpdateEServiceTemplateMetadata(updateCommand);
+        } else {
+            journey.updateEServiceTemplateMetadata(updateCommand);
+        }
+    }
+
+    @When("un {userRole} di/del {tenant} richiede la modifica del template e-service {string} con un payload vuoto")
+    public void updateEServiceTemplateFieldWithEmptyPayload(UserRole role, Tenant producer, String alias) {
+        EServiceTemplate currentEServiceTemplate = entityStore.getByAliasOrThrow(alias, EServiceTemplate.class);
+        initialEServiceTemplate = currentEServiceTemplate.toBuilder().build();
+        requestedMetadata = Map.of();
+        UpdateEServiceTemplateCommand updateCommand = requestFactory.defaultUpdateEServiceTemplateCommand(true)
+                .alias(alias);
+        interopJourney
+            .withProducer(producer, role)
+            .tryUpdateEServiceTemplateMetadata(updateCommand);
     }
 }

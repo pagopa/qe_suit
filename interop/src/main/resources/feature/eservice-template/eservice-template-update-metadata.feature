@@ -136,7 +136,7 @@ Feature: Modifica dei metadati dei template e-service
 
     Given i seguenti template e-service pubblicati:
       | alias | nome                  | tecnologia |
-      | TPL-1 | Template Modello Alfa | SOAP       |
+      | TPL-1 | Template Modello Alfa | REST       |
     And le seguenti istanze di template pubblicate:
       | alias | template |
       | ES-1  | TPL-1    |
@@ -145,6 +145,30 @@ Feature: Modifica dei metadati dei template e-service
       | nome        | Nome aggiornato dell'istanza        |
       | descrizione | Descrizione aggiornata dell'istanza |
     Then la modifica dei metadati dell'e-service "ES-1" viene rifiutata per NOT_ALLOWED
+
+
+    @work-item:QA-19036
+    @channel:Given=BFF,When=BFF,Then=BFF
+    Scenario Outline: [ESERVICE_TEMPLATE_METADATA_AUTHORIZATION] - Rifiuto della modifica dei metadati per ruolo non autorizzato.
+      Dato un template e-service pubblicato,
+      quando un operatore con ruolo non autorizzato o che non possiede la titolarità tenta la modifica dei metadati,
+      allora il sistema non accetta le richiesta.
+
+      Given i seguenti template e-service pubblicati:
+        | alias | erogatore          | nome                 | tecnologia |
+        | TPL-1 | Comune di Pozzallo |Template Modello Alfa | REST       |
+      When un <ruolo> del <ente> tenta la modifica dei metadati del template e-service:
+        | campo | valore               |
+        | nome  | Servizio anagrafico aggiornato |
+      Then la modifica dei metadati del template e-service viene rifiutata per UNAUTHORIZED
+
+      Examples:
+        | ente               | ruolo    |
+        | Comune di Pozzallo | SECURITY |
+        | Comune di Pozzallo | SUPPORT  |
+        | Comune di Pozzallo | REVIEWER |
+        | Comune di Pozzallo | VIEWER   |
+        | Comune di Milano   | ADMIN    |
 
   @work-item:QA-19036
   @channel:Given=BFF,When=BFF,Then=BFF
@@ -165,33 +189,27 @@ Feature: Modifica dei metadati dei template e-service
       | Comune di Milano   |
       | Comune di Pozzallo |
 
-
-
-
-
-
-
-
   @work-item:QA-19036
   @channel:Given=BFF,When=BFF,Then=BFF
   Scenario Outline: [ESERVICE_TEMPLATE_METADATA_VALIDATION_1] - Rispetto dei limiti di lunghezza dei metadati
   Dato una risorsa modificabile con un campo soggetto a limiti di lunghezza,
-  quando l’attore propone un testo alla lunghezza di confine,
-  allora il sistema accetta i valori ammessi e rifiuta gli altri senza modifiche parziali.
+  quando l’attore propone un testo con lunghezza oltre tali limiti,
+  allora il sistema rifiuta i valori senza modifiche parziali.
 
-    Given i seguenti template e-service con versioni predisposte:
-      | alias | erogatore        | nome                | tecnologia | versioni |
-      | TE-1  | Comune di Milano | Template anagrafico | REST       | bozza    |
-    When un admin del Comune di Milano richiede un valore di <lunghezza> caratteri per il campo <campo> della risorsa "TE-1"
-    Then la modifica della risorsa "TE-1" ha esito <esito>
-    And in caso di rifiuto la risorsa "TE-1" conserva tutti i dati iniziali
+    Given i seguenti template e-service pubblicati:
+      | alias | erogatore        | nome                  | tecnologia |
+      | TPL-1 | Comune di Milano | Template Modello Alfa | REST       |
+    When un admin del Comune di Milano tenta la modifica del campo "<campo>" del template e-service "TPL-1" con un valore di <lunghezza> caratteri
+    Then la modifica dei metadati del template e-service viene rifiutata per INVALID_DATA
 
     Examples:
-      | campo       | lunghezza | esito     |
-      | nome        | 45        | accettata |
-      | nome        | 46        | rifiutata |
-      | destinatari | 250       | accettata |
-      | destinatari | 251       | rifiutata |
+      | campo       | lunghezza |
+      | nome        | 4         |
+      | nome        | 46        |
+      | descrizione | 9         |
+      | descrizione | 401       |
+      | destinatari | 9         |
+      | destinatari | 251       |
 
   @work-item:QA-19036
   @channel:Given=BFF,When=BFF,Then=BFF
@@ -200,9 +218,9 @@ Feature: Modifica dei metadati dei template e-service
   quando l’attore richiede una modifica con un valore vietato,
   allora il sistema rifiuta la richiesta e conserva i dati originari.
 
-    Given i seguenti template e-service con versioni predisposte:
-      | alias | erogatore        | nome                | tecnologia | versioni |
-      | TE-1  | Comune di Milano | Template anagrafico | REST       | bozza    |
-    When un admin del Comune di Milano richiede la modifica del campo nome della risorsa "TE-1" con un valore vuoto
-    Then la modifica della risorsa "TE-1" viene rifiutata
-    And la risorsa "TE-1" conserva tutti i dati iniziali
+    Given i seguenti template e-service pubblicati:
+      | alias | erogatore        | nome                  | tecnologia |
+      | TPL-1 | Comune di Milano | Template Modello Alfa | REST       |
+    When un admin del Comune di Milano richiede la modifica del template e-service "TPL-1" con un payload vuoto
+    Then la modifica dei metadati del template e-service viene rifiutata per INVALID_DATA
+    And il template e-service presenta i metadati richiesti e conserva quelli non modificati
