@@ -68,7 +68,7 @@ class EServiceTemplatePublicationStepsTest {
         var configuration = new EServiceTemplateInstanceConfiguration();
         configuration.setAlias("ES-1");
         configuration.setTemplate("TPL-1");
-        configuration.setInstanceLabel("eservice-1");
+        configuration.setInstanceLabel(new ConfigurableText("eservice-1", TextGenerationMode.EXACT));
 
         steps.publishInstances(List.of(configuration));
 
