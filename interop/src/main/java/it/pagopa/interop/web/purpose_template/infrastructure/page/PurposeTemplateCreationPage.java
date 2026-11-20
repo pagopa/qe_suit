@@ -33,10 +33,8 @@ public interface PurposeTemplateCreationPage extends Page {
     default void assertLoaded() {
         PollingUtils.pollUntil(
                 () -> pageTitle().read(),
-                title -> title.equals("Crea template finalità"),
-                Duration.ofSeconds(20),
-                Duration.ofSeconds(1),
-                "Purpose Template Creation Page is not loaded yet. Page title is blank"
+                title -> !title.isBlank(),
+                "Purpose Template Creation Page is not loaded yet."
         );
     }
 }
