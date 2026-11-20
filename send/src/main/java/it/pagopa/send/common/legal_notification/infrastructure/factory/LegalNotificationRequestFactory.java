@@ -51,6 +51,7 @@ public class LegalNotificationRequestFactory {
     // "77777777777" è il creditore di test condiviso usato in pn-b2b-client (PAYMENT_CREDITOR_TAX_ID).
     private static final String PAGOPA_TEST_CREDITOR_TAX_ID = "77777777777";
     private static final String ATTACHMENT_CONTENT_TYPE = "application/pdf";
+    private static final String F24_METADATA_CONTENT_TYPE = "application/json";
 
     private final NotificationDefaultsLoader defaultsLoader;
     private final DebtPositionService debtPositionService;
@@ -137,12 +138,17 @@ public class LegalNotificationRequestFactory {
         return new ResolvedPagoPaPayment(noticeCode, PAGOPA_TEST_CREDITOR_TAX_ID, buildAttachment());
     }
 
+    // l'allegato di un F24 sono i suoi metadati in JSON, non il PDF di test
     private ResolvedF24Payment buildF24Payment(F24PaymentSpec spec) {
-        return new ResolvedF24Payment(spec.title(), buildAttachment());
+        return new ResolvedF24Payment(spec.title(),
+                toDocumentRef(documentPreloadService.preloadF24Metadata("f24-" + UUID.randomUUID()), F24_METADATA_CONTENT_TYPE));
     }
 
     private DocumentRef buildAttachment() {
-        PreloadedDocument document = documentPreloadService.preloadTestPdf("doc-" + UUID.randomUUID());
-        return new DocumentRef(document.key(), document.versionToken(), document.sha256(), ATTACHMENT_CONTENT_TYPE);
+        return toDocumentRef(documentPreloadService.preloadTestPdf("doc-" + UUID.randomUUID()), ATTACHMENT_CONTENT_TYPE);
+    }
+
+    private static DocumentRef toDocumentRef(PreloadedDocument document, String contentType) {
+        return new DocumentRef(document.key(), document.versionToken(), document.sha256(), contentType);
     }
 }
