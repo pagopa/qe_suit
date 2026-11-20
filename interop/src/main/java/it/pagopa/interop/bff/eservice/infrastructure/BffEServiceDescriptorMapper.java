@@ -59,6 +59,7 @@ public interface BffEServiceDescriptorMapper {
     @Mapping(target = "isConsumerDelegable", source = "eservice.isConsumerDelegable")
     @Mapping(target = "isClientAccessDelegable", source = "eservice.isClientAccessDelegable")
     @Mapping(target = "descriptors", ignore = true)
+    @Mapping(target = "templateInstance", ignore = true)
     EService toDomainBase(ProducerEServiceDescriptor source);
 
     /**
@@ -118,6 +119,7 @@ public interface BffEServiceDescriptorMapper {
         }
 
         return updatedBase.toBuilder()
+                .templateInstance(existingEService != null && existingEService.isTemplateInstance())
                 .descriptors(new ArrayList<>(finalDescriptors))
                 .build();
     }

@@ -40,12 +40,22 @@ class EServiceTemplateCleanupRenameTest {
         when(update.name(anyString())).thenReturn(update);
         var hooks = new EServiceTemplateHooks(store, useCase, factory, versions, session, channel);
 
+        hooks.renameTemplatesForCleanup();
         hooks.cleanUpTemplates();
 
         verify(update).name(matches("cleanup-template-[A-Za-z0-9]{20}"));
         var sequence = inOrder(useCase, versions);
         sequence.verify(useCase).updateEServiceTemplateMetadata(template, update);
         sequence.verify(versions).retireVersions(template);
+    }
+
+    @Test
+    void renameExecutesBeforeInstanceCleanup() throws Exception {
+        var rename = EServiceTemplateHooks.class.getMethod("renameTemplatesForCleanup")
+                .getAnnotation(After.class);
+        var instances = it.pagopa.interop.common.eservice.infrastructure.cucumber.EServiceHooks.class
+                .getMethod("cleanUpEServices").getAnnotation(After.class);
+        assertThat(rename.order()).isGreaterThan(instances.order());
     }
 
     @Test

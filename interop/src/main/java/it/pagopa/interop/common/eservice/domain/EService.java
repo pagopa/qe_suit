@@ -16,6 +16,8 @@ import java.util.stream.Stream;
 public class EService implements Identifiable {
     UUID id;
     String name;
+    // Informazione locale allo scenario, non ricavata dal DTO BFF.
+    boolean templateInstance;
     String producerId;
     EServiceTechnology technology;
     EServiceMode mode;

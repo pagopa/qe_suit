@@ -23,7 +23,37 @@ public class EServiceTemplateHooks {
     private final AuthSession session;
     private final CurrentChannel<Channel> channel;
 
-    // Published templates cannot be deleted/archived by BFF; suspension is the supported retirement operation.
+    /** Rinomina il padre prima del cleanup delle istanze (After order 100). */
+    @After(value = "@private-catalog or @clean-up", order = 120)
+    public void renameTemplatesForCleanup() {
+        var created = entities.getAll(EServiceTemplate.class);
+        if (created.isEmpty()) return;
+        var user = session.getActor();
+        var tenant = session.getTenant();
+        var previousChannel = channel.getCurrentChannel();
+        var failure = new IllegalStateException("Rinomina dei template e-service non completata");
+        try {
+            channel.setCurrentChannel(Channel.BFF);
+            for (var template : created) {
+                try {
+                    var creator = Tenant.fromOrganizationId(template.getCreatorId());
+                    session.set(User.getTenantAdmin(creator), creator);
+                    var current = templates.getEServiceTemplate(template);
+                    var command = requestFactory.defaultUpdateEServiceTemplateCommand(true)
+                            .name(RandomUtils.randomAlphanumericName("cleanup-template", 20));
+                    templates.updateEServiceTemplateMetadata(current, command);
+                } catch (RuntimeException | AssertionError exception) {
+                    failure.addSuppressed(exception);
+                }
+            }
+        } finally {
+            channel.setCurrentChannel(previousChannel);
+            session.set(user, tenant);
+        }
+        if (failure.getSuppressed().length > 0) throw failure;
+    }
+
+    // Published templates cannot be deleted/archived by BFF; suspension is supported.
     @After(value = "@private-catalog or @clean-up", order = 90)
     public void cleanUpTemplates() {
         var created = entities.getAll(EServiceTemplate.class);
@@ -38,17 +68,6 @@ public class EServiceTemplateHooks {
                 try {
                     var creator = Tenant.fromOrganizationId(template.getCreatorId());
                     session.set(User.getTenantAdmin(creator), creator);
-                    var current = templates.getEServiceTemplate(template);
-                    // Rename while metadata updates are still permitted; a suspended
-                    // template still occupies its name in the producer namespace.
-                    try {
-                        var command = requestFactory.defaultUpdateEServiceTemplateCommand(true)
-                                .name(RandomUtils.randomAlphanumericName("cleanup-template", 20));
-                        templates.updateEServiceTemplateMetadata(current, command);
-                    } catch (RuntimeException | AssertionError exception) {
-                        failure.addSuppressed(exception);
-                    }
-                    // Always attempt retirement even if the rename fails.
                     versions.retireVersions(templates.getEServiceTemplate(template));
                 } catch (RuntimeException | AssertionError exception) {
                     failure.addSuppressed(exception);

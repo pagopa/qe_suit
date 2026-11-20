@@ -250,6 +250,16 @@ class EServiceHooksTest {
     }
 
     @Test
+    void skipsDirectRenameForTemplateInstances() {
+        var instance = eService(PUBLISHED).toBuilder().templateInstance(true).build();
+        when(store.getAll(EService.class)).thenReturn(List.of(instance));
+        hooks.cleanUpEServices();
+        verify(services).archiveEService(instance, GracePeriodDays.NUMBER_60);
+        verify(services, never()).updateEServiceMetadata(any(), any());
+        verifyNoMoreInteractions(services);
+    }
+
+    @Test
     void doesNothingWhenNoEServicesAreStored() {
         when(store.getAll(EService.class)).thenReturn(List.of());
 

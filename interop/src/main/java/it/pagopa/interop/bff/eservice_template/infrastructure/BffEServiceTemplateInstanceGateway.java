@@ -1,5 +1,6 @@
 package it.pagopa.interop.bff.eservice_template.infrastructure;
 
+import it.pagopa.application.context.EntityStore;
 import it.pagopa.infrastructure.template.action.strategy.PollingStrategy;
 import it.pagopa.interop.bff.eservice.application.BffEServiceTemplateInstanceUpdateDescriptorCommand;
 import it.pagopa.interop.bff.eservice.infrastructure.BffEServiceDescriptorGateway;
@@ -16,18 +17,20 @@ import it.pagopa.interop.common.kernel.domain.Channel;
 import it.pagopa.interop.common.kernel.domain.EServiceDescriptorRef;
 import it.pagopa.interop.common.kernel.domain.EServiceRef;
 import it.pagopa.interop.generated.openapi.clients.bff.model.CreatedResource;
-import it.pagopa.interop.generated.openapi.clients.bff.model.InstanceEServiceSeed;
 import it.pagopa.interop.generated.openapi.clients.bff.model.UpdateEServiceDescriptorTemplateInstanceSeed;
 import it.pagopa.interop.generated.openapi.clients.bff.model.UpdateEServiceTemplateInstanceDescriptorQuotas;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
 @Service
 @RequiredArgsConstructor
+@Slf4j
 public class BffEServiceTemplateInstanceGateway implements EServiceTemplateInstanceGateway {
     private final BffEServiceRestClient restClient;
     private final BffEServiceGateway eServiceGateway;
     private final BffEServiceDescriptorGateway descriptorGateway;
+    private final EntityStore entityStore;
 
     @Override
     public EService createEServiceInstance(EServiceTemplate template, EServiceTemplateInstanceCreationCommand command) {
@@ -44,7 +47,7 @@ public class BffEServiceTemplateInstanceGateway implements EServiceTemplateInsta
         EServiceDescriptorRef descriptorRef = EServiceDescriptorRef.of(created.getDescriptorId());
 
         descriptorGateway.getEServiceDescriptor(serviceRef, descriptorRef);
-        return eServiceGateway.getEService(serviceRef);
+        return loadAndStoreTemplateInstance(serviceRef);
     }
 
     @Override
@@ -72,7 +75,22 @@ public class BffEServiceTemplateInstanceGateway implements EServiceTemplateInsta
 
         EServiceRef serviceRef = EServiceRef.of(updated.getId());
         descriptorGateway.getEServiceDescriptor(serviceRef, descriptorRef);
-        return eServiceGateway.getEService(serviceRef);
+        return loadAndStoreTemplateInstance(serviceRef);
+    }
+
+    private EService loadAndStoreTemplateInstance(EServiceRef serviceRef) {
+        EService marked = eServiceGateway.getEService(serviceRef).toBuilder()
+                .templateInstance(true)
+                .build();
+        entityStore.upsert(marked);
+        log.info(
+                "INSTANCE STORED - id={}, templateInstance={}",
+                marked.getId(),
+                entityStore.getById(marked.getId(), EService.class)
+                        .orElseThrow()
+                        .isTemplateInstance()
+        );
+        return marked;
     }
 
     @Override

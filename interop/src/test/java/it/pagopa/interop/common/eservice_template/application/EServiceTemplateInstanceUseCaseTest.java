@@ -86,6 +86,7 @@ class EServiceTemplateInstanceUseCaseTest {
                 .createPublishedEServiceTemplateInstance(source, command, "ES-1");
 
         assertThat(store.getByAliasOrThrow("ES-1", EService.class).getDescriptorOrThrow(1)).isEqualTo(ready);
+        assertThat(store.getByAliasOrThrow("ES-1", EService.class).isTemplateInstance()).isTrue();
         assertThat(service.getLastDraftDescriptor()).isSameAs(draft);
         var metadata = ArgumentCaptor.forClass(it.pagopa.interop.common.eservice.application.command.UpdateEServiceDescriptorCommand.class);
         var order = inOrder(descriptorGateway);
@@ -114,7 +115,7 @@ class EServiceTemplateInstanceUseCaseTest {
         assertThatThrownBy(() -> new EServiceTemplateInstanceJourneyImpl(useCase, store)
                 .createPublishedEServiceTemplateInstance(template, command, "ES-1"))
                 .isInstanceOf(IllegalStateException.class).hasMessage("failed");
-        assertThat(store.getByAliasOrThrow("ES-1", EService.class)).isSameAs(service);
+        assertThat(store.getByAliasOrThrow("ES-1", EService.class).isTemplateInstance()).isTrue();
     }
 
     @Test
@@ -129,7 +130,9 @@ class EServiceTemplateInstanceUseCaseTest {
         new EServiceTemplateInstanceJourneyImpl(useCase, store)
                 .createPublishedEServiceTemplateInstance(template, command, "ES-1");
 
-        assertThat(store.getByAliasOrThrow("ES-1", EService.class)).isSameAs(stored);
-        verify(useCase).publishEServiceInstance(template, stored);
+        var marked = store.getByAliasOrThrow("ES-1", EService.class);
+        assertThat(marked.isTemplateInstance()).isTrue();
+        assertThat(marked.getName()).isEqualTo("gateway snapshot");
+        verify(useCase).publishEServiceInstance(template, marked);
     }
 }

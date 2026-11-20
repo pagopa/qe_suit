@@ -45,14 +45,18 @@ class BffEServiceTemplateInstanceGatewayTest {
         });
         var service = EService.builder().id(serviceId).build();
         when(serviceGateway.getEService(EServiceRef.of(serviceId))).thenReturn(service);
+        var entityStore = mock(EntityStore.class);
         var restClient = new BffEServiceRestClient(new TestChainFactory(
-                mock(LastApiResponseStore.class), mock(EntityStore.class)), client);
-        var gateway = new BffEServiceTemplateInstanceGateway(restClient, serviceGateway, descriptorGateway);
+                mock(LastApiResponseStore.class), entityStore), client);
+        var gateway = new BffEServiceTemplateInstanceGateway(restClient, serviceGateway, descriptorGateway, entityStore);
         var template = EServiceTemplate.builder().id(UUID.randomUUID()).build();
         var command = new BffEServiceTemplateInstanceCreationCommand();
         command.instanceLabel("eservice-1");
 
-        assertThat(gateway.createEServiceInstance(template, command)).isSameAs(service);
+        var instance = gateway.createEServiceInstance(template, command);
+        assertThat(instance.getId()).isEqualTo(service.getId());
+        assertThat(instance.isTemplateInstance()).isTrue();
+        verify(entityStore).upsert(instance);
 
         verify(operation).templateIdPath(template.getId());
         verify(operation).body(same(command.getBffPayload()));

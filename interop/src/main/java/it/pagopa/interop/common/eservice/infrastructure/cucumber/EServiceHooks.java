@@ -74,13 +74,25 @@ public class EServiceHooks {
                         // Archiving does not release (producer, name). Rename first to make
                         // literal fixture names reusable in the next scenario execution.
                         // A failed rename must not prevent retirement from being attempted.
-                        try {
-                            var command = requestFactory.defaultUpdateEServiceCommand()
-                                    .name(RandomUtils.randomAlphanumericName("cleanup-eservice", 20));
-                            eServiceUseCase.updateEServiceMetadata(eservice, command);
-                        } catch (RuntimeException | AssertionError exception) {
-                            log.error("Impossibile rinominare l'e-service {} durante il cleanup", eservice.getId(), exception);
-                            cleanupFailure.addSuppressed(exception);
+
+                        log.info(
+                                "CLEANUP DEBUG - eServiceId={}, name={}, templateInstance={}",
+                                eservice.getId(),
+                                eservice.getName(),
+                                eservice.isTemplateInstance()
+                        );
+                        if (eservice.isTemplateInstance()) {
+                            // Il nome dell'istanza viene propagato dal template padre.
+                            log.info("Istanza di template {}: nessuna rinomina diretta", eservice.getId());
+                        } else {
+                            try {
+                                var command = requestFactory.defaultUpdateEServiceCommand()
+                                        .name(RandomUtils.randomAlphanumericName("cleanup-eservice", 20));
+                                eServiceUseCase.updateEServiceMetadata(eservice, command);
+                            } catch (RuntimeException | AssertionError exception) {
+                                log.error("Impossibile rinominare l'e-service {} durante il cleanup", eservice.getId(), exception);
+                                cleanupFailure.addSuppressed(exception);
+                            }
                         }
                         if (!retirementAlreadyScheduled) {
                             eServiceUseCase.archiveEService(eservice, GracePeriodDays.NUMBER_60);

@@ -150,7 +150,7 @@ public class EServiceTemplateJourneyImpl implements EServiceTemplateJourney<ESer
     public EServiceTemplateJourneyImpl createEServiceInstanceTemplate() {
         EServiceTemplate template = entityStore.getLastOrThrow(EServiceTemplate.class);
         EService eService = eServiceTemplateInstanceUseCase.createEServiceInstance(template);
-        entityStore.upsert(eService);
+        entityStore.upsert(eService.toBuilder().templateInstance(true).build());
         return this;
     }
 
@@ -166,7 +166,7 @@ public class EServiceTemplateJourneyImpl implements EServiceTemplateJourney<ESer
         command.attributes(attributes -> prepareContextAttributes(attributes, customThreshold));
         EService updatedEService = eServiceTemplateInstanceUseCase.updateEServiceInstanceDescriptor(
                 eServiceInstance.getRef(), eServiceInstance.getLatestDescriptor().getRef(), eServiceInstance.getLatestDescriptor().getState(), command
-        );
+        ).toBuilder().templateInstance(true).build();
         EServiceDescriptor updatedDescriptor = updatedEService.getLatestDescriptor();
         entityStore.upsert(updatedEService);
         switch (state) {

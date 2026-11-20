@@ -20,6 +20,8 @@ public class EServiceTemplatePublicationSteps {
     private final EServiceTemplateRequestFactory factory;
     private final EServiceTemplateConfigurationMapper mapper;
     private final EntityStore entities;
+    private final EntityStore entityStore;
+
 
     @Given("i seguenti template (di )e-service pubblicati:")
     public void publishTemplates(List<EServiceTemplatePublicationConfiguration> configurations) {
