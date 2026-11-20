@@ -5,21 +5,30 @@ import it.pagopa.interop.common.kernel.domain.DelegationRef;
 import it.pagopa.interop.common.kernel.domain.EServiceRiskAnalysis;
 import it.pagopa.interop.common.purpose.domain.Purpose;
 import it.pagopa.interop.common.purpose.domain.PurposeVersion;
-import it.pagopa.interop.common.purpose.domain.PurposeVersionState;
 import it.pagopa.interop.common.purpose_template.domain.PurposeTemplate;
+import it.pagopa.interop.common.risk_analysis.domain.RiskAnalysisReviewMode;
+import it.pagopa.interop.common.risk_analysis.domain.RiskAnalysisForm;
 import jakarta.annotation.Nullable;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
+import java.util.UUID;
 import java.util.function.Consumer;
-
-import static org.assertj.core.api.Assertions.assertThat;
 
 @Service
 @RequiredArgsConstructor
 public class PurposeUseCase {
     private final PurposeGateway purposeGateway;
     private final PurposeCommandFactory purposeCommandFactory;
+
+    public RiskAnalysisForm getRiskAnalysisForm(Purpose purpose) {
+        return purposeGateway.getRiskAnalysisForm(purpose.getRef());
+    }
+
+    public void saveRiskAnalysisForm(Purpose purpose, RiskAnalysisForm form) {
+        purposeGateway.saveRiskAnalysisForm(purpose.getRef(), form);
+    }
 
     public Purpose updatePurposeDailyCallsEstimateBeyondThreshold(Purpose purpose, EService eService) {
         PurposeVersion activeVersion = purpose.getLastActiveVersion();
@@ -78,5 +87,29 @@ public class PurposeUseCase {
 
     public Purpose suspendPurpose(Purpose purpose, PurposeVersion purposeVersion, @Nullable DelegationRef delegationRef) {
         return purposeGateway.suspendPurpose(purpose.getRef(), purposeVersion.getRef(), delegationRef);
+    }
+
+    public void assignRiskAnalysisReviewers(
+            Purpose purpose,
+            RiskAnalysisReviewMode reviewMode,
+            List<UUID> reviewerIds
+    ) {
+        purposeGateway.assignRiskAnalysisReviewers(purpose.getRef(), reviewMode, reviewerIds);
+    }
+
+    public void submitRiskAnalysis(Purpose purpose) {
+        purposeGateway.submitRiskAnalysis(purpose.getRef());
+    }
+
+    public void signRiskAnalysis(Purpose purpose, int metadataVersionToSign) {
+        purposeGateway.signRiskAnalysis(purpose.getRef(), metadataVersionToSign);
+    }
+
+    public void signRiskAnalysis(Purpose purpose) {
+        purposeGateway.signRiskAnalysis(purpose.getRef());
+    }
+
+    public void rejectRiskAnalysis(Purpose purpose, String rejectionReason) {
+        purposeGateway.rejectRiskAnalysis(purpose.getRef(), rejectionReason);
     }
 }
