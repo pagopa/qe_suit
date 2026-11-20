@@ -65,13 +65,14 @@ jobs:
         if: steps.eligibility.outputs.eligible == 'true'
         run: |
           python -m pip install \
-            -r trusted/tools/rae-generator/requirements.txt
+            -r trusted/tools/rae/rae_generator/requirements.txt
 
       - name: Validate, render, and check Markdown
         if: steps.eligibility.outputs.eligible == 'true'
         working-directory: rae_pr
         env:
           RAE_HEAD_REF: ${{ github.event.pull_request.head.ref }}
+          RAE_JIRA_HOSTS: pagopa.atlassian.net  # Canonical Jira tenant; syntax and host, not ticket existence
         run: |
           set -euo pipefail
 
@@ -112,10 +113,10 @@ jobs:
             QA_ARGS=()
           fi
 
-          PYTHONPATH="$GITHUB_WORKSPACE/trusted/tools/rae-generator" \
+          PYTHONPATH="$GITHUB_WORKSPACE/trusted/tools/rae/rae_generator" \
             python -m rae_generator finalize "$YAML" --write "${QA_ARGS[@]}"
 
-          PYTHONPATH="$GITHUB_WORKSPACE/trusted/tools/rae-generator" \
+          PYTHONPATH="$GITHUB_WORKSPACE/trusted/tools/rae/rae_generator" \
             python -m rae_generator check "$YAML" "${QA_ARGS[@]}"
 
           echo "rae_yaml=$YAML" >> "$GITHUB_ENV"
