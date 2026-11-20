@@ -63,18 +63,20 @@ public class EServiceTemplateMetadataUpdatesSteps {
     }
 
     @Given("un {userRole} di/del {tenant} richiede la modifica dei metadati del template e-service {string}:")
-    public void updateMetadata(UserRole role, Tenant producer, String alias, List<EServiceTemplateMetadataUpdateConfiguration> metadata) {
+    public void updateMetadata(InteropRole role, Tenant producer, String alias, List<EServiceTemplateMetadataUpdateConfiguration> metadata) {
         updateMetadata(role, producer, entityStore.getByAliasOrThrow(alias, EServiceTemplate.class), metadata,
                 requestFactory.defaultUpdateEServiceTemplateCommand(true).alias(alias));
     }
 
+    @Given("un sistema informatico autenticato con ruolo {userM2MRole} di/del {tenant} richiede la modifica dei metadati dell'{currentEServiceTemplate}:")
+    @Given("un sistema informatico autenticato con ruolo {userM2MRole} di/del {tenant} richiede la modifica dei metadati del {currentEServiceTemplate}:")
     @Given("un {userRole} di/del {tenant} richiede la modifica dei metadati dell'{currentEServiceTemplate}:")
     @Given("un {userRole} di/del {tenant} richiede la modifica dei metadati del {currentEServiceTemplate}:")
-    public void updateMetadata(UserRole role, Tenant producer, EServiceTemplate eServiceTemplate, List<EServiceTemplateMetadataUpdateConfiguration> metadata) {
+    public void updateMetadata(InteropRole role, Tenant producer, EServiceTemplate eServiceTemplate, List<EServiceTemplateMetadataUpdateConfiguration> metadata) {
         updateMetadata(role, producer, eServiceTemplate, metadata, requestFactory.defaultUpdateEServiceTemplateCommand(true));
     }
 
-    private void updateMetadata(UserRole role, Tenant producer, EServiceTemplate eServiceTemplate,
+    private void updateMetadata(InteropRole role, Tenant producer, EServiceTemplate eServiceTemplate,
                                 List<EServiceTemplateMetadataUpdateConfiguration> metadata,
                                 UpdateEServiceTemplateCommand command) {
         initialEServiceTemplate = eServiceTemplate.toBuilder().build();

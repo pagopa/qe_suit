@@ -25,6 +25,30 @@ Feature: Modifica dei metadati dei template e-service
       #TODO | soltanto deprecate       | descrizione | Descrizione aggiornata del template  |
       | pubblicata e nuova bozza | intendedTarget | Nuovo testo dei destinatari         |
 
+  @work-item:QA-19036 @m2m
+  @channel:Given=BFF,When=M2M,Then=BFF
+  Scenario Outline: [ESERVICE_TEMPLATE_METADATA_1_M2M] - Modifica di un singolo metadato indipendentemente dalle versioni
+  Dato un template e-service con la configurazione di versioni prevista,
+  quando il creatore ne modifica un singolo metadato,
+  allora il template salva il valore richiesto e conserva gli altri metadati, le versioni e le configurazioni.
+
+    Given un admin appartenente all'erogatore Comune di Milano
+    And un template e-service con versione <versioni>
+    When un sistema informatico autenticato con ruolo M2M_ADMIN del Comune di Milano richiede la modifica dei metadati del template e-service:
+      | campo   | valore   |
+      | <campo> | <valore> |
+    Then il template e-service presenta i metadati richiesti e conserva quelli non modificati
+
+    Examples:
+      | versioni                 | campo          | valore                              |
+      | in bozza                 | descrizione    | Descrizione aggiornata del template |
+      | pubblicata               | intendedTarget | Nuovo testo dei destinatari         |
+      | sospesa                  | nome           | Template anagrafico aggiornato      |
+      #TODO | soltanto deprecate       | descrizione | Descrizione aggiornata del template  |
+      | pubblicata e nuova bozza | intendedTarget | Nuovo testo dei destinatari         |
+
+
+
   @work-item:QA-19036
   @channel:Given=BFF,When=BFF,Then=BFF
   Scenario: [ESERVICE_TEMPLATE_METADATA_2] - Modifica congiunta dei metadati senza creare versioni
