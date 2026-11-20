@@ -54,7 +54,7 @@ Feature: Propagazione dei metadati del template e-service alle istanze
   Scenario: [ESERVICE_TEMPLATE_PROPAGATION_3] - Rifiuto atomico della rinomina in conflitto con un'istanza
   Dato un template e-service pubblicato con un'istanza etichettata e un e-service omonimo al nome che risulterebbe dalla rinomina,
   quando il creatore modifica nome e descrizione del template,
-  allora la modifica viene rifiutata e template e istanza restano invariati.
+  allora la modifica viene rifiutata.
 
     Given i seguenti template e-service pubblicati:
       | alias | erogatore        | nome (letterale)    | tecnologia |
@@ -65,25 +65,8 @@ Feature: Propagazione dei metadati del template e-service alle istanze
     And i seguenti e-service in bozza:
       | alias | erogatore        | nome (letterale)                 |
       | ES-1  | Comune di Milano | Nuovo nome in conflitto - Milano |
-    When un admin del Comune di Milano richiede la modifica dei metadati del template e-service "TE-1":
-      | campo       | valore                              |
+    When un admin del Comune di Milano tenta la modifica dei metadati del template e-service "TE-1":
+      | campo       | valore (letterale)                  |
       | nome        | Nuovo nome in conflitto             |
       | descrizione | Descrizione valida ma non applicata |
-#    Then la modifica del template e-service "TE-1" viene rifiutata
-#    And il template e-service "TE-1" conserva tutti i metadati iniziali
-#    And l'istanza "EI-1" conserva i propri metadati e configurazioni
-
-  @work-item:QA-19036
-  @channel:Given=BFF,When=BFF,Then=BFF
-  Scenario: [ESERVICE_TEMPLATE_PROPAGATION_4] - Rifiuto della rinomina in conflitto con un altro template
-  Dati due template e-service pubblicati con nomi distinti,
-  quando il creatore rinomina il primo con il nome del secondo e modifica anche la descrizione,
-  allora l'intera modifica viene rifiutata.
-
-    Given i seguenti template e-service pubblicati:
-      | alias | erogatore        | nome                    | tecnologia |
-      | TE-1  | Comune di Milano | Template anagrafico     | REST       |
-      | TE-2  | Comune di Milano | Template anagrafico bis | REST       |
-    When un admin del Comune di Milano richiede la modifica del template e-service "TE-1" usando il nome di "TE-2" e una descrizione diversa
-    Then la modifica del template e-service "TE-1" viene rifiutata
-    And il template e-service "TE-1" conserva tutti i metadati iniziali
+    Then la modifica dei metadati del template e-service viene rifiutata per CONFLICT

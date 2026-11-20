@@ -84,6 +84,11 @@ public class EServiceTemplateMetadataUpdatesSteps {
                 .updateEServiceTemplateMetadata(command);
     }
 
+    @Given("un {userRole} di/del {tenant} tenta la modifica dei metadati del template e-service {string}:")
+    public void tryUpdateMetadata(UserRole role, Tenant producer, String alias, List<EServiceTemplateMetadataUpdateConfiguration> metadata) {
+        tryUpdateMetadata(role, producer, entityStore.getByAliasOrThrow(alias, EServiceTemplate.class), metadata);
+    }
+
     @Given("un {userRole} di/del {tenant} tenta la modifica dei metadati dell'{currentEServiceTemplate}:")
     @Given("un {userRole} di/del {tenant} tenta la modifica dei metadati del {currentEServiceTemplate}:")
     public void tryUpdateMetadata(UserRole role, Tenant producer, EServiceTemplate eServiceTemplate, List<EServiceTemplateMetadataUpdateConfiguration> metadata) {
@@ -217,8 +222,8 @@ public class EServiceTemplateMetadataUpdatesSteps {
         UpdateEServiceTemplateCommand updateCommand = requestFactory.defaultUpdateEServiceTemplateCommand(true)
                 .alias(alias);
         interopJourney
-            .withProducer(producer, role)
-            .tryUpdateEServiceTemplateMetadata(updateCommand);
+                .withProducer(producer, role)
+                .tryUpdateEServiceTemplateMetadata(updateCommand);
     }
 
     @Then("{tenant} verifica che le istanze e-service presentino i metadati ereditati dal template {string}:")

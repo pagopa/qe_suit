@@ -3,6 +3,7 @@ package it.pagopa.interop.common.eservice_template.infrastructure.cucumber.dto;
 import com.fasterxml.jackson.annotation.JsonAlias;
 import com.fasterxml.jackson.annotation.JsonSetter;
 import com.fasterxml.jackson.annotation.Nulls;
+import it.pagopa.interop.common.kernel.dto.ConfigurableText;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Pattern;
@@ -25,5 +26,5 @@ public class EServiceTemplateMetadataUpdateConfiguration {
     @JsonAlias("valore")
     @JsonSetter(nulls = Nulls.FAIL)
     @NotNull
-    private String value;
+    private ConfigurableText value;
 }
