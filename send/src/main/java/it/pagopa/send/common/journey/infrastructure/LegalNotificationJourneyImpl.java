@@ -1,13 +1,14 @@
 package it.pagopa.send.common.journey.infrastructure;
 
 import it.pagopa.application.context.EntityStore;
-import it.pagopa.send.common.user.domain.User;
 import it.pagopa.send.common.journey.application.LegalNotificationJourney;
 import it.pagopa.send.common.kernel.context.CurrentUserSession;
+import it.pagopa.send.common.legal_notification.application.LegalNotificationUseCase;
+import it.pagopa.send.common.legal_notification.domain.LegalNotificationCreationCommand;
 import it.pagopa.send.common.legal_notification.domain.LegalNotificationDomain;
 import it.pagopa.send.common.legal_notification.domain.NotificationStatus;
-import it.pagopa.send.common.legal_notification.application.LegalNotificationUseCase;
 import it.pagopa.send.common.legal_notification.domain.RecipientSpec;
+import it.pagopa.send.common.user.domain.User;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
@@ -22,9 +23,8 @@ import java.util.Map;
  * {@link CurrentUserSession}, {@link EntityStore}), che sono loro a essere scoped in modo diverso
  * per Cucumber (scenario) o JUnit (singleton in-memory) — lo stesso identico pattern dei Journey di
  * interop. Grazie a questo, la stessa istanza funziona sia dentro uno scenario Cucumber sia in un
- * test JUnit puro (es. un contract test). Quando un flusso richiede più step Cucumber distinti (es.
- * il flusso multi-destinatario) gli step chiamano {@link LegalNotificationUseCase} direttamente,
- * senza passare da qui.
+ * test JUnit puro (es. un contract test). Anche gli step configurabili, separati in più step Cucumber
+ * (es. il flusso multi-destinatario), passano da qui un metodo alla volta.
  */
 @Slf4j
 @Component
@@ -48,16 +48,22 @@ public class LegalNotificationJourneyImpl implements LegalNotificationJourney<Le
     }
 
     @Override
-    public LegalNotificationJourneyImpl prepareNotification(Map<String, String> data) {
-        legalNotificationUseCase.prepareNotification(data);
-        return this;
-    }
-
-    @Override
     public LegalNotificationJourneyImpl sendNotification(User sender, NotificationStatus targetStatus) {
         currentUserSession.setUser(sender);
         legalNotificationUseCase.sendNotification(sender, targetStatus);
         log.info("Notifica legale inviata, stato raggiunto: {}", targetStatus);
+        return this;
+    }
+
+    /**
+     * Predispone la notifica dal command: mittente, dati e destinatari (anche nessuno, da aggiungere poi con
+     * {@link #withRecipient}). Non la invia: lo stato da attendere si sceglie
+     * con {@link #sendNotification}, per esempio ACCEPTED oppure REFUSED.
+     */
+    @Override
+    public LegalNotificationJourneyImpl prepareNotification(LegalNotificationCreationCommand command) {
+        currentUserSession.setUser(command.getSender());
+        legalNotificationUseCase.prepareNotification(command);
         return this;
     }
 
