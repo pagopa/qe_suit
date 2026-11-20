@@ -37,16 +37,16 @@ Feature: Propagazione dei metadati del template e-service alle istanze
 
     Given i seguenti template e-service pubblicati:
       | alias | erogatore        | nome                | tecnologia |
-      | TE-1  | Comune di Milano | Template anagrafico | REST       |
+      | TPL-1  | Comune di Milano | Template anagrafico | REST       |
     And le seguenti istanze di template e-service pubblicate:
-      | alias | template | suffisso |
-      | EI-1  | TE-1     | Milano   |
-      | EI-2  | TE-1     | Seconda  |
-    When un admin del Comune di Milano richiede la modifica dei metadati del template e-service "TE-1":
-      | campo       | valore                           |
-      | destinatari | Testo dei destinatari aggiornato |
-    Then il template e-service "TE-1" presenta i metadati richiesti
-    And le istanze "EI-1" e "EI-2" conservano nome, descrizione, etichette e configurazioni
+      | alias | template  | erogatore        | suffisso |
+      | EI-1  | TPL-1     | Comune di Milano | Milano   |
+    When un admin del Comune di Milano richiede la modifica dei metadati del template e-service "TPL-1":
+      | campo          | valore                           |
+      | intendedTarget | Testo dei destinatari aggiornato |
+    Then il template e-service presenta i metadati richiesti e conserva quelli non modificati
+    And Comune di Milano verifica che le istanze e-service presentino i metadati ereditati dal template "TPL-1":
+      | EI-1  |
 
   @work-item:QA-19036
   @channel:Given=BFF,When=BFF,Then=BFF
