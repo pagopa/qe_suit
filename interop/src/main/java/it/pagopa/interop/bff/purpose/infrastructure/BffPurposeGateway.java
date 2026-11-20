@@ -1,5 +1,7 @@
 package it.pagopa.interop.bff.purpose.infrastructure;
 
+import it.pagopa.application.context.LastApiResponseStore;
+import it.pagopa.infrastructure.response.ApiResponse;
 import it.pagopa.infrastructure.template.action.strategy.PollingStrategy;
 import it.pagopa.interop.bff.purpose.application.BffPurposeCreateCommand;
 import it.pagopa.interop.common.kernel.domain.Channel;
@@ -13,6 +15,8 @@ import it.pagopa.interop.common.purpose.application.PurposeCreateCommand;
 import it.pagopa.interop.common.purpose.application.PurposeGateway;
 import it.pagopa.interop.common.purpose.domain.Purpose;
 import it.pagopa.interop.common.purpose.domain.PurposeVersionState;
+import it.pagopa.interop.generated.openapi.clients.bff.model.PatchPurposeUpdateContent;
+import it.pagopa.interop.generated.openapi.clients.bff.model.PatchReversePurposeUpdateContent;
 import it.pagopa.interop.generated.openapi.clients.bff.model.PurposeSeed;
 import it.pagopa.interop.generated.openapi.clients.bff.model.PurposeVersionSeed;
 import it.pagopa.interop.generated.openapi.clients.bff.model.RejectPurposeVersionPayload;
@@ -22,12 +26,35 @@ import lombok.RequiredArgsConstructor;
 import org.jspecify.annotations.NonNull;
 import org.springframework.stereotype.Service;
 
+import static org.assertj.core.api.Assertions.assertThat;
+
 @Service
 @RequiredArgsConstructor
 public class BffPurposeGateway implements PurposeGateway {
     private final BffPurposeRestClient restClient;
     private final BffPurposeMapper mapper;
     private final BffPurposeCommandFactory commandFactory;
+    private final LastApiResponseStore lastApiResponseStore;
+
+    @Override
+    public void shouldFailToUpdatePurposeMetadataAsMalformed() {
+        assertThat(lastApiResponseStore.getLastResponse())
+                .as("Risposta al tentativo di modifica dei metadati della finalita")
+                .isNotNull()
+                .extracting(ApiResponse::getStatusCode)
+                .as("Modifica dei metadati della finalita malformata")
+                .isEqualTo(400);
+    }
+
+    @Override
+    public void shouldFailToUpdatePurposeMetadataAsConflict() {
+        assertThat(lastApiResponseStore.getLastResponse())
+                .as("Risposta al tentativo di modifica dei metadati della finalita")
+                .isNotNull()
+                .extracting(ApiResponse::getStatusCode)
+                .as("Modifica dei metadati della finalita in conflitto")
+                .isEqualTo(409);
+    }
 
     @Override
     public Purpose getPurpose(PurposeRef purposeRef) {
@@ -36,6 +63,48 @@ public class BffPurposeGateway implements PurposeGateway {
                 .map(mapper::toPurpose)
                 .updateContext()
                 .get();
+    }
+
+    @Override
+    public Purpose updatePurposeMetadata(PurposeRef purposeRef, String name, String description) {
+        PatchPurposeUpdateContent payload = new PatchPurposeUpdateContent()
+                .title(name)
+                .description(description);
+
+        return restClient.patchUpdatePurpose(purposeRef.id(), payload)
+                .withPolling(PollingStrategy.UNTIL_SUCCESS)
+                .map(ignored -> getPurpose(purposeRef))
+                .updateContext()
+                .get();
+    }
+
+    @Override
+    public Purpose updateReversePurposeMetadata(PurposeRef purposeRef, String name, String description) {
+        PatchReversePurposeUpdateContent payload = new PatchReversePurposeUpdateContent()
+                .title(name)
+                .description(description);
+
+        return restClient.patchUpdateReversePurpose(purposeRef.id(), payload)
+                .withPolling(PollingStrategy.UNTIL_SUCCESS)
+                .map(ignored -> getPurpose(purposeRef))
+                .updateContext()
+                .get();
+    }
+
+    @Override
+    public void tryToUpdatePurposeMetadata(PurposeRef purposeRef, String name, String description) {
+        PatchPurposeUpdateContent payload = new PatchPurposeUpdateContent()
+                .title(name)
+                .description(description);
+        restClient.patchUpdatePurpose(purposeRef.id(), payload).withoutPolling();
+    }
+
+    @Override
+    public void tryToUpdateReversePurposeMetadata(PurposeRef purposeRef, String name, String description) {
+        PatchReversePurposeUpdateContent payload = new PatchReversePurposeUpdateContent()
+                .title(name)
+                .description(description);
+        restClient.patchUpdateReversePurpose(purposeRef.id(), payload).withoutPolling();
     }
 
     @Override
@@ -149,6 +218,19 @@ public class BffPurposeGateway implements PurposeGateway {
                 purpose -> purpose.findVersionById(purposeVersionRef.id())
                                 .orElseThrow(() -> new IllegalStateException("Purpose version not found"))
                                 .getRef().equals(purposeVersionRef)
+        );
+    }
+
+    @Override
+    public Purpose archivePurpose(PurposeRef purposeRef, PurposeVersionRef purposeVersionRef) {
+        restClient.archivePurposeVersion(purposeRef.id(), purposeVersionRef.id())
+                .withPolling(PollingStrategy.UNTIL_SUCCESS);
+
+        return PollingUtils.pollUntil(
+                () -> getPurpose(purposeRef),
+                purpose -> purpose.findVersionById(purposeVersionRef.id())
+                        .map(version -> version.getPurposeVersionState() == PurposeVersionState.ARCHIVED)
+                        .orElse(false)
         );
     }
 

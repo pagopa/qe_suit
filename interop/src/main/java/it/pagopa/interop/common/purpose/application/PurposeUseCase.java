@@ -5,21 +5,61 @@ import it.pagopa.interop.common.kernel.domain.DelegationRef;
 import it.pagopa.interop.common.kernel.domain.EServiceRiskAnalysis;
 import it.pagopa.interop.common.purpose.domain.Purpose;
 import it.pagopa.interop.common.purpose.domain.PurposeVersion;
-import it.pagopa.interop.common.purpose.domain.PurposeVersionState;
 import it.pagopa.interop.common.purpose_template.domain.PurposeTemplate;
+import it.pagopa.utils.async.PollingUtils;
 import jakarta.annotation.Nullable;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
+import java.util.Objects;
 import java.util.function.Consumer;
-
-import static org.assertj.core.api.Assertions.assertThat;
 
 @Service
 @RequiredArgsConstructor
 public class PurposeUseCase {
     private final PurposeGateway purposeGateway;
     private final PurposeCommandFactory purposeCommandFactory;
+
+    public Purpose getPurpose(Purpose purpose) {
+        return purposeGateway.getPurpose(purpose.getRef());
+    }
+
+    public Purpose updatePurposeMetadata(Purpose purpose, String name, String description) {
+        purposeGateway.updatePurposeMetadata(purpose.getRef(), name, description);
+
+        return pollForUpdatedMetadata(purpose, name, description);
+    }
+
+    public Purpose updateReversePurposeMetadata(Purpose purpose, String name, String description) {
+        purposeGateway.updateReversePurposeMetadata(purpose.getRef(), name, description);
+
+        return pollForUpdatedMetadata(purpose, name, description);
+    }
+
+    public void tryToUpdatePurposeMetadata(Purpose purpose, String name, String description) {
+        purposeGateway.tryToUpdatePurposeMetadata(purpose.getRef(), name, description);
+    }
+
+    public void tryToUpdateReversePurposeMetadata(Purpose purpose, String name, String description) {
+        purposeGateway.tryToUpdateReversePurposeMetadata(purpose.getRef(), name, description);
+    }
+
+    public void shouldFailToUpdatePurposeMetadataAsMalformed() {
+        purposeGateway.shouldFailToUpdatePurposeMetadataAsMalformed();
+    }
+
+    public void shouldFailToUpdatePurposeMetadataAsConflict() {
+        purposeGateway.shouldFailToUpdatePurposeMetadataAsConflict();
+    }
+
+    private Purpose pollForUpdatedMetadata(Purpose purpose, String name, String description) {
+        return PollingUtils.pollUntil(
+                () -> getPurpose(purpose),
+                refreshed -> Objects.equals(name, refreshed.getTitle())
+                        && Objects.equals(description, refreshed.getDescription()),
+                "Purpose " + purpose.getId() + " metadata did not reach the requested name and description"
+        );
+    }
 
     public Purpose updatePurposeDailyCallsEstimateBeyondThreshold(Purpose purpose, EService eService) {
         PurposeVersion activeVersion = purpose.getLastActiveVersion();
@@ -78,5 +118,9 @@ public class PurposeUseCase {
 
     public Purpose suspendPurpose(Purpose purpose, PurposeVersion purposeVersion, @Nullable DelegationRef delegationRef) {
         return purposeGateway.suspendPurpose(purpose.getRef(), purposeVersion.getRef(), delegationRef);
+    }
+
+    public Purpose archivePurpose(Purpose purpose, PurposeVersion purposeVersion) {
+        return purposeGateway.archivePurpose(purpose.getRef(), purposeVersion.getRef());
     }
 }

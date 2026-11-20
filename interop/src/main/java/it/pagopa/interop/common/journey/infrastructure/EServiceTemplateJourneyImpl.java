@@ -14,8 +14,10 @@ import it.pagopa.interop.common.eservice_template.application.EServiceTemplateRe
 import it.pagopa.interop.common.eservice_template.application.EServiceTemplateUseCase;
 import it.pagopa.interop.common.eservice_template.application.EServiceTemplateVersionUseCase;
 import it.pagopa.interop.common.eservice_template.application.command.EServiceTemplateCreationCommand;
+import it.pagopa.interop.common.eservice_template.application.command.UpdateEServiceTemplateCommand;
 import it.pagopa.interop.common.eservice_template.application.command.UpdateEServiceTemplateVersionCommand;
 import it.pagopa.interop.common.eservice_template.domain.EServiceTemplate;
+import it.pagopa.interop.common.eservice_template.domain.EServiceTemplateUpdateFailureReason;
 import it.pagopa.interop.common.eservice_template.domain.EServiceTemplateVersion;
 import it.pagopa.interop.common.eservice_template.domain.EServiceTemplateVersionState;
 import it.pagopa.interop.common.journey.application.EServiceTemplateJourney;
@@ -26,6 +28,8 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.function.Consumer;
 import java.util.function.Predicate;
+
+import static org.assertj.core.api.Assertions.assertThat;
 
 @Component
 @RequiredArgsConstructor
@@ -56,6 +60,32 @@ public class EServiceTemplateJourneyImpl implements EServiceTemplateJourney<ESer
     public EServiceTemplateJourneyImpl createEServiceTemplate(EServiceTemplateVersionState targetState) {
         EServiceTemplate draftTemplate = eServiceTemplateUseCase.createEServiceTemplate(cmd -> {});
         return processLifecycle(draftTemplate, draftTemplate.getLastDraftVersion(), targetState);
+    }
+
+    @Override
+    public EServiceTemplateJourneyImpl updateEServiceTemplateMetadata(UpdateEServiceTemplateCommand command) {
+        String alias = command.getAlias();
+        EServiceTemplate eServiceTemplate = alias != null
+                ? entityStore.getByAliasOrThrow(alias, EServiceTemplate.class)
+                : entityStore.getLastOrThrow(EServiceTemplate.class);
+        eServiceTemplateUseCase.updateEServiceTemplateMetadata(eServiceTemplate, command);
+        return this;
+    }
+
+    @Override
+    public EServiceTemplateJourneyImpl tryUpdateEServiceTemplateMetadata(UpdateEServiceTemplateCommand command) {
+        String alias = command.getAlias();
+        EServiceTemplate eServiceTemplate = alias != null
+                ? entityStore.getByAliasOrThrow(alias, EServiceTemplate.class)
+                : entityStore.getLastOrThrow(EServiceTemplate.class);
+        eServiceTemplateUseCase.tryUpdateEServiceTemplateMetadata(eServiceTemplate, command);
+        return this;
+    }
+
+    @Override
+    public EServiceTemplateJourneyImpl shouldFailToUpdateEServiceTemplateMetadata(EServiceTemplateUpdateFailureReason reason) {
+        eServiceTemplateUseCase.shouldFailToUpdateEServiceTemplateMetadata(reason);
+        return this;
     }
 
     @Override
@@ -119,8 +149,7 @@ public class EServiceTemplateJourneyImpl implements EServiceTemplateJourney<ESer
     @Override
     public EServiceTemplateJourneyImpl createEServiceInstanceTemplate() {
         EServiceTemplate template = entityStore.getLastOrThrow(EServiceTemplate.class);
-        EService eService = eServiceTemplateInstanceUseCase.createEServiceInstance(template);
-        entityStore.upsert(eService);
+        eServiceTemplateInstanceUseCase.createEServiceInstance(template);
         return this;
     }
 
@@ -138,14 +167,9 @@ public class EServiceTemplateJourneyImpl implements EServiceTemplateJourney<ESer
                 eServiceInstance.getRef(), eServiceInstance.getLatestDescriptor().getRef(), eServiceInstance.getLatestDescriptor().getState(), command
         );
         EServiceDescriptor updatedDescriptor = updatedEService.getLatestDescriptor();
-        entityStore.upsert(updatedEService);
         switch (state) {
             case DRAFT -> {}
-            case PUBLISHED -> {
-                EServiceDescriptor publishedDescriptor = eServiceDescriptorUseCase.publishDescriptor(updatedEService, updatedDescriptor);
-                updatedEService.upsertDescriptor(publishedDescriptor);
-                entityStore.upsert(updatedEService);
-            }
+            case PUBLISHED -> eServiceDescriptorUseCase.publishDescriptor(updatedEService, updatedDescriptor);
             default -> throw new UnsupportedOperationException(String.format("La transizione allo stato %s non è ancora supportata nel Journey.", state));
         }
         return this;
@@ -155,6 +179,13 @@ public class EServiceTemplateJourneyImpl implements EServiceTemplateJourney<ESer
         return switch (targetState) {
             case DRAFT -> this;
             case PUBLISHED -> publishPipeline(template, version, configuration);
+            case SUSPENDED -> {
+                publishPipeline(template, version, configuration);
+                eServiceTemplateVersionUseCase.suspendEServiceTemplateVersion(template);
+                // waitUntilEServiceTemplate(templ -> templ.getState().equals(EServiceTemplateState.SUSPENDED));
+                // var tmp = entityStore.getLastOrThrow(EServiceTemplate.class);
+                yield this;
+            }
             default -> throw new UnsupportedOperationException(String.format("La transizione allo stato %s non è ancora supportata nel Journey.", targetState));
         };
     }

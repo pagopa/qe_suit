@@ -33,6 +33,7 @@ public interface BffPurposeTemplateMapper {
     @Mapping(target = "creatorId", source = "creator.id")
     @Mapping(target = "title", source = "purposeTitle")
     @Mapping(target = "description", source = "purposeDescription")
+    @Mapping(target = "targetDescription", source = "targetDescription")
     @Mapping(target = "createdAt", source = "createdAt", qualifiedByName = "mapStringToInstant")
     @Mapping(target = "updatedAt", source = "updatedAt", qualifiedByName = "mapStringToInstant")
     @Mapping(target = "linkedEServiceIds", ignore = true)

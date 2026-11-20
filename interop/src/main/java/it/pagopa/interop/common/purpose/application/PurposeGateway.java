@@ -14,6 +14,18 @@ import org.springframework.plugin.core.Plugin;
 public interface PurposeGateway extends Plugin<Channel> {
     Purpose getPurpose(PurposeRef purposeRef);
 
+    Purpose updatePurposeMetadata(PurposeRef purposeRef, String name, String description);
+
+    Purpose updateReversePurposeMetadata(PurposeRef purposeRef, String name, String description);
+
+    void tryToUpdatePurposeMetadata(PurposeRef purposeRef, String name, String description);
+
+    void tryToUpdateReversePurposeMetadata(PurposeRef purposeRef, String name, String description);
+
+    void shouldFailToUpdatePurposeMetadataAsMalformed();
+
+    void shouldFailToUpdatePurposeMetadataAsConflict();
+
     Purpose updatePurposeDailyCalls(PurposeRef purposeRef, int dailyCalls);
 
     Purpose createPurpose(PurposeCreateCommand createCommand);
@@ -31,4 +43,6 @@ public interface PurposeGateway extends Plugin<Channel> {
     Purpose askForApprovalPurpose(PurposeRef purposeRef, PurposeVersionRef purposeVersionRef, @Nullable DelegationRef delegationRef);
 
     Purpose suspendPurpose(PurposeRef purposeRef, PurposeVersionRef purposeVersionRef, @Nullable DelegationRef delegationRef);
+
+    Purpose archivePurpose(PurposeRef purposeRef, PurposeVersionRef purposeVersionRef);
 }

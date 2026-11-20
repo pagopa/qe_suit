@@ -46,6 +46,39 @@ class PurposeUseCaseTest {
     }
 
     @Test
+    void verifiesConflictingMetadataUpdateThroughTheGateway() {
+        useCase.shouldFailToUpdatePurposeMetadataAsConflict();
+
+        verify(gateway).shouldFailToUpdatePurposeMetadataAsConflict();
+        verifyNoMoreInteractions(gateway);
+    }
+
+    @Test
+    void updatesOrdinaryPurposeMetadata() {
+        Purpose updated = purpose.toBuilder().title("new title").description("new description").build();
+        when(gateway.getPurpose(purpose.getRef())).thenReturn(updated);
+
+        assertThat(useCase.updatePurposeMetadata(purpose, "new title", "new description")).isSameAs(updated);
+
+        verify(gateway).updatePurposeMetadata(purpose.getRef(), "new title", "new description");
+        verify(gateway).getPurpose(purpose.getRef());
+        verifyNoMoreInteractions(gateway);
+    }
+
+    @Test
+    void updatesReversePurposeMetadata() {
+        Purpose updated = purpose.toBuilder().title("new title").description("new description").build();
+        when(gateway.getPurpose(purpose.getRef())).thenReturn(updated);
+
+        assertThat(useCase.updateReversePurposeMetadata(purpose, "new title", "new description"))
+                .isSameAs(updated);
+
+        verify(gateway).updateReversePurposeMetadata(purpose.getRef(), "new title", "new description");
+        verify(gateway).getPurpose(purpose.getRef());
+        verifyNoMoreInteractions(gateway);
+    }
+
+    @Test
     void requiresAnActiveVersion() {
         assertThatThrownBy(() -> useCase.updatePurposeDailyCallsEstimateBeyondThreshold(
                 purpose.toBuilder().clearVersions().build(), eService))
@@ -67,5 +100,18 @@ class PurposeUseCaseTest {
                 purpose, eService.toBuilder().id(UUID.randomUUID()).build()))
                 .isInstanceOf(IllegalArgumentException.class).hasMessageContaining("does not belong");
         verifyNoInteractions(gateway);
+    }
+
+    @Test
+    void archivesTheRequestedPurposeVersion() {
+        Purpose archived = purpose.toBuilder()
+                .version(active.toBuilder().purposeVersionState(PurposeVersionState.ARCHIVED).build())
+                .build();
+        when(gateway.archivePurpose(purpose.getRef(), active.getRef())).thenReturn(archived);
+
+        assertThat(useCase.archivePurpose(purpose, active)).isSameAs(archived);
+
+        verify(gateway).archivePurpose(purpose.getRef(), active.getRef());
+        verifyNoMoreInteractions(gateway);
     }
 }

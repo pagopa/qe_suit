@@ -21,6 +21,7 @@ public class PurposeTemplate implements Identifiable {
     UUID creatorId;
     String title;
     String description;
+    String targetDescription;
     PurposeTemplateState state;
     Instant createdAt;
     Instant updatedAt;

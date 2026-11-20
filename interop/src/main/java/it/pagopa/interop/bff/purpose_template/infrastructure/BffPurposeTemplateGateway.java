@@ -46,6 +46,21 @@ public class BffPurposeTemplateGateway implements PurposeTemplateGateway {
     }
 
     @Override
+    public PurposeTemplate updateMetadata(
+            PurposeTemplate purposeTemplate, String name, String description, String targetDescription) {
+        PatchUpdatePurposeTemplateSeed payload = new PatchUpdatePurposeTemplateSeed()
+                .purposeTitle(name)
+                .purposeDescription(description)
+                .targetDescription(targetDescription);
+
+        return restClient.updatePurposeTemplate(purposeTemplate.getId(), payload)
+                .withPolling(PollingStrategy.UNTIL_SUCCESS)
+                .map(ignored -> getPurposeTemplate(purposeTemplate.getId()))
+                .updateContext()
+                .get();
+    }
+
+    @Override
     public PurposeTemplate createPurposeTemplate(Tenant targetTenant, RiskAnalysisForm riskAnalysisForm) {
         PurposeTemplateSeed payload = requestFactory.creationRequest(targetTenant, riskAnalysisForm);
 
@@ -124,6 +139,18 @@ public class BffPurposeTemplateGateway implements PurposeTemplateGateway {
         return PollingUtils.pollUntil(
                 () -> getPurposeTemplate(purposeTemplate.getId()),
                 pt -> pt.getState() == PurposeTemplateState.SUSPENDED
+        );
+    }
+
+    @Override
+    public PurposeTemplate archivePurposeTemplate(PurposeTemplate purposeTemplate) {
+        restClient.archivePurposeTemplate(purposeTemplate.getId())
+                .withPolling(PollingStrategy.UNTIL_SUCCESS)
+                .get();
+
+        return PollingUtils.pollUntil(
+                () -> getPurposeTemplate(purposeTemplate.getId()),
+                pt -> pt.getState() == PurposeTemplateState.ARCHIVED
         );
     }
 
