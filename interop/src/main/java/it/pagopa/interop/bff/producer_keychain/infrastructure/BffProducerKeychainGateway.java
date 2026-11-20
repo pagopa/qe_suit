@@ -17,6 +17,7 @@ import it.pagopa.interop.common.producer_keychain.domain.ProducerKeysPage;
 import it.pagopa.interop.generated.openapi.clients.bff.model.EServiceAdditionDetailsSeed;
 import it.pagopa.interop.generated.openapi.clients.bff.model.ProducerKeychainUpdateSeed;
 import it.pagopa.kernel.security.Key;
+import it.pagopa.utils.async.PollingUtils;
 import lombok.RequiredArgsConstructor;
 import org.jspecify.annotations.NonNull;
 import org.springframework.stereotype.Service;
@@ -118,7 +119,13 @@ public class BffProducerKeychainGateway implements ProducerKeychainGateway {
     public ProducerKeychain updateMetadata(ProducerKeychainRef ref, String name, String description) {
         restClient.updateProducerKeychain(ref.id(), updateSeed(name, description))
                 .withPolling(PollingStrategy.UNTIL_SUCCESS).get();
-        return getProducerKeychain(ref);
+        return PollingUtils.pollUntil(
+                () -> getProducerKeychain(ref),
+                updatedKeychain -> (name == null || Objects.equals(name, updatedKeychain.getName()))
+                        && (description == null || Objects.equals(description, updatedKeychain.getDescription())),
+                "Metadati attesi non ancora visibili per il portachiavi %s (nome: %s, descrizione: %s)"
+                        .formatted(ref.id(), name, description)
+        );
     }
 
     @Override
