@@ -10,6 +10,7 @@ import it.pagopa.interop.web.riskanalysis.infrastructure.component.APIEstimateCa
 import it.pagopa.interop.web.riskanalysis.infrastructure.component.AssignmentCard;
 import it.pagopa.interop.web.riskanalysis.infrastructure.component.PurposeRiskAnalysisGeneralInfoCard;
 import it.pagopa.interop.web.riskanalysis.infrastructure.component.RiskAnalysisCard;
+import it.pagopa.interop.web.riskanalysis.infrastructure.component.RejectionReasonDrawer;
 import it.pagopa.utils.async.PollingUtils;
 
 @Url("${interop.web.base-url}/analisi-del-rischio/${riskAnalysisId}/dettaglio")
@@ -97,20 +98,6 @@ public interface ReviewerRiskAnalysisDetailPage extends Page {
         Label personalDataTreatmentValue();
     }
 
-    interface RejectionReasonDrawer extends Drawer {
-        @XPath(".//h6")
-        Label drawerTitle();
-
-        @XPath(".//p[contains(@class, 'MuiTypography-root')]")
-        Label drawerDescription();
-
-        @XPath(".//h6[normalize-space()='Rifiuto analisi del rischio']/parent::div/following-sibling::div/p")
-        Label rejectionReason();
-
-        @XPath("//button[@aria-label='Chiudi il drawer']")
-        Button closeButton();
-
-    }
     @Override
     default void assertLoaded() {
         PollingUtils.pollUntil(
