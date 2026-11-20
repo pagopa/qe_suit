@@ -179,9 +179,15 @@ public class BffPurposeGateway implements PurposeGateway {
                 )
                 .withPolling(PollingStrategy.UNTIL_SUCCESS);
 
+        /* NOTA 20/11/2026: se il workflow di revisione è ADMIN_WRITES_REVIEWER_SIGNS,
+         * allora lo stato atteso è DRAFT; se invece è REVIEWER_WRITEST_REVIEWER_SIGNS,
+         * allora lo stato atteso è ASSIGNED.
+         * I test pn-b2b-client [AWRS_ASSEGNAZIONE_16_1_ADMIN] e [RWRS_ASSEGNAZIONE_11_1_RUOLO]
+         * chiariscono queste regole. */
         return PollingUtils.pollUntil(
                 () -> getPurpose(purposeRef),
-                purpose -> purpose.getRiskAnalysisSigningState() == RiskAnalysisSigningState.ASSIGNED
+                purpose -> (purpose.getRiskAnalysisSigningState() == RiskAnalysisSigningState.ASSIGNED
+                        || purpose.getRiskAnalysisSigningState() == RiskAnalysisSigningState.DRAFT)
                         && purpose.getRiskAnalysisReviewMode() == bffCommand.getReviewMode()
         );
     }
@@ -345,5 +351,58 @@ public class BffPurposeGateway implements PurposeGateway {
             );
         }
         restClient.rejectRiskAnalysis(purposeRef.id(), bffCommand.getBffRejectionPayload()).withoutPolling();
+    }
+
+    @Override
+    public void attemptCreatePurpose(PurposeCreateCommand createCommand) {
+        if (!(createCommand instanceof BffPurposeCreateCommand bffCommand)) {
+            throw new IllegalArgumentException(
+                    "Command must be an instance of " + BffPurposeCreateCommand.class.getSimpleName()
+            );
+        }
+        restClient.createPurpose(bffCommand.getBffCreationPayload()).withoutPolling();
+    }
+
+    @Override
+    public void attemptCreateReversePurpose(
+            EServiceRef eServiceRef,
+            EServiceRiskAnalysisRef riskAnalysisRef,
+            String title
+    ) {
+        restClient.createReversePurpose(
+                commandFactory.reverseCreationRequest(eServiceRef, riskAnalysisRef).title(title)
+        ).withoutPolling();
+    }
+
+    @Override
+    public void attemptCreatePurposeFromTemplate(
+            PurposeTemplateRef purposeTemplateRef,
+            PurposeCreateCommand createCommand
+    ) {
+        restClient.createPurposeFromTemplate(
+                purposeTemplateRef.id(),
+                commandFactory.creationFromTemplateRequest(createCommand, purposeTemplateRef)
+        ).withoutPolling();
+    }
+
+    @Override
+    public void attemptNameUpdateFromTemplate(
+            PurposeTemplateRef purposeTemplateRef,
+            PurposeRef purposeRef,
+            String name
+    ) {
+        restClient.patchUpdatePurposeFromTemplate(
+                purposeTemplateRef.id(),
+                purposeRef.id(),
+                commandFactory.patchFromTemplateRequest().title(name)
+        ).withoutPolling();
+    }
+
+    @Override
+    public void attemptRiskAnalysisFormUpdate(PurposeRef purposeRef) {
+        restClient.editRiskAnalysisForm(
+                purposeRef.id(),
+                commandFactory.validRiskAnalysisFormSeed()
+        ).withoutPolling();
     }
 }

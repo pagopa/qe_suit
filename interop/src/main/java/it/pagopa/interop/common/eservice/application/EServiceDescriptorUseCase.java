@@ -123,6 +123,9 @@ public class EServiceDescriptorUseCase {
 
     private UpdateEServiceDescriptorCommand publicationCommand(EServiceDescriptor descriptor) {
         UpdateEServiceDescriptorCommand command = requestFactory.prepareDescriptorForPublicationCommand();
+        if (descriptor.getAgreementApprovalPolicy() != null) {
+            command.agreementApprovalPolicy(descriptor.getAgreementApprovalPolicy());
+        }
         if (descriptor.getDailyCallsPerConsumer() != null) {
             command.dailyCallsPerConsumer(descriptor.getDailyCallsPerConsumer());
         }

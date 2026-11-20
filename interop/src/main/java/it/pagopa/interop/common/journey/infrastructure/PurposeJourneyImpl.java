@@ -108,7 +108,10 @@ public class PurposeJourneyImpl implements PurposeJourney<PurposeJourneyImpl> {
 
     @Override
     public PurposeJourneyImpl clonePurpose(Purpose purpose, EService eService) {
-        purposeUseCase.clonePurpose(purpose, eService);
+        Purpose activePurpose = purpose.getLastActiveVersion() != null
+                ? purpose
+                : activatePipeline(purpose);
+        purposeUseCase.clonePurpose(activePurpose, eService);
         return this;
     }
 

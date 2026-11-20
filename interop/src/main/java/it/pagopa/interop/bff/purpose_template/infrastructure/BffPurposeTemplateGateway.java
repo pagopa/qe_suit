@@ -15,6 +15,7 @@ import it.pagopa.interop.generated.openapi.clients.bff.model.*;
 import it.pagopa.utils.FileUtils;
 import it.pagopa.utils.RandomUtils;
 import it.pagopa.utils.async.PollingUtils;
+import java.time.Duration;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
@@ -183,7 +184,10 @@ public class BffPurposeTemplateGateway implements PurposeTemplateGateway {
     @Override
     public void awaitSignedRiskAnalysisDocumentAvailable(PurposeTemplate purposeTemplate) {
         restClient.getRiskAnalysisTemplateSignedDocument(purposeTemplate.getId())
-                .withPolling(PollingStrategy.UNTIL_SUCCESS)
+                .withPolling(
+                    PollingStrategy.UNTIL_SUCCESS,
+                    Duration.ofSeconds(90),
+                    Duration.ofSeconds(5))
                 .get();
     }
 
