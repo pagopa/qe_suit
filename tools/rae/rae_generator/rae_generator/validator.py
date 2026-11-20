@@ -94,7 +94,7 @@ class ValidationError(ValueError):
     pass
 
 
-def validate(data: object, filename: str | None = None) -> dict:
+def validate(data: object, filename: str | None = None, *, draft: bool = False) -> dict:
     errors = []
     if not isinstance(data, dict):
         raise ValidationError('RAE deve essere una mappa YAML')
@@ -110,7 +110,7 @@ def validate(data: object, filename: str | None = None) -> dict:
                 errors.append(f'rae.{field}: mancante')
         elif field == 'release' and not isinstance(meta[field], str):
             errors.append('rae.release: deve essere una stringa, anche vuota')
-        elif field not in ('numero_ko', 'release', 'scope') and (not isinstance(meta[field], str) or not meta[field].strip()):
+        elif field not in ('numero_ko', 'release', 'scope') and (not isinstance(meta[field], str) or (not meta[field].strip() and not (draft and field == 'issue_jira'))):
             errors.append(f'rae.{field}: valore obbligatorio non valido')
     if set(meta) not in (set(METADATA), set(METADATA) - {'scope'}):
         errors.append('rae: campi inattesi o mancanti')
@@ -137,7 +137,7 @@ def validate(data: object, filename: str | None = None) -> dict:
                 errors.append(f'{prefix}: campi obbligatori mancanti o inattesi')
             for field in FIELDS:
                 value = entry.get(field)
-                if not isinstance(value, str) or (field in FIELDS[:4] and not value.strip()):
+                if not isinstance(value, str) or (field in FIELDS[:2] and not value.strip()) or (not draft and field in ('procedure', 'result') and not value.strip()):
                     errors.append(f'{prefix}.{field}: valore non valido o vuoto')
             for link_field in ('link_prod_bug', 'link_suite_bug'):
                 url = entry.get(link_field)

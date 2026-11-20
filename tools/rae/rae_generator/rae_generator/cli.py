@@ -45,7 +45,7 @@ def main(argv: list[str] | None = None) -> int:
             data = read_yaml(args.yaml_file)
             if args.qa_reviewed and not args.original_yaml:
                 raise ValidationError('--qa-reviewed richiede --original-yaml')
-            original = validate(yaml.safe_load(args.original_yaml.read_text(encoding='utf-8'))) if args.original_yaml else None
+            original = validate(yaml.safe_load(args.original_yaml.read_text(encoding='utf-8')), draft=True) if args.original_yaml else None
             if original is not None:
                 validate_original_evidences(data, original)
             md = args.yaml_file.with_suffix('.md')
