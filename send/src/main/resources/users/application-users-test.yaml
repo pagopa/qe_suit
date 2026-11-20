@@ -34,16 +34,15 @@ users:
       - party-role: MANAGER
         role: pg-admin
   Impresa_2:
-    username: FrancescoPetrarca
-    password: ${pn.external.password.francescopetrarca:}
-    organization: "Le Epistolae srl"
-    # codice fiscale non numerico: l'impresa non può ricevere notifiche nuove
-    tax-id: LELPTR04A01C352E
-    organization-id: e2486126-4394-4300-a25d-b6d879fa1717
-    uid: d5a8a380-910d-49dc-9fb8-84700c64410f
-    denomination: Francesco Petrarca
-    family-name: Petrarca
-    personal-tax-id: PTRFNC04A01C352E
+    username: MarcoPorcioCatoneSpqr
+    password: ${pn.external.password.marcoporciocatonespqr:}
+    organization: "Effimera Stoica S.r.l."
+    tax-id: "12825810299"
+    organization-id: 6aea890b-88be-4338-bdb6-634dad7269cf
+    uid: acc1fef0-786c-4c59-b80f-ab935718f963
+    denomination: Marco Porcio
+    family-name: Catone
+    personal-tax-id: CTNMCP80A01H501M
     roles:
       - party-role: MANAGER
         role: pg-admin
