@@ -11,16 +11,16 @@ import it.pagopa.interop.common.kernel.domain.TenantRef;
 import it.pagopa.interop.common.tenant.application.TenantGateway;
 import it.pagopa.interop.generated.openapi.clients.bff.model.Tenant;
 import it.pagopa.interop.generated.openapi.clients.bff.model.TenantDelegatedFeaturesFlagsUpdateSeed;
+import it.pagopa.interop.generated.openapi.clients.bff.model.UpdateVerifiedTenantAttributeSeed;
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
 import java.time.Duration;
+import java.time.OffsetDateTime;
 import java.util.Set;
 import java.util.UUID;
 import java.util.stream.Collectors;
-
-import static org.assertj.core.api.Assertions.assertThat;
 
 @Service
 @RequiredArgsConstructor
@@ -102,6 +102,28 @@ public class BffTenantGateway implements TenantGateway {
     }
 
     @Override
+    public void enableConsumerDelegationAvailability(@NonNull TenantRef tenantRef) {
+        Tenant tenant = restClient.getTenant(tenantRef.id())
+                .withPolling(PollingStrategy.UNTIL_SUCCESS)
+                .get();
+
+        if (isConsumerDelegationEnabled(tenant)) {
+            return;
+        }
+
+        boolean producerEnabled = isProducerDelegationEnabled(tenant);
+        var payload = new TenantDelegatedFeaturesFlagsUpdateSeed()
+                .isDelegatedProducerFeatureEnabled(producerEnabled)
+                .isDelegatedConsumerFeatureEnabled(true);
+        executeWithPolling(restClient.updateDelegatedFeatures(payload));
+
+        restClient.getTenant(tenantRef.id())
+                .withPolling(response -> response.isSuccess()
+                        && isConsumerDelegationEnabled(response.as(Tenant.class)))
+                .get();
+    }
+
+    @Override
     public void assignCertifiedAttribute(@NonNull TenantRef tenantRef, @NonNull AttributeRef attributeRef) {
         var command = bffCommand(requestFactory.assignCertifiedAttributeCommand(attributeRef), BffAssignCertifiedAttributeCommand.class);
         executeWithPolling(restClient.addCertifiedAttribute(tenantRef.id(), command.getBffPayload()));
@@ -143,7 +165,8 @@ public class BffTenantGateway implements TenantGateway {
     @Override
     public void revokeVerifiedAttribute(@NonNull TenantRef tenantRef, @NonNull AttributeRef attributeRef, @NonNull AgreementRef agreementRef) {
         var command = bffCommand(requestFactory.revokeVerifiedAttributeCommand(agreementRef), BffRevokeVerifiedAttributeCommand.class);
-        executeWithPolling(restClient.revokeVerifiedAttribute(tenantRef.id(), attributeRef.id(), command.getBffPayload()));
+        executeWithPolling(restClient.revokeVerifiedAttribute(tenantRef.id(), attributeRef.id(), command.getAgreement()
+            .id()));
     }
 
     @Override
@@ -151,6 +174,20 @@ public class BffTenantGateway implements TenantGateway {
         return delimiter == Channel.BFF;
     }
 
+
+    @Override
+    public void attemptVerifiedAttributeExpirationUpdate(TenantRef tenantRef, AttributeRef attributeRef, OffsetDateTime expirationDate) {
+        var payload = new UpdateVerifiedTenantAttributeSeed().expirationDate(expirationDate.toString());
+        restClient.updateVerifiedAttribute(tenantRef.id(), attributeRef.id(), payload).withoutPolling();
+    }
+
+    @Override
+    public void attemptProducerDelegationAvailability(@NonNull TenantRef tenantRef) {
+        Tenant tenant = restClient.getTenant(tenantRef.id()).withoutPolling().assertStatusCode(200).get();
+        producerDelegationEnabled(tenant, tenantRef);
+        var payload = requestFactory.enableProducerDelegationPayload(isConsumerDelegationEnabled(tenant));
+        restClient.updateTenantDelegatedFeatures(payload).withoutPolling();
+    }
 
     private static <T> T bffCommand(Object command, Class<T> type) {
         if (!type.isInstance(command)) {
@@ -169,5 +206,26 @@ public class BffTenantGateway implements TenantGateway {
 
     private static boolean isConsumerDelegationEnabled(Tenant tenant) {
         return tenant.getFeatures().stream().anyMatch(feature -> feature.getDelegatedConsumer() != null);
+    }
+
+    @Override
+    public void attemptCertifiedAttributeAssignment(@NonNull TenantRef tenantRef, @NonNull AttributeRef attributeRef) {
+        var command = bffCommand(requestFactory.assignCertifiedAttributeCommand(attributeRef), BffAssignCertifiedAttributeCommand.class);
+        restClient.addCertifiedAttribute(tenantRef.id(), command.getBffPayload()).withoutPolling();
+    }
+
+    @Override
+    public void attemptContactEmailSaveWithHyperlinkInNotes(@NonNull TenantRef tenantRef) {
+        restClient.addTenantMail(tenantRef.id(), requestFactory.contactEmailWithHyperlinkInNotes()).withoutPolling();
+    }
+
+    @Override
+    public void attemptVerifiedAttributeAssignment(
+            @NonNull TenantRef tenantRef, @NonNull AttributeRef attributeRef,
+            @NonNull AgreementRef agreementRef, @NonNull OffsetDateTime expirationDate
+    ) {
+        var command = bffCommand(requestFactory.assignVerifiedAttributeCommand(attributeRef, agreementRef)
+                .expirationDate(expirationDate.toString()), BffAssignVerifiedAttributeCommand.class);
+        restClient.verifyVerifiedAttribute(tenantRef.id(), command.getBffPayload()).withoutPolling();
     }
 }

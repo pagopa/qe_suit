@@ -12,6 +12,7 @@ import it.pagopa.interop.common.eservice.domain.*;
 import it.pagopa.interop.common.kernel.domain.ApiInterface;
 import it.pagopa.interop.common.kernel.domain.Channel;
 import it.pagopa.interop.common.kernel.domain.Document;
+import it.pagopa.interop.common.kernel.domain.DocumentKind;
 import it.pagopa.interop.common.kernel.domain.EServiceDescriptorRef;
 import it.pagopa.interop.common.kernel.domain.EServiceRef;
 import it.pagopa.interop.generated.openapi.clients.m2m.v3.model.Problem;
@@ -92,6 +93,11 @@ public class M2MEServiceDescriptorGateway implements EServiceDescriptorGateway {
     }
 
     @Override
+    public EServiceDescriptor addDocument(EServiceRef eServiceRef, EServiceDescriptorRef descriptorRef, String path, String name) {
+        throw new UnsupportedOperationException("Adding descriptor documents is not supported on M2M V3");
+    }
+
+    @Override
     public EServiceDescriptor publishDescriptor(EServiceRef eServiceRef, EServiceDescriptorRef descriptorRef) {
         throw new UnsupportedOperationException();
     }
@@ -159,6 +165,11 @@ public class M2MEServiceDescriptorGateway implements EServiceDescriptorGateway {
     @Override
     public boolean supports(@NonNull Channel channel) {
         return channel == Channel.M2M_V3;
+    }
+
+    @Override
+    public void deleteDraftVersion(EServiceRef eServiceRef, EServiceDescriptorRef descriptorRef) {
+        throw new UnsupportedOperationException("Deleting draft descriptors is not supported on M2M V3");
     }
 
     private EServiceDescriptorInterface fetchRemoteInterface(
@@ -255,5 +266,47 @@ public class M2MEServiceDescriptorGateway implements EServiceDescriptorGateway {
             Assertions.assertThat(error.getCode()).endsWith(expectedCodeSuffix);
             Assertions.assertThat(error.getDetail()).isEqualTo(expectedDetail);
         });
+    }
+
+    @Override
+    public void attemptProducerDescriptorDetailsRead(EServiceRef eServiceRef, EServiceDescriptorRef descriptorRef) {
+        throw new UnsupportedOperationException("Reading producer descriptor details is not supported on M2M V3");
+    }
+
+    @Override
+    public void attemptDescriptorExport(EServiceRef eServiceRef, EServiceDescriptorRef descriptorRef) {
+        throw new UnsupportedOperationException("Exporting an e-service descriptor is not supported on M2M V3");
+    }
+
+    @Override
+    public void attemptValidDocumentUpload(EServiceRef eServiceRef, EServiceDescriptorRef descriptorRef) {
+        throw new UnsupportedOperationException("Uploading descriptor documents is not supported on M2M V3");
+    }
+
+    @Override
+    public void attemptDocumentUpload(EServiceRef eServiceRef, EServiceDescriptorRef descriptorRef, String path, String name) {
+        throw new UnsupportedOperationException("Uploading descriptor documents is not supported on M2M V3");
+    }
+
+    @Override
+    public void attemptFileUpload(
+            EServiceRef eServiceRef,
+            EServiceDescriptorRef descriptorRef,
+            String path,
+            DocumentKind kind,
+            String name
+    ) {
+        throw new UnsupportedOperationException("Uploading descriptor documents is not supported on M2M V3");
+    }
+
+    @Override
+    public void attemptDocumentRename(EServiceRef eServiceRef, EServiceDescriptorRef descriptorRef,
+                                      Document document, String newName) {
+        throw new UnsupportedOperationException("Renaming descriptor documents is not supported on M2M V3");
+    }
+
+    @Override
+    public void attemptDescriptorCreation(EServiceRef eServiceRef) {
+        throw new UnsupportedOperationException("Creating an e-service descriptor is not supported on M2M V3");
     }
 }

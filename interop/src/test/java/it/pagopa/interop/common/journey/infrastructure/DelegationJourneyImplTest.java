@@ -27,6 +27,7 @@ class DelegationJourneyImplTest {
 
     private final DelegationUseCase useCase = mock(DelegationUseCase.class);
     private final AuthSession session = mock(AuthSession.class);
+    private final AuthSession.Snapshot snapshot = mock(AuthSession.Snapshot.class);
     private final CurrentChannel<Channel> channel = mock(CurrentChannel.class);
     private final it.pagopa.application.context.EntityStore entityStore =
             mock(it.pagopa.application.context.EntityStore.class);
@@ -52,8 +53,49 @@ class DelegationJourneyImplTest {
         originalTenant = Tenant.COMUNE_DI_COMUN_NUOVO;
         when(session.getActor()).thenReturn(originalUser);
         when(session.getTenant()).thenReturn(originalTenant);
+        when(session.snapshot()).thenReturn(snapshot);
         when(channel.getCurrentChannel()).thenReturn(Channel.WEB_BROWSER);
         when(useCase.createProducerDelegation(any(), any(), same(eService))).thenReturn(created);
+    }
+
+    @Test
+    void revokesExistingDelegationAsDelegatorWithoutChangingChannel() {
+        journey.revokeProducerDelegationAsDelegator(created.getRef(), delegator);
+
+        InOrder order = inOrder(session, useCase, snapshot);
+        order.verify(session).snapshot();
+        order.verify(session).set(User.getTenantAdmin(delegator), delegator);
+        order.verify(useCase).revokeProducerDelegation(created.getRef());
+        order.verify(useCase).waitForProducerDelegationState(created.getRef(), ProducerDelegationState.REVOKED);
+        order.verify(snapshot).close();
+        verifyNoInteractions(entityStore, channel);
+        verifyNoMoreInteractions(useCase);
+    }
+
+    @Test
+    void restoresContextWhenRevocationFails() {
+        RuntimeException failure = new RuntimeException("revoke failed");
+        doThrow(failure).when(useCase).revokeProducerDelegation(created.getRef());
+
+        assertThatThrownBy(() -> journey.revokeProducerDelegationAsDelegator(created.getRef(), delegator))
+                .isSameAs(failure);
+
+        verify(useCase, never()).waitForProducerDelegationState(any(), any());
+        verify(snapshot).close();
+        verifyNoInteractions(channel);
+    }
+
+    @Test
+    void restoresContextWhenWaitingForRevocationFails() {
+        RuntimeException failure = new RuntimeException("state not reached");
+        when(useCase.waitForProducerDelegationState(created.getRef(), ProducerDelegationState.REVOKED))
+                .thenThrow(failure);
+
+        assertThatThrownBy(() -> journey.revokeProducerDelegationAsDelegator(created.getRef(), delegator))
+                .isSameAs(failure);
+
+        verify(snapshot).close();
+        verifyNoInteractions(channel);
     }
 
     @Test

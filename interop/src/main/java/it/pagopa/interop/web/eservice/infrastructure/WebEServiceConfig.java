@@ -3,12 +3,7 @@ package it.pagopa.interop.web.eservice.infrastructure;
 import io.cucumber.spring.ScenarioScope;
 import it.frontend.e2e.framework.web.WebPresentationGateway;
 import it.pagopa.interop.web.agreement.infrastructure.page.ProducerAgreementDetailPage;
-import it.pagopa.interop.web.eservice.infrastructure.page.ConsumerAgreementDetailsPage;
-import it.pagopa.interop.web.eservice.infrastructure.page.EServiceCreateFromTemplatePage;
-import it.pagopa.interop.web.eservice.infrastructure.page.EServiceEditPage;
-import it.pagopa.interop.web.eservice.infrastructure.page.EServiceRiskAnalysisAssociatedPage;
-import it.pagopa.interop.web.eservice.infrastructure.page.EServiceViewPage;
-import it.pagopa.interop.web.eservice.infrastructure.page.ProducerEServiceDetailPage;
+import it.pagopa.interop.web.eservice.infrastructure.page.*;
 import it.pagopa.interop.web.eservice.infrastructure.suit.page.EServiceCatalogPage;
 import it.pagopa.interop.web.eservice.infrastructure.suit.page.EServiceCreatePage;
 import it.pagopa.interop.web.eservice.infrastructure.suit.page.EServiceDetailPage;
@@ -16,6 +11,7 @@ import lombok.Getter;
 import lombok.Setter;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.Primary;
 
 @Configuration
 @Getter
@@ -29,9 +25,16 @@ public class WebEServiceConfig {
     }
 
     @Bean
+    @Primary
     @ScenarioScope
     public EServiceCreatePage eServiceCreationPage(WebPresentationGateway webPresentationGateway) {
         return webPresentationGateway.bind(EServiceCreatePage.class);
+    }
+
+    @Bean
+    @ScenarioScope
+    public EServiceDraftEditPage eServiceDraftEditPage(WebPresentationGateway webPresentationGateway) {
+        return webPresentationGateway.bind(EServiceDraftEditPage.class);
     }
 
     @Bean

@@ -44,4 +44,13 @@ public class ClientJourneySteps {
                                 .keys(List.of(ClientKeyCreationCommand::randomClientKey))
                 );
     }
+
+    @Given("un client CONSUMER creato da/dal {tenant} senza finalità associate")
+    public void setupConsumerClientWithoutPurposes(Tenant consumer) {
+        interopJourney
+                .withConsumer(consumer, UserRole.ADMIN)
+                .createClient(command -> command.name(RandomUtils.randomAlphanumericName("client"))
+                        .kind(ClientKind.CONSUMER)
+                        .users(UserRef.of(User.getTenantAdmin(consumer), consumer)));
+    }
 }

@@ -131,14 +131,31 @@ public class BffTenantRestClient extends RestClient {
     public TestChain<Void> revokeVerifiedAttribute(
             @Nonnull UUID tenantId,
             @Nonnull UUID attributeId,
-            @Nonnull RevokeVerifiedAttributeRequest request
+            @Nonnull UUID agreementId
     ) {
         return execute(
                 () -> tenantsApi.revokeVerifiedAttribute()
                         .tenantIdPath(tenantId)
                         .attributeIdPath(attributeId)
-                        .body(request)
+                        .agreementIdQuery(agreementId)
                         .execute(Function.identity()),
+                Void.class
+        );
+    }
+
+    public TestChain<Void> updateVerifiedAttribute(
+            @Nonnull UUID tenantId, @Nonnull UUID attributeId, @Nonnull UpdateVerifiedTenantAttributeSeed seed
+    ) {
+        return execute(
+                () -> tenantsApi.updateVerifiedAttribute().tenantIdPath(tenantId).attributeIdPath(attributeId)
+                        .body(seed).execute(Function.identity()),
+                Void.class
+        );
+    }
+
+    public TestChain<Void> addTenantMail(@Nonnull UUID tenantId, @Nonnull MailSeed payload) {
+        return execute(
+                () -> tenantsApi.addTenantMail().tenantIdPath(tenantId).body(payload).execute(Function.identity()),
                 Void.class
         );
     }

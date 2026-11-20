@@ -73,6 +73,21 @@ public class BffEServiceRestClient extends RestClient {
         return execute(() -> eservicesApi.addRiskAnalysisToEService().eServiceIdPath(eserviceId).body(payload).execute(Function.identity()), Void.class);
     }
 
+    public TestChain<Void> updateRiskAnalysis(
+            @Nonnull UUID eserviceId,
+            @Nonnull UUID riskAnalysisId,
+            @Nonnull EServiceRiskAnalysisSeed payload
+    ) {
+        return execute(
+                () -> eservicesApi.updateEServiceRiskAnalysis()
+                        .eServiceIdPath(eserviceId)
+                        .riskAnalysisIdPath(riskAnalysisId)
+                        .body(payload)
+                        .execute(Function.identity()),
+                Void.class
+        );
+    }
+
     public TestChain<ProducerEServiceDescriptor> readDescriptor(@Nonnull UUID eserviceId, @Nonnull UUID descriptorId) {
         return execute(
                 () -> eservicesApi.getProducerEServiceDescriptor().eserviceIdPath(eserviceId).descriptorIdPath(descriptorId).execute(Function.identity()),
@@ -167,5 +182,58 @@ public class BffEServiceRestClient extends RestClient {
                 () -> eservicesApi.getProducerEServices().qQuery(queryName).offsetQuery(0).limitQuery(10).execute(Function.identity()),
                 ProducerEServices.class
         );
+    }
+
+    public TestChain<Void> deleteDraftVersion(@Nonnull UUID eserviceId, @Nonnull UUID descriptorId) {
+        return execute(
+                () -> eservicesApi.deleteDraft().eServiceIdPath(eserviceId).descriptorIdPath(descriptorId).execute(Function.identity()),
+                Void.class
+        );
+    }
+
+    public TestChain<FileResource> exportDescriptor(@Nonnull UUID eserviceId, @Nonnull UUID descriptorId) {
+        return execute(
+                () -> eservicesApi.exportEServiceDescriptor().eserviceIdPath(eserviceId).descriptorIdPath(descriptorId).execute(Function.identity()),
+                FileResource.class
+        );
+    }
+
+    public TestChain<EServiceDoc> updateDocument(
+            @Nonnull UUID eserviceId, @Nonnull UUID descriptorId, @Nonnull UUID documentId,
+            @Nonnull UpdateEServiceDescriptorDocumentSeed payload
+    ) {
+        return execute(() -> eservicesApi.updateEServiceDocumentById().eServiceIdPath(eserviceId)
+                .descriptorIdPath(descriptorId).documentIdPath(documentId).body(payload)
+                .execute(Function.identity()), EServiceDoc.class);
+    }
+
+    public TestChain<CreatedResource> updateEServiceTemplateInstance(@Nonnull UUID eserviceId, @Nonnull UpdateEServiceTemplateInstanceSeed payload) {
+        return execute(() -> eservicesApi.updateEServiceTemplateInstanceById().eServiceIdPath(eserviceId)
+                .body(payload).execute(Function.identity()), CreatedResource.class);
+    }
+
+    public TestChain<CreatedResource> updateEServiceInstanceLabel(@Nonnull UUID eserviceId, @Nonnull EServiceInstanceLabelUpdateSeed payload) {
+        return execute(() -> eservicesApi.updateEServiceInstanceLabelAfterPublication().eServiceIdPath(eserviceId)
+                .body(payload).execute(Function.identity()), CreatedResource.class);
+    }
+
+    public TestChain<Void> updateName(@Nonnull UUID eserviceId, @Nonnull EServiceNameUpdateSeed payload) {
+        return execute(() -> eservicesApi.updateEServiceName().eServiceIdPath(eserviceId)
+                .body(payload).execute(Function.identity()), Void.class);
+    }
+
+    public TestChain<Void> submitDelegatedEServiceArchiving(@Nonnull UUID eserviceId, @Nonnull EServiceArchivingSeed payload) {
+        return execute(() -> eservicesApi.submitDelegatedEServiceArchiving().eServiceIdPath(eserviceId)
+                .body(payload).execute(Function.identity()), Void.class);
+    }
+
+    public TestChain<Void> updateDescription(@Nonnull UUID eserviceId, @Nonnull EServiceDescriptionUpdateSeed payload) {
+        return execute(() -> eservicesApi.updateEServiceDescription().eServiceIdPath(eserviceId)
+                .body(payload).execute(Function.identity()), Void.class);
+    }
+
+    public TestChain<CreatedResource> partialUpdateEService(@Nonnull UUID eserviceId, @Nonnull PatchUpdateEServiceSeed payload) {
+        return execute(() -> eservicesApi.patchUpdateEServiceById().eServiceIdPath(eserviceId)
+                .body(payload).execute(Function.identity()), CreatedResource.class);
     }
 }

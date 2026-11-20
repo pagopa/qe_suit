@@ -10,4 +10,8 @@ public class BffDelegationRequestFactory {
         return new RejectDelegationPayload()
                 .rejectionReason("Rifiutata nell'ambito del setup di test");
     }
+
+    public RejectDelegationPayload rejectionRequest(String rejectionReason) {
+        return new RejectDelegationPayload().rejectionReason(rejectionReason);
+    }
 }

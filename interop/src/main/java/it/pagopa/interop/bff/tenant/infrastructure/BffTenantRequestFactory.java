@@ -6,7 +6,12 @@ import it.pagopa.interop.common.kernel.domain.AttributeRef;
 import it.pagopa.interop.common.kernel.domain.Channel;
 import it.pagopa.interop.common.tenant.application.TenantRequestFactory;
 import it.pagopa.interop.common.tenant.application.command.*;
+import it.pagopa.interop.generated.openapi.clients.bff.model.MailKind;
+import it.pagopa.interop.generated.openapi.clients.bff.model.MailSeed;
+import it.pagopa.interop.generated.openapi.clients.bff.model.TenantDelegatedFeaturesFlagsUpdateSeed;
 import org.springframework.stereotype.Component;
+
+import java.util.UUID;
 
 @Component
 public class BffTenantRequestFactory implements TenantRequestFactory {
@@ -39,5 +44,18 @@ public class BffTenantRequestFactory implements TenantRequestFactory {
     @Override
     public boolean supports(@jakarta.annotation.Nonnull Channel delimiter) {
         return delimiter == Channel.BFF;
+    }
+
+    public TenantDelegatedFeaturesFlagsUpdateSeed enableProducerDelegationPayload(boolean consumerEnabled) {
+        return new TenantDelegatedFeaturesFlagsUpdateSeed()
+                .isDelegatedProducerFeatureEnabled(true)
+                .isDelegatedConsumerFeatureEnabled(consumerEnabled);
+    }
+
+    public MailSeed contactEmailWithHyperlinkInNotes() {
+        return new MailSeed()
+                .kind(MailKind.CONTACT_EMAIL)
+                .address("contact-" + UUID.randomUUID() + "@example.test")
+                .description("Contatto https://example.org");
     }
 }

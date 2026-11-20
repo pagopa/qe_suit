@@ -1,8 +1,12 @@
 package it.pagopa.interop.common.tenant.infrastructure.cucumber;
 
 import io.cucumber.java.en.Given;
+import io.cucumber.java.en.When;
 import it.pagopa.interop.common.journey.application.InteropJourney;
+import it.pagopa.interop.common.kernel.domain.Tenant;
+import it.pagopa.interop.common.kernel.domain.TenantRef;
 import it.pagopa.interop.common.kernel.domain.User;
+import it.pagopa.interop.common.tenant.application.TenantUseCase;
 import it.pagopa.interop.common.tenant.infrastructure.cucumber.dto.ProducerDelegationRecipient;
 import lombok.RequiredArgsConstructor;
 
@@ -11,6 +15,7 @@ import java.util.List;
 @RequiredArgsConstructor
 public class TenantDelegationSettingsSteps {
     private final InteropJourney journey;
+    private final TenantUseCase tenantUseCase;
 
     @Given("i seguenti enti abilitati a ricevere deleghe di erogazione:")
     public void enableProducerDelegationRecipients(List<ProducerDelegationRecipient> recipients) {
@@ -23,5 +28,10 @@ public class TenantDelegationSettingsSteps {
                         .withProducer(tenant)
                         .ensureProducerDelegationEnabled(tenant)
         );
+    }
+
+    @When("{tenant} tenta di abilitarsi a ricevere deleghe di erogazione")
+    public void attemptProducerDelegationAvailability(Tenant tenant) {
+        tenantUseCase.attemptProducerDelegationAvailability(TenantRef.of(tenant.getOrganizationId()));
     }
 }

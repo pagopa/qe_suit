@@ -1,14 +1,18 @@
 package it.pagopa.interop.common.journey.application;
 
 import it.pagopa.interop.common.delegation.application.command.ProducerDelegationSetupCommand;
+import it.pagopa.interop.common.delegation.application.command.ConsumerDelegationCreationCommand;
 import it.pagopa.interop.common.delegation.application.command.ProducerDelegationCreationCommand;
 import it.pagopa.interop.common.kernel.domain.DelegationRef;
 import it.pagopa.interop.common.kernel.domain.EServiceRef;
 import it.pagopa.interop.common.kernel.domain.TenantRef;
+import it.pagopa.interop.common.kernel.domain.Tenant;
 
 public interface DelegationJourney<SELF extends DelegationJourney<SELF>> extends JourneyModule {
 
     SELF createProducerDelegation(ProducerDelegationCreationCommand command);
+
+    SELF createConsumerDelegation(ConsumerDelegationCreationCommand command);
 
     SELF createConsumerDelegation(TenantRef delegateRef, EServiceRef eServiceRef);
 
@@ -19,4 +23,8 @@ public interface DelegationJourney<SELF extends DelegationJourney<SELF>> extends
     SELF approveConsumerDelegation(DelegationRef delegationRef);
 
     SELF setUpProducerDelegation(ProducerDelegationSetupCommand command);
+
+    SELF revokeProducerDelegationAsDelegator(DelegationRef delegationRef, Tenant delegator);
+
+    SELF revokeConsumerDelegationAsDelegator(DelegationRef delegationRef, Tenant delegator);
 }

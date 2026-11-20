@@ -1,5 +1,6 @@
 package it.pagopa.interop.bff.eservice_template.infrastructure;
 
+import it.pagopa.application.context.EntityStore;
 import it.pagopa.infrastructure.template.action.strategy.PollingStrategy;
 import it.pagopa.interop.bff.eservice.application.BffEServiceTemplateInstanceUpdateDescriptorCommand;
 import it.pagopa.interop.bff.eservice.infrastructure.BffEServiceDescriptorGateway;
@@ -12,11 +13,11 @@ import it.pagopa.interop.common.eservice.domain.EServiceDescriptorState;
 import it.pagopa.interop.common.eservice_template.application.EServiceTemplateInstanceGateway;
 import it.pagopa.interop.common.eservice_template.application.command.EServiceTemplateInstanceCreationCommand;
 import it.pagopa.interop.common.eservice_template.domain.EServiceTemplate;
+import it.pagopa.interop.common.eservice_template.domain.EServiceTemplateInstanceCreationFailureReason;
 import it.pagopa.interop.common.kernel.domain.Channel;
 import it.pagopa.interop.common.kernel.domain.EServiceDescriptorRef;
 import it.pagopa.interop.common.kernel.domain.EServiceRef;
 import it.pagopa.interop.generated.openapi.clients.bff.model.CreatedResource;
-import it.pagopa.interop.generated.openapi.clients.bff.model.InstanceEServiceSeed;
 import it.pagopa.interop.generated.openapi.clients.bff.model.UpdateEServiceDescriptorTemplateInstanceSeed;
 import it.pagopa.interop.generated.openapi.clients.bff.model.UpdateEServiceTemplateInstanceDescriptorQuotas;
 import lombok.RequiredArgsConstructor;
@@ -28,6 +29,8 @@ public class BffEServiceTemplateInstanceGateway implements EServiceTemplateInsta
     private final BffEServiceRestClient restClient;
     private final BffEServiceGateway eServiceGateway;
     private final BffEServiceDescriptorGateway descriptorGateway;
+    private final EntityStore entityStore;
+    private final BffEServiceTemplateRequestFactory requestFactory;
 
     @Override
     public EService createEServiceInstance(EServiceTemplate template, EServiceTemplateInstanceCreationCommand command) {
@@ -44,7 +47,26 @@ public class BffEServiceTemplateInstanceGateway implements EServiceTemplateInsta
         EServiceDescriptorRef descriptorRef = EServiceDescriptorRef.of(created.getDescriptorId());
 
         descriptorGateway.getEServiceDescriptor(serviceRef, descriptorRef);
-        return eServiceGateway.getEService(serviceRef);
+        EService instance = eServiceGateway.getEService(serviceRef).toBuilder()
+                .instanceLabel(bffCommand.getBffPayload().getInstanceLabel())
+                .build();
+        entityStore.upsert(instance);
+        return instance;
+    }
+
+    @Override
+    public void shouldFailToCreateEServiceInstance(EServiceTemplate template,
+            EServiceTemplateInstanceCreationCommand command, EServiceTemplateInstanceCreationFailureReason reason) {
+        if (!(command instanceof BffEServiceTemplateInstanceCreationCommand bffCommand)) {
+            throw new IllegalArgumentException("Expected BffEServiceTemplateInstanceCreationCommand");
+        }
+        int expectedStatus = switch (reason) {
+            case HYPERLINK_DETECTED -> 400;
+            case DUPLICATE_NAME -> 409;
+        };
+        restClient.createEServiceInstanceFromTemplate(template.getId(), bffCommand.getBffPayload())
+                .withoutPolling()
+                .assertStatusCode(expectedStatus);
     }
 
     @Override
@@ -78,5 +100,17 @@ public class BffEServiceTemplateInstanceGateway implements EServiceTemplateInsta
     @Override
     public boolean supports(Channel channel) {
         return channel == Channel.BFF;
+    }
+
+    @Override
+    public void attemptGeneralDataUpdate(EService instance, String instanceLabel) {
+        restClient.updateEServiceTemplateInstance(instance.getId(),
+                requestFactory.instanceGeneralDataUpdateRequest(instance, instanceLabel)).withoutPolling();
+    }
+
+    @Override
+    public void attemptInstanceLabelUpdate(EServiceRef instanceRef, String instanceLabel) {
+        restClient.updateEServiceInstanceLabel(instanceRef.id(),
+                requestFactory.instanceLabelUpdateRequest(instanceLabel)).withoutPolling();
     }
 }

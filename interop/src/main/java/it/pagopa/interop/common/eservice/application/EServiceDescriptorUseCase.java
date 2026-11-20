@@ -123,6 +123,9 @@ public class EServiceDescriptorUseCase {
 
     private UpdateEServiceDescriptorCommand publicationCommand(EServiceDescriptor descriptor) {
         UpdateEServiceDescriptorCommand command = requestFactory.prepareDescriptorForPublicationCommand();
+        if (descriptor.getAgreementApprovalPolicy() != null) {
+            command.agreementApprovalPolicy(descriptor.getAgreementApprovalPolicy());
+        }
         if (descriptor.getDailyCallsPerConsumer() != null) {
             command.dailyCallsPerConsumer(descriptor.getDailyCallsPerConsumer());
         }
@@ -190,6 +193,11 @@ public class EServiceDescriptorUseCase {
         return eServiceDescriptorGateway.downloadInterface(eService.getRef(), descriptor.getRef());
     }
 
+    public void deleteDraftVersion(EService eService) {
+        EServiceDescriptor draft = eService.getLastDraftDescriptor();
+        eServiceDescriptorGateway.deleteDraftVersion(eService.getRef(), draft.getRef());
+    }
+
     private static void assertSameSnapshot(
             java.util.Optional<it.pagopa.interop.common.eservice.domain.EServiceDescriptorInterface> before,
             java.util.Optional<it.pagopa.interop.common.eservice.domain.EServiceDescriptorInterface> after,
@@ -216,5 +224,24 @@ public class EServiceDescriptorUseCase {
                 || !java.util.Arrays.equals(original.getContent(), current.getContent())) {
             throw new AssertionError("L'interfaccia è cambiata dopo il rifiuto (" + reason + ")");
         }
+    }
+
+    public void attemptProducerDescriptorDetailsRead(EService eService, EServiceDescriptor descriptor) {
+        eServiceDescriptorGateway.attemptProducerDescriptorDetailsRead(eService.getRef(), descriptor.getRef());
+    }
+
+    public void attemptDescriptorExport(EService eService, EServiceDescriptor descriptor) {
+        eServiceDescriptorGateway.attemptDescriptorExport(eService.getRef(), descriptor.getRef());
+    }
+
+    /**
+     * Tenta di creare una nuova versione per l'e-service indicato.
+     * <p>
+     * NOTA (ERROR_085): l'endpoint BFF {@code POST /eservices/{eServiceId}/descriptors} non accetta la descrizione
+     * in input ma clona i dati dalla versione precedente; la fattibilità dello scenario ERROR_085 è dubbia poiché
+     * una versione precedente con link nella descrizione non potrebbe essere stata creata/pubblicata a monte.
+     */
+    public void attemptDescriptorCreation(EService eService) {
+        eServiceDescriptorGateway.attemptDescriptorCreation(eService.getRef());
     }
 }

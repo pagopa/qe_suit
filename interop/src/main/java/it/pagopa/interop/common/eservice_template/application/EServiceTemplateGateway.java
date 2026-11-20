@@ -3,6 +3,7 @@ package it.pagopa.interop.common.eservice_template.application;
 import it.pagopa.interop.common.eservice_template.application.command.*;
 import it.pagopa.interop.common.eservice_template.domain.EServiceTemplate;
 import it.pagopa.interop.common.kernel.domain.Channel;
+import it.pagopa.interop.common.kernel.domain.EServiceRiskAnalysis;
 import it.pagopa.interop.common.kernel.domain.EServiceTemplateRef;
 import org.springframework.plugin.core.Plugin;
 
@@ -18,4 +19,16 @@ public interface EServiceTemplateGateway extends Plugin<Channel> {
     EServiceTemplate updateTemplateIntendedTarget(EServiceTemplateRef templateRef, UpdateEServiceTemplateIntendedTargetCommand command);
 
     EServiceTemplate updateTemplateDescription(EServiceTemplateRef templateRef, UpdateEServiceTemplateDescriptionCommand command);
+
+    EServiceRiskAnalysis addRiskAnalysis(EServiceTemplateRef templateRef, CreateEServiceTemplateRiskAnalysisCommand command);
+
+    void attemptTemplateNameUpdate(EServiceTemplateRef templateRef, UpdateEServiceTemplateNameCommand command);
+
+    void attemptTemplateDescriptionUpdate(EServiceTemplateRef templateRef, UpdateEServiceTemplateDescriptionCommand command);
+
+    void attemptTemplateIntendedTargetUpdate(EServiceTemplateRef templateRef, UpdateEServiceTemplateIntendedTargetCommand command);
+
+    void attemptTemplateCreation(EServiceTemplateCreationCommand command);
+
+    void attemptAddRiskAnalysis(EServiceTemplateRef templateRef, CreateEServiceTemplateRiskAnalysisCommand command);
 }

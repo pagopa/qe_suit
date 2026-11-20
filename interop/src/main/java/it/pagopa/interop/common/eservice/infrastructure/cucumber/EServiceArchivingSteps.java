@@ -14,6 +14,7 @@ public class EServiceArchivingSteps {
     private final AuthSession session;
 
     @Given("{eServiceByAlias} del/di {tenant} interamente in archiviazione")
+    @Given("l'{currentEService} del/di {tenant} interamente in archiviazione")
     public void archiveEntireEService(EService eService, Tenant producer) {
         session.set(producer);
         archiving.archiveEntireEService(eService);

@@ -10,6 +10,8 @@ import lombok.Setter;
 @Getter
 @Setter
 public class EServiceTemplatePreparationConfiguration {
+    private String alias;
+
     @JsonAlias({"tecnologia"})
     @NotNull
     private EServiceTechnology technology;

@@ -10,6 +10,7 @@ import it.pagopa.interop.common.eservice.domain.EServiceDescriptor;
 import it.pagopa.interop.common.kernel.domain.AgreementRef;
 import it.pagopa.interop.common.kernel.domain.Channel;
 import it.pagopa.interop.common.kernel.domain.Delegation;
+import it.pagopa.interop.common.kernel.domain.Document;
 import it.pagopa.interop.web.agreement.application.WebAgreementSecurityGateway;
 import it.pagopa.interop.web.agreement.infrastructure.page.ProducerAgreementDetailPage;
 import it.pagopa.interop.web.eservice.infrastructure.page.ConsumerAgreementDetailsPage;
@@ -24,11 +25,9 @@ import static org.assertj.core.api.Assertions.assertThat;
 import java.util.function.Supplier;
 import java.util.Set;
 
-
 @Service
 @RequiredArgsConstructor
 public class WebAgreementGateway implements AgreementGateway, WebAgreementSecurityGateway {
-
     private final EServiceDetailPage eServiceDetailPage;
     private final ProducerAgreementDetailPage producerAgreementDetailPage;
     private final ConsumerAgreementDetailsPage consumerAgreementDetailsPage;
@@ -93,6 +92,11 @@ public class WebAgreementGateway implements AgreementGateway, WebAgreementSecuri
     }
 
     @Override
+    public void attemptAgreementSubmission(Agreement agreement) {
+        throw new UnsupportedOperationException("WebAgreementGateway does not support attemptAgreementSubmission operation");
+    }
+
+    @Override
     public Agreement activateAgreement(Agreement agreement, @Nullable Delegation delegation) {
         producerAgreementDetailPage.navigateTo(agreement.getId().toString());
         producerAgreementDetailPage.assertLoaded();
@@ -102,8 +106,18 @@ public class WebAgreementGateway implements AgreementGateway, WebAgreementSecuri
     }
 
     @Override
+    public void attemptAgreementActivation(Agreement agreement) {
+        throw new UnsupportedOperationException("WebAgreementGateway does not support attemptAgreementActivation operation");
+    }
+
+    @Override
     public Agreement suspendAgreement(Agreement agreement, @Nullable Delegation delegation) {
         throw new UnsupportedOperationException("WebAgreementGateway does not support suspendAgreement operation");
+    }
+
+    @Override
+    public Agreement rejectAgreement(Agreement agreement) {
+        throw new UnsupportedOperationException("WebAgreementGateway does not support rejectAgreement operation");
     }
 
     @Override
@@ -117,6 +131,21 @@ public class WebAgreementGateway implements AgreementGateway, WebAgreementSecuri
     }
 
     @Override
+    public Agreement awaitContractAvailable(Agreement agreement) {
+        throw new UnsupportedOperationException("WebAgreementGateway does not support awaitContractAvailable operation");
+    }
+
+    @Override
+    public Agreement addConsumerDocument(Agreement agreement, @Nullable String fileName) {
+        throw new UnsupportedOperationException("WebAgreementGateway does not support addConsumerDocument operation");
+    }
+
+    @Override
+    public Agreement removeConsumerDocument(Agreement agreement, Document document) {
+        throw new UnsupportedOperationException("WebAgreementGateway does not support removeLastConsumerDocument operation");
+    }
+
+    @Override
     public void blockUnauthorizedAccessToErogazioneSection(Agreement agreement) {
         producerAgreementDetailPage.navigateTo(agreement.getId().toString());
         notFoundComponent.assertLoaded();
@@ -126,6 +155,11 @@ public class WebAgreementGateway implements AgreementGateway, WebAgreementSecuri
     @Override
     public boolean supports(Channel delimiter) {
         return delimiter == Channel.WEB_BROWSER;
+    }
+
+    @Override
+    public void attemptAgreementSuspension(Agreement agreement) {
+        throw new UnsupportedOperationException("WebAgreementGateway does not support attemptAgreementSuspension operation");
     }
 
     private void verifyAgreementDownloadAvailability(Supplier<Button> downloadButton, Runnable reloadPage) {
@@ -152,5 +186,55 @@ public class WebAgreementGateway implements AgreementGateway, WebAgreementSecuri
                     "Expected agreement button to be disabled for reason: " + reason
             );
         }
+    }
+
+    @Override
+    public void attemptAgreementReactivation(Agreement agreement) {
+        throw new UnsupportedOperationException("WebAgreementGateway does not support attemptAgreementReactivation operation");
+    }
+
+    @Override
+    public void attemptAgreementArchiving(Agreement agreement) {
+        throw new UnsupportedOperationException("WebAgreementGateway does not support attemptAgreementArchiving operation");
+    }
+
+    @Override
+    public void attemptConsumerDocumentUpload(Agreement agreement) {
+        throw new UnsupportedOperationException("WebAgreementGateway does not support attemptConsumerDocumentUpload operation");
+    }
+
+    @Override
+    public void attemptAgreementCreation(EService eService, EServiceDescriptor descriptor) {
+        throw new UnsupportedOperationException("WebAgreementGateway does not support attemptAgreementCreation operation");
+    }
+
+    @Override
+    public void attemptAgreementCloning(Agreement agreement) {
+        throw new UnsupportedOperationException("WebAgreementGateway does not support attemptAgreementCloning operation");
+    }
+
+    @Override
+    public void attemptAgreementRejection(Agreement agreement) {
+        throw new UnsupportedOperationException("WebAgreementGateway does not support attemptAgreementRejection operation");
+    }
+
+    @Override
+    public void attemptAgreementSignedDocumentDownload(Agreement agreement) {
+        throw new UnsupportedOperationException("WebAgreementGateway does not support attemptAgreementSignedDocumentDownload operation");
+    }
+
+    @Override
+    public void attemptInvalidFormatConsumerDocumentUpload(Agreement agreement) {
+        throw new UnsupportedOperationException("WebAgreementGateway does not support attemptInvalidFormatConsumerDocumentUpload operation");
+    }
+
+    @Override
+    public void attemptAgreementDocumentDownload(Agreement agreement) {
+        throw new UnsupportedOperationException("WebAgreementGateway does not support attemptAgreementDocumentDownload operation");
+    }
+
+    @Override
+    public void attemptAgreementDocumentDeletion(Agreement agreement) {
+        throw new UnsupportedOperationException("WebAgreementGateway does not support attemptAgreementDocumentDeletion operation");
     }
 }

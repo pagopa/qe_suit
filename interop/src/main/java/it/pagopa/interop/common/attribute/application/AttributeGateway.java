@@ -22,4 +22,6 @@ public interface AttributeGateway extends Plugin<Channel> {
     void certifiedAttributeThresholdShouldBeRemoved();
 
     Attribute createCertifiedAttribute(Attribute attribute);
+
+    void attemptAttributeCreation(Attribute attribute);
 }

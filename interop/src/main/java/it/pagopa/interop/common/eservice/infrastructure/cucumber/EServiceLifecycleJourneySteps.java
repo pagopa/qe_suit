@@ -13,6 +13,11 @@ public class EServiceLifecycleJourneySteps {
 
     private final InteropJourney interopJourney;
 
+    @Given("la versione {int} dell'e-service predisposta per la pubblicazione")
+    public void prepareEServiceDescriptorForPublication(int version) {
+        interopJourney.prepareEServiceDescriptorForPublication(version);
+    }
+
     @Given("{eServiceDescriptorByVersionAndAlias} del/di {tenant} {eServiceDescriptorState}")
     @Given("{eServiceDescriptorByVersionAndAlias} predisposta dal delegato {tenant} {eServiceDescriptorState}")
     public void bringEServiceDescriptorToState(SelectedEServiceDescriptor selectedEServiceDescriptor, Tenant producer, EServiceDescriptorState targetState) {

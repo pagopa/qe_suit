@@ -154,6 +154,11 @@ public class BffEServiceDescriptorGateway implements EServiceDescriptorGateway {
     }
 
     @Override
+    public EServiceDescriptor addDocument(EServiceRef serviceRef, EServiceDescriptorRef descriptorRef, String path, String name) {
+        return linkDocument(serviceRef, descriptorRef, path, DocumentKind.DOCUMENT, name);
+    }
+
+    @Override
     public void archiveDescriptor(EServiceRef serviceRef, EServiceDescriptorRef descriptorRef, GracePeriodDays gracePeriodDays) {
         archiveGateway.archive(serviceRef, descriptorRef, gracePeriodDays);
     }
@@ -194,5 +199,54 @@ public class BffEServiceDescriptorGateway implements EServiceDescriptorGateway {
     @Override
     public boolean supports(Channel channel) {
         return channel == Channel.BFF;
+    }
+
+    @Override
+    public void deleteDraftVersion(EServiceRef serviceRef, EServiceDescriptorRef descriptorRef) {
+        restClient.deleteDraftVersion(serviceRef.id(), descriptorRef.id())
+                .withoutPolling().assertStatusCode(204);
+        restClient.readDescriptor(serviceRef.id(), descriptorRef.id())
+                .withPolling(PollingStrategy.UNTIL_ERROR).assertStatusCode(404);
+    }
+
+    @Override
+    public void attemptProducerDescriptorDetailsRead(EServiceRef serviceRef, EServiceDescriptorRef descriptorRef) {
+        restClient.readDescriptor(serviceRef.id(), descriptorRef.id()).withoutPolling();
+    }
+
+    @Override
+    public void attemptDescriptorExport(EServiceRef serviceRef, EServiceDescriptorRef descriptorRef) {
+        restClient.exportDescriptor(serviceRef.id(), descriptorRef.id()).withoutPolling();
+    }
+
+    @Override
+    public void attemptValidDocumentUpload(EServiceRef serviceRef, EServiceDescriptorRef descriptorRef) {
+        interfaceGateway.attemptValidDocumentUpload(serviceRef, descriptorRef);
+    }
+
+    @Override
+    public void attemptDocumentUpload(EServiceRef serviceRef, EServiceDescriptorRef descriptorRef, String path, String name) {
+        interfaceGateway.attemptDocumentUpload(serviceRef, descriptorRef, path, name);
+    }
+
+    @Override
+    public void attemptFileUpload(
+            EServiceRef serviceRef,
+            EServiceDescriptorRef descriptorRef,
+            String path,
+            DocumentKind kind,
+            String name
+    ) {
+        interfaceGateway.attemptFileUpload(serviceRef, descriptorRef, path, kind, name);
+    }
+
+    @Override
+    public void attemptDocumentRename(EServiceRef serviceRef, EServiceDescriptorRef descriptorRef, Document document, String newName) {
+        interfaceGateway.attemptDocumentRename(serviceRef, descriptorRef, document.getId(), newName);
+    }
+
+    @Override
+    public void attemptDescriptorCreation(EServiceRef serviceRef) {
+        restClient.addDescriptor(serviceRef.id()).withoutPolling();
     }
 }

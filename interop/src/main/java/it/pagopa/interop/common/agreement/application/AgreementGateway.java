@@ -8,6 +8,7 @@ import it.pagopa.interop.common.eservice.domain.EServiceDescriptor;
 import it.pagopa.interop.common.kernel.domain.AgreementRef;
 import it.pagopa.interop.common.kernel.domain.Channel;
 import it.pagopa.interop.common.kernel.domain.Delegation;
+import it.pagopa.interop.common.kernel.domain.Document;
 import jakarta.annotation.Nullable;
 import org.springframework.plugin.core.Plugin;
 
@@ -41,11 +42,45 @@ public interface AgreementGateway extends Plugin<Channel> {
 
     Agreement submitAgreement(Agreement agreement);
 
+    void attemptAgreementSubmission(Agreement agreement);
+
     Agreement activateAgreement(Agreement agreement, @Nullable Delegation delegation);
 
+    void attemptAgreementActivation(Agreement agreement);
+
     Agreement suspendAgreement(Agreement agreement, @Nullable Delegation delegation);
+
+    Agreement rejectAgreement(Agreement agreement);
 
     Agreement archiveAgreement(Agreement agreement);
 
     Agreement awaitState(Agreement agreement, Set<AgreementState> expectedStates);
+
+    Agreement awaitContractAvailable(Agreement agreement);
+
+    Agreement addConsumerDocument(Agreement agreement, @Nullable String fileName);
+
+    Agreement removeConsumerDocument(Agreement agreement, Document document);
+
+    void attemptAgreementSuspension(Agreement agreement);
+
+    void attemptAgreementReactivation(Agreement agreement);
+
+    void attemptAgreementArchiving(Agreement agreement);
+
+    void attemptConsumerDocumentUpload(Agreement agreement);
+
+    void attemptAgreementCreation(EService eService, EServiceDescriptor descriptor);
+
+    void attemptAgreementCloning(Agreement agreement);
+
+    void attemptAgreementRejection(Agreement agreement);
+
+    void attemptAgreementSignedDocumentDownload(Agreement agreement);
+
+    void attemptInvalidFormatConsumerDocumentUpload(Agreement agreement);
+
+    void attemptAgreementDocumentDownload(Agreement agreement);
+
+    void attemptAgreementDocumentDeletion(Agreement agreement);
 }

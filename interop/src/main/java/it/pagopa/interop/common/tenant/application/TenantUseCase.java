@@ -1,10 +1,14 @@
 package it.pagopa.interop.common.tenant.application;
 
+import it.pagopa.interop.common.attribute.domain.Attribute;
+import it.pagopa.interop.common.attribute.domain.AttributeKind;
 import it.pagopa.interop.common.kernel.domain.AgreementRef;
 import it.pagopa.interop.common.kernel.domain.AttributeRef;
 import it.pagopa.interop.common.kernel.domain.TenantRef;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+
+import java.time.OffsetDateTime;
 
 @Service
 @RequiredArgsConstructor
@@ -18,6 +22,10 @@ public class TenantUseCase {
 
     public void enableProducerDelegationAvailability(TenantRef tenantRef) {
         tenantGateway.enableProducerDelegationAvailability(tenantRef);
+    }
+
+    public void enableConsumerDelegationAvailability(TenantRef tenantRef) {
+        tenantGateway.enableConsumerDelegationAvailability(tenantRef);
     }
 
     public void assignCertifiedAttribute(TenantRef tenantRef, AttributeRef attributeRef) {
@@ -50,5 +58,35 @@ public class TenantUseCase {
 
     public void revokeVerifiedAttribute(TenantRef tenantRef, AttributeRef attributeRef, AgreementRef agreementRef) {
         tenantGateway.revokeVerifiedAttribute(tenantRef, attributeRef, agreementRef);
+    }
+
+    public void attemptVerifiedAttributeExpirationUpdate(TenantRef tenantRef, AttributeRef attributeRef, OffsetDateTime expirationDate) {
+        tenantGateway.attemptVerifiedAttributeExpirationUpdate(tenantRef, attributeRef, expirationDate);
+    }
+
+    public void attemptProducerDelegationAvailability(TenantRef tenantRef) {
+        tenantGateway.attemptProducerDelegationAvailability(tenantRef);
+    }
+
+    public void attemptCertifiedAttributeAssignment(TenantRef tenantRef, Attribute attribute) {
+        if (attribute.getKind() != AttributeKind.CERTIFIED) {
+            throw new IllegalArgumentException("Certified attribute assignment attempt requires kind CERTIFIED, but was "
+                    + attribute.getKind());
+        }
+        tenantGateway.attemptCertifiedAttributeAssignment(tenantRef, attribute.getRef());
+    }
+
+    public void attemptContactEmailSaveWithHyperlinkInNotes(TenantRef tenantRef) {
+        tenantGateway.attemptContactEmailSaveWithHyperlinkInNotes(tenantRef);
+    }
+
+    public void attemptVerifiedAttributeAssignment(
+            TenantRef tenantRef, Attribute attribute, AgreementRef agreementRef, OffsetDateTime expirationDate
+    ) {
+        if (attribute.getKind() != AttributeKind.VERIFIED) {
+            throw new IllegalArgumentException("Attribute assignment attempt requires kind VERIFIED, but was "
+                    + attribute.getKind());
+        }
+        tenantGateway.attemptVerifiedAttributeAssignment(tenantRef, attribute.getRef(), agreementRef, expirationDate);
     }
 }

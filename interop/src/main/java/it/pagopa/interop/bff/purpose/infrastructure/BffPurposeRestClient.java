@@ -104,4 +104,89 @@ public class BffPurposeRestClient extends RestClient {
                 RiskAnalysisFormConfig.class
         );
     }
+
+    public TestChain<Purpose> updatePurpose(@Nonnull UUID purposeId, @Nonnull PurposeUpdateContent payload) {
+        return execute(
+                () -> purposesApi.updatePurpose().purposeIdPath(purposeId).body(payload).execute(Function.identity()),
+                Purpose.class
+        );
+    }
+
+    public TestChain<PurposeVersionResource> clonePurpose(@Nonnull UUID purposeId, @Nonnull PurposeCloneSeed payload) {
+        return execute(
+                () -> purposesApi.clonePurpose()
+                        .purposeIdPath(purposeId)
+                        .body(payload)
+                        .execute(Function.identity()),
+                PurposeVersionResource.class
+        );
+    }
+
+    public TestChain<Void> assignRiskAnalysisReviewer(@Nonnull UUID purposeId, @Nonnull RiskAnalysisAssignmentSeed payload) {
+        return execute(
+                () -> purposesApi.assignRiskAnalysisReviewer()
+                        .purposeIdPath(purposeId)
+                        .body(payload)
+                        .execute(Function.identity()),
+                Void.class
+        );
+    }
+
+    public TestChain<Void> submitRiskAnalysis(@Nonnull UUID purposeId, @Nonnull RiskAnalysisSubmissionSeed payload) {
+        return execute(
+                () -> purposesApi.submitRiskAnalysis()
+                        .purposeIdPath(purposeId)
+                        .body(payload)
+                        .execute(Function.identity()),
+                Void.class
+        );
+    }
+
+    public TestChain<Void> signRiskAnalysis(@Nonnull UUID purposeId, @Nonnull RiskAnalysisSignSeed payload) {
+        return execute(
+                () -> purposesApi.signRiskAnalysis()
+                        .purposeIdPath(purposeId)
+                        .body(payload)
+                        .execute(Function.identity()),
+                Void.class
+        );
+    }
+
+    public TestChain<Void> rejectRiskAnalysis(@Nonnull UUID purposeId, @Nonnull RiskAnalysisRejectionSeed payload) {
+        return execute(
+                () -> purposesApi.rejectRiskAnalysis()
+                        .purposeIdPath(purposeId)
+                        .body(payload)
+                        .execute(Function.identity()),
+                Void.class
+        );
+    }
+
+    public TestChain<PurposeVersionResource> patchUpdatePurposeFromTemplate(
+            @Nonnull UUID purposeTemplateId,
+            @Nonnull UUID purposeId,
+            @Nonnull PatchPurposeUpdateFromTemplateContent payload
+    ) {
+        return execute(
+                () -> purposesApi.patchUpdatePurposeFromTemplate()
+                        .purposeTemplateIdPath(purposeTemplateId)
+                        .purposeIdPath(purposeId)
+                        .body(payload)
+                        .execute(Function.identity()),
+                PurposeVersionResource.class
+        );
+    }
+
+    public TestChain<Void> editRiskAnalysisForm(
+            @Nonnull UUID purposeId,
+            @Nonnull RiskAnalysisFormSeed payload
+    ) {
+        return execute(
+                () -> purposesApi.editRiskAnalysisForm()
+                        .purposeIdPath(purposeId)
+                        .body(payload)
+                        .execute(Function.identity()),
+                Void.class
+        );
+    }
 }

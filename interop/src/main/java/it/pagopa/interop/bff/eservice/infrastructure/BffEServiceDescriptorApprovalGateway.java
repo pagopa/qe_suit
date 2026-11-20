@@ -48,4 +48,10 @@ public class BffEServiceDescriptorApprovalGateway implements EServiceDescriptorA
     public boolean supports(Channel channel) {
         return channel == Channel.BFF;
     }
+
+    @Override
+    public void attemptDescriptorRejection(EServiceRef serviceRef, EServiceDescriptorRef descriptorRef, String reason) {
+        restClient.rejectDescriptor(serviceRef.id(), descriptorRef.id(),
+                new RejectDelegatedEServiceDescriptorSeed().rejectionReason(reason)).withoutPolling();
+    }
 }

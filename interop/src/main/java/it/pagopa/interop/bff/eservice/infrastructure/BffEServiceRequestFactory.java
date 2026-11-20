@@ -203,4 +203,19 @@ public class BffEServiceRequestFactory implements EServiceRequestFactory {
     public boolean supports(@NonNull Channel delimiter) {
         return delimiter == Channel.BFF;
     }
+
+    public UpdateEServiceDescriptorDocumentSeed documentRenameRequest(String newName) {
+        return new UpdateEServiceDescriptorDocumentSeed().prettyName(newName);
+    }
+
+    public EServiceArchivingSeed archivingRequest(it.pagopa.interop.common.eservice.domain.GracePeriodDays gracePeriodDays) {
+        return Instancio.of(EServiceArchivingSeed.class)
+                .set(field(EServiceArchivingSeed::getGracePeriodDays), GracePeriodDays.fromValue(gracePeriodDays.getDays()))
+                .set(field(EServiceArchivingSeed::getArchivingReason), RandomUtils.randomAlphanumericName("archiving-reason"))
+                .create();
+    }
+
+    public PatchUpdateEServiceSeed partialNameUpdateRequest(String name) {
+        return new PatchUpdateEServiceSeed().name(name);
+    }
 }

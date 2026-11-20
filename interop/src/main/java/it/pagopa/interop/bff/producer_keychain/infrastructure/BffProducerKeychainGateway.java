@@ -4,7 +4,10 @@ import it.pagopa.application.context.EntityStore;
 import it.pagopa.infrastructure.template.action.strategy.PollingStrategy;
 import it.pagopa.interop.bff.producer_keychain.application.BffProducerKeyCreationCommand;
 import it.pagopa.interop.bff.producer_keychain.application.BffProducerKeychainCreationCommand;
+import it.pagopa.interop.bff.infrastructure.security.BffKeyRequestFactory;
+import it.pagopa.interop.common.kernel.domain.EServiceRef;
 import it.pagopa.interop.common.kernel.domain.Channel;
+import it.pagopa.interop.common.kernel.domain.KeyRegistrationMaterial;
 import it.pagopa.interop.common.producer_keychain.application.ProducerKeychainGateway;
 import it.pagopa.interop.common.producer_keychain.application.command.ProducerKeyCreationCommand;
 import it.pagopa.interop.common.producer_keychain.application.command.ProducerKeychainCreationCommand;
@@ -26,6 +29,7 @@ public class BffProducerKeychainGateway implements ProducerKeychainGateway {
     private final BffProducerKeychainRestClient restClient;
     private final BffProducerKeychainMapper mapper;
     private final EntityStore entityStore;
+    private final BffKeyRequestFactory keyRequests;
 
     @Override
     public ProducerKeychain createProducerKeychain(ProducerKeychainCreationCommand command) {
@@ -96,5 +100,23 @@ public class BffProducerKeychainGateway implements ProducerKeychainGateway {
     public boolean supports(@NonNull Channel channel) {
         return channel == Channel.BFF;
     }
-}
 
+    @Override
+    public void attemptEServiceAssociation(ProducerKeychainRef ref, EServiceRef eServiceRef) {
+        restClient.addEService(ref.id(), eServiceRef.id()).withoutPolling();
+    }
+
+    @Override
+    public void attemptKeyRegistration(ProducerKeychain keychain, KeyRegistrationMaterial material, String name) {
+        restClient.createProducerKey(keychain.getId(),
+                keyRequests.registrationRequest(material, name, keychain.getKeys())).withoutPolling();
+    }
+
+    @Override
+    public void attemptProducerKeychainCreation(ProducerKeychainCreationCommand command) {
+        if (!(command instanceof BffProducerKeychainCreationCommand bffCommand)) {
+            throw new IllegalArgumentException("Expected BFF producer keychain creation command");
+        }
+        restClient.createProducerKeychain(bffCommand.getSeed()).withoutPolling();
+    }
+}

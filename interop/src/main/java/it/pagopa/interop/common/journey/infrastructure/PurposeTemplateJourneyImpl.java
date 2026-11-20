@@ -44,5 +44,12 @@ public class PurposeTemplateJourneyImpl implements PurposeTemplateJourney<Purpos
         purposeTemplateUseCase.linkEService(purposeTemplate, eService);
         return this;
     }
+
+    @Override
+    public PurposeTemplateJourneyImpl addAnnotationToPurposeTemplateRiskAnalysisAnswer() {
+        PurposeTemplate purposeTemplate = entityStore.getLastOrThrow(PurposeTemplate.class);
+        purposeTemplateUseCase.addRiskAnalysisAnswerAnnotation(purposeTemplate);
+        return this;
+    }
 }
 

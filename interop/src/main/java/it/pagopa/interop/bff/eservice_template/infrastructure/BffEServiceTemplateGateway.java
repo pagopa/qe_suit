@@ -8,8 +8,10 @@ import it.pagopa.interop.common.eservice_template.application.command.*;
 import it.pagopa.interop.common.eservice_template.domain.EServiceTemplate;
 import it.pagopa.interop.common.eservice_template.domain.EServiceTemplateVersion;
 import it.pagopa.interop.common.kernel.domain.Channel;
+import it.pagopa.interop.common.kernel.domain.EServiceRiskAnalysis;
 import it.pagopa.interop.common.kernel.domain.EServiceTemplateRef;
 import it.pagopa.interop.common.kernel.domain.EServiceTemplateVersionRef;
+import it.pagopa.utils.async.PollingUtils;
 import lombok.RequiredArgsConstructor;
 import org.jspecify.annotations.NonNull;
 import org.springframework.stereotype.Service;
@@ -93,6 +95,31 @@ public class BffEServiceTemplateGateway implements EServiceTemplateGateway {
                 .get();
     }
 
+    @Override
+    public EServiceRiskAnalysis addRiskAnalysis(
+            EServiceTemplateRef templateRef,
+            CreateEServiceTemplateRiskAnalysisCommand command
+    ) {
+        if (!(command instanceof BffCreateEServiceTemplateRiskAnalysisCommand bffCommand)) {
+            throw new IllegalArgumentException(
+                    "Command must be an instance of " + BffCreateEServiceTemplateRiskAnalysisCommand.class.getSimpleName()
+            );
+        }
+
+        restClient.addRiskAnalysis(templateRef.id(), bffCommand.getBffPayload())
+                .withPolling(PollingStrategy.UNTIL_SUCCESS)
+                .get();
+
+        EServiceRiskAnalysis eServiceRiskAnalysis = PollingUtils.pollUntil(
+            () -> getEServiceTemplate(templateRef).getRiskAnalyses().stream()
+                .filter(analysis -> bffCommand.getName().equals(analysis.getName()))
+                .findFirst(),
+            Optional::isPresent
+        ).orElseThrow();
+        entityStore.upsert(eServiceRiskAnalysis);
+        return eServiceRiskAnalysis;
+    }
+
     private EServiceTemplate refresh(EServiceTemplateRef templateRef, EServiceTemplateVersionRef versionRef) {
         EServiceTemplateVersion createdVersion = versionGateway.getEServiceTemplateVersion(templateRef, versionRef);
         EServiceTemplate savedTemplate = getEServiceTemplate(templateRef);
@@ -104,5 +131,46 @@ public class BffEServiceTemplateGateway implements EServiceTemplateGateway {
     @Override
     public boolean supports(@NonNull Channel delimiter) {
         return delimiter == Channel.BFF;
+    }
+
+    @Override
+    public void attemptTemplateNameUpdate(EServiceTemplateRef templateRef, UpdateEServiceTemplateNameCommand command) {
+        if (!(command instanceof BffUpdateEServiceTemplateNameCommand bffCommand))
+            throw new IllegalArgumentException("Command must be an instance of " + BffUpdateEServiceTemplateNameCommand.class.getSimpleName());
+        restClient.updateTemplateName(templateRef.id(), bffCommand.getBffPayload()).withoutPolling();
+    }
+
+    @Override
+    public void attemptTemplateDescriptionUpdate(EServiceTemplateRef templateRef, UpdateEServiceTemplateDescriptionCommand command) {
+        if (!(command instanceof BffUpdateEServiceTemplateDescriptionCommand bffCommand))
+            throw new IllegalArgumentException("Command must be an instance of " + BffUpdateEServiceTemplateDescriptionCommand.class.getSimpleName());
+        restClient.updateTemplateDescription(templateRef.id(), bffCommand.getBffPayload()).withoutPolling();
+    }
+
+    @Override
+    public void attemptTemplateIntendedTargetUpdate(EServiceTemplateRef templateRef, UpdateEServiceTemplateIntendedTargetCommand command) {
+        if (!(command instanceof BffUpdateEServiceTemplateIntendedTargetCommand bffCommand))
+            throw new IllegalArgumentException("Command must be an instance of " + BffUpdateEServiceTemplateIntendedTargetCommand.class.getSimpleName());
+        restClient.updateTemplateIntendedTarget(templateRef.id(), bffCommand.getBffPayload()).withoutPolling();
+    }
+
+    @Override
+    public void attemptTemplateCreation(EServiceTemplateCreationCommand command) {
+        if (!(command instanceof BffEServiceTemplateCreationCommand bffCommand))
+            throw new IllegalArgumentException("Command must be an instance of " + BffEServiceTemplateCreationCommand.class.getSimpleName());
+        restClient.createEServiceTemplate(bffCommand.getBffCreationPayload()).withoutPolling();
+    }
+
+    @Override
+    public void attemptAddRiskAnalysis(
+            EServiceTemplateRef templateRef,
+            CreateEServiceTemplateRiskAnalysisCommand command
+    ) {
+        if (!(command instanceof BffCreateEServiceTemplateRiskAnalysisCommand bffCommand)) {
+            throw new IllegalArgumentException(
+                    "Command must be an instance of " + BffCreateEServiceTemplateRiskAnalysisCommand.class.getSimpleName()
+            );
+        }
+        restClient.addRiskAnalysis(templateRef.id(), bffCommand.getBffPayload()).withoutPolling();
     }
 }

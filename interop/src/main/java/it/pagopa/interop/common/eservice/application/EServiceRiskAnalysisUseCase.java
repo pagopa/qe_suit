@@ -31,19 +31,90 @@ public class EServiceRiskAnalysisUseCase {
     }
 
     public EServiceRiskAnalysis addLatestRiskAnalysis(Tenant tenant, EService eService, boolean completed) {
+        RiskAnalysisForm form = buildRiskAnalysisForm(tenant, completed);
+        return eServiceRiskAnalysisGateway.addRiskAnalysis(eService.getRef(), form);
+    }
+
+    public EServiceRiskAnalysis addLatestRiskAnalysis(
+            Tenant tenant,
+            EService eService,
+            boolean completed,
+            @jakarta.annotation.Nullable String name
+    ) {
+        RiskAnalysisForm form = buildRiskAnalysisForm(tenant, completed);
+        return name == null || name.isBlank()
+                ? eServiceRiskAnalysisGateway.addRiskAnalysis(eService.getRef(), form)
+                : eServiceRiskAnalysisGateway.addRiskAnalysis(eService.getRef(), form, name);
+    }
+
+    private RiskAnalysisForm buildRiskAnalysisForm(Tenant tenant, boolean completed) {
         RiskAnalysisFormConfig latestConfig = riskAnalysisGateway.getLatestRiskAnalysisConfig(tenant);
         Map<String, List<String>> answers =
                 riskAnalysisDataFactory.getTemplateForTenant(tenant, completed);
+
+        return RiskAnalysisForm.builder()
+                .version(latestConfig.getVersion())
+                .answers(answers)
+                .build();
+    }
+
+    public EServiceRiskAnalysis getRiskAnalysis(EService eService) {
+        return eServiceRiskAnalysisGateway.getRiskAnalysis(eService.getRef());
+    }
+
+    public void attemptAddRiskAnalysisWithFreeTextAnswer(
+            Tenant tenant,
+            EService eService,
+            String freeTextAnswer
+    ) {
+        RiskAnalysisFormConfig latestConfig = riskAnalysisGateway.getLatestRiskAnalysisConfig(tenant);
+        Map<String, List<String>> answers = new java.util.LinkedHashMap<>(
+                riskAnalysisDataFactory.getTemplateForTenant(tenant, true)
+        );
+        String freeTextKey = resolveFreeTextQuestionKey(latestConfig, answers);
+        answers.put(freeTextKey, List.of(freeTextAnswer));
 
         RiskAnalysisForm form = RiskAnalysisForm.builder()
                 .version(latestConfig.getVersion())
                 .answers(answers)
                 .build();
 
-        return eServiceRiskAnalysisGateway.addRiskAnalysis(eService.getRef(), form);
+        eServiceRiskAnalysisGateway.attemptAddRiskAnalysis(eService.getRef(), form, null);
     }
 
-    public EServiceRiskAnalysis getRiskAnalysis(EService eService) {
-        return eServiceRiskAnalysisGateway.getRiskAnalysis(eService.getRef());
+    public void attemptRenameRiskAnalysis(
+            Tenant tenant,
+            EService eService,
+            EServiceRiskAnalysis riskAnalysis,
+            String newName
+    ) {
+        RiskAnalysisForm form = riskAnalysis.getRiskAnalysisForm() != null
+                ? riskAnalysis.getRiskAnalysisForm()
+                : buildRiskAnalysisForm(tenant, true);
+        eServiceRiskAnalysisGateway.attemptUpdateRiskAnalysis(
+                eService.getRef(),
+                riskAnalysis.getRef(),
+                form,
+                newName
+        );
+    }
+
+    private static String resolveFreeTextQuestionKey(
+            RiskAnalysisFormConfig config,
+            Map<String, List<String>> answers
+    ) {
+        if (config != null && config.getQuestions() != null) {
+            for (RiskAnalysisFormConfig.Question question : config.getQuestions()) {
+                if ("FREETEXT".equals(question.getDataType()) && answers.containsKey(question.getId())) {
+                    return question.getId();
+                }
+            }
+            for (RiskAnalysisFormConfig.Question question : config.getQuestions()) {
+                if ("FREETEXT".equals(question.getDataType())) {
+                    return question.getId();
+                }
+            }
+        }
+        return "institutionalPurpose";
     }
 }

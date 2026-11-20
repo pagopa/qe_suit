@@ -104,4 +104,9 @@ public class WebAttributeGateway implements AttributeGateway {
     public boolean supports(Channel delimiter) {
         return delimiter == Channel.WEB_BROWSER;
     }
+
+    @Override
+    public void attemptAttributeCreation(Attribute attribute) {
+        throw new UnsupportedOperationException("Attribute creation attempts are not supported on the WEB channel");
+    }
 }

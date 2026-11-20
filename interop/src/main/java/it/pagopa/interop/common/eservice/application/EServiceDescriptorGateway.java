@@ -4,6 +4,8 @@ import it.pagopa.interop.common.eservice.application.command.UpdateEServiceDescr
 import it.pagopa.interop.common.eservice.domain.*;
 import it.pagopa.interop.common.kernel.domain.ApiInterface;
 import it.pagopa.interop.common.kernel.domain.Channel;
+import it.pagopa.interop.common.kernel.domain.Document;
+import it.pagopa.interop.common.kernel.domain.DocumentKind;
 import it.pagopa.interop.common.kernel.domain.EServiceDescriptorRef;
 import it.pagopa.interop.common.kernel.domain.EServiceRef;
 import org.springframework.plugin.core.Plugin;
@@ -19,6 +21,8 @@ public interface EServiceDescriptorGateway extends Plugin<Channel> {
     );
 
     EServiceDescriptor addDescriptor(EServiceRef eServiceRef);
+
+    EServiceDescriptor addDocument(EServiceRef eServiceRef, EServiceDescriptorRef descriptorRef, String path, String name);
 
     EServiceDescriptor publishDescriptor(EServiceRef eServiceRef, EServiceDescriptorRef descriptorRef);
 
@@ -76,4 +80,26 @@ public interface EServiceDescriptorGateway extends Plugin<Channel> {
             EServiceRef eServiceRef,
             EServiceDescriptorRef descriptorRef
     );
+
+    void deleteDraftVersion(EServiceRef eServiceRef, EServiceDescriptorRef descriptorRef);
+
+    void attemptProducerDescriptorDetailsRead(EServiceRef eServiceRef, EServiceDescriptorRef descriptorRef);
+
+    void attemptDescriptorExport(EServiceRef eServiceRef, EServiceDescriptorRef descriptorRef);
+
+    void attemptValidDocumentUpload(EServiceRef eServiceRef, EServiceDescriptorRef descriptorRef);
+
+    void attemptDocumentUpload(EServiceRef eServiceRef, EServiceDescriptorRef descriptorRef, String path, String name);
+
+    void attemptFileUpload(
+            EServiceRef eServiceRef,
+            EServiceDescriptorRef descriptorRef,
+            String path,
+            DocumentKind kind,
+            String name
+    );
+
+    void attemptDocumentRename(EServiceRef eServiceRef, EServiceDescriptorRef descriptorRef, Document document, String newName);
+
+    void attemptDescriptorCreation(EServiceRef eServiceRef);
 }
