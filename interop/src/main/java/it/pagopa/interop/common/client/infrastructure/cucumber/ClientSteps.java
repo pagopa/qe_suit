@@ -33,7 +33,7 @@ public class ClientSteps {
     private Client clientReference;
 
     @When("l'{userRole} di/del {tenant} richiede la generazione del voucher per il client e la finalità attiva")
-    public void generateClientVoucher(UserRole role, Tenant tenant)
+    public void generateClientEServiceVoucher(UserRole role, Tenant tenant)
             throws NoSuchAlgorithmException, JsonProcessingException {
         Client client = entityStore.getLastOrThrow(Client.class);
         Purpose purpose = entityStore.getAll(Purpose.class).stream()
@@ -42,6 +42,14 @@ public class ClientSteps {
                 .orElseThrow(() -> new NoSuchElementException("Nessuna finalita attiva presente nell'entity store"));
         interopJourney.withProducer(tenant, role);
         clientUseCase.generateVoucher(client, purpose);
+    }
+
+    @When("l'{userRole} di/del {tenant} richiede la generazione del voucher per il client interop")
+    public void generateClientInteropVoucher(UserRole role, Tenant tenant)
+            throws NoSuchAlgorithmException, JsonProcessingException {
+        Client client = entityStore.getLastOrThrow(Client.class);
+        interopJourney.withProducer(tenant, role);
+        clientUseCase.generateVoucher(client, null);
     }
 
     @Given("i dati e le associazioni del client {string} allo stato attuale appuntati come riferimento")

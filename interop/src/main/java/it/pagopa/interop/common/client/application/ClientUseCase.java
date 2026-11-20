@@ -10,6 +10,7 @@ import it.pagopa.kernel.security.AccessToken;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
+import javax.annotation.Nullable;
 import java.security.NoSuchAlgorithmException;
 import java.util.function.Consumer;
 
@@ -23,7 +24,10 @@ public class ClientUseCase {
     private final ClientCommandFactory clientCommandFactory;
     private final ClientAssertionGateway clientAssertionGateway;
 
-    public AccessToken generateVoucher(Client client, Purpose purpose) throws NoSuchAlgorithmException, JsonProcessingException {
+    public AccessToken generateVoucher(
+            Client client,
+            @Nullable Purpose purpose
+    ) throws NoSuchAlgorithmException, JsonProcessingException {
         if (client.getKind() == null) {
             throw new IllegalArgumentException("Tipologia non specificata per il client " + client.getId());
         }
