@@ -86,8 +86,8 @@ public class EServiceJourneyImpl implements EServiceJourney<EServiceJourneyImpl>
     }
 
     @Override
-    public EServiceJourneyImpl assertEServiceNotPresentInProducerCatalog(String eserviceName) {
-        eServiceUseCase.assertEServiceNotPresentInProducerCatalog(eserviceName);
+    public EServiceJourneyImpl assertEServiceHasNoInterface(String eserviceName) {
+        eServiceUseCase.assertEServiceHasNoInterface(eserviceName);
         return this;
     }
 

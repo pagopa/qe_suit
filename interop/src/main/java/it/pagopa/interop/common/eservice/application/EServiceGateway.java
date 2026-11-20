@@ -28,5 +28,5 @@ public interface EServiceGateway extends Plugin<Channel> {
             SoapInterfaceUploadFailureReason reason
     );
 
-    void assertEServiceNotPresentInProducerCatalog(String eserviceName);
+    void assertEServiceHasNoInterface(String eserviceName);
 }

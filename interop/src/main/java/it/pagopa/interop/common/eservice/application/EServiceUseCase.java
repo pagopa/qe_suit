@@ -55,7 +55,7 @@ public class EServiceUseCase {
         eServiceGateway.shouldFailToImportSOAPEService(eserviceName, wsdlResourcePath, reason);
     }
 
-    public void assertEServiceNotPresentInProducerCatalog(String eserviceName) {
-        eServiceGateway.assertEServiceNotPresentInProducerCatalog(eserviceName);
+    public void assertEServiceHasNoInterface(String eserviceName) {
+        eServiceGateway.assertEServiceHasNoInterface(eserviceName);
     }
 }

@@ -31,9 +31,9 @@ public class EServiceSteps {
         interopJourney.shouldFailToImportSOAPEService(lastImportedEServiceName, "assets/wsdl/" + fixture, reason);
     }
 
-    @Then("l'e-service importato non è presente tra gli e-service dell'erogatore")
-    public void assertImportedEServiceNotPresentInProducerCatalog() {
-        interopJourney.assertEServiceNotPresentInProducerCatalog(lastImportedEServiceName);
+    @Then("l'e-service importato non è legato a nessun file di interfaccia")
+    public void assertImportedEServiceHasNoInterface() {
+        interopJourney.assertEServiceHasNoInterface(lastImportedEServiceName);
     }
 
     @Given("la versione {int} dell'{currentEService} (è )in fase di archiviazione con un periodo di preavviso di {gracePeriodDays} giorni")

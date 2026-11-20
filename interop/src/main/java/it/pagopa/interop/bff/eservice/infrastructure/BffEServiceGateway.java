@@ -10,9 +10,12 @@ import it.pagopa.interop.common.eservice.domain.*;
 import it.pagopa.interop.common.kernel.domain.Channel;
 import it.pagopa.interop.common.kernel.domain.EServiceDescriptorRef;
 import it.pagopa.interop.common.kernel.domain.EServiceRef;
+import it.pagopa.interop.generated.openapi.clients.bff.model.CompactProducerDescriptor;
 import it.pagopa.interop.generated.openapi.clients.bff.model.EServiceArchivingSeed;
 import it.pagopa.interop.generated.openapi.clients.bff.model.FileResource;
 import it.pagopa.interop.generated.openapi.clients.bff.model.PresignedUrl;
+import it.pagopa.interop.generated.openapi.clients.bff.model.ProducerEService;
+import it.pagopa.interop.generated.openapi.clients.bff.model.ProducerEServiceDescriptor;
 import it.pagopa.interop.generated.openapi.clients.bff.model.ProducerEServices;
 import it.pagopa.utils.FileUtils;
 import it.pagopa.utils.RandomUtils;
@@ -26,10 +29,8 @@ import java.io.IOException;
 import java.io.UncheckedIOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
-import java.util.LinkedHashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Optional;
+import java.util.*;
+import java.util.stream.Stream;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipOutputStream;
 
@@ -133,12 +134,28 @@ public class BffEServiceGateway implements EServiceGateway {
     }
 
     @Override
-    public void assertEServiceNotPresentInProducerCatalog(String eserviceName) {
+    public void assertEServiceHasNoInterface(String eserviceName) {
         ProducerEServices producerEServices = restClient.getProducerEServices(eserviceName)
                 .withPolling(PollingStrategy.UNTIL_SUCCESS)
                 .get();
-        assertThat(producerEServices.getResults())
-                .noneMatch(eService -> eserviceName.equals(eService.getName()));
+        List<ProducerEService> matchingEServices = producerEServices.getResults().stream()
+                .filter(eService -> eserviceName.equals(eService.getName()))
+                .toList();
+        for (ProducerEService eService : matchingEServices) {
+            Stream.of(eService.getDraftDescriptor(), eService.getActiveDescriptor())
+                    .filter(Objects::nonNull)
+                    .map(CompactProducerDescriptor::getId)
+                    .distinct()
+                    .forEach(descriptorId -> {
+                        ProducerEServiceDescriptor descriptor = restClient.readDescriptor(eService.getId(), descriptorId)
+                                .withPolling(PollingStrategy.UNTIL_SUCCESS)
+                                .get();
+                        assertThat(descriptor.getInterface())
+                                .as("L'e-service importato '%s' (descriptor %s) non deve avere alcun file di interfaccia associato",
+                                        eserviceName, descriptorId)
+                                .isNull();
+                    });
+        }
     }
 
     private byte[] buildSoapImportZip(String eserviceName, String wsdlResourcePath) {

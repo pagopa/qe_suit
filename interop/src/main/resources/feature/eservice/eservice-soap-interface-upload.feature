@@ -21,7 +21,7 @@ Feature: Validazione del file WSDL nel caricamento dell'interfaccia di un e-serv
 
   Scenario Outline: [ESERVICE_SOAP_IMPORT_1] Rifiuto dell'importazione di un e-service SOAP con WSDL non valido
     When l'erogatore tenta di importare un e-service SOAP con interfaccia "<fixture>" ottenendo un rifiuto per "<motivo>"
-    Then l'e-service importato non è presente tra gli e-service dell'erogatore
+    Then l'e-service importato non è legato a nessun file di interfaccia
 
     Examples:
       | fixture                     | motivo                            |
