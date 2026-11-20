@@ -35,6 +35,7 @@ public class M2MClientRestClient extends RestClient {
 
     public TestChain<Client> updateClient(UUID clientId, ClientUpdateSeed clientUpdateSeed) {
         // TODO serve il rilascio di PIN-11333 per fixare errore con rotta PATCH /clients/{clientId} su M2M
+        // Per QA tracciato il problema con PIN-11637
         return execute(
                 () -> {
                     Map<String, String> payload = new LinkedHashMap<>();
