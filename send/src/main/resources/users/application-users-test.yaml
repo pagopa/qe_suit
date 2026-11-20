@@ -34,15 +34,15 @@ users:
       - party-role: MANAGER
         role: pg-admin
   Impresa_2:
-    username: MarcoPorcioCatoneSpqr
-    password: ${pn.external.password.marcoporciocatonespqr:}
-    organization: "Effimera Stoica S.r.l."
-    tax-id: "12825810299"
-    organization-id: 6aea890b-88be-4338-bdb6-634dad7269cf
-    uid: acc1fef0-786c-4c59-b80f-ab935718f963
-    denomination: Marco Porcio
-    family-name: Catone
-    personal-tax-id: CTNMCP80A01H501M
+    username: LucioAnneoSeneca
+    password: ${pn.external.password.lucioanneoseneca:}
+    organization: "LuAnSe SpA"
+    tax-id: "20517490320"
+    organization-id: b05de777-80c6-4549-a054-d8dfda139c62
+    uid: a7b0191f-fd1c-48ea-b2eb-d12f9f1ba50e
+    denomination: Lucio Anneo
+    family-name: Seneca
+    personal-tax-id: SNCLNN00A01H501S
     roles:
       - party-role: MANAGER
         role: pg-admin
