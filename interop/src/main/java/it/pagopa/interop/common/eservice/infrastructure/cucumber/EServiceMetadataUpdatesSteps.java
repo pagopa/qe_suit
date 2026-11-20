@@ -52,7 +52,8 @@ public class EServiceMetadataUpdatesSteps {
     }
 
     @When("un {userRole} di/del {tenant} tenta la modifica dei metadati dell'e-service {string}:")
-    public void tryUpdateMetadata(UserRole role, Tenant producer, String alias, List<EServiceMetadataUpdateConfiguration> configurations) {
+    @When("un sistema informatico autenticato con ruolo {userM2MRole} per conto del {tenant} tenta la modifica dei metadati dell'e-service {string}:")
+    public void tryUpdateMetadata(InteropRole role, Tenant producer, String alias, List<EServiceMetadataUpdateConfiguration> configurations) {
         EService currentEService = entityStore.getByAliasOrThrow(alias, EService.class);
         initialEService = currentEService.toBuilder()
                 .descriptors(new ArrayList<>(currentEService.getDescriptors()))
@@ -64,18 +65,20 @@ public class EServiceMetadataUpdatesSteps {
                 .tryUpdateEServiceMetadata(updateCommand);
     }
 
+    @When("un sistema informatico autenticato con ruolo {userM2MRole} per conto di/del {tenant} richiede per l'e-service {string} il nome di {string} cambiandone soltanto le maiuscole e una nuova descrizione")
     @When("un {userRole} di/del {tenant} richiede per l'e-service {string} il nome di {string} cambiandone soltanto le maiuscole e una nuova descrizione")
-    public void updateEServiceNameWithExisting(UserRole role, Tenant producer, String targetAlias, String existingAlias) {
+    public void updateEServiceNameWithExisting(InteropRole role, Tenant producer, String targetAlias, String existingAlias) {
         updateEServiceNameWithExisting(role, producer, targetAlias, existingAlias, true, true, true);
     }
 
+    @When("un sistema informatico autenticato con ruolo {userM2MRole} per conto di/del {tenant} richiede di assegnare all'e-service {string} il nome di {string}")
     @When("un {userRole} di/del {tenant} richiede di assegnare all'e-service {string} il nome di {string}")
-    public void updateEServiceNameWithExistingOfAnotherTenant(UserRole role, Tenant producer, String targetAlias, String existingAlias) {
+    public void updateEServiceNameWithExistingOfAnotherTenant(InteropRole role, Tenant producer, String targetAlias, String existingAlias) {
         updateEServiceNameWithExisting(role, producer, targetAlias, existingAlias, false, false, false);
     }
 
     private void updateEServiceNameWithExisting(
-            UserRole role,
+            InteropRole role,
             Tenant producer,
             String targetAlias,
             String existingAlias,
@@ -106,17 +109,19 @@ public class EServiceMetadataUpdatesSteps {
         }
     }
 
+    @When("un sistema informatico autenticato con ruolo {userM2MRole} per conto di/del {tenant} tenta la modifica del campo {string} dell'e-service {string} con un valore di {int} caratteri")
     @When("un {userRole} di/del {tenant} tenta la modifica del campo {string} dell'e-service {string} con un valore di {int} caratteri")
-    public void tryUpdateEServiceField(UserRole role, Tenant producer, String fieldName, String alias, int fieldLength) {
+    public void tryUpdateEServiceField(InteropRole role, Tenant producer, String fieldName, String alias, int fieldLength) {
         updateEServiceField(role, producer, fieldName, alias, fieldLength, true);
     }
 
+    @When("un sistema informatico autenticato con ruolo {userM2MRole} per conto di/del {tenant} richiede la modifica del campo {string} dell'e-service {string} con un valore di {int} caratteri")
     @When("un {userRole} di/del {tenant} richiede la modifica del campo {string} dell'e-service {string} con un valore di {int} caratteri")
-    public void updateEServiceField(UserRole role, Tenant producer, String fieldName, String alias, int fieldLength) {
+    public void updateEServiceField(InteropRole role, Tenant producer, String fieldName, String alias, int fieldLength) {
         updateEServiceField(role, producer, fieldName, alias, fieldLength, false);
     }
 
-    private void updateEServiceField(UserRole role, Tenant producer, String fieldName, String alias, int fieldLength, boolean onlyTry) {
+    private void updateEServiceField(InteropRole role, Tenant producer, String fieldName, String alias, int fieldLength, boolean onlyTry) {
         if (fieldLength < 0) {
             throw new IllegalArgumentException("La lunghezza del campo non può essere negativa: " + fieldLength);
         }
@@ -146,8 +151,23 @@ public class EServiceMetadataUpdatesSteps {
         }
     }
 
+    @When("un sistema informatico autenticato con ruolo {userM2MRole} per conto di/del {tenant} richiede la modifica dell'e-service {string} con un payload vuoto")
     @When("un {userRole} di/del {tenant} richiede la modifica dell'e-service {string} con un payload vuoto")
-    public void updateEServiceFieldWithEmptyPayload(UserRole role, Tenant producer, String alias) {
+    public void updateEServiceFieldWithEmptyPayload(InteropRole role, Tenant producer, String alias) {
+        EService currentEService = entityStore.getByAliasOrThrow(alias, EService.class);
+        initialEService = currentEService.toBuilder()
+                .descriptors(new ArrayList<>(currentEService.getDescriptors()))
+                .build();
+        requestedMetadata = Map.of();
+
+        interopJourney
+                .withProducer(producer, role)
+                .updateEServiceMetadata(command -> command.alias(alias));
+    }
+
+    @When("un sistema informatico autenticato con ruolo {userM2MRole} per conto di/del {tenant} tenta la modifica dell'e-service {string} con un payload vuoto")
+    @When("un {userRole} di/del {tenant} tenta la modifica dell'e-service {string} con un payload vuoto")
+    public void tryUpdateEServiceFieldWithEmptyPayload(InteropRole role, Tenant producer, String alias) {
         EService currentEService = entityStore.getByAliasOrThrow(alias, EService.class);
         initialEService = currentEService.toBuilder()
                 .descriptors(new ArrayList<>(currentEService.getDescriptors()))
