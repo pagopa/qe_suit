@@ -1,5 +1,7 @@
 package it.pagopa.send.suite.contract;
 
+import it.pagopa.send.common.legal_notification.domain.FeePolicy;
+import it.pagopa.send.common.legal_notification.domain.PhysicalCommunicationType;
 import it.pagopa.infrastructure.contract.browser.WebScenario;
 import it.pagopa.send.TestBootApp;
 import it.pagopa.send.common.user.domain.User;
@@ -8,6 +10,7 @@ import it.pagopa.send.common.user.domain.UserProvider;
 import it.pagopa.send.common.infrastructure.WebBrowserContractValidator;
 import it.pagopa.send.common.infrastructure.config.JunitContextConfig;
 import it.pagopa.send.common.journey.application.SendJourney;
+import it.pagopa.send.common.legal_notification.domain.LegalNotificationCreationCommand;
 import it.pagopa.send.common.legal_notification.domain.LegalNotificationDomain;
 import it.pagopa.send.common.legal_notification.domain.NotificationStatus;
 import it.pagopa.send.web.notification_details.infrastructure.page.MittenteNotificationDetailsPage;
@@ -23,6 +26,7 @@ import org.junit.jupiter.api.TestFactory;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.TestConstructor;
 
+import java.util.List;
 import java.util.Map;
 import java.util.stream.Stream;
 
@@ -53,13 +57,12 @@ public class WebNotificationDetailsContractTest {
         ));
 
         LegalNotificationDomain createdNotification = sendJourney
-                .withSender(sender)
-                .prepareNotification(Map.of(
-                        "subject", "Comunicazione di test multi-destinatario",
-                        "physicalCommunication", "REGISTERED_LETTER_890",
-                        "feePolicy", "FLAT_RATE"
-                ))
-                .withRecipient(user1)
+                .prepareNotification(new LegalNotificationCreationCommand()
+                        .sender(sender)
+                        .subject("Comunicazione di test multi-destinatario")
+                        .physicalCommunication(PhysicalCommunicationType.REGISTERED_LETTER_890)
+                        .feePolicy(FeePolicy.FLAT_RATE)
+                        .recipient(user1))
                 .sendNotification(sender, NotificationStatus.ACCEPTED)
                 .waitForNotificationStatus(NotificationStatus.EFFECTIVE_DATE)
                 .get(LegalNotificationDomain.class);

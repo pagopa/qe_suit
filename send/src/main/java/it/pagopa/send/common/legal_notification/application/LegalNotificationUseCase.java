@@ -1,5 +1,6 @@
 package it.pagopa.send.common.legal_notification.application;
 
+import it.pagopa.send.common.legal_notification.domain.LegalNotificationCreationCommand;
 import it.pagopa.send.common.user.domain.User;
 import it.pagopa.send.common.legal_notification.domain.LegalNotificationDomain;
 import it.pagopa.send.common.legal_notification.domain.NotificationStatus;
@@ -23,8 +24,8 @@ public class LegalNotificationUseCase {
 
     private final LegalNotificationGateway legalNotificationGateway;
 
-    public void prepareNotification(Map<String, String> data) {
-        legalNotificationGateway.prepareNotification(data);
+    public void prepareNotification(LegalNotificationCreationCommand command) {
+        legalNotificationGateway.prepareNotification(command);
     }
 
     public void addRecipient(RecipientSpec recipient) {
