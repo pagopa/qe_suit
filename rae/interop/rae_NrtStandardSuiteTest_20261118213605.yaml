@@ -5880,8 +5880,8 @@ ko:
     ]
 }
     '
-    link_prod_bug: ''
-    link_suite_bug: 'https://pagopa.atlassian.net/browse/QA-15512'
+    link_prod_bug: 'https://pagopa.atlassian.net/browse/PIN-11634'
+    link_suite_bug: ''
   - id_test: WebProducerAgreementContractTest::shouldShowReceivedAgreementListToProducer::richieste di fruizione ricevute
       accessibili all'utente API del Comune di Milano
     error_log: |
@@ -5928,8 +5928,8 @@ ko:
     ]
 }
     '
-    link_prod_bug: ''
-    link_suite_bug: 'https://pagopa.atlassian.net/browse/QA-15512'
+    link_prod_bug: 'https://pagopa.atlassian.net/browse/PIN-11635'
+    link_suite_bug: ''
   - id_test: WebProducerPurposeContractTest::shouldShowReceivedPurposeListToProducer::finalità ricevute visibili all'utente
       API del Comune di Milano
     error_log: |
@@ -5964,5 +5964,5 @@ ko:
     ]
 }
     '
-    link_prod_bug: ''
-    link_suite_bug: 'https://pagopa.atlassian.net/browse/QA-15512'
+    link_prod_bug: 'https://pagopa.atlassian.net/browse/PIN-11636'
+    link_suite_bug: ''
