@@ -208,7 +208,7 @@ public class PurposeSteps {
                 .createPurpose(purposeState);
     }
 
-    @Given("una finalità in stato {purposeState} associata da/dal {tenant}")
+    @Given("l'e-service con una finalità inversa in stato {purposeState} associata da/dal {tenant}")
     public void createReversePurposeForEService(PurposeVersionState purposeState, Tenant consumer) {
         EService eService = entityStore.getLastOrThrow(EService.class);
         EServiceRiskAnalysis riskAnalysis = entityStore.getLastOrThrow(EServiceRiskAnalysis.class);
