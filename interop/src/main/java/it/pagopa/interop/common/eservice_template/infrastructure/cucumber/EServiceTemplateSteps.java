@@ -115,4 +115,10 @@ public class EServiceTemplateSteps {
     public void attemptDraftVersionDescriptionUpdate(int version, EServiceTemplate template, String description) {
         templateVersionUseCase.attemptDraftVersionDescriptionUpdate(template, template.getVersion(version), description);
     }
+
+    @When("l'erogatore allega il file {string} come {string} sulla versione del template con il nome {string}")
+    public void attachFileToTemplateVersion(String filePath, String documentType, String documentName) {
+        // TODO
+        // Usato negli scenari con id ERROR_188, ERROR_189, ERROR_190, ERROR_192, ERROR_193, ERROR_194
+    }
 }

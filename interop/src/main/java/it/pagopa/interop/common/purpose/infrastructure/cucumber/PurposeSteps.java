@@ -190,14 +190,12 @@ public class PurposeSteps {
         // TODO: considerare di adattare la firma così che accetti {purposeState}
         // Usato negli scenari con id ERROR_025, ERROR_026, ERROR_028, ERROR_029, ERROR_030, ERROR_031, ERROR_032
         RiskAnalysisSigningState targetState = parseRiskAnalysisSigningState(state);
-
         interopJourney
                 .withProducer(Tenant.COMUNE_DI_MILANO, UserRole.ADMIN)
                 .createEService(EServiceDescriptorState.PUBLISHED)
                 .withConsumer(tenant, UserRole.ADMIN)
                 .linkAgreement(AgreementState.ACTIVE)
                 .createPurpose(PurposeVersionState.DRAFT);
-
         Purpose purpose = entityStore.getLastOrThrow(Purpose.class);
         interopJourney.bringPurposeRiskAnalysisToStateForReviewer(purpose, tenant, targetState);
     }
@@ -256,5 +254,29 @@ public class PurposeSteps {
     @When("il valutatore tenta di rifiutare l'analisi del rischio della {currentPurpose} con la motivazione {string}")
     public void attemptRiskAnalysisRejection(Purpose purpose, String rejectionReason) {
         purposeUseCase.attemptRiskAnalysisRejection(purpose, rejectionReason);
+    }
+
+    @When("il fruitore tenta di creare una finalità per l'e-service con il nome della finalità")
+    public void attemptCreatePurposeWithExistingPurposeName() {
+        // TODO
+        // Usato negli scenari con id ERROR_019
+    }
+
+    @When("il fruitore tenta di creare una finalità dal template finalità per l'e-service con il nome della finalità")
+    public void attemptCreatePurposeFromTemplateWithExistingPurposeName() {
+        // TODO
+        // Usato negli scenari con id ERROR_023
+    }
+
+    @When("il fruitore tenta di modificare la finalità da template {string} con il nome della finalità {string}")
+    public void attemptUpdatePurposeFromTemplateWithExistingPurposeName(String targetPurposeAlias, String sourcePurposeAlias) {
+        // TODO
+        // Usato negli scenari con id ERROR_024
+    }
+
+    @When("il valutatore tenta di salvare risposte valide nell'analisi del rischio della finalità")
+    public void attemptSaveValidAnswersInPurposeRiskAnalysis() {
+        // TODO
+        // Usato negli scenari con id ERROR_030, ERROR_031
     }
 }

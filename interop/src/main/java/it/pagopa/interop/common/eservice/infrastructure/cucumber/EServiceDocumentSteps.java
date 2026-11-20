@@ -43,4 +43,10 @@ public class EServiceDocumentSteps {
         EService service = selection.getEService();
         useCase.attemptDocumentRename(service, service.getDescriptorOrThrow(selection.getVersion()), documentName, newName);
     }
+
+    @When("l'erogatore carica il file {string} come {string} sulla versione dell'e-service con il nome {string}")
+    public void uploadFileToEServiceVersion(String filePath, String documentType, String documentName) {
+        // TODO
+        // Usato negli scenari con id ERROR_181, ERROR_182, ERROR_183, ERROR_185, ERROR_186, ERROR_187
+    }
 }

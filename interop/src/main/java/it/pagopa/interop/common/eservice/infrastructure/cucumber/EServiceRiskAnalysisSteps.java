@@ -1,6 +1,7 @@
 package it.pagopa.interop.common.eservice.infrastructure.cucumber;
 
 import io.cucumber.java.en.Given;
+import io.cucumber.java.en.When;
 import it.pagopa.application.context.EntityStore;
 import it.pagopa.interop.common.eservice.infrastructure.cucumber.dto.EServiceRiskAnalysisAliasConfiguration;
 import it.pagopa.interop.common.journey.application.InteropJourney;
@@ -45,5 +46,17 @@ public class EServiceRiskAnalysisSteps {
                 throw new IllegalArgumentException("Risk analysis name must not be blank");
             }
         }
+    }
+
+    @When("l'erogatore tenta di aggiungere all'e-service un'analisi del rischio con la risposta a testo libero {string}")
+    public void attemptAddRiskAnalysisWithFreeTextAnswer(String answer) {
+        // TODO
+        // Usato negli scenari con id ERROR_202
+    }
+
+    @When("l'erogatore tenta di rinominare l'analisi del rischio {string} dell'e-service con il nome di {string}")
+    public void attemptRenameEServiceRiskAnalysis(String sourceAlias, String targetNameAlias) {
+        // TODO
+        // Usato negli scenari con id ERROR_047
     }
 }

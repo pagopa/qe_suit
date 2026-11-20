@@ -183,4 +183,16 @@ public class EServiceSteps {
     public void attemptDescriptorRejection(int version, EService eService, String reason) {
         approvalUseCase.attemptDescriptorRejection(eService, eService.getDescriptorOrThrow(version), reason);
     }
+
+    @When("l'erogatore tenta di importare un e-service dal file {string}")
+    public void attemptEServiceImportFromFile(String filePath) {
+        // TODO
+        // Usato negli scenari con id ERROR_173
+    }
+
+    @When("l'erogatore tenta di creare una nuova versione dell'e-service con un link nella descrizione e gli altri dati validi")
+    public void attemptCreateDescriptorWithLinkInDescription() {
+        // TODO
+        // Usato negli scenari con id ERROR_085
+    }
 }

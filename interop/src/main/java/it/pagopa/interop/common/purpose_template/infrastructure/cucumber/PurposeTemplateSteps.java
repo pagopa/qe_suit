@@ -69,4 +69,46 @@ public class PurposeTemplateSteps {
     public void attemptPurposeTemplatePublication(PurposeTemplate purposeTemplate) {
         purposeTemplateUseCase.attemptPurposeTemplatePublication(purposeTemplate);
     }
+
+    @When("l'operatore allega il file {string} all'annotazione del template finalità con il nome {string}")
+    public void attachFileToPurposeTemplateAnnotation(String filePath, String documentName) {
+        // TODO
+        // Usato negli scenari con id ERROR_140, ERROR_141, ERROR_195, ERROR_196
+    }
+
+    @When("l'operatore tenta di aggiungere l'e-service {string} agli e-service suggeriti del template finalità")
+    public void attemptAddSuggestedEServiceToPurposeTemplate(String eServiceAlias) {
+        // TODO
+        // Usato negli scenari con id ERROR_206
+    }
+
+    @When("l'operatore tenta di modificare il template finalità inserendo {string} in una risposta a testo libero dell'analisi del rischio")
+    public void attemptUpdatePurposeTemplateWithLinkInRiskAnalysisFreeTextAnswer(String answerText) {
+        // TODO
+        // Usato negli scenari con id ERROR_207
+    }
+
+    @When("l'operatore tenta di aggiungere una risposta al template finalità con l'annotazione {string}")
+    public void attemptAddAnnotatedAnswerToPurposeTemplate(String annotationText) {
+        // TODO
+        // Usato negli scenari con id ERROR_142
+    }
+
+    @When("l'operatore tenta di aggiornare l'annotazione del template finalità con il testo {string}")
+    public void attemptUpdatePurposeTemplateAnnotationText(String annotationText) {
+        // TODO
+        // Usato negli scenari con id ERROR_143
+    }
+
+    @When("l'operatore tenta di rinominare l'allegato {string} dell'annotazione del template finalità in {string}")
+    public void attemptRenamePurposeTemplateAnnotationDocument(String currentDocumentName, String newDocumentName) {
+        // TODO
+        // Usato negli scenari con id ERROR_144
+    }
+
+    @When("l'utente tenta di scaricare il documento firmato di analisi del rischio del template finalità")
+    public void attemptDownloadSignedRiskAnalysisDocument() {
+        // TODO
+        // Usato negli scenari con id ERROR_145
+    }
 }
