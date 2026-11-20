@@ -54,7 +54,11 @@ public class ProducerKeychainJourneySteps {
         ProducerKeychain keychain = entityStore.getByAliasOrThrow(keychainAlias, ProducerKeychain.class);
         MetadataUpdate metadata = readMetadataUpdate(keychain, dataTable);
 
-        interopJourney.withProducer(producer, userRole);
+        if (userRole == UserRole.ADMIN) {
+            interopJourney.withProducer(producer);
+        } else {
+            interopJourney.withConsumer(producer, userRole);
+        }
         useCase.updateMetadata(keychain.getRef(), metadata.name(), metadata.description());
     }
 
@@ -64,7 +68,11 @@ public class ProducerKeychainJourneySteps {
         ProducerKeychain keychain = entityStore.getByAliasOrThrow(keychainAlias, ProducerKeychain.class);
         MetadataUpdate metadata = readMetadataUpdate(keychain, dataTable);
 
-        interopJourney.withProducer(producer, userRole);
+        if (userRole == UserRole.ADMIN) {
+            interopJourney.withProducer(producer);
+        } else {
+            interopJourney.withConsumer(producer, userRole);
+        }
         useCase.tryToUpdateMetadata(keychain.getRef(), metadata.name(), metadata.description());
     }
 
