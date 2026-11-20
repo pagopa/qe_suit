@@ -46,6 +46,14 @@ class PurposeUseCaseTest {
     }
 
     @Test
+    void verifiesConflictingMetadataUpdateThroughTheGateway() {
+        useCase.shouldFailToUpdatePurposeMetadataAsConflict();
+
+        verify(gateway).shouldFailToUpdatePurposeMetadataAsConflict();
+        verifyNoMoreInteractions(gateway);
+    }
+
+    @Test
     void updatesOrdinaryPurposeMetadata() {
         Purpose updated = purpose.toBuilder().title("new title").description("new description").build();
         when(gateway.getPurpose(purpose.getRef())).thenReturn(updated);

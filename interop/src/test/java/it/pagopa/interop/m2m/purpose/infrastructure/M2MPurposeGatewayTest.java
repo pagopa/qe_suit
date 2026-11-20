@@ -79,7 +79,7 @@ class M2MPurposeGatewayTest {
         gateway = new M2MPurposeGateway(
                 new M2MPurposeRestClient(new TestChainFactory(mock(LastApiResponseStore.class), store), apiClient),
                 mapper,
-                requestFactory);
+                requestFactory, mock(LastApiResponseStore.class));
         store.upsert("purpose", original);
     }
 
@@ -105,6 +105,38 @@ class M2MPurposeGatewayTest {
         verify(read, times(2)).execute(any());
         assertThat(store.getByAliasOrThrow("purpose", Purpose.class)).isSameAs(updated);
         assertThat(updated.getLastActiveVersion()).isSameAs(active);
+    }
+
+    @Test
+    void attemptsPurposeMetadataUpdateOnceWithoutRefreshingContext() {
+        when(updatePurpose.execute(any())).thenAnswer(invocation -> {
+            Function<Response, Response> handler = invocation.getArgument(0);
+            return handler.apply(response(403, "{}"));
+        });
+
+        gateway.tryToUpdatePurposeMetadata(original.getRef(), "new title", "new description");
+
+        verify(updatePurpose).body(
+                new UpdateDraftPurposeRequest().title("new title").description("new description"));
+        verify(updatePurpose).execute(any());
+        verifyNoInteractions(read, updateReversePurpose, mapper);
+        assertThat(store.getByAliasOrThrow("purpose", Purpose.class)).isSameAs(original);
+    }
+
+    @Test
+    void attemptsReversePurposeMetadataUpdateOnceWithoutRefreshingContext() {
+        when(updateReversePurpose.execute(any())).thenAnswer(invocation -> {
+            Function<Response, Response> handler = invocation.getArgument(0);
+            return handler.apply(response(403, "{}"));
+        });
+
+        gateway.tryToUpdateReversePurposeMetadata(original.getRef(), "new title", "new description");
+
+        verify(updateReversePurpose).body(
+                new ReversePurposeDraftUpdateSeed().title("new title").description("new description"));
+        verify(updateReversePurpose).execute(any());
+        verifyNoInteractions(read, updatePurpose, mapper);
+        assertThat(store.getByAliasOrThrow("purpose", Purpose.class)).isSameAs(original);
     }
 
     @Test

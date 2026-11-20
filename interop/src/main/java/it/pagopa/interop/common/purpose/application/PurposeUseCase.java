@@ -36,6 +36,22 @@ public class PurposeUseCase {
         return pollForUpdatedMetadata(purpose, name, description);
     }
 
+    public void tryToUpdatePurposeMetadata(Purpose purpose, String name, String description) {
+        purposeGateway.tryToUpdatePurposeMetadata(purpose.getRef(), name, description);
+    }
+
+    public void tryToUpdateReversePurposeMetadata(Purpose purpose, String name, String description) {
+        purposeGateway.tryToUpdateReversePurposeMetadata(purpose.getRef(), name, description);
+    }
+
+    public void shouldFailToUpdatePurposeMetadataAsMalformed() {
+        purposeGateway.shouldFailToUpdatePurposeMetadataAsMalformed();
+    }
+
+    public void shouldFailToUpdatePurposeMetadataAsConflict() {
+        purposeGateway.shouldFailToUpdatePurposeMetadataAsConflict();
+    }
+
     private Purpose pollForUpdatedMetadata(Purpose purpose, String name, String description) {
         return PollingUtils.pollUntil(
                 () -> getPurpose(purpose),

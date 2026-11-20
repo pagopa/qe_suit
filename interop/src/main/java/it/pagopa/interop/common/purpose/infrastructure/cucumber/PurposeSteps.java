@@ -133,6 +133,39 @@ public class PurposeSteps {
         }
     }
 
+    @When("un {userRole} di/del {tenant} tenta di modificare i metadati della finalità:")
+    public void tryToUpdatePurposeMetadata(UserRole role, Tenant consumer, DataTable dataTable) {
+        Purpose purpose = entityStore.getLastOrThrow(Purpose.class);
+        MetadataUpdate metadata = readMetadataUpdate(purpose, dataTable);
+        EService eService = entityStore.getById(purpose.getEserviceId(), EService.class)
+                .orElseThrow(() -> new IllegalStateException(
+                        "E-service not found for purpose " + purpose.getId()
+                ));
+
+        if (role == UserRole.ADMIN) {
+            interopJourney.withConsumer(consumer);
+        } else {
+            interopJourney.withConsumer(consumer, role);
+        }
+        if (eService.getMode() == EServiceMode.RECEIVE) {
+            purposeUseCase.tryToUpdateReversePurposeMetadata(purpose, metadata.name(), metadata.description());
+        } else if (eService.getMode() == EServiceMode.DELIVER) {
+            purposeUseCase.tryToUpdatePurposeMetadata(purpose, metadata.name(), metadata.description());
+        } else {
+            throw new IllegalStateException("E-service mode is missing for purpose " + purpose.getId());
+        }
+    }
+
+    @Then("la richiesta di modifica dei metadati della finalità fallisce come operazione malformata")
+    public void shouldFailToUpdatePurposeMetadataAsMalformed() {
+        purposeUseCase.shouldFailToUpdatePurposeMetadataAsMalformed();
+    }
+
+    @Then("la richiesta di modifica dei metadati della finalità fallisce per conflitto di risorsa")
+    public void shouldFailToUpdatePurposeMetadataAsConflict() {
+        purposeUseCase.shouldFailToUpdatePurposeMetadataAsConflict();
+    }
+
     private MetadataUpdate readMetadataUpdate(Purpose purpose, DataTable dataTable) {
         List<List<String>> rows = dataTable.cells();
         if (rows.size() < 2 || !rows.get(0).equals(List.of("campo", "valore"))) {

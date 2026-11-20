@@ -18,6 +18,14 @@ public interface PurposeGateway extends Plugin<Channel> {
 
     Purpose updateReversePurposeMetadata(PurposeRef purposeRef, String name, String description);
 
+    void tryToUpdatePurposeMetadata(PurposeRef purposeRef, String name, String description);
+
+    void tryToUpdateReversePurposeMetadata(PurposeRef purposeRef, String name, String description);
+
+    void shouldFailToUpdatePurposeMetadataAsMalformed();
+
+    void shouldFailToUpdatePurposeMetadataAsConflict();
+
     Purpose updatePurposeDailyCalls(PurposeRef purposeRef, int dailyCalls);
 
     Purpose createPurpose(PurposeCreateCommand createCommand);

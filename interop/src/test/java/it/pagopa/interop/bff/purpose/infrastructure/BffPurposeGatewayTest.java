@@ -67,7 +67,7 @@ class BffPurposeGatewayTest {
         when(patchReversePurpose.body(any())).thenReturn(patchReversePurpose);
         gateway = new BffPurposeGateway(
                 new BffPurposeRestClient(new TestChainFactory(mock(LastApiResponseStore.class), store), apiClient),
-                mapper, commandFactory);
+                mapper, commandFactory, mock(LastApiResponseStore.class));
         store.upsert("purpose", original);
     }
 
