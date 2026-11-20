@@ -6,8 +6,8 @@ import it.pagopa.interop.common.eservice_template.domain.EServiceTemplatePrepara
 import it.pagopa.interop.common.eservice_template.infrastructure.cucumber.dto.EServiceTemplatePublicationConfiguration;
 import it.pagopa.interop.common.eservice_template.infrastructure.cucumber.dto.EServiceTemplateInstanceConfiguration;
 import it.pagopa.interop.common.infrastructure.config.TestMapperConfig;
-import it.pagopa.interop.common.infrastructure.cucumber.dto.ConfigurableText;
-import it.pagopa.interop.common.infrastructure.cucumber.dto.ConfigurableTextValueResolver;
+import it.pagopa.interop.common.kernel.dto.ConfigurableText;
+import it.pagopa.interop.common.kernel.dto.ConfigurableTextValueResolver;
 import org.mapstruct.*;
 
 @Mapper(config = TestMapperConfig.class)

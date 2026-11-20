@@ -1,8 +1,8 @@
 package it.pagopa.interop.common.infrastructure;
 
 import it.pagopa.utils.RandomUtils;
-import it.pagopa.interop.common.infrastructure.cucumber.dto.ConfigurableText;
-import it.pagopa.interop.common.infrastructure.cucumber.dto.ConfigurableTextValueResolver;
+import it.pagopa.interop.common.kernel.dto.ConfigurableText;
+import it.pagopa.interop.common.kernel.dto.ConfigurableTextValueResolver;
 import org.mapstruct.Named;
 import org.springframework.stereotype.Component;
 

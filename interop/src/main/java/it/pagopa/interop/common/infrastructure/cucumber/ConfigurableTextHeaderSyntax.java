@@ -1,6 +1,6 @@
 package it.pagopa.interop.common.infrastructure.cucumber;
 
-import it.pagopa.interop.common.infrastructure.cucumber.dto.TextGenerationMode;
+import it.pagopa.interop.common.kernel.dto.TextGenerationMode;
 
 import java.util.Map;
 import java.util.Objects;

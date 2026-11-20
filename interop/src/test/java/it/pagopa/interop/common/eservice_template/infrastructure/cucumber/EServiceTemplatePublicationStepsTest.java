@@ -12,8 +12,8 @@ import it.pagopa.interop.common.eservice_template.domain.EServiceTemplateVersion
 import it.pagopa.interop.common.eservice_template.infrastructure.cucumber.dto.EServiceTemplateInstanceConfiguration;
 import it.pagopa.interop.common.eservice_template.infrastructure.cucumber.dto.EServiceTemplatePublicationConfiguration;
 import it.pagopa.interop.common.eservice_template.infrastructure.cucumber.dto.mapper.EServiceTemplateConfigurationMapper;
-import it.pagopa.interop.common.infrastructure.cucumber.dto.ConfigurableText;
-import it.pagopa.interop.common.infrastructure.cucumber.dto.TextGenerationMode;
+import it.pagopa.interop.common.kernel.dto.ConfigurableText;
+import it.pagopa.interop.common.kernel.dto.TextGenerationMode;
 import it.pagopa.interop.common.journey.application.InteropJourney;
 import it.pagopa.interop.common.kernel.domain.Tenant;
 import org.junit.jupiter.api.Test;

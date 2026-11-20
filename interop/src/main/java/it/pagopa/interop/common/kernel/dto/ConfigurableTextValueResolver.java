@@ -1,4 +1,4 @@
-package it.pagopa.interop.common.infrastructure.cucumber.dto;
+package it.pagopa.interop.common.kernel.dto;
 
 import it.pagopa.utils.RandomUtils;
 

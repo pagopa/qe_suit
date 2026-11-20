@@ -8,8 +8,8 @@ import it.pagopa.interop.common.eservice.infrastructure.cucumber.dto.EServicePre
 import it.pagopa.interop.common.eservice.infrastructure.cucumber.dto.mapper.EServicePreparationConfigurationMapper;
 import it.pagopa.interop.common.eservice.infrastructure.cucumber.dto.mapper.EServicePreparationConfigurationMapperImpl;
 import it.pagopa.interop.common.infrastructure.SharedMapper;
-import it.pagopa.interop.common.infrastructure.cucumber.dto.ConfiguredBoolean;
-import it.pagopa.interop.common.infrastructure.cucumber.dto.ConfigurableText;
+import it.pagopa.interop.common.kernel.dto.ConfiguredBoolean;
+import it.pagopa.interop.common.kernel.dto.ConfigurableText;
 import it.pagopa.interop.common.journey.application.InteropJourney;
 import it.pagopa.interop.common.kernel.domain.Tenant;
 import it.pagopa.interop.common.kernel.domain.UserRole;

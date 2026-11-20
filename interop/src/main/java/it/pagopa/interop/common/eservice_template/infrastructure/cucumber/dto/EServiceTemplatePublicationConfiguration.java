@@ -5,7 +5,7 @@ import com.fasterxml.jackson.annotation.JsonSetter;
 import com.fasterxml.jackson.annotation.Nulls;
 import it.pagopa.interop.common.eservice.domain.EServiceTechnology;
 import it.pagopa.interop.common.kernel.domain.Tenant;
-import it.pagopa.interop.common.infrastructure.cucumber.dto.ConfigurableText;
+import it.pagopa.interop.common.kernel.dto.ConfigurableText;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;

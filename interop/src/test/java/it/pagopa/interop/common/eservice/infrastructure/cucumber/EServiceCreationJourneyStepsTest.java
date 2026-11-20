@@ -2,8 +2,8 @@ package it.pagopa.interop.common.eservice.infrastructure.cucumber;
 
 import it.pagopa.interop.common.eservice.infrastructure.cucumber.dto.EServicePreparationConfiguration;
 import it.pagopa.interop.common.infrastructure.cucumber.DataTableMapper;
-import it.pagopa.interop.common.infrastructure.cucumber.dto.ConfiguredBoolean;
-import it.pagopa.interop.common.infrastructure.cucumber.dto.ConfigurableText;
+import it.pagopa.interop.common.kernel.dto.ConfiguredBoolean;
+import it.pagopa.interop.common.kernel.dto.ConfigurableText;
 import it.pagopa.interop.common.eservice.domain.EServiceMode;
 import it.pagopa.interop.common.kernel.domain.Tenant;
 import org.junit.jupiter.api.Test;

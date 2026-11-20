@@ -4,8 +4,8 @@ import com.fasterxml.jackson.databind.BeanDescription;
 import com.fasterxml.jackson.databind.DeserializationConfig;
 import com.fasterxml.jackson.databind.JavaType;
 import com.fasterxml.jackson.databind.introspect.BeanPropertyDefinition;
-import it.pagopa.interop.common.infrastructure.cucumber.dto.ConfigurableText;
-import it.pagopa.interop.common.infrastructure.cucumber.dto.TextGenerationMode;
+import it.pagopa.interop.common.kernel.dto.ConfigurableText;
+import it.pagopa.interop.common.kernel.dto.TextGenerationMode;
 
 import java.util.HashMap;
 import java.util.HashSet;

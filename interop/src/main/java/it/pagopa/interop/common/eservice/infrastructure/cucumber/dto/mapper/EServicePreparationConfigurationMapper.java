@@ -4,7 +4,7 @@ import it.pagopa.interop.common.eservice.application.command.EServiceCreationCom
 import it.pagopa.interop.common.eservice.infrastructure.cucumber.dto.EServicePreparationConfiguration;
 import it.pagopa.interop.common.infrastructure.SharedMapper;
 import it.pagopa.interop.common.infrastructure.config.TestMapperConfig;
-import it.pagopa.interop.common.infrastructure.cucumber.dto.ConfiguredBoolean;
+import it.pagopa.interop.common.kernel.dto.ConfiguredBoolean;
 import org.mapstruct.*;
 
 import java.util.function.Consumer;

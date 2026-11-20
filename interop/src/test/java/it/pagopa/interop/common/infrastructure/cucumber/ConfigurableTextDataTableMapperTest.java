@@ -1,8 +1,8 @@
 package it.pagopa.interop.common.infrastructure.cucumber;
 
 import com.fasterxml.jackson.annotation.JsonAlias;
-import it.pagopa.interop.common.infrastructure.cucumber.dto.ConfigurableText;
-import it.pagopa.interop.common.infrastructure.cucumber.dto.TextGenerationMode;
+import it.pagopa.interop.common.kernel.dto.ConfigurableText;
+import it.pagopa.interop.common.kernel.dto.TextGenerationMode;
 import jakarta.validation.ConstraintViolationException;
 import jakarta.validation.Valid;
 import jakarta.validation.Validation;

@@ -8,7 +8,7 @@ import jakarta.validation.ConstraintViolationException;
 import jakarta.validation.Validator;
 import it.pagopa.interop.common.eservice.domain.EServiceMode;
 import it.pagopa.interop.common.eservice.infrastructure.cucumber.dto.mapper.EServiceModeDeserializer;
-import it.pagopa.interop.common.infrastructure.cucumber.dto.ProducerDeserializer;
+import it.pagopa.interop.common.kernel.dto.ProducerDeserializer;
 import it.pagopa.interop.common.kernel.domain.Tenant;
 
 import lombok.RequiredArgsConstructor;

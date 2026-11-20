@@ -1,4 +1,4 @@
-package it.pagopa.interop.common.infrastructure.cucumber.dto;
+package it.pagopa.interop.common.kernel.dto;
 
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
