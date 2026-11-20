@@ -10,6 +10,7 @@ Feature: Messaggi di errore durante la gestione dei template finalità e delle a
     Given un admin appartenente al fruitore PagoPA
 
   # Endpoint: POST /purposeTemplates/:purposeTemplateId/linkResource
+  @err_msg_when_exec
   Scenario: [ERROR_206] - Impossibilità di suggerire in un template finalità un e-service creato da template
   Dati un template finalità in bozza e un e-service pubblicato creato da un template e-service
   Quando il creatore tenta di aggiungere l'istanza agli e-service suggeriti del template finalità
@@ -31,6 +32,7 @@ Feature: Messaggi di errore durante la gestione dei template finalità e delle a
     Then il messaggio di errore corrisponde al caso "PURPOSE_TEMPLATE_ASSOCIATION_ESERVICES_FOR_PURPOSE_TEMPLATE_FAILED__POST_PURPOSE_TEMPLATES_PURPOSE_TEMPLATE_ID_LINK_RESOURCE" in lingua "it"
 
   # Endpoint: PUT /purposeTemplates/:purposeTemplateId
+  @err_msg_when_exec
   Scenario: [ERROR_207] - Rifiuto della modifica di un template finalità con un link in una risposta dell'analisi del rischio
   Dato un template finalità in bozza con un'analisi del rischio valida
   Quando il creatore tenta di inserire un collegamento in una risposta a testo libero lasciando valide le altre risposte
@@ -77,6 +79,8 @@ Feature: Messaggi di errore durante la gestione dei template finalità e delle a
     Then il messaggio di errore corrisponde al caso "PURPOSE_TEMPLATE_INVALID_ASSOCIATED_ESERVICE_FOR_PUBLICATION_ERROR__POST_PURPOSE_TEMPLATES_PURPOSE_TEMPLATE_ID_PUBLISH" in lingua "it"
 
   # Endpoint: POST /purposeTemplates/:purposeTemplateId/riskAnalysis/answers/:answerId/annotation/documents
+  @err_msg_given_exec_2
+  @err_msg_when_exec
   Scenario: [ERROR_140] - Rifiuto di un allegato all'annotazione con un nome già in uso
   Dato un template finalità in bozza con una risposta annotata e un documento allegato
   Quando il creatore tenta di allegare un PDF diverso con lo stesso nome
@@ -93,6 +97,8 @@ Feature: Messaggi di errore durante la gestione dei template finalità e delle a
     Then il messaggio di errore corrisponde al caso "PURPOSE_TEMPLATE_CONFLICT_DOCUMENT_PRETTY_NAME_DUPLICATE__POST_PURPOSE_TEMPLATES_PURPOSE_TEMPLATE_ID_RISK_ANALYSIS_ANSWERS_ANSWER_ID_ANNOTATION_DOCUMENTS" in lingua "it"
 
   # Endpoint: POST /purposeTemplates/:purposeTemplateId/riskAnalysis/answers/:answerId/annotation/documents
+  @err_msg_given_exec_2
+  @err_msg_when_exec
   Scenario: [ERROR_141] - Rifiuto di un allegato all'annotazione con contenuto già presente
   Dato un template finalità in bozza con una risposta annotata e un documento allegato
   Quando il creatore tenta di allegare lo stesso PDF con un nome diverso
@@ -109,6 +115,8 @@ Feature: Messaggi di errore durante la gestione dei template finalità e delle a
     Then il messaggio di errore corrisponde al caso "PURPOSE_TEMPLATE_CONFLICT_DUPLICATED_DOCUMENT" in lingua "it"
 
   # Endpoint: POST /purposeTemplates/:purposeTemplateId/riskAnalysis/answers
+  @err_msg_given_exec_2
+  @err_msg_when_exec
   Scenario: [ERROR_142] - Rifiuto dell'aggiunta di una risposta con un link nell'annotazione
   Dato un template finalità in bozza con una domanda che consente le annotazioni
   Quando il creatore tenta di aggiungere una risposta valida con un collegamento nell'annotazione
@@ -121,6 +129,8 @@ Feature: Messaggi di errore durante la gestione dei template finalità e delle a
     Then il messaggio di errore corrisponde al caso "PURPOSE_TEMPLATE_HYPERLINK_DETECTION_ERROR__POST_PURPOSE_TEMPLATES_PURPOSE_TEMPLATE_ID_RISK_ANALYSIS_ANSWERS" in lingua "it"
 
   # Endpoint: PUT /purposeTemplates/:purposeTemplateId/riskAnalysis/answers/:answerId/annotation
+  @err_msg_given_exec_2
+  @err_msg_when_exec
   Scenario: [ERROR_143] - Rifiuto della modifica di un'annotazione con un link
   Dato un template finalità in bozza con una risposta annotata
   Quando il creatore tenta di inserire un collegamento nell'annotazione esistente
@@ -133,6 +143,8 @@ Feature: Messaggi di errore durante la gestione dei template finalità e delle a
     Then il messaggio di errore corrisponde al caso "PURPOSE_TEMPLATE_HYPERLINK_DETECTION_ERROR__PUT_PURPOSE_TEMPLATES_PURPOSE_TEMPLATE_ID_RISK_ANALYSIS_ANSWERS_ANSWER_ID_ANNOTATION" in lingua "it"
 
   # Endpoint: POST /purposeTemplates/:purposeTemplateId/riskAnalysis/answers/:answerId/annotation/documents/:documentId/update
+  @err_msg_given_exec_2
+  @err_msg_when_exec
   Scenario: [ERROR_144] - Impossibilità di rinominare un allegato con il nome di un altro documento
   Dato un template finalità in bozza con due documenti distinti allegati alla stessa annotazione
   Quando il creatore tenta di assegnare al secondo documento il nome del primo
@@ -150,6 +162,8 @@ Feature: Messaggi di errore durante la gestione dei template finalità e delle a
     Then il messaggio di errore corrisponde al caso "PURPOSE_TEMPLATE_CONFLICT_DOCUMENT_PRETTY_NAME_DUPLICATE__POST_PURPOSE_TEMPLATES_PURPOSE_TEMPLATE_ID_RISK_ANALYSIS_ANSWERS_ANSWER_ID_ANNOTATION_DOCUMENTS_DOCUMENT_ID_UPDATE" in lingua "it"
 
   # Endpoint: GET /purposeTemplates/:purposeTemplateId/riskAnalysisDocument/signed
+  @err_msg_given_exec_2
+  @err_msg_when_exec
   Scenario: [ERROR_145] - Impossibilità per un operatore di sicurezza di scaricare l'analisi del rischio firmata
   Dato un template finalità con il documento firmato disponibile e un operatore di sicurezza dell'ente creatore
   Quando l'operatore tenta di scaricare il documento firmato

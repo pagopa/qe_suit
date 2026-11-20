@@ -31,6 +31,7 @@ Feature: Messaggi di errore durante la gestione dei client, dei portachiavi e de
 
   #DA FARE MANUALE
   # Endpoint: POST /producerKeychains/:producerKeychainId/eservices
+  @err_msg_given_exec_2
   Scenario: [ERROR_204] - Impossibilità di associare un portachiavi a un e-service archiviato
   Dati un e-service interamente archiviato e un portachiavi appartenenti allo stesso erogatore
   Quando l'erogatore tenta di associare il portachiavi all'e-service

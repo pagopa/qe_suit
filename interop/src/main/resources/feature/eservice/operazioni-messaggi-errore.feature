@@ -10,6 +10,7 @@ Feature: Messaggi di errore durante la gestione degli e-service
     Given un admin appartenente all'erogatore Comune di Milano
 
   # Endpoint: POST /eservices/:eServiceId/riskAnalysis
+  @err_msg_when_exec
   Scenario: [ERROR_202] - Rifiuto dell'aggiunta di un'analisi del rischio con un link in una risposta
   Dato un e-service in ricezione con una versione in bozza
   Quando l'erogatore tenta di aggiungere un'analisi del rischio con un collegamento in una risposta a testo libero e gli altri dati validi
@@ -166,6 +167,8 @@ Feature: Messaggi di errore durante la gestione degli e-service
     Then il messaggio di errore corrisponde al caso "CATALOG_RISK_ANALYSIS_DUPLICATED__POST_ESERVICES_E_SERVICE_ID_RISK_ANALYSIS" in lingua "it"
 
   # Endpoint: POST /eservices/:eServiceId/riskAnalysis/:riskAnalysisId
+  @err_msg_given_exec_2
+  @err_msg_when_exec
   Scenario: [ERROR_047] - Rifiuto della modifica di un'analisi del rischio con un nome già usato
   Dato un e-service in ricezione con due analisi del rischio distinte
   Quando l'erogatore tenta di assegnare a un'analisi il nome dell'altra
@@ -767,6 +770,7 @@ Feature: Messaggi di errore durante la gestione degli e-service
     Then il messaggio di errore corrisponde al caso "CATALOG_HYPERLINK_DETECTION_ERROR__POST_ESERVICES_E_SERVICE_ID_DESCRIPTORS_DESCRIPTOR_ID_DOCUMENTS_DOCUMENT_ID_UPDATE" in lingua "it"
 
   # Endpoint: POST /eservices/:eServiceId/descriptors
+  @err_msg_when_exec
   Scenario: [ERROR_085] - Rifiuto della creazione di una versione con un link nella descrizione
   Dato un e-service pubblicato senza versioni in bozza
   Quando l'erogatore tenta di creare una nuova versione con un link nella descrizione

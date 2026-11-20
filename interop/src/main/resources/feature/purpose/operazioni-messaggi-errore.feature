@@ -21,6 +21,8 @@ Feature: Messaggi di errore durante la gestione delle finalità e la valutazione
     Then il messaggio di errore corrisponde al caso "PURPOSE_DUPLICATED_PURPOSE_TITLE__POST_PURPOSES" in lingua "it"
 
   # Endpoint: POST /reverse/purposes
+  @err_msg_given_exec_1
+  @err_msg_when_exec
   Scenario: [ERROR_019] - Impossibilità di creare una finalità omonima per un e-service in ricezione
   Dato un e-service in ricezione sottoscritto dal fruitore con una finalità già creata
   Quando il fruitore tenta di crearne un'altra con lo stesso nome per lo stesso e-service
@@ -39,6 +41,7 @@ Feature: Messaggi di errore durante la gestione delle finalità e la valutazione
     Then il messaggio di errore corrisponde al caso "PURPOSE_DUPLICATED_PURPOSE_TITLE__POST_REVERSE_PURPOSES" in lingua "it"
 
   # Endpoint: POST /purposes/:purposeId
+  @err_msg_given_exec_1
   Scenario: [ERROR_020] - Impossibilità di rinominare una finalità con il nome di un'altra dello stesso fruitore
   Date due finalità in bozza del fruitore per lo stesso e-service con nomi diversi
   Quando il fruitore tenta di assegnare alla seconda il nome della prima
@@ -67,6 +70,7 @@ Feature: Messaggi di errore durante la gestione delle finalità e la valutazione
     Then il messaggio di errore corrisponde al caso "PURPOSE_HYPERLINK_DETECTION_ERROR__POST_PURPOSES_PURPOSE_ID" in lingua "it"
 
   # Endpoint: POST /purposes/:purposeId/clone
+  @err_msg_given_exec_1
   Scenario: [ERROR_022] - Impossibilità di duplicare una finalità quando il nome derivato è già in uso
   Data una finalità del fruitore e un'altra finalità dello stesso fruitore per lo stesso e-service con il nome che deriverebbe dalla duplicazione
   Quando il fruitore tenta di duplicare la prima finalità
@@ -86,6 +90,7 @@ Feature: Messaggi di errore durante la gestione delle finalità e la valutazione
     Then il messaggio di errore corrisponde al caso "PURPOSE_DUPLICATED_PURPOSE_TITLE__POST_PURPOSES_PURPOSE_ID_CLONE" in lingua "it"
 
   # Endpoint: POST /purposeTemplates/:purposeTemplateId/purposes
+  @err_msg_when_exec
   Scenario: [ERROR_023] - Impossibilità di creare una finalità da template con un nome già usato
   Data una finalità del fruitore e un template finalità pubblicato applicabile allo stesso e-service
   Quando il fruitore tenta di creare una finalità da template con lo stesso nome della finalità esistente
@@ -102,6 +107,8 @@ Feature: Messaggi di errore durante la gestione delle finalità e la valutazione
     Then il messaggio di errore corrisponde al caso "PURPOSE_DUPLICATED_PURPOSE_TITLE__POST_PURPOSE_TEMPLATES_PURPOSE_TEMPLATE_ID_PURPOSES" in lingua "it"
 
   # Endpoint: PATCH /purposeTemplates/:purposeTemplateId/purposes/:purposeId
+  @err_msg_given_exec_1
+  @err_msg_when_exec
   Scenario: [ERROR_024] - Impossibilità di rinominare una finalità da template con il nome di un'altra finalità
   Date due finalità distinte del fruitore per lo stesso e-service, una delle quali creata da template
   Quando il fruitore tenta di assegnare alla finalità da template il nome dell'altra
@@ -123,6 +130,7 @@ Feature: Messaggi di errore durante la gestione delle finalità e la valutazione
     Then il messaggio di errore corrisponde al caso "PURPOSE_DUPLICATED_PURPOSE_TITLE__PATCH_PURPOSE_TEMPLATES_PURPOSE_TEMPLATE_ID_PURPOSES_PURPOSE_ID" in lingua "it"
 
   # Endpoint: POST /purposes/:purposeId/riskAnalysis/sign
+  @err_msg_given_exec_1
   Scenario: [ERROR_025] - Impossibilità di firmare un'analisi del rischio già approvata
   Data un'analisi del rischio già approvata e assegnata al valutatore del fruitore
   Quando il valutatore tenta di firmarla nuovamente
@@ -136,6 +144,7 @@ Feature: Messaggi di errore durante la gestione delle finalità e la valutazione
     Then il messaggio di errore corrisponde al caso "PURPOSE_RISK_ANALYSIS_ALREADY_APPROVED__POST_PURPOSES_PURPOSE_ID_RISK_ANALYSIS_SIGN" in lingua "it"
 
   # Endpoint: POST /purposes/:purposeId/riskAnalysis/sign
+  @err_msg_given_exec_1
   Scenario: [ERROR_026] - Impossibilità di firmare un'analisi del rischio già rifiutata
   Data un'analisi del rischio già rifiutata e assegnata al valutatore del fruitore
   Quando il valutatore tenta di firmarla
@@ -169,6 +178,7 @@ Feature: Messaggi di errore durante la gestione delle finalità e la valutazione
     Then il messaggio di errore corrisponde al caso "PURPOSE_PURPOSE_METADATA_VERSION_MISMATCH" in lingua "it"
 
   # Endpoint: POST /purposes/:purposeId/riskAnalysis/reject
+  @err_msg_given_exec_1
   Scenario: [ERROR_028] - Impossibilità di rifiutare un'analisi del rischio già approvata
   Data un'analisi del rischio già approvata e assegnata al valutatore del fruitore
   Quando il valutatore tenta di rifiutarla con una motivazione valida
@@ -182,6 +192,7 @@ Feature: Messaggi di errore durante la gestione delle finalità e la valutazione
     Then il messaggio di errore corrisponde al caso "PURPOSE_RISK_ANALYSIS_ALREADY_APPROVED__POST_PURPOSES_PURPOSE_ID_RISK_ANALYSIS_REJECT" in lingua "it"
 
   # Endpoint: POST /purposes/:purposeId/riskAnalysis/reject
+  @err_msg_given_exec_1
   Scenario: [ERROR_029] - Impossibilità di rifiutare un'analisi del rischio già rifiutata
   Data un'analisi del rischio già rifiutata e assegnata al valutatore del fruitore
   Quando il valutatore tenta di rifiutarla nuovamente con una motivazione valida
@@ -195,6 +206,8 @@ Feature: Messaggi di errore durante la gestione delle finalità e la valutazione
     Then il messaggio di errore corrisponde al caso "PURPOSE_RISK_ANALYSIS_ALREADY_REJECTED__POST_PURPOSES_PURPOSE_ID_RISK_ANALYSIS_REJECT" in lingua "it"
 
   # Endpoint: PUT /purposes/:purposeId/riskAnalysis/form
+  @err_msg_given_exec_1
+  @err_msg_when_exec
   Scenario: [ERROR_030] - Impossibilità di modificare le risposte di un'analisi già approvata
   Data un'analisi del rischio già approvata e assegnata al valutatore del fruitore
   Quando il valutatore tenta di salvare nuove risposte valide
@@ -209,6 +222,8 @@ Feature: Messaggi di errore durante la gestione delle finalità e la valutazione
     Then il messaggio di errore corrisponde al caso "PURPOSE_RISK_ANALYSIS_ALREADY_APPROVED__PUT_PURPOSES_PURPOSE_ID_RISK_ANALYSIS_FORM" in lingua "it"
 
   # Endpoint: PUT /purposes/:purposeId/riskAnalysis/form
+  @err_msg_given_exec_1
+  @err_msg_when_exec
   Scenario: [ERROR_031] - Impossibilità di modificare le risposte di un'analisi già rifiutata
   Data un'analisi del rischio già rifiutata e assegnata al valutatore del fruitore
   Quando il valutatore tenta di salvare nuove risposte valide
@@ -223,6 +238,7 @@ Feature: Messaggi di errore durante la gestione delle finalità e la valutazione
     Then il messaggio di errore corrisponde al caso "PURPOSE_RISK_ANALYSIS_ALREADY_REJECTED__PUT_PURPOSES_PURPOSE_ID_RISK_ANALYSIS_FORM" in lingua "it"
 
   # Endpoint: POST /purposes/:purposeId/riskAnalysis/reject
+  @err_msg_given_exec_1
   Scenario: [ERROR_032] - Rifiuto di una motivazione con un link nella valutazione dell'analisi del rischio
   Data un'analisi del rischio in attesa di valutazione e assegnata al valutatore del fruitore
   Quando il valutatore tenta di rifiutarla inserendo un collegamento nella motivazione

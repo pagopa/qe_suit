@@ -61,6 +61,7 @@ Feature: Messaggi di errore durante la consultazione, il trasferimento e il cari
     Then il messaggio di errore corrisponde al caso "BFF_ESERVICE_DESCRIPTOR_NOT_FOUND" in lingua "it"
 
   # Endpoint: POST /import/eservices
+  @err_msg_when_exec
   Scenario: [ERROR_173] - Rifiuto dell'importazione di un archivio senza la configurazione dell'e-service
   Dato un amministratore abilitato all'importazione degli e-service
   Quando tenta di importare un archivio ZIP valido ma privo della configurazione richiesta
@@ -84,6 +85,7 @@ Feature: Messaggi di errore durante la consultazione, il trasferimento e il cari
     Then il messaggio di errore corrisponde al caso "BFF_DELEGATED_ESERVICE_NOT_EXPORTABLE" in lingua "it"
 
   # Endpoint: POST /eservices/:eServiceId/descriptors/:descriptorId/documents
+  @err_msg_when_exec
   Scenario: [ERROR_181] - Rifiuto di un PDF caricato come interfaccia REST
   Dato un e-service REST con una versione in bozza senza interfaccia
   Quando l'erogatore tenta di caricare un PDF come interfaccia della versione
@@ -97,6 +99,7 @@ Feature: Messaggi di errore durante la consultazione, il trasferimento e il cari
     Then il messaggio di errore corrisponde al caso "CATALOG_INVALID_ESERVICE_INTERFACE_FILE_DETECTED" in lingua "it"
 
   # Endpoint: POST /eservices/:eServiceId/descriptors/:descriptorId/documents
+  @err_msg_when_exec
   Scenario: [ERROR_182] - Rifiuto di un'interfaccia con una versione OpenAPI non supportata
   Dato un e-service REST con una versione in bozza senza interfaccia
   Quando l'erogatore tenta di caricare una specifica che dichiara una versione OpenAPI non supportata
@@ -110,6 +113,7 @@ Feature: Messaggi di errore durante la consultazione, il trasferimento e il cari
     Then il messaggio di errore corrisponde al caso "CATALOG_OPENAPI_VERSION_NOT_RECOGNIZED__POST_ESERVICES_E_SERVICE_ID_DESCRIPTORS_DESCRIPTOR_ID_DOCUMENTS" in lingua "it"
 
   # Endpoint: POST /eservices/:eServiceId/descriptors/:descriptorId/documents
+  @err_msg_when_exec
   Scenario: [ERROR_183] - Rifiuto di un documento il cui formato non è verificabile
   Dato un e-service con una versione in bozza disponibile per il caricamento di documenti
   Quando l'erogatore tenta di allegare un file il cui formato non può essere determinato
@@ -133,6 +137,7 @@ Feature: Messaggi di errore durante la consultazione, il trasferimento e il cari
     Then il messaggio di errore corrisponde al caso "CATALOG_INTERFACE_EXTRACTING_SOAP_FIELD_VALUE_ERROR" in lingua "it"
 
   # Endpoint: POST /eservices/:eServiceId/descriptors/:descriptorId/documents
+  @err_msg_when_exec
   Scenario: [ERROR_185] - Rifiuto di un'interfaccia REST con un URL del server non valido
   Dato un e-service REST con una versione in bozza senza interfaccia
   Quando l'erogatore tenta di caricare una specifica OpenAPI con un URL del server non valido
@@ -146,6 +151,7 @@ Feature: Messaggi di errore durante la consultazione, il trasferimento e il cari
     Then il messaggio di errore corrisponde al caso "CATALOG_INVALID_SERVER_URL" in lingua "it"
 
   # Endpoint: POST /eservices/:eServiceId/descriptors/:descriptorId/documents
+  @err_msg_when_exec
   Scenario: [ERROR_186] - Rifiuto di un documento che supera la dimensione massima
   Dato un e-service con una versione in bozza disponibile per il caricamento di documenti
   Quando l'erogatore tenta di allegare un PDF valido che supera la dimensione massima consentita
@@ -160,6 +166,7 @@ Feature: Messaggi di errore durante la consultazione, il trasferimento e il cari
     Then il messaggio di errore corrisponde al caso "CATALOG_CONTENT_TOO_LARGE_ERROR" in lingua "it"
 
   # Endpoint: POST /eservices/:eServiceId/descriptors/:descriptorId/documents
+  @err_msg_when_exec
   Scenario: [ERROR_187] - Rifiuto di un documento PDF con contenuto non valido
   Dato un e-service con una versione in bozza disponibile per il caricamento di documenti
   Quando l'erogatore tenta di allegare un file identificato come PDF il cui contenuto non è valido

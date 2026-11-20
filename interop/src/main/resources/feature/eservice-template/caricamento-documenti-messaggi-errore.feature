@@ -24,6 +24,7 @@ Feature: Messaggi di errore durante il caricamento di file nei template e-servic
     Then il messaggio di errore corrisponde al caso "BFF_ESERVICE_TEMPLATE_VERSION_NOT_FOUND" in lingua "it"
 
   @work-item:QA-18430
+  @err_msg_when_exec
   # Endpoint: POST /eservices/templates/:eServiceTemplateId/versions/:eServiceTemplateVersionId/documents
   Scenario: [ERROR_188] - Rifiuto di un PDF caricato come interfaccia REST
   Dato un template e-service REST con una versione in bozza senza interfaccia
@@ -37,6 +38,7 @@ Feature: Messaggi di errore durante il caricamento di file nei template e-servic
     Then il messaggio di errore corrisponde al caso "ESERVICE_TEMPLATE_INVALID_ESERVICE_INTERFACE_FILE_DETECTED" in lingua "it"
 
   @work-item:QA-18430
+  @err_msg_when_exec
   # Endpoint: POST /eservices/templates/:eServiceTemplateId/versions/:eServiceTemplateVersionId/documents
   Scenario: [ERROR_189] - Rifiuto di un'interfaccia con una versione OpenAPI non supportata
   Dato un template e-service REST con una versione in bozza senza interfaccia
@@ -51,6 +53,7 @@ Feature: Messaggi di errore durante il caricamento di file nei template e-servic
 
     # Ticket aperto https://pagopa.atlassian.net/browse/PIN-11646
   @work-item:QA-18430
+  @err_msg_when_exec
   # Endpoint: POST /eservices/templates/:eServiceTemplateId/versions/:eServiceTemplateVersionId/documents
   Scenario: [ERROR_190] - Rifiuto di un documento il cui formato non è verificabile
   Dato un template e-service con una versione in bozza disponibile per il caricamento di documenti
@@ -75,6 +78,7 @@ Feature: Messaggi di errore durante il caricamento di file nei template e-servic
     Then il messaggio di errore corrisponde al caso "ESERVICE_TEMPLATE_INTERFACE_EXTRACTING_SOAP_FIELD_VALUE_ERROR" in lingua "it"
 
   @work-item:QA-18430
+  @err_msg_when_exec
   # Endpoint: POST /eservices/templates/:eServiceTemplateId/versions/:eServiceTemplateVersionId/documents
   Scenario: [ERROR_192] - Rifiuto di un'interfaccia REST con un URL del server non valido
   Dato un template e-service REST con una versione in bozza senza interfaccia
@@ -89,6 +93,7 @@ Feature: Messaggi di errore durante il caricamento di file nei template e-servic
 
     # Ticket aperto https://pagopa.atlassian.net/browse/PIN-11647
   @work-item:QA-18430
+  @err_msg_when_exec
   # Endpoint: POST /eservices/templates/:eServiceTemplateId/versions/:eServiceTemplateVersionId/documents
   Scenario: [ERROR_193] - Rifiuto di un documento che supera la dimensione massima
   Dato un template e-service con una versione in bozza disponibile per il caricamento di documenti
@@ -103,6 +108,7 @@ Feature: Messaggi di errore durante il caricamento di file nei template e-servic
     Then il messaggio di errore corrisponde al caso "ESERVICE_TEMPLATE_CONTENT_TOO_LARGE_ERROR" in lingua "it"
 
   @work-item:QA-18430
+  @err_msg_when_exec
   # Endpoint: POST /eservices/templates/:eServiceTemplateId/versions/:eServiceTemplateVersionId/documents
   Scenario: [ERROR_194] - Rifiuto di un documento PDF con contenuto non valido
   Dato un template e-service con una versione in bozza disponibile per il caricamento di documenti

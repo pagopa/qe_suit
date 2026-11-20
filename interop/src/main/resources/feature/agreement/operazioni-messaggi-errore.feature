@@ -139,6 +139,7 @@ Feature: Messaggi di errore durante la gestione delle richieste di fruizione
     Then il messaggio di errore corrisponde al caso "AGREEMENT_DOCUMENT_NOT_FOUND__GET_AGREEMENTS_AGREEMENT_ID_CONSUMER_DOCUMENTS_DOCUMENT_ID" in lingua "it"
 
   # Endpoint: DELETE /agreements/:agreementId/consumer-documents/:documentId
+  @err_msg_given_exec_1
   Scenario: [ERROR_156] - Impossibilità di eliminare un documento già rimosso dalla richiesta
   Dato un e-service che richiede un attributo verificato e una richiesta di fruizione in bozza con un documento allegato e poi eliminato
   Quando il fruitore tenta di eliminare nuovamente lo stesso documento
@@ -164,6 +165,7 @@ Feature: Messaggi di errore durante la gestione delle richieste di fruizione
     Then il messaggio di errore corrisponde al caso "AGREEMENT_DOCUMENT_NOT_FOUND__DELETE_AGREEMENTS_AGREEMENT_ID_CONSUMER_DOCUMENTS_DOCUMENT_ID" in lingua "it"
 
   # Endpoint: DELETE /agreements/:agreementId/consumer-documents/:documentId
+  @err_msg_given_exec_1
   Scenario: [ERROR_157] - Impossibilità di eliminare un documento da una richiesta di fruizione attiva
   Dato un e-service che richiede un attributo verificato e una richiesta del fruitore con un documento allegato in bozza e poi attivata dopo la verifica dell'attributo
   Quando il fruitore tenta di eliminare il documento dalla richiesta attiva
@@ -293,6 +295,7 @@ Feature: Messaggi di errore durante la gestione delle richieste di fruizione
     Then il messaggio di errore corrisponde al caso "AGREEMENT_AGREEMENT_ALREADY_EXISTS__POST_AGREEMENTS" in lingua "it"
 
   # Endpoint: POST /agreements/:agreementId/clone
+  @err_msg_given_exec_1
   Scenario: [ERROR_165] - Impossibilità di duplicare una richiesta dopo la perdita di un attributo certificato
   Data una richiesta di fruizione rifiutata del fruitore e un attributo certificato richiesto non più posseduto dal fruitore
   Quando il fruitore tenta di duplicare la richiesta
@@ -322,6 +325,7 @@ Feature: Messaggi di errore durante la gestione delle richieste di fruizione
     Then il messaggio di errore corrisponde al caso "AGREEMENT_MISSING_CERTIFIED_ATTRIBUTES_ERROR__POST_AGREEMENTS_AGREEMENT_ID_CLONE" in lingua "it"
 
   # Endpoint: POST /agreements/:agreementId/clone
+  @err_msg_given_exec_1
   Scenario: [ERROR_166] - Impossibilità di duplicare una richiesta quando ne esiste già un'altra in corso
   Data una richiesta rifiutata del fruitore e un'altra richiesta attiva per lo stesso e-service e lo stesso fruitore
   Quando il fruitore tenta di duplicare la prima richiesta

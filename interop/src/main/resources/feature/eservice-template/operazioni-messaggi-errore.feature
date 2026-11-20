@@ -22,6 +22,8 @@ Feature: Messaggi di errore durante la creazione e la modifica dei template e-se
     Then il messaggio di errore corrisponde al caso "ESERVICE_TEMPLATE_ESERVICE_TEMPLATE_DUPLICATE__POST_ESERVICES_TEMPLATES" in lingua "it"
 
   # Endpoint: POST /eservices/templates/:eServiceTemplateId/riskAnalysis
+  @err_msg_given_exec_2
+  @err_msg_when_exec
   Scenario: [ERROR_125] - Impossibilità di aggiungere un'analisi del rischio con un nome già usato nel template
   Dato un template e-service in ricezione con un'analisi del rischio completa
   Quando l'erogatore tenta di aggiungere un'altra analisi con lo stesso nome allo stesso template

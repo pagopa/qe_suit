@@ -12,6 +12,7 @@ Feature: Messaggi di errore durante il download del documento firmato e il caric
   # Endpoint: GET /agreements/:agreementId/signedContract
   # NOTE 19/11/2026: assume che il documento firmato non sia immediatamente disponibile, che
   # è una condizione che può cambiare nel tempo
+  @err_msg_given_exec_1
   Scenario: [ERROR_168] - Impossibilità di scaricare un documento firmato non ancora disponibile
   Data una richiesta di fruizione del fruitore attiva con un contratto generato e il documento firmato non ancora disponibile
   Quando l'erogatore tenta di scaricare il documento firmato della richiesta
