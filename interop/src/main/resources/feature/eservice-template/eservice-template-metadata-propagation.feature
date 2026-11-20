@@ -66,7 +66,7 @@ Feature: Propagazione dei metadati del template e-service alle istanze
       | alias | erogatore        | nome (letterale)                 |
       | ES-1  | Comune di Milano | Nuovo nome in conflitto - Milano |
     When un admin del Comune di Milano tenta la modifica dei metadati del template e-service "TE-1":
-      | campo       | valore (letterale)                  |
-      | nome        | Nuovo nome in conflitto             |
-      | descrizione | Descrizione valida ma non applicata |
+      | campo            | valore                              |
+      | nome (letterale) | Nuovo nome in conflitto             |
+      | descrizione      | Descrizione valida ma non applicata |
     Then la modifica dei metadati del template e-service viene rifiutata per CONFLICT

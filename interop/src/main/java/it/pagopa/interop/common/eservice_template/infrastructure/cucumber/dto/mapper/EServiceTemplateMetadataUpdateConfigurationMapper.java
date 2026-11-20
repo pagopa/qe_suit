@@ -8,6 +8,7 @@ import it.pagopa.interop.common.eservice_template.domain.EServiceTemplate;
 import it.pagopa.interop.common.eservice_template.infrastructure.cucumber.dto.EServiceTemplateMetadataUpdateConfiguration;
 import it.pagopa.interop.common.kernel.dto.ConfigurableText;
 import it.pagopa.interop.common.kernel.dto.ConfigurableTextValueResolver;
+import it.pagopa.utils.RandomUtils;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
 
@@ -33,8 +34,7 @@ public class EServiceTemplateMetadataUpdateConfigurationMapper {
 
         for (EServiceTemplateMetadataUpdateConfiguration configuration : configurations) {
             String field = configuration.getField();
-            ConfigurableText configValue = configuration.getValue();
-            String value;
+            String value = configuration.getValue();
 
             if (values.containsKey(field)) {
                 throw new IllegalArgumentException("Campo metadato e-service template duplicato: " + field);
@@ -42,55 +42,61 @@ public class EServiceTemplateMetadataUpdateConfigurationMapper {
 
             switch (field) {
                 case "nome" -> {
-                    value = LAST_USED.equals(configValue.value())
+                    value = LAST_USED.equals(value)
                             ? lastEServiceTemplateOrThrow(lastEServiceTemplate).getName()
-                            : ConfigurableTextValueResolver.resolve(configValue);
+                            : RandomUtils.randomAlphanumericName(value, 10);
+                    command.name(value);
+                }
+                case "nome (letterale)" -> {
+                    value = LAST_USED.equals(value)
+                            ? lastEServiceTemplateOrThrow(lastEServiceTemplate).getName()
+                            : value;
                     command.name(value);
                 }
                 case "descrizione" -> {
-                    value = LAST_USED.equals(configValue.value())
+                    value = LAST_USED.equals(value)
                             ? lastEServiceTemplateOrThrow(lastEServiceTemplate).getDescription()
-                            : ConfigurableTextValueResolver.resolve(configValue);
+                            : value;
                     command.description(value);
                 }
                 case "intendedTarget" -> {
-                    value = LAST_USED.equals(configValue.value())
+                    value = LAST_USED.equals(value)
                             ? lastEServiceTemplateOrThrow(lastEServiceTemplate).getIntendedTarget()
-                            : ConfigurableTextValueResolver.resolve(configValue);
+                            : value;
                     command.intendedTarget(value);
                 }
                 case "technology" -> {
-                    EServiceTechnology technology = LAST_USED.equals(configValue.value())
+                    EServiceTechnology technology = LAST_USED.equals(value)
                             ? lastEServiceTemplateOrThrow(lastEServiceTemplate).getTechnology()
-                            : EServiceTechnology.valueOf(configValue.value());
+                            : EServiceTechnology.valueOf(value);
                     command.technology(technology);
                     value = technology == null ? null : technology.name();
                 }
                 case "mode" -> {
-                    EServiceMode mode = LAST_USED.equals(configValue.value())
+                    EServiceMode mode = LAST_USED.equals(value)
                             ? lastEServiceTemplateOrThrow(lastEServiceTemplate).getMode()
-                            : EServiceMode.valueOf(configValue.value());
+                            : EServiceMode.valueOf(value);
                     command.mode(mode);
                     value = mode == null ? null : mode.name();
                 }
                 case "isSignalHubEnabled" -> {
-                    Boolean enabled = LAST_USED.equals(configValue.value())
+                    Boolean enabled = LAST_USED.equals(value)
                             ? lastEServiceTemplateOrThrow(lastEServiceTemplate).getIsSignalHubEnabled()
-                            : parseBoolean(field, configValue.value());
+                            : parseBoolean(field, value);
                     command.isSignalHubEnabled(enabled);
                     value = enabled == null ? null : enabled.toString();
                 }
                 case "personalData" -> {
-                    Boolean personalData = LAST_USED.equals(configValue.value())
+                    Boolean personalData = LAST_USED.equals(value)
                             ? lastEServiceTemplateOrThrow(lastEServiceTemplate).getPersonalData()
-                            : parseBoolean(field, configValue.value());
+                            : parseBoolean(field, value);
                     command.handlePersonalData(personalData);
                     value = personalData == null ? null : personalData.toString();
                 }
                 case "asyncExchange" -> {
-                    Boolean asyncExchange = LAST_USED.equals(configValue.value())
+                    Boolean asyncExchange = LAST_USED.equals(value)
                             ? lastEServiceTemplateOrThrow(lastEServiceTemplate).getAsyncExchange()
-                            : parseBoolean(field, configValue.value());
+                            : parseBoolean(field, value);
                     command.isAsync(asyncExchange);
                     value = asyncExchange == null ? null : asyncExchange.toString();
                 }
