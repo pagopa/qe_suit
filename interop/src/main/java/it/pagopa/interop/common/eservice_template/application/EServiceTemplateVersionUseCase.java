@@ -6,6 +6,7 @@ import it.pagopa.interop.common.eservice_template.domain.EServiceTemplate;
 import it.pagopa.interop.common.eservice_template.domain.EServiceTemplateInterface;
 import it.pagopa.interop.common.eservice_template.domain.EServiceTemplateVersion;
 import it.pagopa.interop.common.eservice_template.domain.EServiceTemplateVersionState;
+import it.pagopa.interop.common.kernel.domain.DocumentKind;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
@@ -151,5 +152,18 @@ public class EServiceTemplateVersionUseCase {
     ) {
         var command = requestFactory.defaultUpdateTemplateVersionCommand().description(description);
         eServiceTemplateVersionGateway.attemptDraftVersionUpdate(template.getRef(), version.getRef(), command);
+    }
+
+    public void attemptFileUpload(
+            EServiceTemplate template,
+            EServiceTemplateVersion version,
+            String path,
+            DocumentKind kind,
+            String name
+    ) {
+        if (path == null || path.isBlank() || kind == null || name == null || name.isBlank()) {
+            throw new IllegalArgumentException("Template document fixture path, kind, and name must not be blank");
+        }
+        eServiceTemplateVersionGateway.attemptFileUpload(template.getRef(), version.getRef(), path, kind, name);
     }
 }

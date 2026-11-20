@@ -5,6 +5,7 @@ import it.pagopa.interop.common.eservice.domain.*;
 import it.pagopa.interop.common.kernel.domain.ApiInterface;
 import it.pagopa.interop.common.kernel.domain.Channel;
 import it.pagopa.interop.common.kernel.domain.Document;
+import it.pagopa.interop.common.kernel.domain.DocumentKind;
 import it.pagopa.interop.common.kernel.domain.EServiceDescriptorRef;
 import it.pagopa.interop.common.kernel.domain.EServiceRef;
 import org.springframework.plugin.core.Plugin;
@@ -90,5 +91,15 @@ public interface EServiceDescriptorGateway extends Plugin<Channel> {
 
     void attemptDocumentUpload(EServiceRef eServiceRef, EServiceDescriptorRef descriptorRef, String path, String name);
 
+    void attemptFileUpload(
+            EServiceRef eServiceRef,
+            EServiceDescriptorRef descriptorRef,
+            String path,
+            DocumentKind kind,
+            String name
+    );
+
     void attemptDocumentRename(EServiceRef eServiceRef, EServiceDescriptorRef descriptorRef, Document document, String newName);
+
+    void attemptDescriptorCreation(EServiceRef eServiceRef);
 }

@@ -3,6 +3,7 @@ package it.pagopa.interop.common.eservice.infrastructure.cucumber;
 import io.cucumber.java.en.Given;
 import io.cucumber.java.en.Then;
 import io.cucumber.java.en.When;
+import it.pagopa.application.context.EntityStore;
 import it.pagopa.interop.common.eservice.application.EServiceDescriptorUseCase;
 import it.pagopa.interop.common.eservice.application.EServiceDescriptorApprovalUseCase;
 import it.pagopa.interop.common.eservice.application.EServiceUseCase;
@@ -20,6 +21,7 @@ public class EServiceSteps {
     private final InteropJourney interopJourney;
     private final EServiceUseCase eServiceUseCase;
     private final EServiceDescriptorApprovalUseCase approvalUseCase;
+    private final EntityStore entityStore;
     private String lastImportedEServiceName;
 
     @Given("un e-service SOAP in bozza creato dall'erogatore")
@@ -186,13 +188,25 @@ public class EServiceSteps {
 
     @When("l'erogatore tenta di importare un e-service dal file {string}")
     public void attemptEServiceImportFromFile(String filePath) {
-        // TODO
         // Usato negli scenari con id ERROR_173
+        eServiceUseCase.attemptEServiceImportFromFile(filePath);
     }
 
+    /**
+     * Tenta di creare una nuova versione (descrittore) per l'ultimo e-service nel contesto.
+     * <p>
+     * DUBBIO SULLA FATTIBILITÀ DEL TEST (ERROR_085):
+     * L'endpoint BFF {@code POST /eservices/{eServiceId}/descriptors} ({@code createDescriptor}) non accetta
+     * alcun payload di richiesta: clona la descrizione e gli altri metadati dalla versione precedente.
+     * Tuttavia, la creazione/modifica e la conseguente pubblicazione della versione precedente vengono
+     * già bloccate a monte dal backend se la descrizione contiene un URL ({@code hyperlinkDetectionError}).
+     * Non è quindi chiaro come sia possibile mettersi nella condizione di avere una versione precedente
+     * pubblicata contenente un link per poter poi fallire sulla creazione della nuova versione.
+     */
     @When("l'erogatore tenta di creare una nuova versione dell'e-service con un link nella descrizione e gli altri dati validi")
     public void attemptCreateDescriptorWithLinkInDescription() {
-        // TODO
         // Usato negli scenari con id ERROR_085
+        EService eService = entityStore.getLastOrThrow(EService.class);
+        descriptorUseCase.attemptDescriptorCreation(eService);
     }
 }

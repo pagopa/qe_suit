@@ -161,4 +161,32 @@ public class BffPurposeRestClient extends RestClient {
                 Void.class
         );
     }
+
+    public TestChain<PurposeVersionResource> patchUpdatePurposeFromTemplate(
+            @Nonnull UUID purposeTemplateId,
+            @Nonnull UUID purposeId,
+            @Nonnull PatchPurposeUpdateFromTemplateContent payload
+    ) {
+        return execute(
+                () -> purposesApi.patchUpdatePurposeFromTemplate()
+                        .purposeTemplateIdPath(purposeTemplateId)
+                        .purposeIdPath(purposeId)
+                        .body(payload)
+                        .execute(Function.identity()),
+                PurposeVersionResource.class
+        );
+    }
+
+    public TestChain<Void> editRiskAnalysisForm(
+            @Nonnull UUID purposeId,
+            @Nonnull RiskAnalysisFormSeed payload
+    ) {
+        return execute(
+                () -> purposesApi.editRiskAnalysisForm()
+                        .purposeIdPath(purposeId)
+                        .body(payload)
+                        .execute(Function.identity()),
+                Void.class
+        );
+    }
 }

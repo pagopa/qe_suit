@@ -116,4 +116,24 @@ public class EServiceTemplateUseCase {
         var command = requestFactory.defaultCreationEServiceTemplateCommand().name(name);
         eServiceTemplateGateway.attemptTemplateCreation(command);
     }
+
+    public void attemptAddRiskAnalysisWithName(
+            Tenant tenant,
+            EServiceTemplate eServiceTemplate,
+            String name
+    ) {
+        RiskAnalysisFormConfig latestConfig = riskAnalysisGateway.getLatestRiskAnalysisConfig(tenant);
+        Map<String, List<String>> answers =
+                riskAnalysisDataFactory.getTemplateForTenant(tenant, true);
+
+        RiskAnalysisForm form = RiskAnalysisForm.builder()
+                .version(latestConfig.getVersion())
+                .answers(answers)
+                .build();
+
+        CreateEServiceTemplateRiskAnalysisCommand command =
+                requestFactory.createRiskAnalysisCommand(tenant.getTenantType(), form)
+                        .name(name);
+        eServiceTemplateGateway.attemptAddRiskAnalysis(eServiceTemplate.getRef(), command);
+    }
 }

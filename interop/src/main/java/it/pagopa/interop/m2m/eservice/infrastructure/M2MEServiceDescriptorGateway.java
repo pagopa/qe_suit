@@ -12,6 +12,7 @@ import it.pagopa.interop.common.eservice.domain.*;
 import it.pagopa.interop.common.kernel.domain.ApiInterface;
 import it.pagopa.interop.common.kernel.domain.Channel;
 import it.pagopa.interop.common.kernel.domain.Document;
+import it.pagopa.interop.common.kernel.domain.DocumentKind;
 import it.pagopa.interop.common.kernel.domain.EServiceDescriptorRef;
 import it.pagopa.interop.common.kernel.domain.EServiceRef;
 import it.pagopa.interop.generated.openapi.clients.m2m.v3.model.Problem;
@@ -288,8 +289,24 @@ public class M2MEServiceDescriptorGateway implements EServiceDescriptorGateway {
     }
 
     @Override
+    public void attemptFileUpload(
+            EServiceRef eServiceRef,
+            EServiceDescriptorRef descriptorRef,
+            String path,
+            DocumentKind kind,
+            String name
+    ) {
+        throw new UnsupportedOperationException("Uploading descriptor documents is not supported on M2M V3");
+    }
+
+    @Override
     public void attemptDocumentRename(EServiceRef eServiceRef, EServiceDescriptorRef descriptorRef,
                                       Document document, String newName) {
         throw new UnsupportedOperationException("Renaming descriptor documents is not supported on M2M V3");
+    }
+
+    @Override
+    public void attemptDescriptorCreation(EServiceRef eServiceRef) {
+        throw new UnsupportedOperationException("Creating an e-service descriptor is not supported on M2M V3");
     }
 }

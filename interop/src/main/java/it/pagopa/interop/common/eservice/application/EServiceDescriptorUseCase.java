@@ -233,4 +233,15 @@ public class EServiceDescriptorUseCase {
     public void attemptDescriptorExport(EService eService, EServiceDescriptor descriptor) {
         eServiceDescriptorGateway.attemptDescriptorExport(eService.getRef(), descriptor.getRef());
     }
+
+    /**
+     * Tenta di creare una nuova versione per l'e-service indicato.
+     * <p>
+     * NOTA (ERROR_085): l'endpoint BFF {@code POST /eservices/{eServiceId}/descriptors} non accetta la descrizione
+     * in input ma clona i dati dalla versione precedente; la fattibilità dello scenario ERROR_085 è dubbia poiché
+     * una versione precedente con link nella descrizione non potrebbe essere stata creata/pubblicata a monte.
+     */
+    public void attemptDescriptorCreation(EService eService) {
+        eServiceDescriptorGateway.attemptDescriptorCreation(eService.getRef());
+    }
 }

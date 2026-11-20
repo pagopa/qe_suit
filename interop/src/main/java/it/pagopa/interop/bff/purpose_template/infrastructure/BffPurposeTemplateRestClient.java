@@ -14,10 +14,14 @@ import it.pagopa.interop.generated.openapi.clients.bff.model.PurposeTemplateWith
 import it.pagopa.interop.generated.openapi.clients.bff.model.RiskAnalysisTemplateAnswerAnnotation;
 import it.pagopa.interop.generated.openapi.clients.bff.model.RiskAnalysisTemplateAnswerAnnotationDocument;
 import it.pagopa.interop.generated.openapi.clients.bff.model.RiskAnalysisTemplateAnswerAnnotationSeed;
+import it.pagopa.interop.generated.openapi.clients.bff.model.RiskAnalysisTemplateAnswerRequest;
+import it.pagopa.interop.generated.openapi.clients.bff.model.RiskAnalysisTemplateAnswerResponse;
+import it.pagopa.interop.generated.openapi.clients.bff.model.UpdateRiskAnalysisTemplateAnswerAnnotationDocumentSeed;
 import jakarta.annotation.Nonnull;
 import org.springframework.stereotype.Component;
 
 import java.io.File;
+import java.util.Locale;
 import java.util.UUID;
 import java.util.function.Function;
 
@@ -119,12 +123,56 @@ public class BffPurposeTemplateRestClient extends RestClient {
             @Nonnull String prettyName,
             @Nonnull File doc
     ) {
+        String mimeType = resolveMimeType(doc);
         return execute(
                 () -> purposeTemplatesApi.addRiskAnalysisTemplateAnswerAnnotationDocument()
                         .purposeTemplateIdPath(purposeTemplateId)
                         .answerIdPath(answerId)
                         .prettyNameForm(prettyName)
-                        .reqSpec(reqSpec -> reqSpec.addMultiPart("doc", doc, "application/pdf"))
+                        .reqSpec(reqSpec -> reqSpec.addMultiPart("doc", doc, mimeType))
+                        .execute(Function.identity()),
+                RiskAnalysisTemplateAnswerAnnotationDocument.class
+        );
+    }
+
+    public TestChain<Void> updatePurposeTemplate(
+            @Nonnull UUID purposeTemplateId,
+            @Nonnull PurposeTemplateSeed payload
+    ) {
+        return execute(
+                () -> purposeTemplatesApi.updatePurposeTemplate()
+                        .purposeTemplateIdPath(purposeTemplateId)
+                        .body(payload)
+                        .execute(Function.identity()),
+                Void.class
+        );
+    }
+
+    public TestChain<RiskAnalysisTemplateAnswerResponse> addRiskAnalysisAnswer(
+            @Nonnull UUID purposeTemplateId,
+            @Nonnull RiskAnalysisTemplateAnswerRequest payload
+    ) {
+        return execute(
+                () -> purposeTemplatesApi.addPurposeTemplateRiskAnalysisAnswer()
+                        .purposeTemplateIdPath(purposeTemplateId)
+                        .body(payload)
+                        .execute(Function.identity()),
+                RiskAnalysisTemplateAnswerResponse.class
+        );
+    }
+
+    public TestChain<RiskAnalysisTemplateAnswerAnnotationDocument> updateRiskAnalysisAnswerAnnotationDocument(
+            @Nonnull UUID purposeTemplateId,
+            @Nonnull UUID answerId,
+            @Nonnull UUID documentId,
+            @Nonnull UpdateRiskAnalysisTemplateAnswerAnnotationDocumentSeed payload
+    ) {
+        return execute(
+                () -> purposeTemplatesApi.updateRiskAnalysisTemplateAnswerAnnotationDocument()
+                        .purposeTemplateIdPath(purposeTemplateId)
+                        .answerIdPath(answerId)
+                        .documentIdPath(documentId)
+                        .body(payload)
                         .execute(Function.identity()),
                 RiskAnalysisTemplateAnswerAnnotationDocument.class
         );
@@ -137,5 +185,16 @@ public class BffPurposeTemplateRestClient extends RestClient {
                         .execute(Function.identity()),
                 byte[].class
         );
+    }
+
+    private static String resolveMimeType(File doc) {
+        String name = doc.getName().toLowerCase(Locale.ROOT);
+        if (name.endsWith(".pdf")) {
+            return "application/pdf";
+        }
+        if (name.endsWith(".txt")) {
+            return "text/plain";
+        }
+        return "application/octet-stream";
     }
 }

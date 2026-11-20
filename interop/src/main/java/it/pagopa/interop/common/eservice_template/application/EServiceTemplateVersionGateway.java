@@ -5,6 +5,7 @@ import it.pagopa.interop.common.eservice_template.application.command.UpdateESer
 import it.pagopa.interop.common.eservice_template.domain.EServiceTemplateInterface;
 import it.pagopa.interop.common.eservice_template.domain.EServiceTemplateVersion;
 import it.pagopa.interop.common.kernel.domain.Channel;
+import it.pagopa.interop.common.kernel.domain.DocumentKind;
 import it.pagopa.interop.common.kernel.domain.EServiceTemplateRef;
 import it.pagopa.interop.common.kernel.domain.EServiceTemplateVersionRef;
 import org.springframework.plugin.core.Plugin;
@@ -25,6 +26,14 @@ public interface EServiceTemplateVersionGateway extends Plugin<Channel> {
     EServiceTemplateVersion uploadInterface(EServiceTemplateRef templateRef, EServiceTemplateVersionRef versionRef, String fixturePath);
 
     void requestDocumentUpload(EServiceTemplateRef templateRef, EServiceTemplateVersionRef versionRef, String fixturePath);
+
+    void attemptFileUpload(
+            EServiceTemplateRef templateRef,
+            EServiceTemplateVersionRef versionRef,
+            String fixturePath,
+            DocumentKind kind,
+            String documentName
+    );
 
     void shouldFailToUploadInterface(
             EServiceTemplateRef templateRef,

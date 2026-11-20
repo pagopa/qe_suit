@@ -258,25 +258,54 @@ public class PurposeSteps {
 
     @When("il fruitore tenta di creare una finalità per l'e-service con il nome della finalità")
     public void attemptCreatePurposeWithExistingPurposeName() {
-        // TODO
         // Usato negli scenari con id ERROR_019
+        Purpose existingPurpose = entityStore.getLastOrThrow(Purpose.class);
+        EService eService = entityStore.getById(existingPurpose.getEserviceId(), EService.class)
+                .orElseGet(() -> entityStore.getLastOrThrow(EService.class));
+
+        if (eService.getMode() == EServiceMode.RECEIVE) {
+            EServiceRiskAnalysis riskAnalysis = entityStore.getLast(EServiceRiskAnalysis.class)
+                    .orElseGet(() -> eServiceRiskAnalysisUseCase.getRiskAnalysis(eService));
+            if (riskAnalysis == null) {
+                throw new IllegalStateException(
+                        "No EServiceRiskAnalysis found for RECEIVE e-service " + eService.getId()
+                );
+            }
+            purposeUseCase.attemptCreateReversePurposeWithTitle(
+                    eService, riskAnalysis, existingPurpose.getTitle()
+            );
+        } else {
+            purposeUseCase.attemptCreatePurposeWithTitle(eService, existingPurpose.getTitle());
+        }
     }
 
     @When("il fruitore tenta di creare una finalità dal template finalità per l'e-service con il nome della finalità")
     public void attemptCreatePurposeFromTemplateWithExistingPurposeName() {
-        // TODO
         // Usato negli scenari con id ERROR_023
+        Purpose existingPurpose = entityStore.getLastOrThrow(Purpose.class);
+        PurposeTemplate purposeTemplate = entityStore.getLastOrThrow(PurposeTemplate.class);
+        EService eService = entityStore.getById(existingPurpose.getEserviceId(), EService.class)
+                .orElseGet(() -> entityStore.getLastOrThrow(EService.class));
+        purposeUseCase.attemptCreatePurposeFromTemplateWithTitle(
+                purposeTemplate, eService, existingPurpose.getTitle()
+        );
     }
 
     @When("il fruitore tenta di modificare la finalità da template {string} con il nome della finalità {string}")
     public void attemptUpdatePurposeFromTemplateWithExistingPurposeName(String targetPurposeAlias, String sourcePurposeAlias) {
-        // TODO
         // Usato negli scenari con id ERROR_024
+        Purpose targetPurpose = entityStore.getByAliasOrThrow(targetPurposeAlias, Purpose.class);
+        Purpose sourcePurpose = entityStore.getByAliasOrThrow(sourcePurposeAlias, Purpose.class);
+        PurposeTemplate purposeTemplate = entityStore.getLastOrThrow(PurposeTemplate.class);
+        purposeUseCase.attemptNameUpdateFromTemplate(
+                purposeTemplate, targetPurpose, sourcePurpose.getTitle()
+        );
     }
 
     @When("il valutatore tenta di salvare risposte valide nell'analisi del rischio della finalità")
     public void attemptSaveValidAnswersInPurposeRiskAnalysis() {
-        // TODO
         // Usato negli scenari con id ERROR_030, ERROR_031
+        Purpose purpose = entityStore.getLastOrThrow(Purpose.class);
+        purposeUseCase.attemptRiskAnalysisFormUpdate(purpose);
     }
 }

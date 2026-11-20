@@ -181,4 +181,40 @@ public class M2MPurposeGateway implements PurposeGateway {
     public void attemptRiskAnalysisRejection(PurposeRef purposeRef, RejectRiskAnalysisCommand rejectCommand) {
         throw unsupportedOperation();
     }
+
+    @Override
+    public void attemptCreatePurpose(PurposeCreateCommand createCommand) {
+        throw unsupportedOperation();
+    }
+
+    @Override
+    public void attemptCreateReversePurpose(
+            EServiceRef eServiceRef,
+            EServiceRiskAnalysisRef riskAnalysisRef,
+            String title
+    ) {
+        throw unsupportedOperation();
+    }
+
+    @Override
+    public void attemptCreatePurposeFromTemplate(
+            PurposeTemplateRef purposeTemplateRef,
+            PurposeCreateCommand createCommand
+    ) {
+        throw unsupportedOperation();
+    }
+
+    @Override
+    public void attemptNameUpdateFromTemplate(
+            PurposeTemplateRef purposeTemplateRef,
+            PurposeRef purposeRef,
+            String name
+    ) {
+        throw unsupportedOperation();
+    }
+
+    @Override
+    public void attemptRiskAnalysisFormUpdate(PurposeRef purposeRef) {
+        throw unsupportedOperation();
+    }
 }

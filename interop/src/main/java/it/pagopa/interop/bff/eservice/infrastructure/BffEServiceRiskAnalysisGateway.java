@@ -6,6 +6,7 @@ import it.pagopa.interop.common.eservice.application.EServiceRiskAnalysisGateway
 import it.pagopa.interop.common.kernel.domain.Channel;
 import it.pagopa.interop.common.kernel.domain.EServiceRef;
 import it.pagopa.interop.common.kernel.domain.EServiceRiskAnalysis;
+import it.pagopa.interop.common.kernel.domain.EServiceRiskAnalysisRef;
 import it.pagopa.interop.common.risk_analysis.domain.RiskAnalysisForm;
 import it.pagopa.interop.generated.openapi.clients.bff.model.EServiceRiskAnalysisSeed;
 import it.pagopa.interop.generated.openapi.clients.bff.model.RiskAnalysisFormSeed;
@@ -88,6 +89,40 @@ public class BffEServiceRiskAnalysisGateway implements EServiceRiskAnalysisGatew
     @Override
     public boolean supports(Channel delimiter) {
         return delimiter == Channel.BFF;
+    }
+
+    @Override
+    public void attemptAddRiskAnalysis(
+            EServiceRef eServiceRef,
+            RiskAnalysisForm riskAnalysisForm,
+            @jakarta.annotation.Nullable String name
+    ) {
+        String effectiveName = name != null && !name.isBlank()
+                ? name
+                : RandomUtils.randomAlphanumericName("risk-analysis");
+        EServiceRiskAnalysisSeed payload = new EServiceRiskAnalysisSeed()
+                .name(effectiveName)
+                .riskAnalysisForm(new RiskAnalysisFormSeed()
+                        .version(riskAnalysisForm.getVersion())
+                        .answers(new HashMap<>(riskAnalysisForm.getAnswers())));
+
+        restClient.addRiskAnalysis(eServiceRef.id(), payload).withoutPolling();
+    }
+
+    @Override
+    public void attemptUpdateRiskAnalysis(
+            EServiceRef eServiceRef,
+            EServiceRiskAnalysisRef riskAnalysisRef,
+            RiskAnalysisForm riskAnalysisForm,
+            String name
+    ) {
+        EServiceRiskAnalysisSeed payload = new EServiceRiskAnalysisSeed()
+                .name(name)
+                .riskAnalysisForm(new RiskAnalysisFormSeed()
+                        .version(riskAnalysisForm.getVersion())
+                        .answers(new HashMap<>(riskAnalysisForm.getAnswers())));
+
+        restClient.updateRiskAnalysis(eServiceRef.id(), riskAnalysisRef.id(), payload).withoutPolling();
     }
 }
 

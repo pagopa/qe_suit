@@ -3,8 +3,11 @@ package it.pagopa.interop.common.eservice.infrastructure.cucumber;
 import io.cucumber.java.en.Given;
 import io.cucumber.java.en.When;
 import it.pagopa.application.context.EntityStore;
+import it.pagopa.interop.common.eservice.application.EServiceRiskAnalysisUseCase;
+import it.pagopa.interop.common.eservice.domain.EService;
 import it.pagopa.interop.common.eservice.infrastructure.cucumber.dto.EServiceRiskAnalysisAliasConfiguration;
 import it.pagopa.interop.common.journey.application.InteropJourney;
+import it.pagopa.interop.common.kernel.context.AuthSession;
 import it.pagopa.interop.common.kernel.domain.EServiceRiskAnalysis;
 import java.util.HashSet;
 import java.util.List;
@@ -15,6 +18,8 @@ import lombok.RequiredArgsConstructor;
 public class EServiceRiskAnalysisSteps {
     private final InteropJourney interopJourney;
     private final EntityStore entityStore;
+    private final EServiceRiskAnalysisUseCase eServiceRiskAnalysisUseCase;
+    private final AuthSession authSession;
 
     @Given("le seguenti analisi del rischio complete associate all'e-service:")
     public void completeRiskAnalysesAssociatedToEService(List<EServiceRiskAnalysisAliasConfiguration> configurations) {
@@ -50,13 +55,21 @@ public class EServiceRiskAnalysisSteps {
 
     @When("l'erogatore tenta di aggiungere all'e-service un'analisi del rischio con la risposta a testo libero {string}")
     public void attemptAddRiskAnalysisWithFreeTextAnswer(String answer) {
-        // TODO
         // Usato negli scenari con id ERROR_202
+        EService eService = entityStore.getLastOrThrow(EService.class);
+        eServiceRiskAnalysisUseCase.attemptAddRiskAnalysisWithFreeTextAnswer(
+                authSession.getTenant(), eService, answer
+        );
     }
 
     @When("l'erogatore tenta di rinominare l'analisi del rischio {string} dell'e-service con il nome di {string}")
     public void attemptRenameEServiceRiskAnalysis(String sourceAlias, String targetNameAlias) {
-        // TODO
         // Usato negli scenari con id ERROR_047
+        EService eService = entityStore.getLastOrThrow(EService.class);
+        EServiceRiskAnalysis source = entityStore.getByAliasOrThrow(sourceAlias, EServiceRiskAnalysis.class);
+        EServiceRiskAnalysis target = entityStore.getByAliasOrThrow(targetNameAlias, EServiceRiskAnalysis.class);
+        eServiceRiskAnalysisUseCase.attemptRenameRiskAnalysis(
+                authSession.getTenant(), eService, source, target.getName()
+        );
     }
 }

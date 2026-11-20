@@ -244,4 +244,55 @@ class PurposeStepsTest {
         verifyNoMoreInteractions(useCase);
         verifyNoInteractions(entities, interopJourney, userSession, currentChannel);
     }
+
+    @Test
+    void attemptsCreateReversePurposeWithExistingPurposeNameForReceiveEService() {
+        var eService = EService.builder().id(UUID.randomUUID()).mode(EServiceMode.RECEIVE).build();
+        var existingPurpose = purpose.toBuilder().eserviceId(eService.getId()).title("Finalità Esistente").build();
+        var riskAnalysis = EServiceRiskAnalysis.builder().id(UUID.randomUUID()).build();
+        when(entities.getLastOrThrow(Purpose.class)).thenReturn(existingPurpose);
+        when(entities.getById(eService.getId(), EService.class)).thenReturn(Optional.of(eService));
+        when(entities.getLast(EServiceRiskAnalysis.class)).thenReturn(Optional.of(riskAnalysis));
+
+        steps.attemptCreatePurposeWithExistingPurposeName();
+
+        verify(useCase).attemptCreateReversePurposeWithTitle(eService, riskAnalysis, "Finalità Esistente");
+    }
+
+    @Test
+    void attemptsCreatePurposeFromTemplateWithExistingPurposeName() {
+        var eService = EService.builder().id(UUID.randomUUID()).build();
+        var template = PurposeTemplate.builder().id(UUID.randomUUID()).build();
+        var existingPurpose = purpose.toBuilder().eserviceId(eService.getId()).title("Finalità Esistente").build();
+        when(entities.getLastOrThrow(Purpose.class)).thenReturn(existingPurpose);
+        when(entities.getLastOrThrow(PurposeTemplate.class)).thenReturn(template);
+        when(entities.getById(eService.getId(), EService.class)).thenReturn(Optional.of(eService));
+
+        steps.attemptCreatePurposeFromTemplateWithExistingPurposeName();
+
+        verify(useCase).attemptCreatePurposeFromTemplateWithTitle(template, eService, "Finalità Esistente");
+    }
+
+    @Test
+    void attemptsUpdatePurposeFromTemplateWithExistingPurposeName() {
+        var template = PurposeTemplate.builder().id(UUID.randomUUID()).build();
+        var targetPurpose = purpose.toBuilder().id(UUID.randomUUID()).title("F-2").build();
+        var sourcePurpose = purpose.toBuilder().id(UUID.randomUUID()).title("F-1").build();
+        when(entities.getByAliasOrThrow("F-2", Purpose.class)).thenReturn(targetPurpose);
+        when(entities.getByAliasOrThrow("F-1", Purpose.class)).thenReturn(sourcePurpose);
+        when(entities.getLastOrThrow(PurposeTemplate.class)).thenReturn(template);
+
+        steps.attemptUpdatePurposeFromTemplateWithExistingPurposeName("F-2", "F-1");
+
+        verify(useCase).attemptNameUpdateFromTemplate(template, targetPurpose, "F-1");
+    }
+
+    @Test
+    void attemptsSaveValidAnswersInPurposeRiskAnalysis() {
+        when(entities.getLastOrThrow(Purpose.class)).thenReturn(purpose);
+
+        steps.attemptSaveValidAnswersInPurposeRiskAnalysis();
+
+        verify(useCase).attemptRiskAnalysisFormUpdate(purpose);
+    }
 }

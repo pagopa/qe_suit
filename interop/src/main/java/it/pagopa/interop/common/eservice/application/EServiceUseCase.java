@@ -110,4 +110,11 @@ public class EServiceUseCase {
     public void attemptPartialNameUpdate(EService eService, String name) {
         eServiceGateway.attemptPartialNameUpdate(eService.getRef(), name);
     }
+
+    public void attemptEServiceImportFromFile(String filePath) {
+        if (filePath == null || filePath.isBlank()) {
+            throw new IllegalArgumentException("Import file path must not be blank");
+        }
+        eServiceGateway.attemptEServiceImportFromFile(filePath);
+    }
 }

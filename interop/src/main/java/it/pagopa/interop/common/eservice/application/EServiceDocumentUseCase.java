@@ -2,6 +2,7 @@ package it.pagopa.interop.common.eservice.application;
 
 import it.pagopa.interop.common.eservice.domain.EService;
 import it.pagopa.interop.common.eservice.domain.EServiceDescriptor;
+import it.pagopa.interop.common.kernel.domain.DocumentKind;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
@@ -26,6 +27,19 @@ public class EServiceDocumentUseCase {
             throw new IllegalArgumentException("Document fixture path and name must not be blank");
         }
         gateway.attemptDocumentUpload(service.getRef(), descriptor.getRef(), path, name);
+    }
+
+    public void attemptFileUpload(
+            EService service,
+            EServiceDescriptor descriptor,
+            String path,
+            DocumentKind kind,
+            String name
+    ) {
+        if (path == null || path.isBlank() || kind == null || name == null || name.isBlank()) {
+            throw new IllegalArgumentException("Document fixture path, kind, and name must not be blank");
+        }
+        gateway.attemptFileUpload(service.getRef(), descriptor.getRef(), path, kind, name);
     }
 
     public void attemptDocumentRename(EService service, EServiceDescriptor descriptor, String documentName, String newName) {

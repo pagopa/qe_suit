@@ -183,13 +183,43 @@ public class BffEServiceDescriptorInterfaceGateway {
     }
 
     public void attemptDocumentUpload(EServiceRef serviceRef, EServiceDescriptorRef descriptorRef, String path, String name) {
-        File document = FileUtils.loadClasspathResourceAsTempFile(path);
-        restClient.addDocument(serviceRef.id(), descriptorRef.id(), DocumentKind.DOCUMENT.name(), name, document)
+        attemptFileUpload(serviceRef, descriptorRef, path, DocumentKind.DOCUMENT, name);
+    }
+
+    public void attemptFileUpload(
+            EServiceRef serviceRef,
+            EServiceDescriptorRef descriptorRef,
+            String path,
+            DocumentKind kind,
+            String name
+    ) {
+        File document = resolveDocumentFixtureFile(path);
+        restClient.addDocument(serviceRef.id(), descriptorRef.id(), kind.name(), name, document)
                 .withoutPolling();
     }
 
     public void attemptDocumentRename(EServiceRef serviceRef, EServiceDescriptorRef descriptorRef, UUID documentId, String newName) {
         restClient.updateDocument(serviceRef.id(), descriptorRef.id(), documentId,
                 requestFactory.documentRenameRequest(newName)).withoutPolling();
+    }
+
+    private static File resolveDocumentFixtureFile(String fixturePath) {
+        ClassLoader classLoader = Thread.currentThread().getContextClassLoader();
+        if (classLoader == null) {
+            classLoader = BffEServiceDescriptorInterfaceGateway.class.getClassLoader();
+        }
+        for (String candidate : List.of(
+                fixturePath,
+                "assets/" + fixturePath,
+                "assets/eservice/" + fixturePath,
+                "assets/eservice-template/" + fixturePath,
+                "assets/wsdl/" + fixturePath
+        )) {
+            String normalized = candidate.startsWith("/") ? candidate.substring(1) : candidate;
+            if (classLoader.getResource(normalized) != null) {
+                return FileUtils.loadClasspathResourceAsTempFile(normalized);
+            }
+        }
+        throw new IllegalStateException("Risorsa non trovata nel classpath: " + fixturePath);
     }
 }

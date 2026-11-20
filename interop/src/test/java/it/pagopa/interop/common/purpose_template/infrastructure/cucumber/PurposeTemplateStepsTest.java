@@ -108,11 +108,87 @@ class PurposeTemplateStepsTest {
 
     @Test
     void waitsForSignedRiskAnalysisDocumentAvailability() {
-        var template = PurposeTemplate.builder().id(UUID.randomUUID()).build();
+        var doc = it.pagopa.interop.common.kernel.domain.Document.builder().id(UUID.randomUUID()).build();
+        var template = PurposeTemplate.builder().id(UUID.randomUUID()).annotationDocument(doc).build();
         when(entityStore.getLastOrThrow(PurposeTemplate.class)).thenReturn(template);
 
         steps.signedRiskAnalysisDocumentForPurposeTemplateAvailable();
 
         verify(useCase).awaitSignedRiskAnalysisDocumentAvailable(template);
+    }
+
+    @Test
+    void attemptsToAttachFileToPurposeTemplateAnnotation() {
+        var template = PurposeTemplate.builder().id(UUID.randomUUID()).build();
+        when(entityStore.getLastOrThrow(PurposeTemplate.class)).thenReturn(template);
+
+        steps.attachFileToPurposeTemplateAnnotation("allegato-b.pdf", "Allegato A");
+
+        verify(useCase).attemptRiskAnalysisAnswerAnnotationDocumentUpload(template, "Allegato A", "allegato-b.pdf");
+    }
+
+    @Test
+    void attemptsToAddSuggestedEServiceToPurposeTemplate() {
+        var template = PurposeTemplate.builder().id(UUID.randomUUID()).build();
+        var eService = it.pagopa.interop.common.eservice.domain.EService.builder().id(UUID.randomUUID()).build();
+        when(entityStore.getLastOrThrow(PurposeTemplate.class)).thenReturn(template);
+        when(entityStore.getByAliasOrThrow("ES-2", it.pagopa.interop.common.eservice.domain.EService.class))
+                .thenReturn(eService);
+
+        steps.attemptAddSuggestedEServiceToPurposeTemplate("ES-2");
+
+        verify(useCase).attemptLinkEService(template, eService);
+    }
+
+    @Test
+    void attemptsToUpdatePurposeTemplateWithLinkInRiskAnalysisFreeTextAnswer() {
+        var template = PurposeTemplate.builder().id(UUID.randomUUID()).build();
+        when(entityStore.getLastOrThrow(PurposeTemplate.class)).thenReturn(template);
+
+        steps.attemptUpdatePurposeTemplateWithLinkInRiskAnalysisFreeTextAnswer("Motivazione https://example.org");
+
+        verify(useCase).attemptUpdatePurposeTemplateWithFreeTextAnswer(
+                template, Tenant.fromTenantType(TenantKind.PA), "Motivazione https://example.org"
+        );
+    }
+
+    @Test
+    void attemptsToAddAnnotatedAnswerToPurposeTemplate() {
+        var template = PurposeTemplate.builder().id(UUID.randomUUID()).build();
+        when(entityStore.getLastOrThrow(PurposeTemplate.class)).thenReturn(template);
+
+        steps.attemptAddAnnotatedAnswerToPurposeTemplate("Motivazione https://example.org");
+
+        verify(useCase).attemptAddRiskAnalysisAnswerWithAnnotation(template, "Motivazione https://example.org");
+    }
+
+    @Test
+    void attemptsToUpdatePurposeTemplateAnnotationText() {
+        var template = PurposeTemplate.builder().id(UUID.randomUUID()).build();
+        when(entityStore.getLastOrThrow(PurposeTemplate.class)).thenReturn(template);
+
+        steps.attemptUpdatePurposeTemplateAnnotationText("Motivazione https://example.org");
+
+        verify(useCase).attemptUpdateRiskAnalysisAnswerAnnotation(template, "Motivazione https://example.org");
+    }
+
+    @Test
+    void attemptsToRenamePurposeTemplateAnnotationDocument() {
+        var template = PurposeTemplate.builder().id(UUID.randomUUID()).build();
+        when(entityStore.getLastOrThrow(PurposeTemplate.class)).thenReturn(template);
+
+        steps.attemptRenamePurposeTemplateAnnotationDocument("Allegato B", "Allegato A");
+
+        verify(useCase).attemptRenameRiskAnalysisAnswerAnnotationDocument(template, "Allegato B", "Allegato A");
+    }
+
+    @Test
+    void attemptsToDownloadSignedRiskAnalysisDocument() {
+        var template = PurposeTemplate.builder().id(UUID.randomUUID()).build();
+        when(entityStore.getLastOrThrow(PurposeTemplate.class)).thenReturn(template);
+
+        steps.attemptDownloadSignedRiskAnalysisDocument();
+
+        verify(useCase).attemptSignedRiskAnalysisDocumentDownload(template);
     }
 }

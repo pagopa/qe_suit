@@ -1,0 +1,1 @@
+Allegato di testo non in formato PDF per test di validazione del content-type.

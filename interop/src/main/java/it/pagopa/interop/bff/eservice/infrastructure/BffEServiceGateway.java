@@ -234,4 +234,38 @@ public class BffEServiceGateway implements EServiceGateway {
     public void attemptPartialNameUpdate(EServiceRef eServiceRef, String name) {
         restClient.partialUpdateEService(eServiceRef.id(), requestFactory.partialNameUpdateRequest(name)).withoutPolling();
     }
+
+    @Override
+    public void attemptEServiceImportFromFile(String filePath) {
+        File zipFile = resolveImportFixtureFile(filePath);
+        String zipFileName = Path.of(filePath).getFileName().toString();
+        byte[] zipBytes;
+        try {
+            zipBytes = Files.readAllBytes(zipFile.toPath());
+        } catch (IOException e) {
+            throw new UncheckedIOException("Errore nella lettura del file ZIP di importazione E-Service: " + filePath, e);
+        }
+        PresignedUrl presignedUrl = restClient.getImportEservicePresignedUrl(zipFileName)
+                .withPolling(PollingStrategy.UNTIL_SUCCESS)
+                .get();
+        restClient.uploadToPresignedUrl(presignedUrl.getUrl(), zipBytes)
+                .withPolling(PollingStrategy.UNTIL_SUCCESS)
+                .get();
+        FileResource fileResource = new FileResource().filename(zipFileName).url(presignedUrl.getUrl());
+        restClient.importEService(fileResource).withoutPolling();
+    }
+
+    private static File resolveImportFixtureFile(String fixturePath) {
+        ClassLoader classLoader = Thread.currentThread().getContextClassLoader();
+        if (classLoader == null) {
+            classLoader = BffEServiceGateway.class.getClassLoader();
+        }
+        for (String candidate : List.of(fixturePath, "assets/" + fixturePath, "assets/eservice/" + fixturePath)) {
+            String normalized = candidate.startsWith("/") ? candidate.substring(1) : candidate;
+            if (classLoader.getResource(normalized) != null) {
+                return FileUtils.loadClasspathResourceAsTempFile(normalized);
+            }
+        }
+        throw new IllegalStateException("Risorsa non trovata nel classpath: " + fixturePath);
+    }
 }

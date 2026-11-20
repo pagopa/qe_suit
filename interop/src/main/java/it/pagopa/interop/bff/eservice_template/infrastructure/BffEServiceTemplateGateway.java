@@ -160,4 +160,17 @@ public class BffEServiceTemplateGateway implements EServiceTemplateGateway {
             throw new IllegalArgumentException("Command must be an instance of " + BffEServiceTemplateCreationCommand.class.getSimpleName());
         restClient.createEServiceTemplate(bffCommand.getBffCreationPayload()).withoutPolling();
     }
+
+    @Override
+    public void attemptAddRiskAnalysis(
+            EServiceTemplateRef templateRef,
+            CreateEServiceTemplateRiskAnalysisCommand command
+    ) {
+        if (!(command instanceof BffCreateEServiceTemplateRiskAnalysisCommand bffCommand)) {
+            throw new IllegalArgumentException(
+                    "Command must be an instance of " + BffCreateEServiceTemplateRiskAnalysisCommand.class.getSimpleName()
+            );
+        }
+        restClient.addRiskAnalysis(templateRef.id(), bffCommand.getBffPayload()).withoutPolling();
+    }
 }

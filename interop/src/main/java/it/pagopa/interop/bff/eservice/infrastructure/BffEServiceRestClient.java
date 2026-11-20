@@ -73,6 +73,21 @@ public class BffEServiceRestClient extends RestClient {
         return execute(() -> eservicesApi.addRiskAnalysisToEService().eServiceIdPath(eserviceId).body(payload).execute(Function.identity()), Void.class);
     }
 
+    public TestChain<Void> updateRiskAnalysis(
+            @Nonnull UUID eserviceId,
+            @Nonnull UUID riskAnalysisId,
+            @Nonnull EServiceRiskAnalysisSeed payload
+    ) {
+        return execute(
+                () -> eservicesApi.updateEServiceRiskAnalysis()
+                        .eServiceIdPath(eserviceId)
+                        .riskAnalysisIdPath(riskAnalysisId)
+                        .body(payload)
+                        .execute(Function.identity()),
+                Void.class
+        );
+    }
+
     public TestChain<ProducerEServiceDescriptor> readDescriptor(@Nonnull UUID eserviceId, @Nonnull UUID descriptorId) {
         return execute(
                 () -> eservicesApi.getProducerEServiceDescriptor().eserviceIdPath(eserviceId).descriptorIdPath(descriptorId).execute(Function.identity()),

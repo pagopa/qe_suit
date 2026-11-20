@@ -142,6 +142,42 @@ public class PurposeUseCase {
         purposeGateway.attemptRiskAnalysisRejection(purpose.getRef(), command);
     }
 
+    public void attemptCreatePurposeWithTitle(EService eService, String title) {
+        PurposeCreateCommand command = purposeCommandFactory.validFullPopulatedCreateCommand(eService.getRef());
+        command.title(title);
+        purposeGateway.attemptCreatePurpose(command);
+    }
+
+    public void attemptCreateReversePurposeWithTitle(
+            EService eService,
+            EServiceRiskAnalysis riskAnalysis,
+            String title
+    ) {
+        purposeGateway.attemptCreateReversePurpose(eService.getRef(), riskAnalysis.getRef(), title);
+    }
+
+    public void attemptCreatePurposeFromTemplateWithTitle(
+            PurposeTemplate purposeTemplate,
+            EService eService,
+            String title
+    ) {
+        PurposeCreateCommand command = purposeCommandFactory.validFullPopulatedCreateCommand(eService.getRef());
+        command.title(title);
+        purposeGateway.attemptCreatePurposeFromTemplate(purposeTemplate.getRef(), command);
+    }
+
+    public void attemptNameUpdateFromTemplate(
+            PurposeTemplate purposeTemplate,
+            Purpose purpose,
+            String name
+    ) {
+        purposeGateway.attemptNameUpdateFromTemplate(purposeTemplate.getRef(), purpose.getRef(), name);
+    }
+
+    public void attemptRiskAnalysisFormUpdate(Purpose purpose) {
+        purposeGateway.attemptRiskAnalysisFormUpdate(purpose.getRef());
+    }
+
     private int resolveMetadataVersion(Purpose purpose) {
         Integer metadataVersion = purpose.getMetadataVersion();
         if (metadataVersion == null) {

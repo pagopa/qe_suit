@@ -223,6 +223,10 @@ public class BffPurposeCommandFactory implements PurposeCommandFactory {
                 .answers(new HashMap<>(riskAnalysisDataFactory.getTemplateForTenant(consumer, true)));
     }
 
+    public RiskAnalysisFormSeed validRiskAnalysisFormSeed() {
+        return riskAnalysisFormSeed(authSession.getTenant());
+    }
+
     private RiskAnalysisFormSeed riskAnalysisFormTemplateSeed(@Nullable RiskAnalysisFormTemplate templateForm) {
         Map<String, List<String>> answers = new HashMap<>();
         if (templateForm == null || templateForm.getVersion() == null || templateForm.getVersion().isBlank()

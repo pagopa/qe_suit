@@ -1,6 +1,7 @@
 package it.pagopa.interop.common.purpose_template.application;
 
 import it.pagopa.interop.common.eservice.domain.EService;
+import it.pagopa.interop.common.kernel.domain.Document;
 import it.pagopa.interop.common.kernel.domain.Tenant;
 import it.pagopa.interop.common.purpose_template.domain.PurposeTemplate;
 import it.pagopa.interop.common.risk_analysis.application.RiskAnalysisDataFactory;
@@ -10,6 +11,9 @@ import it.pagopa.interop.common.risk_analysis.domain.RiskAnalysisFormConfig;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
+import java.util.LinkedHashMap;
+import java.util.List;
+import java.util.Map;
 import java.util.UUID;
 
 @Service
@@ -82,5 +86,110 @@ public class PurposeTemplateUseCase {
 
     public void awaitSignedRiskAnalysisDocumentAvailable(PurposeTemplate purposeTemplate) {
         purposeTemplateGateway.awaitSignedRiskAnalysisDocumentAvailable(purposeTemplate);
+    }
+
+    public void attemptRiskAnalysisAnswerAnnotationDocumentUpload(
+            PurposeTemplate purposeTemplate,
+            String prettyName,
+            String fixturePath
+    ) {
+        if (prettyName == null || prettyName.isBlank() || fixturePath == null || fixturePath.isBlank()) {
+            throw new IllegalArgumentException("Annotation document name and fixture path must not be blank");
+        }
+        UUID answerId = purposeTemplate.getFirstRiskAnalysisAnswerId();
+        purposeTemplateGateway.attemptRiskAnalysisAnswerAnnotationDocumentUpload(
+                purposeTemplate,
+                answerId,
+                prettyName,
+                fixturePath
+        );
+    }
+
+    public void attemptLinkEService(PurposeTemplate purposeTemplate, EService eService) {
+        purposeTemplateGateway.attemptLinkEService(purposeTemplate, eService.getRef());
+    }
+
+    public void attemptUpdatePurposeTemplateWithFreeTextAnswer(
+            PurposeTemplate purposeTemplate,
+            Tenant targetTenant,
+            String freeTextAnswer
+    ) {
+        RiskAnalysisFormConfig latestConfig = riskAnalysisGateway.getLatestRiskAnalysisConfig(targetTenant);
+        Map<String, List<String>> answers = new LinkedHashMap<>(
+                riskAnalysisDataFactory.getTemplateForTenant(targetTenant, true)
+        );
+        String freeTextKey = resolveFreeTextQuestionKey(latestConfig, answers);
+        answers.put(freeTextKey, List.of(freeTextAnswer));
+
+        RiskAnalysisForm form = RiskAnalysisForm.builder()
+                .version(latestConfig.getVersion())
+                .answers(answers)
+                .build();
+
+        purposeTemplateGateway.attemptUpdatePurposeTemplate(purposeTemplate, targetTenant, form);
+    }
+
+    public void attemptAddRiskAnalysisAnswerWithAnnotation(
+            PurposeTemplate purposeTemplate,
+            String annotationText
+    ) {
+        purposeTemplateGateway.attemptAddRiskAnalysisAnswerWithAnnotation(purposeTemplate, annotationText);
+    }
+
+    public void attemptUpdateRiskAnalysisAnswerAnnotation(
+            PurposeTemplate purposeTemplate,
+            String annotationText
+    ) {
+        UUID answerId = purposeTemplate.getFirstRiskAnalysisAnswerId();
+        purposeTemplateGateway.attemptUpdateRiskAnalysisAnswerAnnotation(
+                purposeTemplate, answerId, annotationText
+        );
+    }
+
+    public void attemptRenameRiskAnalysisAnswerAnnotationDocument(
+            PurposeTemplate purposeTemplate,
+            String currentDocumentName,
+            String newDocumentName
+    ) {
+        List<Document> docs = purposeTemplate.getAnnotationDocuments() != null
+                ? purposeTemplate.getAnnotationDocuments()
+                : List.of();
+        List<Document> matches = docs.stream()
+                .filter(doc -> currentDocumentName.equals(doc.getPrettyName()))
+                .toList();
+        if (matches.size() != 1) {
+            throw new IllegalStateException("Expected exactly one annotation document named '" + currentDocumentName
+                    + "' in PurposeTemplate " + purposeTemplate.getId() + ", found " + matches.size());
+        }
+        UUID answerId = purposeTemplate.getFirstRiskAnalysisAnswerId();
+        purposeTemplateGateway.attemptRenameRiskAnalysisAnswerAnnotationDocument(
+                purposeTemplate,
+                answerId,
+                matches.get(0).getId(),
+                newDocumentName
+        );
+    }
+
+    public void attemptSignedRiskAnalysisDocumentDownload(PurposeTemplate purposeTemplate) {
+        purposeTemplateGateway.attemptSignedRiskAnalysisDocumentDownload(purposeTemplate);
+    }
+
+    private static String resolveFreeTextQuestionKey(
+            RiskAnalysisFormConfig config,
+            Map<String, List<String>> answers
+    ) {
+        if (config != null && config.getQuestions() != null) {
+            for (RiskAnalysisFormConfig.Question question : config.getQuestions()) {
+                if ("FREETEXT".equals(question.getDataType()) && answers.containsKey(question.getId())) {
+                    return question.getId();
+                }
+            }
+            for (RiskAnalysisFormConfig.Question question : config.getQuestions()) {
+                if ("FREETEXT".equals(question.getDataType())) {
+                    return question.getId();
+                }
+            }
+        }
+        return "institutionalPurpose";
     }
 }

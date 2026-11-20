@@ -135,6 +135,43 @@ public class BffEServiceTemplateVersionGateway implements EServiceTemplateVersio
     }
 
     @Override
+    public void attemptFileUpload(
+            EServiceTemplateRef templateRef,
+            EServiceTemplateVersionRef versionRef,
+            String fixturePath,
+            DocumentKind kind,
+            String documentName
+    ) {
+        File document = resolveTemplateFixtureFile(fixturePath);
+        restClient.createEServiceTemplateDocument(
+                templateRef.id(),
+                versionRef.versionId(),
+                kind.name(),
+                documentName,
+                document
+        ).withoutPolling();
+    }
+
+    private static File resolveTemplateFixtureFile(String fixturePath) {
+        ClassLoader classLoader = Thread.currentThread().getContextClassLoader();
+        if (classLoader == null) {
+            classLoader = BffEServiceTemplateVersionGateway.class.getClassLoader();
+        }
+        for (String candidate : List.of(
+                fixturePath,
+                "assets/" + fixturePath,
+                "assets/eservice-template/" + fixturePath,
+                "assets/wsdl/" + fixturePath
+        )) {
+            String normalized = candidate.startsWith("/") ? candidate.substring(1) : candidate;
+            if (classLoader.getResource(normalized) != null) {
+                return FileUtils.loadClasspathResourceAsTempFile(normalized);
+            }
+        }
+        throw new IllegalStateException("Risorsa non trovata nel classpath: " + fixturePath);
+    }
+
+    @Override
     public EServiceTemplateVersion updateDraftVersion(
             EServiceTemplateRef templateRef,
             EServiceTemplateVersionRef versionRef,

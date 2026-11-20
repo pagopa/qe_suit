@@ -9,6 +9,7 @@ import it.pagopa.interop.common.eservice_template.domain.EServiceTemplate;
 import it.pagopa.interop.common.eservice_template.domain.EServiceTemplateInterface;
 import it.pagopa.interop.common.eservice_template.domain.EServiceTemplateVersion;
 import it.pagopa.interop.common.kernel.domain.Channel;
+import it.pagopa.interop.common.kernel.domain.DocumentKind;
 import it.pagopa.interop.common.kernel.domain.EServiceTemplateRef;
 import it.pagopa.interop.common.kernel.domain.EServiceTemplateVersionRef;
 import lombok.RequiredArgsConstructor;
@@ -70,6 +71,17 @@ public class M2MEServiceTemplateVersionGateway implements EServiceTemplateVersio
 
     @Override
     public void requestDocumentUpload(EServiceTemplateRef templateRef, EServiceTemplateVersionRef versionRef, String fixturePath) {
+        throw new UnsupportedOperationException("Document upload is not supported on M2M V3");
+    }
+
+    @Override
+    public void attemptFileUpload(
+            EServiceTemplateRef templateRef,
+            EServiceTemplateVersionRef versionRef,
+            String fixturePath,
+            DocumentKind kind,
+            String documentName
+    ) {
         throw new UnsupportedOperationException("Document upload is not supported on M2M V3");
     }
 

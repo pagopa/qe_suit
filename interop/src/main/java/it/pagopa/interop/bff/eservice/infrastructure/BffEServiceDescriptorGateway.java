@@ -230,7 +230,23 @@ public class BffEServiceDescriptorGateway implements EServiceDescriptorGateway {
     }
 
     @Override
+    public void attemptFileUpload(
+            EServiceRef serviceRef,
+            EServiceDescriptorRef descriptorRef,
+            String path,
+            DocumentKind kind,
+            String name
+    ) {
+        interfaceGateway.attemptFileUpload(serviceRef, descriptorRef, path, kind, name);
+    }
+
+    @Override
     public void attemptDocumentRename(EServiceRef serviceRef, EServiceDescriptorRef descriptorRef, Document document, String newName) {
         interfaceGateway.attemptDocumentRename(serviceRef, descriptorRef, document.getId(), newName);
+    }
+
+    @Override
+    public void attemptDescriptorCreation(EServiceRef serviceRef) {
+        restClient.addDescriptor(serviceRef.id()).withoutPolling();
     }
 }

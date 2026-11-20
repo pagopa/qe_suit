@@ -51,4 +51,6 @@ public interface EServiceGateway extends Plugin<Channel> {
     void attemptDescriptionUpdate(EServiceRef eServiceRef, String description);
 
     void attemptPartialNameUpdate(EServiceRef eServiceRef, String name);
+
+    void attemptEServiceImportFromFile(String filePath);
 }

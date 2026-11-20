@@ -16,6 +16,7 @@ import it.pagopa.interop.common.eservice.domain.RestInterfaceConfiguration;
 import it.pagopa.interop.common.eservice.domain.EServiceMode;
 import it.pagopa.interop.common.eservice_template.domain.EServiceTemplateVersionState;
 import it.pagopa.interop.common.journey.application.InteropJourney;
+import it.pagopa.interop.common.kernel.domain.DocumentKind;
 import lombok.RequiredArgsConstructor;
 import it.pagopa.interop.common.eservice_template.infrastructure.cucumber.dto.mapper.EServiceTemplateConfigurationMapper;
 
@@ -118,7 +119,23 @@ public class EServiceTemplateSteps {
 
     @When("l'erogatore allega il file {string} come {string} sulla versione del template con il nome {string}")
     public void attachFileToTemplateVersion(String filePath, String documentType, String documentName) {
-        // TODO
         // Usato negli scenari con id ERROR_188, ERROR_189, ERROR_190, ERROR_192, ERROR_193, ERROR_194
+        EServiceTemplate template = entities.getLastOrThrow(EServiceTemplate.class);
+        DocumentKind kind = parseDocumentKind(documentType);
+        templateVersionUseCase.attemptFileUpload(
+                template, template.getLastDraftVersion(), filePath, kind, documentName
+        );
+    }
+
+    private static DocumentKind parseDocumentKind(String documentType) {
+        if (documentType == null) {
+            throw new IllegalArgumentException("Document type must not be null");
+        }
+        return switch (documentType.trim().toLowerCase()) {
+            case "interfaccia" -> DocumentKind.INTERFACE;
+            case "documento" -> DocumentKind.DOCUMENT;
+            case "interfaccia di callback" -> DocumentKind.ASYNC_EXCHANGE_CALLBACK_INTERFACE;
+            default -> throw new IllegalArgumentException("Tipo di documento non supportato: " + documentType);
+        };
     }
 }

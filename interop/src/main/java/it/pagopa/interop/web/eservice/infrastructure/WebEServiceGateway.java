@@ -201,4 +201,9 @@ public class WebEServiceGateway implements EServiceGateway {
     public void attemptPartialNameUpdate(EServiceRef eServiceRef, String name) {
         throw new UnsupportedOperationException("attemptPartialNameUpdate is not supported on the WEB channel");
     }
+
+    @Override
+    public void attemptEServiceImportFromFile(String filePath) {
+        throw new UnsupportedOperationException("attemptEServiceImportFromFile is not supported on the WEB channel");
+    }
 }

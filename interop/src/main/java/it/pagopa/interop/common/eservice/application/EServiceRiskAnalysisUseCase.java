@@ -61,4 +61,60 @@ public class EServiceRiskAnalysisUseCase {
     public EServiceRiskAnalysis getRiskAnalysis(EService eService) {
         return eServiceRiskAnalysisGateway.getRiskAnalysis(eService.getRef());
     }
+
+    public void attemptAddRiskAnalysisWithFreeTextAnswer(
+            Tenant tenant,
+            EService eService,
+            String freeTextAnswer
+    ) {
+        RiskAnalysisFormConfig latestConfig = riskAnalysisGateway.getLatestRiskAnalysisConfig(tenant);
+        Map<String, List<String>> answers = new java.util.LinkedHashMap<>(
+                riskAnalysisDataFactory.getTemplateForTenant(tenant, true)
+        );
+        String freeTextKey = resolveFreeTextQuestionKey(latestConfig, answers);
+        answers.put(freeTextKey, List.of(freeTextAnswer));
+
+        RiskAnalysisForm form = RiskAnalysisForm.builder()
+                .version(latestConfig.getVersion())
+                .answers(answers)
+                .build();
+
+        eServiceRiskAnalysisGateway.attemptAddRiskAnalysis(eService.getRef(), form, null);
+    }
+
+    public void attemptRenameRiskAnalysis(
+            Tenant tenant,
+            EService eService,
+            EServiceRiskAnalysis riskAnalysis,
+            String newName
+    ) {
+        RiskAnalysisForm form = riskAnalysis.getRiskAnalysisForm() != null
+                ? riskAnalysis.getRiskAnalysisForm()
+                : buildRiskAnalysisForm(tenant, true);
+        eServiceRiskAnalysisGateway.attemptUpdateRiskAnalysis(
+                eService.getRef(),
+                riskAnalysis.getRef(),
+                form,
+                newName
+        );
+    }
+
+    private static String resolveFreeTextQuestionKey(
+            RiskAnalysisFormConfig config,
+            Map<String, List<String>> answers
+    ) {
+        if (config != null && config.getQuestions() != null) {
+            for (RiskAnalysisFormConfig.Question question : config.getQuestions()) {
+                if ("FREETEXT".equals(question.getDataType()) && answers.containsKey(question.getId())) {
+                    return question.getId();
+                }
+            }
+            for (RiskAnalysisFormConfig.Question question : config.getQuestions()) {
+                if ("FREETEXT".equals(question.getDataType())) {
+                    return question.getId();
+                }
+            }
+        }
+        return "institutionalPurpose";
+    }
 }

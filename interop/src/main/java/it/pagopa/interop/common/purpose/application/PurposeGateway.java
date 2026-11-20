@@ -52,4 +52,25 @@ public interface PurposeGateway extends Plugin<Channel> {
     void attemptRiskAnalysisSigning(PurposeRef purposeRef, SignRiskAnalysisCommand signCommand);
 
     void attemptRiskAnalysisRejection(PurposeRef purposeRef, RejectRiskAnalysisCommand rejectCommand);
+
+    void attemptCreatePurpose(PurposeCreateCommand createCommand);
+
+    void attemptCreateReversePurpose(
+            EServiceRef eServiceRef,
+            EServiceRiskAnalysisRef riskAnalysisRef,
+            String title
+    );
+
+    void attemptCreatePurposeFromTemplate(
+            PurposeTemplateRef purposeTemplateRef,
+            PurposeCreateCommand createCommand
+    );
+
+    void attemptNameUpdateFromTemplate(
+            PurposeTemplateRef purposeTemplateRef,
+            PurposeRef purposeRef,
+            String name
+    );
+
+    void attemptRiskAnalysisFormUpdate(PurposeRef purposeRef);
 }
