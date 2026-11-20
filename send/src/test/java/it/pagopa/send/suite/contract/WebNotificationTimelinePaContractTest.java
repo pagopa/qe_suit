@@ -1,5 +1,7 @@
 package it.pagopa.send.suite.contract;
 
+import it.pagopa.send.common.legal_notification.domain.FeePolicy;
+import it.pagopa.send.common.legal_notification.domain.PhysicalCommunicationType;
 import it.pagopa.infrastructure.contract.browser.WebScenario;
 import it.pagopa.send.TestBootApp;
 import it.pagopa.send.common.infrastructure.WebBrowserContractValidator;
@@ -24,7 +26,6 @@ import org.junit.jupiter.api.TestFactory;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.TestConstructor;
 
-import java.util.List;
 import java.util.Map;
 import java.util.stream.Stream;
 
@@ -147,11 +148,12 @@ public class WebNotificationTimelinePaContractTest {
                 "F24_number", "0"
         ));
         return sendJourney
-                .prepareNotification(new LegalNotificationCreationCommand(sender, Map.of(
-                        "subject", NOTIFICATION_SUBJECT,
-                        "physicalCommunication", "REGISTERED_LETTER_890",
-                        "feePolicy", "FLAT_RATE"
-                ), List.of(recipient)))
+                .prepareNotification(new LegalNotificationCreationCommand()
+                        .sender(sender)
+                        .subject(NOTIFICATION_SUBJECT)
+                        .physicalCommunication(PhysicalCommunicationType.REGISTERED_LETTER_890)
+                        .feePolicy(FeePolicy.FLAT_RATE)
+                        .recipient(recipient))
                 .sendNotification(sender, NotificationStatus.ACCEPTED)
                 .get(LegalNotificationDomain.class);
     }

@@ -62,9 +62,8 @@ public class LegalNotificationJourneyImpl implements LegalNotificationJourney<Le
      */
     @Override
     public LegalNotificationJourneyImpl prepareNotification(LegalNotificationCreationCommand command) {
-        currentUserSession.setUser(command.sender());
-        legalNotificationUseCase.prepareNotification(command.notificationData());
-        command.recipients().forEach(legalNotificationUseCase::addRecipient);
+        currentUserSession.setUser(command.getSender());
+        legalNotificationUseCase.prepareNotification(command);
         return this;
     }
 

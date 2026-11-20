@@ -20,7 +20,6 @@ import org.assertj.core.api.Assertions;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 
 @Slf4j
@@ -53,7 +52,7 @@ public class WebLegalNotificationSteps {
         overrides.putAll(recipientOverrides);
         RecipientSpec recipientSpec = recipientSpecFactory.build(recipient, overrides);
 
-        journey.prepareNotification(new LegalNotificationCreationCommand(sender, List.of(recipientSpec)))
+        journey.prepareNotification(new LegalNotificationCreationCommand().sender(sender).recipient(recipientSpec))
                 .sendNotification(sender, NotificationStatus.ACCEPTED);
 
         log.info("Notifica legale generata: {}", entityStore.getLastOrThrow(LegalNotificationDomain.class));

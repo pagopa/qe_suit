@@ -1,5 +1,6 @@
 package it.pagopa.send.common.legal_notification.infrastructure.factory;
 
+import java.util.Optional;
 import it.pagopa.send.common.user.domain.User;
 import it.pagopa.send.common.legal_notification.domain.DocumentRef;
 import it.pagopa.send.common.legal_notification.domain.FeePolicy;
@@ -10,7 +11,7 @@ import it.pagopa.send.common.legal_notification.domain.ResolvedF24Payment;
 import it.pagopa.send.common.legal_notification.domain.ResolvedPagoPaPayment;
 import it.pagopa.send.common.legal_notification.domain.ResolvedPayment;
 import it.pagopa.send.common.legal_notification.domain.ResolvedRecipient;
-import it.pagopa.send.common.legal_notification.infrastructure.factory.RequestOverrideApplier;
+import it.pagopa.send.common.legal_notification.domain.LegalNotificationCreationCommand;
 import it.pagopa.send.common.legal_notification.domain.F24PaymentSpec;
 import it.pagopa.send.common.legal_notification.domain.NotificationDefaults;
 import it.pagopa.send.common.legal_notification.domain.PagoPaPaymentSpec;
@@ -24,9 +25,7 @@ import it.pagopa.send.common.infrastructure.RandomNumericGenerator;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
 
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 import java.util.UUID;
 
 /**
@@ -60,11 +59,11 @@ public class LegalNotificationRequestFactory {
 
     /**
      * Prepara una nuova notifica: compila i campi base (indipendenti dal mittente e dai destinatari) con i
-     * default statici del template, sovrascritti puntualmente dalle chiavi riconosciute da
-     * {@link RequestOverrideApplier} presenti in {@code data}, e svuota i destinatari, che altrimenti
+     * default statici del template, sovrascritti dai soli campi valorizzati nel command, e svuota i destinatari,
+     * che altrimenti
      * resterebbero dalla notifica precedente quando la richiesta è condivisa (es. tra i contract test).
      */
-    public void applyPreliminaryData(LegalNotificationCreationRequest request, Map<String, String> data) {
+    public void applyPreliminaryData(LegalNotificationCreationRequest request, LegalNotificationCreationCommand command) {
         NotificationDefaults defaults = defaultsLoader.load();
 
         request.clearRecipients()
@@ -84,7 +83,9 @@ public class LegalNotificationRequestFactory {
                 .amount(null)
                 .paymentExpirationDate(null);
 
-        RequestOverrideApplier.apply(request, new HashMap<>(data));
+        Optional.ofNullable(command.getSubject()).ifPresent(request::subject);
+        Optional.ofNullable(command.getPhysicalCommunication()).ifPresent(request::physicalCommunication);
+        Optional.ofNullable(command.getFeePolicy()).ifPresent(request::feePolicy);
     }
 
     /**
