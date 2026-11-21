@@ -10,7 +10,6 @@ import it.pagopa.interop.generated.openapi.clients.bff.api.TenantsApi;
 import it.pagopa.interop.generated.openapi.clients.bff.model.CertifiedDiscreteTenantAttributeSeed;
 import it.pagopa.interop.generated.openapi.clients.bff.model.CertifiedTenantAttributeSeed;
 import it.pagopa.interop.generated.openapi.clients.bff.model.DeclaredTenantAttributeSeed;
-import it.pagopa.interop.generated.openapi.clients.bff.model.RevokeVerifiedAttributeRequest;
 import it.pagopa.interop.generated.openapi.clients.bff.model.VerifiedTenantAttributeSeed;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -72,7 +71,7 @@ class BffTenantRestClientTest {
         TestChain<Void> c8 = client.revokeVerifiedAttribute(
                 tenantId,
                 attributeId,
-                new RevokeVerifiedAttributeRequest().agreementId(agreementId)
+                agreementId
         );
 
         assertThat(c1).isNotNull();

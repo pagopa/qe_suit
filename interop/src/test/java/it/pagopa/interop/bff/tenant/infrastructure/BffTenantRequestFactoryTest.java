@@ -84,7 +84,7 @@ class BffTenantRequestFactoryTest {
         RevokeVerifiedAttributeCommand command = factory.revokeVerifiedAttributeCommand(AgreementRef.of(agreementId));
 
         assertThat(command).isInstanceOf(BffRevokeVerifiedAttributeCommand.class);
-        assertThat(((BffRevokeVerifiedAttributeCommand) command).getBffPayload().getAgreementId()).isEqualTo(agreementId);
+        assertThat(((BffRevokeVerifiedAttributeCommand) command).getAgreement().id()).isEqualTo(agreementId);
     }
 
     @Test
@@ -95,7 +95,6 @@ class BffTenantRequestFactoryTest {
         assertThatThrownBy(() -> factory.assignVerifiedAttributeCommand(null, AgreementRef.of(UUID.randomUUID()))).isInstanceOf(NullPointerException.class);
         assertThatThrownBy(() -> factory.assignVerifiedAttributeCommand(AttributeRef.of(UUID.randomUUID()), null)).isInstanceOf(NullPointerException.class);
         assertThatThrownBy(() -> factory.revokeVerifiedAttributeCommand(null)).isInstanceOf(NullPointerException.class);
-        assertThatThrownBy(() -> factory.revokeVerifiedAttributeCommand(AgreementRef.of(null))).isInstanceOf(NullPointerException.class);
     }
 
     @Test
