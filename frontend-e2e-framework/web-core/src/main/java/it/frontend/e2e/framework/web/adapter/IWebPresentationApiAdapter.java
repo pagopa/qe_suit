@@ -12,6 +12,14 @@ import java.util.Optional;
 public interface IWebPresentationApiAdapter
         extends IPresentationApiAdapter<XPathSelector, Url, WebPresentationElement> {
 
+    /**
+     * Clicks once and observes newly completed HTTP API resource URLs.
+     * Existing adapters need not support this optional operation.
+     */
+    default List<String> clickAndGetRequestUrls(XPathSelector selector) {
+        throw new UnsupportedOperationException("Request URL capture is not supported by this adapter");
+    }
+
     Optional<String> getCookieValue(String name);
 
     Optional<WebPresentationElement> findElement(XPathSelector selector, Gettable.FindPolicy findPolicy);
