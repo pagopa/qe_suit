@@ -50,7 +50,7 @@ public interface RequiredAttributeSection extends Component {
 
     private void openTabByLabel(String label) {
         attributesTabs().tabs().stream()
-                .filter(tab -> tab.getLabel().equals(label))
+                .filter(tab -> tab.getLabel().equalsIgnoreCase(label))
                 .findFirst()
                 .ifPresentOrElse(Tabs.Tab::click, () -> {
                     throw new IllegalArgumentException("Tab non trovato: " + label);
