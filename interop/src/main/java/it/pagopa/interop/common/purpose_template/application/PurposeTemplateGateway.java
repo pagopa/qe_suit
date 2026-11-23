@@ -21,6 +21,8 @@ public interface PurposeTemplateGateway extends Plugin<Channel> {
     void tryToUpdateMetadata(
             PurposeTemplate purposeTemplate, String name, String description, String targetDescription);
 
+    void shouldFailToUpdateMetadataAsMalformed();
+
     PurposeTemplate createPurposeTemplate(
             Tenant targetTenant, RiskAnalysisForm riskAnalysisForm, RiskAnalysisFormConfig config);
 

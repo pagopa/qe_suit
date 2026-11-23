@@ -1,6 +1,8 @@
 package it.pagopa.interop.m2m.purpose_template.infrastructure;
 
 import it.pagopa.application.context.EntityStore;
+import it.pagopa.application.context.LastApiResponseStore;
+import it.pagopa.infrastructure.response.ApiResponse;
 import it.pagopa.infrastructure.template.action.strategy.PollingStrategy;
 import it.pagopa.interop.common.kernel.domain.Channel;
 import it.pagopa.interop.common.kernel.domain.EServiceRef;
@@ -16,6 +18,8 @@ import org.springframework.stereotype.Service;
 
 import java.util.UUID;
 
+import static org.assertj.core.api.Assertions.assertThat;
+
 @Service
 @RequiredArgsConstructor
 public class M2MPurposeTemplateGateway implements PurposeTemplateGateway {
@@ -23,6 +27,17 @@ public class M2MPurposeTemplateGateway implements PurposeTemplateGateway {
     private final M2MPurposeTemplateRestClient restClient;
     private final M2MPurposeTemplateMapper mapper;
     private final EntityStore entityStore;
+    private final LastApiResponseStore lastApiResponseStore;
+
+    @Override
+    public void shouldFailToUpdateMetadataAsMalformed() {
+        assertThat(lastApiResponseStore.getLastResponse())
+                .as("Risposta al tentativo di modifica dei metadati del template finalità")
+                .isNotNull()
+                .extracting(ApiResponse::getStatusCode)
+                .as("Modifica dei metadati del template finalità malformata")
+                .isEqualTo(400);
+    }
 
     @Override
     public PurposeTemplate getPurposeTemplate(UUID purposeTemplateId) {

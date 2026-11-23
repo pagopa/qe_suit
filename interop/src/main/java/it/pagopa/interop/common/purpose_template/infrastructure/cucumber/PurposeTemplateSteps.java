@@ -134,6 +134,11 @@ public class PurposeTemplateSteps {
                 purposeTemplate, metadata.name(), metadata.description(), metadata.targetDescription());
     }
 
+    @Then("la richiesta di modifica dei metadati del template finalità fallisce come operazione malformata")
+    public void shouldFailToUpdatePurposeTemplateMetadataAsMalformed() {
+        purposeTemplateUseCase.shouldFailToUpdateMetadataAsMalformed();
+    }
+
     private MetadataUpdate readMetadataUpdate(PurposeTemplate purposeTemplate, DataTable dataTable) {
         List<List<String>> rows = dataTable.cells();
         if (rows.size() < 2 || (!rows.get(0).equals(List.of("campo", "valore unico"))

@@ -26,6 +26,7 @@ import static org.mockito.Mockito.*;
 
 class M2MPurposeTemplateGatewayTest {
     private final InMemoryEntityStore store = new InMemoryEntityStore();
+    private final LastApiResponseStore lastApiResponseStore = mock(LastApiResponseStore.class);
     private final ApiClient apiClient = mock(ApiClient.class);
     private final PurposeTemplatesApi api = mock(PurposeTemplatesApi.class);
     private final PurposeTemplatesApi.UpdateDraftPurposeTemplateOper update =
@@ -63,9 +64,10 @@ class M2MPurposeTemplateGatewayTest {
         when(read.purposeTemplateIdPath(templateId)).thenReturn(read);
         gateway = new M2MPurposeTemplateGateway(
                 new M2MPurposeTemplateRestClient(
-                        new TestChainFactory(mock(LastApiResponseStore.class), store), apiClient),
+                        new TestChainFactory(lastApiResponseStore, store), apiClient),
                 mapper,
-                store);
+                store,
+                lastApiResponseStore);
         store.upsert(original);
     }
 

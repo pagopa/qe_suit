@@ -1,6 +1,7 @@
 package it.pagopa.interop.bff.purpose_template.infrastructure;
 
 import it.pagopa.application.context.EntityStore;
+import it.pagopa.application.context.LastApiResponseStore;
 import it.pagopa.infrastructure.template.action.TestChain;
 import it.pagopa.interop.common.kernel.domain.Tenant;
 import it.pagopa.interop.common.kernel.domain.EServiceRef;
@@ -32,7 +33,7 @@ class BffPurposeTemplateGatewayTest {
     private final BffPurposeTemplateRestClient rest = mock(BffPurposeTemplateRestClient.class);
     private final BffPurposeTemplateGateway gateway = new BffPurposeTemplateGateway(
             rest, mock(BffPurposeTemplateMapper.class), mock(BffPurposeTemplateRequestFactory.class),
-            mock(EntityStore.class));
+            mock(EntityStore.class), mock(LastApiResponseStore.class));
     private final RiskAnalysisFormConfig config = RiskAnalysisFormConfig.builder().version("2.1")
             .questions(List.of(question("institutionalPurpose", "FREETEXT"),
                     question("purpose", "SINGLE"), question("legalBasis", "MULTI"),
@@ -47,7 +48,8 @@ class BffPurposeTemplateGatewayTest {
     void linksAndAwaitsTheSelectedResourceKind(boolean template) {
         var mapper = mock(BffPurposeTemplateMapper.class);
         var store = mock(EntityStore.class);
-        var adapter = new BffPurposeTemplateGateway(rest, mapper, mock(BffPurposeTemplateRequestFactory.class), store);
+        var adapter = new BffPurposeTemplateGateway(
+                rest, mapper, mock(BffPurposeTemplateRequestFactory.class), store, mock(LastApiResponseStore.class));
         var purpose = PurposeTemplate.builder().id(UUID.randomUUID()).build();
         var resourceId = UUID.randomUUID();
         var updated = purpose.toBuilder().resourceId(resourceId).build();
