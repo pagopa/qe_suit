@@ -19,7 +19,7 @@ Feature: Messaggi di errore durante la gestione dei dati e degli attributi dell'
       | alias |
       | VER-1 |
     When l'erogatore tenta di modificare la scadenza dell'attributo verificato "VER-1" di PagoPA impostandola a ieri
-    Then il messaggio di errore corrisponde al caso "TENANT_EXPIRATION_DATE_CANNOT_BE_IN_THE_PAST__POST_TENANTS_TENANT_ID_ATTRIBUTES_VERIFIED_ATTRIBUTE_ID" in lingua "it"
+    Then il messaggio di errore corrisponde al caso "TENANT_EXPIRATION_DATE_CANNOT_BE_IN_THE_PAST__POST_TENANTS_TENANT_ID_ATTRIBUTES_VERIFIED_ATTRIBUTE_ID"
 
   # Endpoint: POST /tenants/:tenantId/attributes/certified
   Scenario: [ERROR_013] - Impossibilità di assegnare un attributo certificato già posseduto dall'ente
@@ -34,7 +34,7 @@ Feature: Messaggi di errore durante la gestione dei dati e degli attributi dell'
       | alias  |
       | CERT-1 |
     When il certificatore tenta di assegnare nuovamente l'attributo "CERT-1" all'ente PagoPA
-    Then il messaggio di errore corrisponde al caso "TENANT_CERTIFIED_ATTRIBUTE_ALREADY_ASSIGNED__POST_TENANTS_TENANT_ID_ATTRIBUTES_CERTIFIED" in lingua "it"
+    Then il messaggio di errore corrisponde al caso "TENANT_CERTIFIED_ATTRIBUTE_ALREADY_ASSIGNED__POST_TENANTS_TENANT_ID_ATTRIBUTES_CERTIFIED"
 
   # NON REPLICABILE A FRONTEND
   # Endpoint: POST /tenants/:tenantId/attributes/certifiedDiscrete
@@ -51,7 +51,7 @@ Feature: Messaggi di errore durante la gestione dei dati e degli attributi dell'
     And l'attributo certificato discreto "DISC-1" già assegnato all'ente PagoPA con un valore ammesso
     # Tentativo discreto ancora da implementare con un valore ammesso; non usare l'assegnazione certificata ordinaria.
     When il certificatore tenta di assegnare nuovamente l'attributo "DISC-1" all'ente PagoPA
-    Then il messaggio di errore corrisponde al caso "TENANT_CERTIFIED_ATTRIBUTE_ALREADY_ASSIGNED__POST_TENANTS_TENANT_ID_ATTRIBUTES_CERTIFIED_DISCRETE" in lingua "it"
+    Then il messaggio di errore corrisponde al caso "TENANT_CERTIFIED_ATTRIBUTE_ALREADY_ASSIGNED__POST_TENANTS_TENANT_ID_ATTRIBUTES_CERTIFIED_DISCRETE"
 
   # Endpoint: POST /tenants/:tenantId/attributes/verified
   Scenario: [ERROR_015] - Rifiuto di una nuova verifica con scadenza nel passato
@@ -72,7 +72,7 @@ Feature: Messaggi di errore durante la gestione dei dati e degli attributi dell'
     And l'e-service "ES-1" del Comune di Milano sottoscritto da PagoPA con una richiesta di fruizione in attesa di approvazione
     And un admin appartenente all'erogatore Comune di Milano
     When l'erogatore tenta di assegnare come attributo verificato l'attributo "VER-1" di PagoPA con scadenza ieri
-    Then il messaggio di errore corrisponde al caso "TENANT_EXPIRATION_DATE_CANNOT_BE_IN_THE_PAST__POST_TENANTS_TENANT_ID_ATTRIBUTES_VERIFIED" in lingua "it"
+    Then il messaggio di errore corrisponde al caso "TENANT_EXPIRATION_DATE_CANNOT_BE_IN_THE_PAST__POST_TENANTS_TENANT_ID_ATTRIBUTES_VERIFIED"
 
   # NON REPLICABILE A FRONTEND
   # Endpoint: POST /tenants/delegatedFeatures/update
@@ -83,7 +83,7 @@ Feature: Messaggi di errore durante la gestione dei dati e degli attributi dell'
 
     Given un admin appartenente all'erogatore Sogecap
     When Sogecap tenta di abilitarsi a ricevere deleghe di erogazione
-    Then il messaggio di errore corrisponde al caso "TENANT_OPERATION_FORBIDDEN" in lingua "it"
+    Then il messaggio di errore corrisponde al caso "TENANT_OPERATION_FORBIDDEN"
 
   # Endpoint: POST /tenants/:tenantId/mails
   Scenario: [ERROR_017] - Rifiuto di un contatto email con un link nelle note
@@ -92,4 +92,4 @@ Feature: Messaggi di errore durante la gestione dei dati e degli attributi dell'
   Allora il sistema rifiuta il salvataggio e invita l'amministratore a rimuovere il collegamento.
 
     When l'utente tenta di salvare un contatto email dell'ente inserendo un link nelle note
-    Then il messaggio di errore corrisponde al caso "TENANT_HYPERLINK_DETECTION_ERROR" in lingua "it"
+    Then il messaggio di errore corrisponde al caso "TENANT_HYPERLINK_DETECTION_ERROR"

@@ -4,7 +4,9 @@ import io.cucumber.datatable.DataTable;
 import io.cucumber.java.en.Then;
 import io.restassured.path.json.JsonPath;
 import it.pagopa.application.context.LastApiResponseStore;
+import it.pagopa.infrastructure.channel.CurrentChannel;
 import it.pagopa.interop.common.infrastructure.copy.ExpectedErrorMessages;
+import it.pagopa.interop.common.kernel.domain.Channel;
 import lombok.RequiredArgsConstructor;
 
 import java.util.LinkedHashMap;
@@ -16,10 +18,11 @@ import static org.assertj.core.api.Assertions.assertThat;
 public class BffErrorMessageSteps {
 
     private final LastApiResponseStore responses;
+    private final CurrentChannel<Channel> currentChannel;
 
-    @Then("il messaggio di errore corrisponde al caso {string} in lingua {string}")
-    public void assertErrorMessage(String messageId, String language) {
-        assertErrorMessage(messageId, language, Map.of());
+    @Then("il messaggio di errore corrisponde al caso {string}")
+    public void assertErrorMessage(String messageId) {
+        assertErrorMessage(messageId, currentChannel.getCurrentLanguage().getLanguage(), Map.of());
     }
 
     @Then("il messaggio di errore corrisponde al caso {string} in lingua {string} con i valori:")

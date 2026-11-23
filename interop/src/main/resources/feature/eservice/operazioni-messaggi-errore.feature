@@ -22,7 +22,7 @@ Feature: Messaggi di errore durante la gestione degli e-service
     # Binding negativo mancante; riusare la costruzione del questionario valido di addLatestRiskAnalysis.
     # Alterare soltanto una risposta a testo libero, mantenendo valido anche il nome dell'analisi.
     When l'erogatore tenta di aggiungere all'e-service un'analisi del rischio con la risposta a testo libero "Motivazione https://example.org"
-    Then il messaggio di errore corrisponde al caso "CATALOG_RISK_ANALYSIS_VALIDATION_FAILED__POST_ESERVICES_E_SERVICE_ID_RISK_ANALYSIS" in lingua "it"
+    Then il messaggio di errore corrisponde al caso "CATALOG_RISK_ANALYSIS_VALIDATION_FAILED__POST_ESERVICES_E_SERVICE_ID_RISK_ANALYSIS"
 
   # Endpoint: POST /eservices
   Scenario: [ERROR_037] - Rifiuto della creazione di un e-service con un nome già usato dall'erogatore
@@ -34,7 +34,7 @@ Feature: Messaggi di errore durante la gestione degli e-service
       | alias | erogatore        | nome               |
       | ES-1  | Comune di Milano | Catalogo duplicato |
     When l'utente tenta di creare un e-service con il nome dell'e-service e gli altri dati validi
-    Then il messaggio di errore corrisponde al caso "CATALOG_E_SERVICE_NAME_DUPLICATE_FOR_PRODUCER__POST_ESERVICES" in lingua "it"
+    Then il messaggio di errore corrisponde al caso "CATALOG_E_SERVICE_NAME_DUPLICATE_FOR_PRODUCER__POST_ESERVICES"
 
   # Endpoint: POST /eservices
   Scenario: [ERROR_038] - Rifiuto della creazione di un e-service con il nome di un template
@@ -46,7 +46,7 @@ Feature: Messaggi di errore durante la gestione degli e-service
       | alias | erogatore        | nome               | tecnologia |
       | T-1   | Comune di Milano | Catalogo duplicato | REST       |
     When l'utente tenta di creare un e-service con il nome del template e gli altri dati validi
-    Then il messaggio di errore corrisponde al caso "CATALOG_ESERVICE_TEMPLATE_NAME_CONFLICT__POST_ESERVICES" in lingua "it"
+    Then il messaggio di errore corrisponde al caso "CATALOG_ESERVICE_TEMPLATE_NAME_CONFLICT__POST_ESERVICES"
 
   # Endpoint: POST /templates/:templateId/eservices
   Scenario: [ERROR_039] - Rifiuto della creazione di un'istanza con una parola identificativa già usata
@@ -61,7 +61,7 @@ Feature: Messaggi di errore durante la gestione degli e-service
       | alias | template | suffisso  |
       | ES-1  | T-1      | Duplicato |
     When l'erogatore tenta di istanziare il template con la parola identificativa già usata in precedenza
-    Then il messaggio di errore corrisponde al caso "CATALOG_E_SERVICE_NAME_DUPLICATE_FOR_PRODUCER__POST_TEMPLATES_TEMPLATE_ID_ESERVICES" in lingua "it" con i valori:
+    Then il messaggio di errore corrisponde al caso "CATALOG_E_SERVICE_NAME_DUPLICATE_FOR_PRODUCER__POST_TEMPLATES_TEMPLATE_ID_ESERVICES" in lingua  con i valori:
       | identifyingWord | Duplicato |
 
   # Endpoint: POST /templates/eservices/:eServiceId
@@ -78,7 +78,7 @@ Feature: Messaggi di errore durante la gestione degli e-service
       | ES-1  | T-1      | Duplicato |
     And l'erogatore istanzia un nuovo e-service dal template
     When l'erogatore tenta di aggiornare i dati dell'e-service appena istanziato con la parola identificativa "Duplicato"
-    Then il messaggio di errore corrisponde al caso "CATALOG_E_SERVICE_NAME_DUPLICATE_FOR_PRODUCER__POST_TEMPLATES_ESERVICES_E_SERVICE_ID" in lingua "it" con i valori:
+    Then il messaggio di errore corrisponde al caso "CATALOG_E_SERVICE_NAME_DUPLICATE_FOR_PRODUCER__POST_TEMPLATES_ESERVICES_E_SERVICE_ID" in lingua  con i valori:
       | identifyingWord | Duplicato |
 
   # Endpoint: POST /eservices/:eServiceId/scheduleArchive
@@ -91,7 +91,7 @@ Feature: Messaggi di errore durante la gestione degli e-service
     And un admin appartenente all'erogatore Comune di Milano
     And la versione 1 dell'e-service in fase di archiviazione con un periodo di preavviso di 120 giorni
     When l'erogatore tenta di archiviare l'e-service con un periodo di preavviso di 60 giorni e una motivazione valida
-    Then il messaggio di errore corrisponde al caso "CATALOG_GRACE_PERIOD_DAYS_LOWER_THAN_DESCRIPTOR__POST_ESERVICES_E_SERVICE_ID_SCHEDULE_ARCHIVE" in lingua "it"
+    Then il messaggio di errore corrisponde al caso "CATALOG_GRACE_PERIOD_DAYS_LOWER_THAN_DESCRIPTOR__POST_ESERVICES_E_SERVICE_ID_SCHEDULE_ARCHIVE"
 
   # Endpoint: POST /eservices/:eServiceId/submitDelegatedArchiving
   Scenario: [ERROR_042] - Rifiuto della richiesta del delegato di archiviare l'e-service con un preavviso insufficiente
@@ -105,7 +105,7 @@ Feature: Messaggi di errore durante la gestione degli e-service
     And l'e-service delegato in erogazione dal Comune di Milano al Comune di Pozzallo con una delega in stato ACTIVE
     And un admin appartenente al delegato Comune di Pozzallo
     When il delegato richiede al delegante l'archiviazione dell'e-service con un periodo di preavviso di 60 giorni e una motivazione valida
-    Then il messaggio di errore corrisponde al caso "CATALOG_GRACE_PERIOD_DAYS_LOWER_THAN_DESCRIPTOR__POST_ESERVICES_E_SERVICE_ID_SUBMIT_DELEGATED_ARCHIVING" in lingua "it"
+    Then il messaggio di errore corrisponde al caso "CATALOG_GRACE_PERIOD_DAYS_LOWER_THAN_DESCRIPTOR__POST_ESERVICES_E_SERVICE_ID_SUBMIT_DELEGATED_ARCHIVING"
 
   # Endpoint: POST /eservices/:eServiceId/descriptors/:descriptorId/documents
   Scenario: [ERROR_043] - Rifiuto del caricamento di un documento con un nome già usato nella versione
@@ -120,7 +120,7 @@ Feature: Messaggi di errore durante la gestione degli e-service
       | nome       | fixture                      |
       | Allegato A | assets/origin-interface.yaml |
     When l'erogatore tenta di caricare il file "assets/eservice-template/openapi3-riferimenti.json" come documentazione per la versione 1 dell'e-service "ES-1" con il nome "Allegato A"
-    Then il messaggio di errore corrisponde al caso "CATALOG_DOCUMENT_PRETTY_NAME_DUPLICATE__POST_ESERVICES_E_SERVICE_ID_DESCRIPTORS_DESCRIPTOR_ID_DOCUMENTS" in lingua "it"
+    Then il messaggio di errore corrisponde al caso "CATALOG_DOCUMENT_PRETTY_NAME_DUPLICATE__POST_ESERVICES_E_SERVICE_ID_DESCRIPTORS_DESCRIPTOR_ID_DOCUMENTS"
 
   # Endpoint: POST /eservices/:eServiceId/descriptors/:descriptorId/documents
   Scenario: [ERROR_044] - Rifiuto del caricamento di un file già allegato alla versione
@@ -135,7 +135,7 @@ Feature: Messaggi di errore durante la gestione degli e-service
       | nome       | fixture                      |
       | Allegato A | assets/origin-interface.yaml |
     When l'erogatore tenta di caricare il file "assets/origin-interface.yaml" come documentazione per la versione 1 dell'e-service "ES-1" con il nome "Allegato B"
-    Then il messaggio di errore corrisponde al caso "CATALOG_CHECKSUM_DUPLICATE" in lingua "it"
+    Then il messaggio di errore corrisponde al caso "CATALOG_CHECKSUM_DUPLICATE"
 
   # Endpoint: POST /eservices/:eServiceId/descriptors/:descriptorId/documents/:documentId/update
   Scenario: [ERROR_045] - Rifiuto della rinomina di un documento con un nome già usato nella versione
@@ -151,7 +151,7 @@ Feature: Messaggi di errore durante la gestione degli e-service
       | Allegato A | assets/origin-interface.yaml                     |
       | Allegato B | assets/eservice-template/openapi3-riferimenti.json |
     When l'erogatore tenta di rinominare il documento "Allegato B" della versione 1 dell'e-service "ES-1" in "Allegato A"
-    Then il messaggio di errore corrisponde al caso "CATALOG_DOCUMENT_PRETTY_NAME_DUPLICATE__POST_ESERVICES_E_SERVICE_ID_DESCRIPTORS_DESCRIPTOR_ID_DOCUMENTS_DOCUMENT_ID_UPDATE" in lingua "it"
+    Then il messaggio di errore corrisponde al caso "CATALOG_DOCUMENT_PRETTY_NAME_DUPLICATE__POST_ESERVICES_E_SERVICE_ID_DESCRIPTORS_DESCRIPTOR_ID_DOCUMENTS_DOCUMENT_ID_UPDATE"
 
   # Endpoint: POST /eservices/:eServiceId/riskAnalysis
   Scenario: [ERROR_046] - Rifiuto dell'aggiunta di un'analisi del rischio con un nome già usato
@@ -164,7 +164,7 @@ Feature: Messaggi di errore durante la gestione degli e-service
       | ES-1  | Comune di Milano | ricezione |
     # Binding BFF negativo mancante; riusare addRiskAnalysis con il nome dell'analisi esistente.
     When l'erogatore tenta di aggiungere all'e-service un'analisi del rischio con il nome di quella esistente
-    Then il messaggio di errore corrisponde al caso "CATALOG_RISK_ANALYSIS_DUPLICATED__POST_ESERVICES_E_SERVICE_ID_RISK_ANALYSIS" in lingua "it"
+    Then il messaggio di errore corrisponde al caso "CATALOG_RISK_ANALYSIS_DUPLICATED__POST_ESERVICES_E_SERVICE_ID_RISK_ANALYSIS"
 
   # Endpoint: POST /eservices/:eServiceId/riskAnalysis/:riskAnalysisId
   @err_msg_given_exec_2
@@ -183,7 +183,7 @@ Feature: Messaggi di errore durante la gestione degli e-service
       | AR-1  | Analisi A |
       | AR-2  | Analisi B |
     When l'erogatore tenta di rinominare l'analisi del rischio "AR-2" dell'e-service con il nome di "AR-1"
-    Then il messaggio di errore corrisponde al caso "CATALOG_RISK_ANALYSIS_DUPLICATED__POST_ESERVICES_E_SERVICE_ID_RISK_ANALYSIS_RISK_ANALYSIS_ID" in lingua "it"
+    Then il messaggio di errore corrisponde al caso "CATALOG_RISK_ANALYSIS_DUPLICATED__POST_ESERVICES_E_SERVICE_ID_RISK_ANALYSIS_RISK_ANALYSIS_ID"
 
   # Endpoint: POST /eservices/:eServiceId/name/update
   Scenario: [ERROR_048] - Rifiuto della modifica del nome con quello di un altro e-service dell'erogatore
@@ -196,7 +196,7 @@ Feature: Messaggi di errore durante la gestione degli e-service
       | ES-1  | Comune di Milano | Catalogo esistente   |
       | ES-2  | Comune di Milano | Catalogo da cambiare |
     When l'erogatore tenta di modificare il nome dell'e-service "ES-2" con quello dell'e-service "ES-1"
-    Then il messaggio di errore corrisponde al caso "CATALOG_E_SERVICE_NAME_DUPLICATE_FOR_PRODUCER__POST_ESERVICES_E_SERVICE_ID_NAME_UPDATE" in lingua "it"
+    Then il messaggio di errore corrisponde al caso "CATALOG_E_SERVICE_NAME_DUPLICATE_FOR_PRODUCER__POST_ESERVICES_E_SERVICE_ID_NAME_UPDATE"
 
   # Endpoint: POST /eservices/:eServiceId/name/update
   Scenario: [ERROR_049] - Rifiuto della modifica del nome di un e-service con quello di un template
@@ -211,7 +211,7 @@ Feature: Messaggi di errore durante la gestione degli e-service
       | alias | erogatore        |
       | ES-1  | Comune di Milano |
     When l'erogatore tenta di modificare il nome dell'e-service "ES-1" con quello del template "T-1"
-    Then il messaggio di errore corrisponde al caso "CATALOG_ESERVICE_TEMPLATE_NAME_CONFLICT__POST_ESERVICES_E_SERVICE_ID_NAME_UPDATE" in lingua "it"
+    Then il messaggio di errore corrisponde al caso "CATALOG_ESERVICE_TEMPLATE_NAME_CONFLICT__POST_ESERVICES_E_SERVICE_ID_NAME_UPDATE"
 
   # Endpoint: POST /templates/eservices/:eServiceId/instanceLabel/update
   Scenario: [ERROR_050] - Rifiuto dell'aggiornamento della sola parola identificativa con un valore già usato
@@ -227,7 +227,7 @@ Feature: Messaggi di errore durante la gestione degli e-service
       | ES-1  | T-1      | Duplicato  |
       | ES-2  | T-1      | Modificare |
     When l'erogatore tenta di modificare la sola parola identificativa dell'e-service creato da template "ES-2" in "Duplicato"
-    Then il messaggio di errore corrisponde al caso "CATALOG_E_SERVICE_NAME_DUPLICATE_FOR_PRODUCER__POST_TEMPLATES_ESERVICES_E_SERVICE_ID_INSTANCE_LABEL_UPDATE" in lingua "it" con i valori:
+    Then il messaggio di errore corrisponde al caso "CATALOG_E_SERVICE_NAME_DUPLICATE_FOR_PRODUCER__POST_TEMPLATES_ESERVICES_E_SERVICE_ID_INSTANCE_LABEL_UPDATE" in lingua  con i valori:
       | identifyingWord | Duplicato |
 
   # NON REPLICABILE A FRONTEND
@@ -245,7 +245,7 @@ Feature: Messaggi di errore durante la gestione degli e-service
     And la delega in erogazione viene revocata dal Comune di Milano
     And un admin appartenente al delegato Comune di Pozzallo
     When l'erogatore tenta di aggiornare i dati dell'e-service appena istanziato con la parola identificativa "Disponibile"
-    Then il messaggio di errore corrisponde al caso "CATALOG_OPERATION_FORBIDDEN__POST_TEMPLATES_ESERVICES_E_SERVICE_ID" in lingua "it"
+    Then il messaggio di errore corrisponde al caso "CATALOG_OPERATION_FORBIDDEN__POST_TEMPLATES_ESERVICES_E_SERVICE_ID"
 
   # NON REPLICABILE A FRONTEND
   # Endpoint: DELETE /eservices/:eServiceId
@@ -261,7 +261,7 @@ Feature: Messaggi di errore durante la gestione degli e-service
     And un admin appartenente al delegato Comune di Pozzallo
     # Binding BFF negativo mancante; riusare deleteEService e gestire il rifiuto.
     When l'erogatore tenta di eliminare l'e-service in bozza
-    Then il messaggio di errore corrisponde al caso "CATALOG_OPERATION_FORBIDDEN__DELETE_ESERVICES_E_SERVICE_ID" in lingua "it"
+    Then il messaggio di errore corrisponde al caso "CATALOG_OPERATION_FORBIDDEN__DELETE_ESERVICES_E_SERVICE_ID"
 
   # NON REPLICABILE A FRONTEND
   # Endpoint: POST /eservices/:eServiceId/submitDelegatedArchiving
@@ -277,7 +277,7 @@ Feature: Messaggi di errore durante la gestione degli e-service
     And un admin appartenente all'erogatore PagoPA
     # Mantenere la delega attiva: una delega assente o revocata può produrre un errore diverso.
     When il delegato richiede al delegante l'archiviazione dell'e-service con un periodo di preavviso di 60 giorni e una motivazione valida
-    Then il messaggio di errore corrisponde al caso "CATALOG_OPERATION_FORBIDDEN__POST_ESERVICES_E_SERVICE_ID_SUBMIT_DELEGATED_ARCHIVING" in lingua "it"
+    Then il messaggio di errore corrisponde al caso "CATALOG_OPERATION_FORBIDDEN__POST_ESERVICES_E_SERVICE_ID_SUBMIT_DELEGATED_ARCHIVING"
 
   # NON REPLICABILE A FRONTEND
   # Endpoint: DELETE /eservices/:eServiceId/submitDelegatedArchiving
@@ -295,7 +295,7 @@ Feature: Messaggi di errore durante la gestione degli e-service
     And un admin appartenente all'erogatore PagoPA
     # Mantenere la delega attiva: una delega assente o revocata può produrre un errore diverso.
     When il delegato tenta di annullare la richiesta di archiviazione dell'intero e-service
-    Then il messaggio di errore corrisponde al caso "CATALOG_OPERATION_FORBIDDEN__DELETE_ESERVICES_E_SERVICE_ID_SUBMIT_DELEGATED_ARCHIVING" in lingua "it"
+    Then il messaggio di errore corrisponde al caso "CATALOG_OPERATION_FORBIDDEN__DELETE_ESERVICES_E_SERVICE_ID_SUBMIT_DELEGATED_ARCHIVING"
 
   # NON REPLICABILE A FRONTEND
   # Endpoint: POST /eservices/:eServiceId/descriptors/:descriptorId/submitDelegatedArchiving
@@ -311,7 +311,7 @@ Feature: Messaggi di errore durante la gestione degli e-service
     And un admin appartenente all'erogatore PagoPA
     # Mantenere la delega attiva: una delega assente o revocata può produrre un errore diverso.
     When il delegato richiede al delegante l'archiviazione della versione 1 dell'e-service con 60 giorni di preavviso e una motivazione valida
-    Then il messaggio di errore corrisponde al caso "CATALOG_OPERATION_FORBIDDEN__POST_ESERVICES_E_SERVICE_ID_DESCRIPTORS_DESCRIPTOR_ID_SUBMIT_DELEGATED_ARCHIVING" in lingua "it"
+    Then il messaggio di errore corrisponde al caso "CATALOG_OPERATION_FORBIDDEN__POST_ESERVICES_E_SERVICE_ID_DESCRIPTORS_DESCRIPTOR_ID_SUBMIT_DELEGATED_ARCHIVING"
 
   # NON REPLICABILE A FRONTEND
   # Endpoint: DELETE /eservices/:eServiceId/descriptors/:descriptorId/submitDelegatedArchiving
@@ -329,7 +329,7 @@ Feature: Messaggi di errore durante la gestione degli e-service
     And un admin appartenente all'erogatore PagoPA
     # Mantenere la delega attiva: una delega assente o revocata può produrre un errore diverso.
     When il delegato tenta di annullare la richiesta di archiviazione della versione 1 dell'e-service
-    Then il messaggio di errore corrisponde al caso "CATALOG_OPERATION_FORBIDDEN__DELETE_ESERVICES_E_SERVICE_ID_DESCRIPTORS_DESCRIPTOR_ID_SUBMIT_DELEGATED_ARCHIVING" in lingua "it"
+    Then il messaggio di errore corrisponde al caso "CATALOG_OPERATION_FORBIDDEN__DELETE_ESERVICES_E_SERVICE_ID_DESCRIPTORS_DESCRIPTOR_ID_SUBMIT_DELEGATED_ARCHIVING"
 
   # NON REPLICABILE A FRONTEND
   # Endpoint: POST /eservices/:eServiceId/descriptors/:descriptorId/documents
@@ -344,7 +344,7 @@ Feature: Messaggi di errore durante la gestione degli e-service
     And l'e-service "ES-1" delegato in erogazione dal Comune di Milano al Comune di Pozzallo con delega revocata
     And un admin appartenente al delegato Comune di Pozzallo
     When l'utente tenta di caricare un file valido come documentazione per la versione 1 dell'e-service "ES-1"
-    Then il messaggio di errore corrisponde al caso "CATALOG_OPERATION_FORBIDDEN__POST_ESERVICES_E_SERVICE_ID_DESCRIPTORS_DESCRIPTOR_ID_DOCUMENTS" in lingua "it"
+    Then il messaggio di errore corrisponde al caso "CATALOG_OPERATION_FORBIDDEN__POST_ESERVICES_E_SERVICE_ID_DESCRIPTORS_DESCRIPTOR_ID_DOCUMENTS"
 
   # NON REPLICABILE A FRONTEND
   # Endpoint: DELETE /eservices/:eServiceId/descriptors/:descriptorId/documents/:documentId
@@ -362,7 +362,7 @@ Feature: Messaggi di errore durante la gestione degli e-service
     And l'e-service "ES-1" delegato in erogazione dal Comune di Milano al Comune di Pozzallo con delega revocata
     And un admin appartenente al delegato Comune di Pozzallo
     When l'erogatore tenta di eliminare il documento "Allegato A" della versione dell'e-service
-    Then il messaggio di errore corrisponde al caso "CATALOG_OPERATION_FORBIDDEN__DELETE_ESERVICES_E_SERVICE_ID_DESCRIPTORS_DESCRIPTOR_ID_DOCUMENTS_DOCUMENT_ID" in lingua "it"
+    Then il messaggio di errore corrisponde al caso "CATALOG_OPERATION_FORBIDDEN__DELETE_ESERVICES_E_SERVICE_ID_DESCRIPTORS_DESCRIPTOR_ID_DOCUMENTS_DOCUMENT_ID"
 
   # NON REPLICABILE A FRONTEND
   # Endpoint: POST /eservices/:eServiceId/descriptors/:descriptorId/documents/:documentId/update
@@ -380,7 +380,7 @@ Feature: Messaggi di errore durante la gestione degli e-service
     And l'e-service "ES-1" delegato in erogazione dal Comune di Milano al Comune di Pozzallo con delega revocata
     And un admin appartenente al delegato Comune di Pozzallo
     When l'erogatore rinomina il documento "Allegato A" della versione dell'e-service in "Allegato B"
-    Then il messaggio di errore corrisponde al caso "CATALOG_OPERATION_FORBIDDEN__POST_ESERVICES_E_SERVICE_ID_DESCRIPTORS_DESCRIPTOR_ID_DOCUMENTS_DOCUMENT_ID_UPDATE" in lingua "it"
+    Then il messaggio di errore corrisponde al caso "CATALOG_OPERATION_FORBIDDEN__POST_ESERVICES_E_SERVICE_ID_DESCRIPTORS_DESCRIPTOR_ID_DOCUMENTS_DOCUMENT_ID_UPDATE"
 
   # NON REPLICABILE A FRONTEND
   # Endpoint: POST /eservices/:eServiceId/descriptors
@@ -396,7 +396,7 @@ Feature: Messaggi di errore durante la gestione degli e-service
     And un admin appartenente al delegato Comune di Pozzallo
     # Binding BFF negativo mancante; riusare addDescriptor e gestire il rifiuto.
     When l'erogatore tenta di creare una nuova versione dell'e-service
-    Then il messaggio di errore corrisponde al caso "CATALOG_OPERATION_FORBIDDEN__POST_ESERVICES_E_SERVICE_ID_DESCRIPTORS" in lingua "it"
+    Then il messaggio di errore corrisponde al caso "CATALOG_OPERATION_FORBIDDEN__POST_ESERVICES_E_SERVICE_ID_DESCRIPTORS"
 
   # NON REPLICABILE A FRONTEND
   # Endpoint: DELETE /eservices/:eServiceId/descriptors/:descriptorId
@@ -411,7 +411,7 @@ Feature: Messaggi di errore durante la gestione degli e-service
     And l'e-service "ES-1" delegato in erogazione dal Comune di Milano al Comune di Pozzallo con delega revocata
     And un admin appartenente al delegato Comune di Pozzallo
     When l'erogatore tenta di eliminare la versione 1 dell'e-service
-    Then il messaggio di errore corrisponde al caso "CATALOG_OPERATION_FORBIDDEN__DELETE_ESERVICES_E_SERVICE_ID_DESCRIPTORS_DESCRIPTOR_ID" in lingua "it"
+    Then il messaggio di errore corrisponde al caso "CATALOG_OPERATION_FORBIDDEN__DELETE_ESERVICES_E_SERVICE_ID_DESCRIPTORS_DESCRIPTOR_ID"
 
   # NON REPLICABILE A FRONTEND
   # Endpoint: POST /templates/eservices/:eServiceId/descriptors/:descriptorId
@@ -429,7 +429,7 @@ Feature: Messaggi di errore durante la gestione degli e-service
     And un admin appartenente al delegato Comune di Pozzallo
     # Binding BFF negativo mancante; riusare updateEServiceInstanceDescriptor per la bozza.
     When l'erogatore tenta di modificare la configurazione della versione 1 dell'e-service appena istanziato con dati validi
-    Then il messaggio di errore corrisponde al caso "CATALOG_OPERATION_FORBIDDEN__POST_TEMPLATES_ESERVICES_E_SERVICE_ID_DESCRIPTORS_DESCRIPTOR_ID" in lingua "it"
+    Then il messaggio di errore corrisponde al caso "CATALOG_OPERATION_FORBIDDEN__POST_TEMPLATES_ESERVICES_E_SERVICE_ID_DESCRIPTORS_DESCRIPTOR_ID"
 
   # NON REPLICABILE A FRONTEND
   # Endpoint: POST /eservices/:eServiceId/descriptors/:descriptorId/publish
@@ -446,7 +446,7 @@ Feature: Messaggi di errore durante la gestione degli e-service
     And un admin appartenente al delegato Comune di Pozzallo
     # Binding BFF negativo mancante; riusare publishDescriptor e gestire il rifiuto.
     When l'erogatore tenta di pubblicare la versione 1 dell'e-service
-    Then il messaggio di errore corrisponde al caso "CATALOG_OPERATION_FORBIDDEN__POST_ESERVICES_E_SERVICE_ID_DESCRIPTORS_DESCRIPTOR_ID_PUBLISH" in lingua "it"
+    Then il messaggio di errore corrisponde al caso "CATALOG_OPERATION_FORBIDDEN__POST_ESERVICES_E_SERVICE_ID_DESCRIPTORS_DESCRIPTOR_ID_PUBLISH"
 
   # NON REPLICABILE A FRONTEND
   # Endpoint: POST /eservices/:eServiceId/descriptors/:descriptorId/suspend
@@ -462,7 +462,7 @@ Feature: Messaggi di errore durante la gestione degli e-service
     And un admin appartenente al delegato Comune di Pozzallo
     # Binding BFF negativo mancante; riusare suspendDescriptor e gestire il rifiuto.
     When l'erogatore tenta di sospendere la versione 1 dell'e-service
-    Then il messaggio di errore corrisponde al caso "CATALOG_OPERATION_FORBIDDEN__POST_ESERVICES_E_SERVICE_ID_DESCRIPTORS_DESCRIPTOR_ID_SUSPEND" in lingua "it"
+    Then il messaggio di errore corrisponde al caso "CATALOG_OPERATION_FORBIDDEN__POST_ESERVICES_E_SERVICE_ID_DESCRIPTORS_DESCRIPTOR_ID_SUSPEND"
 
   # NON REPLICABILE A FRONTEND
   # Endpoint: POST /eservices/:eServiceId/descriptors/:descriptorId/activate
@@ -478,7 +478,7 @@ Feature: Messaggi di errore durante la gestione degli e-service
     And l'e-service "ES-1" delegato in erogazione dal Comune di Milano al Comune di Pozzallo con delega revocata
     And un admin appartenente al delegato Comune di Pozzallo
     When l'erogatore tenta di riattivare la versione 1 dell'e-service
-    Then il messaggio di errore corrisponde al caso "CATALOG_OPERATION_FORBIDDEN__POST_ESERVICES_E_SERVICE_ID_DESCRIPTORS_DESCRIPTOR_ID_ACTIVATE" in lingua "it"
+    Then il messaggio di errore corrisponde al caso "CATALOG_OPERATION_FORBIDDEN__POST_ESERVICES_E_SERVICE_ID_DESCRIPTORS_DESCRIPTOR_ID_ACTIVATE"
 
   # NON REPLICABILE A FRONTEND
   # Endpoint: POST /eservices/:eServiceId/descriptors/:descriptorId/update
@@ -494,7 +494,7 @@ Feature: Messaggi di errore durante la gestione degli e-service
     And un admin appartenente al delegato Comune di Pozzallo
     # Binding BFF negativo mancante; riusare updateDescriptor e gestire il rifiuto.
     When l'erogatore tenta di modificare la configurazione della versione 1 dell'e-service con dati validi
-    Then il messaggio di errore corrisponde al caso "CATALOG_OPERATION_FORBIDDEN__POST_ESERVICES_E_SERVICE_ID_DESCRIPTORS_DESCRIPTOR_ID_UPDATE" in lingua "it"
+    Then il messaggio di errore corrisponde al caso "CATALOG_OPERATION_FORBIDDEN__POST_ESERVICES_E_SERVICE_ID_DESCRIPTORS_DESCRIPTOR_ID_UPDATE"
 
   # NON REPLICABILE A FRONTEND
   # Endpoint: POST /eservices/:eServiceId/descriptors/:descriptorId/agreementApprovalPolicy/update
@@ -509,7 +509,7 @@ Feature: Messaggi di errore durante la gestione degli e-service
     And l'e-service "ES-1" delegato in erogazione dal Comune di Milano al Comune di Pozzallo con delega revocata
     And un admin appartenente al delegato Comune di Pozzallo
     When l'erogatore tenta di modificare la modalità di approvazione delle richieste di fruizione della versione 1 dell'e-service con dati validi
-    Then il messaggio di errore corrisponde al caso "CATALOG_OPERATION_FORBIDDEN__POST_ESERVICES_E_SERVICE_ID_DESCRIPTORS_DESCRIPTOR_ID_AGREEMENT_APPROVAL_POLICY_UPDATE" in lingua "it"
+    Then il messaggio di errore corrisponde al caso "CATALOG_OPERATION_FORBIDDEN__POST_ESERVICES_E_SERVICE_ID_DESCRIPTORS_DESCRIPTOR_ID_AGREEMENT_APPROVAL_POLICY_UPDATE"
 
   # NON REPLICABILE A FRONTEND
   # Endpoint: POST /eservices/:eServiceId/description/update
@@ -524,7 +524,7 @@ Feature: Messaggi di errore durante la gestione degli e-service
     And l'e-service "ES-1" delegato in erogazione dal Comune di Milano al Comune di Pozzallo con delega revocata
     And un admin appartenente al delegato Comune di Pozzallo
     When l'erogatore tenta di modificare la descrizione dell'e-service in "Descrizione aggiornata"
-    Then il messaggio di errore corrisponde al caso "CATALOG_OPERATION_FORBIDDEN__POST_ESERVICES_E_SERVICE_ID_DESCRIPTION_UPDATE" in lingua "it"
+    Then il messaggio di errore corrisponde al caso "CATALOG_OPERATION_FORBIDDEN__POST_ESERVICES_E_SERVICE_ID_DESCRIPTION_UPDATE"
 
   # NON REPLICABILE A FRONTEND
   # Endpoint: POST /eservices/:eServiceId/delegationFlags/update
@@ -539,7 +539,7 @@ Feature: Messaggi di errore durante la gestione degli e-service
     And l'e-service "ES-1" delegato in erogazione dal Comune di Milano al Comune di Pozzallo con delega revocata
     And un admin appartenente al delegato Comune di Pozzallo
     When l'erogatore tenta di modificare le impostazioni di delega dell'e-service con dati validi
-    Then il messaggio di errore corrisponde al caso "CATALOG_OPERATION_FORBIDDEN__POST_ESERVICES_E_SERVICE_ID_DELEGATION_FLAGS_UPDATE" in lingua "it"
+    Then il messaggio di errore corrisponde al caso "CATALOG_OPERATION_FORBIDDEN__POST_ESERVICES_E_SERVICE_ID_DELEGATION_FLAGS_UPDATE"
 
   # NON REPLICABILE A FRONTEND
   # Endpoint: POST /eservices/:eServiceId/name/update
@@ -554,7 +554,7 @@ Feature: Messaggi di errore durante la gestione degli e-service
     And l'e-service "ES-1" delegato in erogazione dal Comune di Milano al Comune di Pozzallo con delega revocata
     And un admin appartenente al delegato Comune di Pozzallo
     When l'erogatore tenta di modificare il nome dell'e-service con un nome disponibile
-    Then il messaggio di errore corrisponde al caso "CATALOG_OPERATION_FORBIDDEN__POST_ESERVICES_E_SERVICE_ID_NAME_UPDATE" in lingua "it"
+    Then il messaggio di errore corrisponde al caso "CATALOG_OPERATION_FORBIDDEN__POST_ESERVICES_E_SERVICE_ID_NAME_UPDATE"
 
   # NON REPLICABILE A FRONTEND
   # Endpoint: POST /eservices/:eServiceId/signalhub/update
@@ -569,7 +569,7 @@ Feature: Messaggi di errore durante la gestione degli e-service
     And l'e-service "ES-1" delegato in erogazione dal Comune di Milano al Comune di Pozzallo con delega revocata
     And un admin appartenente al delegato Comune di Pozzallo
     When l'erogatore tenta di modificare l'adesione dell'e-service a Signal Hub con dati validi
-    Then il messaggio di errore corrisponde al caso "CATALOG_OPERATION_FORBIDDEN__POST_ESERVICES_E_SERVICE_ID_SIGNALHUB_UPDATE" in lingua "it"
+    Then il messaggio di errore corrisponde al caso "CATALOG_OPERATION_FORBIDDEN__POST_ESERVICES_E_SERVICE_ID_SIGNALHUB_UPDATE"
 
   # NON REPLICABILE A FRONTEND
   # Endpoint: POST /eservices/:eServiceId/descriptors/:descriptorId/attributes/update
@@ -584,7 +584,7 @@ Feature: Messaggi di errore durante la gestione degli e-service
     And l'e-service "ES-1" delegato in erogazione dal Comune di Milano al Comune di Pozzallo con delega revocata
     And un admin appartenente al delegato Comune di Pozzallo
     When l'erogatore tenta di modificare gli attributi richiesti dalla versione 1 dell'e-service con dati validi
-    Then il messaggio di errore corrisponde al caso "CATALOG_OPERATION_FORBIDDEN__POST_ESERVICES_E_SERVICE_ID_DESCRIPTORS_DESCRIPTOR_ID_ATTRIBUTES_UPDATE" in lingua "it"
+    Then il messaggio di errore corrisponde al caso "CATALOG_OPERATION_FORBIDDEN__POST_ESERVICES_E_SERVICE_ID_DESCRIPTORS_DESCRIPTOR_ID_ATTRIBUTES_UPDATE"
 
   # NON REPLICABILE A FRONTEND
   # Endpoint: POST /templates/eservices/:eServiceId/upgrade
@@ -603,7 +603,7 @@ Feature: Messaggi di errore durante la gestione degli e-service
     And l'e-service "ES-1" delegato in erogazione dal Comune di Milano al Comune di Pozzallo con delega revocata
     And un admin appartenente al delegato Comune di Pozzallo
     When l'erogatore tenta di aggiornare l'e-service alla nuova versione del template
-    Then il messaggio di errore corrisponde al caso "CATALOG_OPERATION_FORBIDDEN__POST_TEMPLATES_ESERVICES_E_SERVICE_ID_UPGRADE" in lingua "it"
+    Then il messaggio di errore corrisponde al caso "CATALOG_OPERATION_FORBIDDEN__POST_TEMPLATES_ESERVICES_E_SERVICE_ID_UPGRADE"
 
   # NON REPLICABILE A FRONTEND
   # Endpoint: POST /templates/eservices/:eServiceId/descriptors/:descriptorId/interface/soap
@@ -621,7 +621,7 @@ Feature: Messaggi di errore durante la gestione degli e-service
     And un admin appartenente al delegato Comune di Pozzallo
     # Binding BFF negativo mancante per il divieto; riusare addEServiceTemplateInstanceInterfaceSoap.
     When l'erogatore tenta di configurare l'interfaccia SOAP della versione 1 dell'e-service con indirizzi validi
-    Then il messaggio di errore corrisponde al caso "CATALOG_OPERATION_FORBIDDEN__POST_TEMPLATES_ESERVICES_E_SERVICE_ID_DESCRIPTORS_DESCRIPTOR_ID_INTERFACE_SOAP" in lingua "it"
+    Then il messaggio di errore corrisponde al caso "CATALOG_OPERATION_FORBIDDEN__POST_TEMPLATES_ESERVICES_E_SERVICE_ID_DESCRIPTORS_DESCRIPTOR_ID_INTERFACE_SOAP"
 
   # NON REPLICABILE A FRONTEND
   # Endpoint: POST /templates/eservices/:eServiceId/descriptors/:descriptorId/interface/rest
@@ -639,7 +639,7 @@ Feature: Messaggi di errore durante la gestione degli e-service
     And un admin appartenente al delegato Comune di Pozzallo
     # Binding BFF negativo mancante; riusare addEServiceTemplateInstanceInterfaceRest.
     When l'erogatore tenta di configurare l'interfaccia REST della versione 1 dell'e-service con dati validi
-    Then il messaggio di errore corrisponde al caso "CATALOG_OPERATION_FORBIDDEN__POST_TEMPLATES_ESERVICES_E_SERVICE_ID_DESCRIPTORS_DESCRIPTOR_ID_INTERFACE_REST" in lingua "it"
+    Then il messaggio di errore corrisponde al caso "CATALOG_OPERATION_FORBIDDEN__POST_TEMPLATES_ESERVICES_E_SERVICE_ID_DESCRIPTORS_DESCRIPTOR_ID_INTERFACE_REST"
 
   # NON REPLICABILE A FRONTEND
   # Endpoint: POST /templates/eservices/:eServiceId/descriptors/:descriptorId/update
@@ -658,7 +658,7 @@ Feature: Messaggi di errore durante la gestione degli e-service
     And un admin appartenente al delegato Comune di Pozzallo
     # Binding BFF negativo mancante; riusare updateEServiceInstanceDescriptor per la versione pubblicata.
     When l'erogatore tenta di modificare la configurazione della versione 1 dell'istanza "ES-1" con dati validi
-    Then il messaggio di errore corrisponde al caso "CATALOG_OPERATION_FORBIDDEN__POST_TEMPLATES_ESERVICES_E_SERVICE_ID_DESCRIPTORS_DESCRIPTOR_ID_UPDATE" in lingua "it"
+    Then il messaggio di errore corrisponde al caso "CATALOG_OPERATION_FORBIDDEN__POST_TEMPLATES_ESERVICES_E_SERVICE_ID_DESCRIPTORS_DESCRIPTOR_ID_UPDATE"
 
   # NON REPLICABILE A FRONTEND
   # Endpoint: POST /eservices/:eServiceId/personalDataFlag
@@ -673,7 +673,7 @@ Feature: Messaggi di errore durante la gestione degli e-service
     And l'e-service "ES-1" delegato in erogazione dal Comune di Milano al Comune di Pozzallo con delega revocata
     And un admin appartenente al delegato Comune di Pozzallo
     When l'erogatore tenta di modificare l'indicazione sul trattamento dei dati personali dell'e-service con dati validi
-    Then il messaggio di errore corrisponde al caso "CATALOG_OPERATION_FORBIDDEN__POST_ESERVICES_E_SERVICE_ID_PERSONAL_DATA_FLAG" in lingua "it"
+    Then il messaggio di errore corrisponde al caso "CATALOG_OPERATION_FORBIDDEN__POST_ESERVICES_E_SERVICE_ID_PERSONAL_DATA_FLAG"
 
   # NON REPLICABILE A FRONTEND
   # Endpoint: POST /templates/eservices/:eServiceId/instanceLabel/update
@@ -691,7 +691,7 @@ Feature: Messaggi di errore durante la gestione degli e-service
     And l'e-service "ES-1" delegato in erogazione dal Comune di Milano al Comune di Pozzallo con delega revocata
     And un admin appartenente al delegato Comune di Pozzallo
     When l'erogatore tenta di modificare la sola parola identificativa dell'istanza "ES-1" in "Disponibile"
-    Then il messaggio di errore corrisponde al caso "CATALOG_OPERATION_FORBIDDEN__POST_TEMPLATES_ESERVICES_E_SERVICE_ID_INSTANCE_LABEL_UPDATE" in lingua "it"
+    Then il messaggio di errore corrisponde al caso "CATALOG_OPERATION_FORBIDDEN__POST_TEMPLATES_ESERVICES_E_SERVICE_ID_INSTANCE_LABEL_UPDATE"
 
   # NON REPLICABILE A FRONTEND
   # Endpoint: POST /templates/eservices/:eServiceId/descriptors/:descriptorId/interface/rest
@@ -706,7 +706,7 @@ Feature: Messaggi di errore durante la gestione degli e-service
     Given un'istanza REST in bozza derivata da un template con una versione OpenAPI non supportata
     # Binding BFF negativo mancante; riusare addEServiceTemplateInstanceInterfaceRest.
     When l'erogatore tenta di configurare l'interfaccia REST della versione 1 dell'e-service con dati validi
-    Then il messaggio di errore corrisponde al caso "CATALOG_OPENAPI_VERSION_NOT_RECOGNIZED__POST_TEMPLATES_ESERVICES_E_SERVICE_ID_DESCRIPTORS_DESCRIPTOR_ID_INTERFACE_REST" in lingua "it"
+    Then il messaggio di errore corrisponde al caso "CATALOG_OPENAPI_VERSION_NOT_RECOGNIZED__POST_TEMPLATES_ESERVICES_E_SERVICE_ID_DESCRIPTORS_DESCRIPTOR_ID_INTERFACE_REST"
 
   # Endpoint: POST /eservices
   Scenario: [ERROR_080] - Rifiuto della creazione di un e-service con un link nel nome
@@ -715,7 +715,7 @@ Feature: Messaggi di errore durante la gestione degli e-service
   Allora il sistema rifiuta la creazione e invita a rimuovere il link dal nome.
 
     When l'utente tenta di creare un e-service con un link nel nome e gli altri dati validi
-    Then il messaggio di errore corrisponde al caso "CATALOG_HYPERLINK_DETECTION_ERROR__POST_ESERVICES" in lingua "it"
+    Then il messaggio di errore corrisponde al caso "CATALOG_HYPERLINK_DETECTION_ERROR__POST_ESERVICES"
 
   # Endpoint: POST /templates/:templateId/eservices
   Scenario: [ERROR_081] - Rifiuto della creazione di un'istanza con un link nella parola identificativa
@@ -727,7 +727,7 @@ Feature: Messaggi di errore durante la gestione degli e-service
       | alias | erogatore        | nome                | tecnologia |
       | T-1   | Comune di Milano | Template di origine | REST       |
     When l'erogatore tenta di istanziare il template e inserisce un link nella parola identificativa
-    Then il messaggio di errore corrisponde al caso "CATALOG_HYPERLINK_DETECTION_ERROR__POST_TEMPLATES_TEMPLATE_ID_ESERVICES" in lingua "it"
+    Then il messaggio di errore corrisponde al caso "CATALOG_HYPERLINK_DETECTION_ERROR__POST_TEMPLATES_TEMPLATE_ID_ESERVICES"
 
   # Endpoint: POST /templates/eservices/:eServiceId
   Scenario: [ERROR_082] - Rifiuto della modifica dei dati di un'istanza con un link nella parola identificativa
@@ -740,7 +740,7 @@ Feature: Messaggi di errore durante la gestione degli e-service
       | T-1   | Comune di Milano | Template di origine | REST       |
     And l'erogatore istanzia un nuovo e-service dal template
     When l'erogatore tenta di aggiornare i dati dell'e-service appena istanziato con la parola identificativa "https://a.it"
-    Then il messaggio di errore corrisponde al caso "CATALOG_HYPERLINK_DETECTION_ERROR__POST_TEMPLATES_ESERVICES_E_SERVICE_ID" in lingua "it"
+    Then il messaggio di errore corrisponde al caso "CATALOG_HYPERLINK_DETECTION_ERROR__POST_TEMPLATES_ESERVICES_E_SERVICE_ID"
 
   # Endpoint: POST /eservices/:eServiceId/descriptors/:descriptorId/documents
   Scenario: [ERROR_083] - Rifiuto del caricamento di un documento con un link nel nome
@@ -752,7 +752,7 @@ Feature: Messaggi di errore durante la gestione degli e-service
       | alias | erogatore        |
       | ES-1  | Comune di Milano |
     When l'erogatore tenta di caricare il file "assets/origin-interface.yaml" come documentazione per la versione 1 dell'e-service "ES-1" con il nome "Documento https://example.org"
-    Then il messaggio di errore corrisponde al caso "CATALOG_HYPERLINK_DETECTION_ERROR__POST_ESERVICES_E_SERVICE_ID_DESCRIPTORS_DESCRIPTOR_ID_DOCUMENTS" in lingua "it"
+    Then il messaggio di errore corrisponde al caso "CATALOG_HYPERLINK_DETECTION_ERROR__POST_ESERVICES_E_SERVICE_ID_DESCRIPTORS_DESCRIPTOR_ID_DOCUMENTS"
 
   # Endpoint: POST /eservices/:eServiceId/descriptors/:descriptorId/documents/:documentId/update
   Scenario: [ERROR_084] - Rifiuto della rinomina di un documento con un link nel nome
@@ -767,7 +767,7 @@ Feature: Messaggi di errore durante la gestione degli e-service
       | nome       | fixture                      |
       | Allegato A | assets/origin-interface.yaml |
     When l'erogatore tenta di rinominare il documento "Allegato A" della versione 1 dell'e-service "ES-1" in "Documento https://example.org"
-    Then il messaggio di errore corrisponde al caso "CATALOG_HYPERLINK_DETECTION_ERROR__POST_ESERVICES_E_SERVICE_ID_DESCRIPTORS_DESCRIPTOR_ID_DOCUMENTS_DOCUMENT_ID_UPDATE" in lingua "it"
+    Then il messaggio di errore corrisponde al caso "CATALOG_HYPERLINK_DETECTION_ERROR__POST_ESERVICES_E_SERVICE_ID_DESCRIPTORS_DESCRIPTOR_ID_DOCUMENTS_DOCUMENT_ID_UPDATE"
 
   # Endpoint: POST /eservices/:eServiceId/descriptors
   @err_msg_when_exec
@@ -781,7 +781,7 @@ Feature: Messaggi di errore durante la gestione degli e-service
       | ES-1  | Comune di Milano |
     # addDescriptor non accetta la descrizione: verificare come raggiungere questo errore senza spostare il caso alla modifica.
     When l'erogatore tenta di creare una nuova versione dell'e-service con un link nella descrizione e gli altri dati validi
-    Then il messaggio di errore corrisponde al caso "CATALOG_HYPERLINK_DETECTION_ERROR__POST_ESERVICES_E_SERVICE_ID_DESCRIPTORS" in lingua "it"
+    Then il messaggio di errore corrisponde al caso "CATALOG_HYPERLINK_DETECTION_ERROR__POST_ESERVICES_E_SERVICE_ID_DESCRIPTORS"
 
   # Endpoint: POST /eservices/:eServiceId/description/update
   Scenario: [ERROR_086] - Rifiuto della modifica della descrizione di un e-service con un link
@@ -793,7 +793,7 @@ Feature: Messaggi di errore durante la gestione degli e-service
       | alias | erogatore        |
       | ES-1  | Comune di Milano |
     When l'erogatore tenta di modificare la descrizione dell'e-service in "Descrizione con https://example.org"
-    Then il messaggio di errore corrisponde al caso "CATALOG_HYPERLINK_DETECTION_ERROR__POST_ESERVICES_E_SERVICE_ID_DESCRIPTION_UPDATE" in lingua "it"
+    Then il messaggio di errore corrisponde al caso "CATALOG_HYPERLINK_DETECTION_ERROR__POST_ESERVICES_E_SERVICE_ID_DESCRIPTION_UPDATE"
 
   # Endpoint: POST /eservices/:eServiceId/name/update
   Scenario: [ERROR_087] - Rifiuto della modifica del nome di un e-service con un link
@@ -805,7 +805,7 @@ Feature: Messaggi di errore durante la gestione degli e-service
       | alias | erogatore        |
       | ES-1  | Comune di Milano |
     When l'erogatore tenta di modificare il nome dell'e-service "ES-1" in "Valore https://example.org"
-    Then il messaggio di errore corrisponde al caso "CATALOG_HYPERLINK_DETECTION_ERROR__POST_ESERVICES_E_SERVICE_ID_NAME_UPDATE" in lingua "it"
+    Then il messaggio di errore corrisponde al caso "CATALOG_HYPERLINK_DETECTION_ERROR__POST_ESERVICES_E_SERVICE_ID_NAME_UPDATE"
 
   # Endpoint: POST /eservices/:eServiceId/descriptors/:descriptorId/reject
   Scenario: [ERROR_088] - Rifiuto di una motivazione con un link per la mancata approvazione della pubblicazione
@@ -820,7 +820,7 @@ Feature: Messaggi di errore durante la gestione degli e-service
     And la versione 1 dell'e-service "ES-1" predisposta dal delegato Comune di Pozzallo in attesa di approvazione
     And un admin appartenente all'erogatore Comune di Milano
     When l'erogatore tenta di rifiutare la pubblicazione della versione 1 dell'e-service con motivazione "Rifiuto con https://example.org"
-    Then il messaggio di errore corrisponde al caso "CATALOG_HYPERLINK_DETECTION_ERROR__POST_ESERVICES_E_SERVICE_ID_DESCRIPTORS_DESCRIPTOR_ID_REJECT" in lingua "it"
+    Then il messaggio di errore corrisponde al caso "CATALOG_HYPERLINK_DETECTION_ERROR__POST_ESERVICES_E_SERVICE_ID_DESCRIPTORS_DESCRIPTOR_ID_REJECT"
 
   # Endpoint: POST /templates/eservices/:eServiceId/instanceLabel/update
   Scenario: [ERROR_089] - Rifiuto dell'aggiornamento della sola parola identificativa con un link
@@ -835,7 +835,7 @@ Feature: Messaggi di errore durante la gestione degli e-service
       | alias | template | suffisso   |
       | ES-1  | T-1      | Modificare |
     When l'erogatore tenta di modificare la sola parola identificativa dell'e-service creato da template "ES-1" in "https://a.it"
-    Then il messaggio di errore corrisponde al caso "CATALOG_HYPERLINK_DETECTION_ERROR__POST_TEMPLATES_ESERVICES_E_SERVICE_ID_INSTANCE_LABEL_UPDATE" in lingua "it"
+    Then il messaggio di errore corrisponde al caso "CATALOG_HYPERLINK_DETECTION_ERROR__POST_TEMPLATES_ESERVICES_E_SERVICE_ID_INSTANCE_LABEL_UPDATE"
 
   # NON REPLICABILE A FRONTEND
   # Endpoint: PATCH /eservices/:eServiceId
@@ -849,7 +849,7 @@ Feature: Messaggi di errore durante la gestione degli e-service
       | ES-1  | Comune di Milano | Catalogo esistente   |
       | ES-2  | Comune di Milano | Catalogo da cambiare |
     When l'erogatore tenta di aggiornare parzialmente i dati dell'e-service "ES-2" con il nome dell'e-service "ES-1"
-    Then il messaggio di errore corrisponde al caso "CATALOG_E_SERVICE_NAME_DUPLICATE_FOR_PRODUCER__PATCH_ESERVICES_E_SERVICE_ID" in lingua "it"
+    Then il messaggio di errore corrisponde al caso "CATALOG_E_SERVICE_NAME_DUPLICATE_FOR_PRODUCER__PATCH_ESERVICES_E_SERVICE_ID"
 
   # NON REPLICABILE A FRONTEND
   # Endpoint: PATCH /eservices/:eServiceId
@@ -865,7 +865,7 @@ Feature: Messaggi di errore durante la gestione degli e-service
       | alias | erogatore        |
       | ES-1  | Comune di Milano |
     When l'erogatore tenta di aggiornare parzialmente i dati dell'e-service con il nome del template
-    Then il messaggio di errore corrisponde al caso "CATALOG_ESERVICE_TEMPLATE_NAME_CONFLICT__PATCH_ESERVICES_E_SERVICE_ID" in lingua "it"
+    Then il messaggio di errore corrisponde al caso "CATALOG_ESERVICE_TEMPLATE_NAME_CONFLICT__PATCH_ESERVICES_E_SERVICE_ID"
 
   # Endpoint: PATCH /eservices/:eServiceId
   Scenario: [ERROR_092] - Rifiuto dell'aggiornamento parziale di un e-service con un link nel nome
@@ -877,4 +877,4 @@ Feature: Messaggi di errore durante la gestione degli e-service
       | alias | erogatore        |
       | ES-1  | Comune di Milano |
     When l'erogatore tenta di aggiornare parzialmente i dati dell'e-service impostando il nome "Valore https://example.org"
-    Then il messaggio di errore corrisponde al caso "CATALOG_HYPERLINK_DETECTION_ERROR__PATCH_ESERVICES_E_SERVICE_ID" in lingua "it"
+    Then il messaggio di errore corrisponde al caso "CATALOG_HYPERLINK_DETECTION_ERROR__PATCH_ESERVICES_E_SERVICE_ID"

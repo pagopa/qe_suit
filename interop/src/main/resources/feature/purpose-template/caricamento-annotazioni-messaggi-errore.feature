@@ -22,7 +22,7 @@ Feature: Messaggi di errore durante il caricamento degli allegati alle annotazio
     # Fixture da predisporre: file di testo valido, non identificato come PDF.
     # Operazione BFF e binding negativo comuni mancanti per gli allegati alle annotazioni.
     When l'operatore allega il file "allegato-non-pdf.txt" all'annotazione del template finalità con il nome "Allegato di test"
-    Then il messaggio di errore corrisponde al caso "PURPOSE_TEMPLATE_INVALID_CONTENT_TYPE_DETECTED" in lingua "it"
+    Then il messaggio di errore corrisponde al caso "PURPOSE_TEMPLATE_INVALID_CONTENT_TYPE_DETECTED"
 
   # Endpoint: POST /purposeTemplates/:purposeTemplateId/riskAnalysis/answers/:answerId/annotation/documents
   @err_msg_given_exec_2
@@ -35,4 +35,4 @@ Feature: Messaggi di errore durante il caricamento degli allegati alle annotazio
     # Fixture da predisporre: tipo PDF ammesso e firma binaria non valida.
     # Operazione BFF e binding negativo comuni mancanti per gli allegati alle annotazioni.
     When l'operatore allega il file "pdf-con-contenuto-non-valido.pdf" all'annotazione del template finalità con il nome "Allegato di test"
-    Then il messaggio di errore corrisponde al caso "PURPOSE_TEMPLATE_INVALID_PDF_SIGNATURE_ERROR" in lingua "it"
+    Then il messaggio di errore corrisponde al caso "PURPOSE_TEMPLATE_INVALID_PDF_SIGNATURE_ERROR"

@@ -21,7 +21,7 @@ Feature: Messaggi di errore durante la gestione delle deleghe in erogazione e in
     Given l'e-service è delegato in fruizione dal Comune di Milano al Comune di Pozzallo con una delega in stato ACTIVE
     And un admin appartenente al delegato Comune di Pozzallo
     When l'utente tenta di rifiutare la delega in fruizione
-    Then il messaggio di errore corrisponde al caso "DELEGATION_INCORRECT_STATE__POST_CONSUMER_DELEGATIONS_DELEGATION_ID_REJECT" in lingua "it"
+    Then il messaggio di errore corrisponde al caso "DELEGATION_INCORRECT_STATE__POST_CONSUMER_DELEGATIONS_DELEGATION_ID_REJECT"
 
   # Endpoint: POST /producers/delegations/:delegationId/reject
   Scenario: [ERROR_201] - Impossibilità di rifiutare una delega in erogazione già attiva
@@ -35,7 +35,7 @@ Feature: Messaggi di errore durante la gestione delle deleghe in erogazione e in
     And l'e-service "ES-1" delegato in erogazione dal Comune di Milano al Comune di Pozzallo con delega attiva
     And un admin appartenente al delegato Comune di Pozzallo
     When l'utente tenta di rifiutare la delega in erogazione
-    Then il messaggio di errore corrisponde al caso "DELEGATION_INCORRECT_STATE__POST_PRODUCERS_DELEGATIONS_DELEGATION_ID_REJECT" in lingua "it"
+    Then il messaggio di errore corrisponde al caso "DELEGATION_INCORRECT_STATE__POST_PRODUCERS_DELEGATIONS_DELEGATION_ID_REJECT"
 
   # Endpoint: POST /producers/delegations
   Scenario: [ERROR_004] - Impossibilità di proporre una delega in erogazione a un ente non pubblico
@@ -44,7 +44,7 @@ Feature: Messaggi di errore durante la gestione delle deleghe in erogazione e in
   Allora il sistema rifiuta la proposta e segnala che l'ente scelto non può ricevere la delega.
 
     When il Comune di Milano tenta di proporre la delega in erogazione a Sogecap per l'e-service
-    Then il messaggio di errore corrisponde al caso "DELEGATION_DELEGATION_NOT_ALLOWED_FOR_TENANT__POST_PRODUCERS_DELEGATIONS" in lingua "it"
+    Then il messaggio di errore corrisponde al caso "DELEGATION_DELEGATION_NOT_ALLOWED_FOR_TENANT__POST_PRODUCERS_DELEGATIONS"
 
   # Endpoint: POST /producers/delegations/:delegationId/approve
   Scenario: [ERROR_005] - Impossibilità di approvare una delega in erogazione già attiva
@@ -58,7 +58,7 @@ Feature: Messaggi di errore durante la gestione delle deleghe in erogazione e in
     And l'e-service "ES-1" delegato in erogazione dal Comune di Milano al Comune di Pozzallo con delega attiva
     And un admin appartenente al delegato Comune di Pozzallo
     When l'utente tenta di approvare la delega in erogazione
-    Then il messaggio di errore corrisponde al caso "DELEGATION_INCORRECT_STATE__POST_PRODUCERS_DELEGATIONS_DELEGATION_ID_APPROVE" in lingua "it"
+    Then il messaggio di errore corrisponde al caso "DELEGATION_INCORRECT_STATE__POST_PRODUCERS_DELEGATIONS_DELEGATION_ID_APPROVE"
 
   # Endpoint: DELETE /producers/delegations/:delegationId
   Scenario: [ERROR_006] - Impossibilità di revocare una delega in erogazione già revocata
@@ -72,7 +72,7 @@ Feature: Messaggi di errore durante la gestione delle deleghe in erogazione e in
     And l'e-service "ES-1" delegato in erogazione dal Comune di Milano al Comune di Pozzallo con delega revocata
     And un admin appartenente all'erogatore Comune di Milano
     When l'utente tenta di revocare la delega in erogazione
-    Then il messaggio di errore corrisponde al caso "DELEGATION_INCORRECT_STATE__DELETE_PRODUCERS_DELEGATIONS_DELEGATION_ID" in lingua "it"
+    Then il messaggio di errore corrisponde al caso "DELEGATION_INCORRECT_STATE__DELETE_PRODUCERS_DELEGATIONS_DELEGATION_ID"
 
   # Endpoint: POST /consumers/delegations
   Scenario: [ERROR_007] - Impossibilità di proporre una delega in fruizione a un ente non pubblico
@@ -82,7 +82,7 @@ Feature: Messaggi di errore durante la gestione delle deleghe in erogazione e in
 
     Given un admin appartenente al fruitore PagoPA
     When PagoPA tenta di proporre la delega in fruizione a Sogecap per l'e-service
-    Then il messaggio di errore corrisponde al caso "DELEGATION_DELEGATION_NOT_ALLOWED_FOR_TENANT__POST_CONSUMERS_DELEGATIONS" in lingua "it"
+    Then il messaggio di errore corrisponde al caso "DELEGATION_DELEGATION_NOT_ALLOWED_FOR_TENANT__POST_CONSUMERS_DELEGATIONS"
 
   # Endpoint: POST /consumers/delegations/:delegationId/approve
   Scenario: [ERROR_008] - Impossibilità di approvare una delega in fruizione già attiva
@@ -93,7 +93,7 @@ Feature: Messaggi di errore durante la gestione delle deleghe in erogazione e in
     Given l'e-service è delegato in fruizione dal Comune di Milano al Comune di Pozzallo con una delega in stato ACTIVE
     And un admin appartenente al delegato Comune di Pozzallo
     When l'utente tenta di approvare la delega in fruizione
-    Then il messaggio di errore corrisponde al caso "DELEGATION_INCORRECT_STATE__POST_CONSUMERS_DELEGATIONS_DELEGATION_ID_APPROVE" in lingua "it"
+    Then il messaggio di errore corrisponde al caso "DELEGATION_INCORRECT_STATE__POST_CONSUMERS_DELEGATIONS_DELEGATION_ID_APPROVE"
 
   # Endpoint: DELETE /consumers/delegations/:delegationId
   Scenario: [ERROR_009] - Impossibilità di revocare una delega in fruizione già revocata
@@ -105,7 +105,7 @@ Feature: Messaggi di errore durante la gestione delle deleghe in erogazione e in
     And la delega in fruizione viene revocata da PagoPA
     And un admin appartenente al fruitore PagoPA
     When l'utente tenta di revocare la delega in fruizione
-    Then il messaggio di errore corrisponde al caso "DELEGATION_INCORRECT_STATE__DELETE_CONSUMERS_DELEGATIONS_DELEGATION_ID" in lingua "it"
+    Then il messaggio di errore corrisponde al caso "DELEGATION_INCORRECT_STATE__DELETE_CONSUMERS_DELEGATIONS_DELEGATION_ID"
 
   # Endpoint: POST /producers/delegations/:delegationId/reject
   Scenario: [ERROR_010] - Rifiuto di una delega in erogazione con un link nella motivazione
@@ -119,7 +119,7 @@ Feature: Messaggi di errore durante la gestione delle deleghe in erogazione e in
     And l'e-service "ES-1" delegato in erogazione dal Comune di Milano al Comune di Pozzallo con delega in attesa di accettazione
     And un admin appartenente al delegato Comune di Pozzallo
     When l'utente tenta di rifiutare la delega in erogazione inserendo la motivazione "Rifiuto https://example.org"
-    Then il messaggio di errore corrisponde al caso "DELEGATION_HYPERLINK_DETECTION_ERROR__POST_PRODUCERS_DELEGATIONS_DELEGATION_ID_REJECT" in lingua "it"
+    Then il messaggio di errore corrisponde al caso "DELEGATION_HYPERLINK_DETECTION_ERROR__POST_PRODUCERS_DELEGATIONS_DELEGATION_ID_REJECT"
 
   # Endpoint: POST /consumers/delegations/:delegationId/reject
   Scenario: [ERROR_011] - Rifiuto di una delega in fruizione con un link nella motivazione
@@ -130,4 +130,4 @@ Feature: Messaggi di errore durante la gestione delle deleghe in erogazione e in
     Given l'e-service è delegato in fruizione da PagoPA al Comune di Pozzallo con una delega in stato WAITING_FOR_APPROVAL
     And un admin appartenente al delegato Comune di Pozzallo
     When l'utente tenta di rifiutare la delega in fruizione inserendo la motivazione "Rifiuto https://example.org"
-    Then il messaggio di errore corrisponde al caso "DELEGATION_HYPERLINK_DETECTION_ERROR__POST_CONSUMERS_DELEGATIONS_DELEGATION_ID_REJECT" in lingua "it"
+    Then il messaggio di errore corrisponde al caso "DELEGATION_HYPERLINK_DETECTION_ERROR__POST_CONSUMERS_DELEGATIONS_DELEGATION_ID_REJECT"

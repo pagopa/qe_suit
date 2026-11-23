@@ -18,7 +18,7 @@ Feature: Messaggi di errore durante la gestione delle finalità e la valutazione
 
     Given un eservice creato dal Comune di Milano con una richiesta di fruizione in stato ACTIVE e una finalità in stato DRAFT associate da PagoPA
     When il fruitore tenta di creare una finalità con lo stesso nome della finalità creata in precedenza per lo stesso e-service
-    Then il messaggio di errore corrisponde al caso "PURPOSE_DUPLICATED_PURPOSE_TITLE__POST_PURPOSES" in lingua "it"
+    Then il messaggio di errore corrisponde al caso "PURPOSE_DUPLICATED_PURPOSE_TITLE__POST_PURPOSES"
 
   # Endpoint: POST /reverse/purposes
   @err_msg_given_exec_1
@@ -38,7 +38,7 @@ Feature: Messaggi di errore durante la gestione delle finalità e la valutazione
       | F-1   |
     # Binding negativo parametrico mancante; riusare createPurpose o createReversePurpose secondo la modalità.
     When il fruitore tenta di creare una finalità per l'e-service con il nome della finalità
-    Then il messaggio di errore corrisponde al caso "PURPOSE_DUPLICATED_PURPOSE_TITLE__POST_REVERSE_PURPOSES" in lingua "it"
+    Then il messaggio di errore corrisponde al caso "PURPOSE_DUPLICATED_PURPOSE_TITLE__POST_REVERSE_PURPOSES"
 
   # Endpoint: POST /purposes/:purposeId
   @err_msg_given_exec_1
@@ -57,7 +57,7 @@ Feature: Messaggi di errore durante la gestione delle finalità e la valutazione
       | F-1   |
       | F-2   |
     When il fruitore tenta di modificare la purpose "F-2" con il nome della purpose "F-1"
-    Then il messaggio di errore corrisponde al caso "PURPOSE_DUPLICATED_PURPOSE_TITLE__POST_PURPOSES_PURPOSE_ID" in lingua "it"
+    Then il messaggio di errore corrisponde al caso "PURPOSE_DUPLICATED_PURPOSE_TITLE__POST_PURPOSES_PURPOSE_ID"
 
   # Endpoint: POST /purposes/:purposeId
   Scenario: [ERROR_021] - Rifiuto della modifica di una finalità con un link nel nome
@@ -67,7 +67,7 @@ Feature: Messaggi di errore durante la gestione delle finalità e la valutazione
 
     Given un eservice creato dal Comune di Milano con una richiesta di fruizione in stato ACTIVE e una finalità in stato DRAFT associate da PagoPA
     When il fruitore tenta di modificare la purpose con il nome "Valore https://example.org"
-    Then il messaggio di errore corrisponde al caso "PURPOSE_HYPERLINK_DETECTION_ERROR__POST_PURPOSES_PURPOSE_ID" in lingua "it"
+    Then il messaggio di errore corrisponde al caso "PURPOSE_HYPERLINK_DETECTION_ERROR__POST_PURPOSES_PURPOSE_ID"
 
   # Endpoint: POST /purposes/:purposeId/clone
   @err_msg_given_exec_1
@@ -87,7 +87,7 @@ Feature: Messaggi di errore durante la gestione delle finalità e la valutazione
     # Setup e binding mancanti; verificare il nome derivato dal clone, senza assumere prefissi o suffissi.
     And un'altra finalità di PagoPA per l'e-service "ES-1" con il nome che deriverebbe dalla duplicazione di "F-1"
     When il fruitore tenta di duplicare la purpose "F-1"
-    Then il messaggio di errore corrisponde al caso "PURPOSE_DUPLICATED_PURPOSE_TITLE__POST_PURPOSES_PURPOSE_ID_CLONE" in lingua "it"
+    Then il messaggio di errore corrisponde al caso "PURPOSE_DUPLICATED_PURPOSE_TITLE__POST_PURPOSES_PURPOSE_ID_CLONE"
 
   # Endpoint: POST /purposeTemplates/:purposeTemplateId/purposes
   @err_msg_when_exec
@@ -104,7 +104,7 @@ Feature: Messaggi di errore durante la gestione delle finalità e la valutazione
     And l'e-service con una finalità in stato DRAFT associata da PagoPA
     # Binding BFF negativo mancante; riusare createPurposeFromTemplate con il nome effettivo della finalità.
     When il fruitore tenta di creare una finalità dal template finalità per l'e-service con il nome della finalità
-    Then il messaggio di errore corrisponde al caso "PURPOSE_DUPLICATED_PURPOSE_TITLE__POST_PURPOSE_TEMPLATES_PURPOSE_TEMPLATE_ID_PURPOSES" in lingua "it"
+    Then il messaggio di errore corrisponde al caso "PURPOSE_DUPLICATED_PURPOSE_TITLE__POST_PURPOSE_TEMPLATES_PURPOSE_TEMPLATE_ID_PURPOSES"
 
   # Endpoint: PATCH /purposeTemplates/:purposeTemplateId/purposes/:purposeId
   @err_msg_given_exec_1
@@ -127,7 +127,7 @@ Feature: Messaggi di errore durante la gestione delle finalità e la valutazione
     And una finalità in bozza creata da PagoPA dal template finalità per l'e-service "ES-1" e identificata come "F-2"
     # Operazione BFF e binding negativo mancanti; riusare patchFromTemplateRequest, non updateRequest.
     When il fruitore tenta di modificare la finalità da template "F-2" con il nome della finalità "F-1"
-    Then il messaggio di errore corrisponde al caso "PURPOSE_DUPLICATED_PURPOSE_TITLE__PATCH_PURPOSE_TEMPLATES_PURPOSE_TEMPLATE_ID_PURPOSES_PURPOSE_ID" in lingua "it"
+    Then il messaggio di errore corrisponde al caso "PURPOSE_DUPLICATED_PURPOSE_TITLE__PATCH_PURPOSE_TEMPLATES_PURPOSE_TEMPLATE_ID_PURPOSES_PURPOSE_ID"
 
   # Endpoint: POST /purposes/:purposeId/riskAnalysis/sign
   @err_msg_given_exec_1
@@ -141,7 +141,7 @@ Feature: Messaggi di errore durante la gestione delle finalità e la valutazione
     Given un'analisi del rischio della finalità in stato "approvata" assegnata al valutatore di PagoPA
     And un reviewer appartenente al fruitore PagoPA
     When il valutatore tenta di firmare l'analisi del rischio della finalità
-    Then il messaggio di errore corrisponde al caso "PURPOSE_RISK_ANALYSIS_ALREADY_APPROVED__POST_PURPOSES_PURPOSE_ID_RISK_ANALYSIS_SIGN" in lingua "it"
+    Then il messaggio di errore corrisponde al caso "PURPOSE_RISK_ANALYSIS_ALREADY_APPROVED__POST_PURPOSES_PURPOSE_ID_RISK_ANALYSIS_SIGN"
 
   # Endpoint: POST /purposes/:purposeId/riskAnalysis/sign
   @err_msg_given_exec_1
@@ -155,7 +155,7 @@ Feature: Messaggi di errore durante la gestione delle finalità e la valutazione
     Given un'analisi del rischio della finalità in stato "rifiutata" assegnata al valutatore di PagoPA
     And un reviewer appartenente al fruitore PagoPA
     When il valutatore tenta di firmare l'analisi del rischio della finalità
-    Then il messaggio di errore corrisponde al caso "PURPOSE_RISK_ANALYSIS_ALREADY_REJECTED__POST_PURPOSES_PURPOSE_ID_RISK_ANALYSIS_SIGN" in lingua "it"
+    Then il messaggio di errore corrisponde al caso "PURPOSE_RISK_ANALYSIS_ALREADY_REJECTED__POST_PURPOSES_PURPOSE_ID_RISK_ANALYSIS_SIGN"
 
   # NON REPLICABILE A FRONTEND
   # Endpoint: POST /purposes/:purposeId/riskAnalysis/sign
@@ -175,7 +175,7 @@ Feature: Messaggi di errore durante la gestione delle finalità e la valutazione
     And l'analisi del rischio aggiornata dopo la lettura del valutatore
     # Operazione BFF e binding negativo mancanti; usare la versione metadata precedente con gli altri dati validi.
     When il valutatore tenta di firmare l'analisi del rischio con i dati letti prima dell'aggiornamento
-    Then il messaggio di errore corrisponde al caso "PURPOSE_PURPOSE_METADATA_VERSION_MISMATCH" in lingua "it"
+    Then il messaggio di errore corrisponde al caso "PURPOSE_PURPOSE_METADATA_VERSION_MISMATCH"
 
   # Endpoint: POST /purposes/:purposeId/riskAnalysis/reject
   @err_msg_given_exec_1
@@ -189,7 +189,7 @@ Feature: Messaggi di errore durante la gestione delle finalità e la valutazione
     Given un'analisi del rischio della finalità in stato "approvata" assegnata al valutatore di PagoPA
     And un reviewer appartenente al fruitore PagoPA
     When il valutatore tenta di rifiutare l'analisi del rischio della finalità con la motivazione "Informazioni insufficienti"
-    Then il messaggio di errore corrisponde al caso "PURPOSE_RISK_ANALYSIS_ALREADY_APPROVED__POST_PURPOSES_PURPOSE_ID_RISK_ANALYSIS_REJECT" in lingua "it"
+    Then il messaggio di errore corrisponde al caso "PURPOSE_RISK_ANALYSIS_ALREADY_APPROVED__POST_PURPOSES_PURPOSE_ID_RISK_ANALYSIS_REJECT"
 
   # Endpoint: POST /purposes/:purposeId/riskAnalysis/reject
   @err_msg_given_exec_1
@@ -203,7 +203,7 @@ Feature: Messaggi di errore durante la gestione delle finalità e la valutazione
     Given un'analisi del rischio della finalità in stato "rifiutata" assegnata al valutatore di PagoPA
     And un reviewer appartenente al fruitore PagoPA
     When il valutatore tenta di rifiutare l'analisi del rischio della finalità con la motivazione "Informazioni insufficienti"
-    Then il messaggio di errore corrisponde al caso "PURPOSE_RISK_ANALYSIS_ALREADY_REJECTED__POST_PURPOSES_PURPOSE_ID_RISK_ANALYSIS_REJECT" in lingua "it"
+    Then il messaggio di errore corrisponde al caso "PURPOSE_RISK_ANALYSIS_ALREADY_REJECTED__POST_PURPOSES_PURPOSE_ID_RISK_ANALYSIS_REJECT"
 
   # Endpoint: PUT /purposes/:purposeId/riskAnalysis/form
   @err_msg_given_exec_1
@@ -219,7 +219,7 @@ Feature: Messaggi di errore durante la gestione delle finalità e la valutazione
     And un reviewer appartenente al fruitore PagoPA
     # Operazione BFF e binding negativo comuni mancanti per il salvataggio delle risposte.
     When il valutatore tenta di salvare risposte valide nell'analisi del rischio della finalità
-    Then il messaggio di errore corrisponde al caso "PURPOSE_RISK_ANALYSIS_ALREADY_APPROVED__PUT_PURPOSES_PURPOSE_ID_RISK_ANALYSIS_FORM" in lingua "it"
+    Then il messaggio di errore corrisponde al caso "PURPOSE_RISK_ANALYSIS_ALREADY_APPROVED__PUT_PURPOSES_PURPOSE_ID_RISK_ANALYSIS_FORM"
 
   # Endpoint: PUT /purposes/:purposeId/riskAnalysis/form
   @err_msg_given_exec_1
@@ -235,7 +235,7 @@ Feature: Messaggi di errore durante la gestione delle finalità e la valutazione
     And un reviewer appartenente al fruitore PagoPA
     # Operazione BFF e binding negativo comuni mancanti per il salvataggio delle risposte.
     When il valutatore tenta di salvare risposte valide nell'analisi del rischio della finalità
-    Then il messaggio di errore corrisponde al caso "PURPOSE_RISK_ANALYSIS_ALREADY_REJECTED__PUT_PURPOSES_PURPOSE_ID_RISK_ANALYSIS_FORM" in lingua "it"
+    Then il messaggio di errore corrisponde al caso "PURPOSE_RISK_ANALYSIS_ALREADY_REJECTED__PUT_PURPOSES_PURPOSE_ID_RISK_ANALYSIS_FORM"
 
   # Endpoint: POST /purposes/:purposeId/riskAnalysis/reject
   @err_msg_given_exec_1
@@ -249,7 +249,7 @@ Feature: Messaggi di errore durante la gestione delle finalità e la valutazione
     Given un'analisi del rischio della finalità in stato "in attesa di valutazione" assegnata al valutatore di PagoPA
     And un reviewer appartenente al fruitore PagoPA
     When il valutatore tenta di rifiutare l'analisi del rischio della finalità con la motivazione "Motivazione https://example.org"
-    Then il messaggio di errore corrisponde al caso "PURPOSE_HYPERLINK_DETECTION_ERROR__POST_PURPOSES_PURPOSE_ID_RISK_ANALYSIS_REJECT" in lingua "it"
+    Then il messaggio di errore corrisponde al caso "PURPOSE_HYPERLINK_DETECTION_ERROR__POST_PURPOSES_PURPOSE_ID_RISK_ANALYSIS_REJECT"
 
   # NON REPLICABILE A FRONTEND
   # Endpoint: PATCH /purposes/:purposeId
@@ -271,7 +271,7 @@ Feature: Messaggi di errore durante la gestione delle finalità e la valutazione
     # Operazione BFF e binding negativo comuni mancanti; verificare il contratto PATCH di rilascio.
     # Il client espone POST per questa modifica; non rimappare questo ID su un altro endpoint.
     When il fruitore tenta di aggiornare parzialmente la finalità "F-2" con il nome della finalità "F-1"
-    Then il messaggio di errore corrisponde al caso "PURPOSE_DUPLICATED_PURPOSE_TITLE__PATCH_PURPOSES_PURPOSE_ID" in lingua "it"
+    Then il messaggio di errore corrisponde al caso "PURPOSE_DUPLICATED_PURPOSE_TITLE__PATCH_PURPOSES_PURPOSE_ID"
 
   # Endpoint: PATCH /purposes/:purposeId
   # PRENDI STEP WHEN DA MODIFICA NOME
@@ -284,7 +284,7 @@ Feature: Messaggi di errore durante la gestione delle finalità e la valutazione
     # Operazione BFF e binding negativo comuni mancanti; verificare il contratto PATCH di rilascio.
     # Il client espone POST per questa modifica; non rimappare questo ID su un altro endpoint.
     When il fruitore tenta di aggiornare parzialmente la finalità con il nome "Finalità https://example.org"
-    Then il messaggio di errore corrisponde al caso "PURPOSE_HYPERLINK_DETECTION_ERROR__PATCH_PURPOSES_PURPOSE_ID" in lingua "it"
+    Then il messaggio di errore corrisponde al caso "PURPOSE_HYPERLINK_DETECTION_ERROR__PATCH_PURPOSES_PURPOSE_ID"
 
   # Endpoint: PATCH /reverse/purposes/:purposeId
   # PRENDI STEP WHEN DA MODIFICA NOME
@@ -305,7 +305,7 @@ Feature: Messaggi di errore durante la gestione delle finalità e la valutazione
     # Operazione BFF e binding negativo comuni mancanti; verificare il contratto PATCH di rilascio.
     # Il client espone POST per questa modifica; non rimappare questo ID su un altro endpoint.
     When il fruitore tenta di aggiornare parzialmente la finalità "F-2" con il nome della finalità "F-1"
-    Then il messaggio di errore corrisponde al caso "PURPOSE_DUPLICATED_PURPOSE_TITLE__PATCH_REVERSE_PURPOSES_PURPOSE_ID" in lingua "it"
+    Then il messaggio di errore corrisponde al caso "PURPOSE_DUPLICATED_PURPOSE_TITLE__PATCH_REVERSE_PURPOSES_PURPOSE_ID"
 
   # Endpoint: PATCH /reverse/purposes/:purposeId
   # PRENDI STEP WHEN DA MODIFICA NOME
@@ -325,4 +325,4 @@ Feature: Messaggi di errore durante la gestione delle finalità e la valutazione
     # Operazione BFF e binding negativo comuni mancanti; verificare il contratto PATCH di rilascio.
     # Il client espone POST per questa modifica; non rimappare questo ID su un altro endpoint.
     When il fruitore tenta di aggiornare parzialmente la finalità con il nome "Finalità https://example.org"
-    Then il messaggio di errore corrisponde al caso "PURPOSE_HYPERLINK_DETECTION_ERROR__PATCH_REVERSE_PURPOSES_PURPOSE_ID" in lingua "it"
+    Then il messaggio di errore corrisponde al caso "PURPOSE_HYPERLINK_DETECTION_ERROR__PATCH_REVERSE_PURPOSES_PURPOSE_ID"
