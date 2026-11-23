@@ -3,7 +3,6 @@ package it.pagopa.interop.bff.risk_analysis.infrastructure;
 import it.pagopa.infrastructure.template.action.strategy.PollingStrategy;
 import it.pagopa.interop.bff.purpose.infrastructure.BffPurposeRestClient;
 import it.pagopa.interop.common.kernel.domain.Channel;
-import it.pagopa.interop.common.kernel.domain.Tenant;
 import it.pagopa.interop.common.risk_analysis.application.RiskAnalysisGateway;
 import it.pagopa.interop.common.risk_analysis.domain.RiskAnalysisFormConfig;
 import it.pagopa.interop.generated.openapi.clients.bff.model.TenantKind;
@@ -18,8 +17,8 @@ public class BffRiskAnalysisGateway implements RiskAnalysisGateway {
     private final BffRiskAnalysisMapper mapper;
 
     @Override
-    public RiskAnalysisFormConfig getLatestRiskAnalysisConfig(Tenant tenant) {
-        return restClient.retrieveLatestRiskAnalysisConfiguration(TenantKind.fromValue(tenant.getTenantType().name()))
+    public RiskAnalysisFormConfig getLatestRiskAnalysisConfig(it.pagopa.interop.common.kernel.domain.TenantKind tenantKind) {
+        return restClient.retrieveLatestRiskAnalysisConfiguration(TenantKind.fromValue(tenantKind.name()))
                 .withPolling(PollingStrategy.UNTIL_SUCCESS)
                 .map(mapper::toRiskAnalysisFormConfig)
                 .get();

@@ -32,6 +32,8 @@ Feature: Messaggi di errore durante la gestione dei template finalità e delle a
     Then il messaggio di errore corrisponde al caso "PURPOSE_TEMPLATE_ASSOCIATION_ESERVICES_FOR_PURPOSE_TEMPLATE_FAILED__POST_PURPOSE_TEMPLATES_PURPOSE_TEMPLATE_ID_LINK_RESOURCE"
 
   # Endpoint: PUT /purposeTemplates/:purposeTemplateId
+  # TODO 23/11/2026: autenticazione non del tutto chiara da questo Gherkin: la creazione del template finalità è fatta da PagoPA,
+  #   ma non è chiaro.
   @err_msg_when_exec
   Scenario: [ERROR_207] - Rifiuto della modifica di un template finalità con un link in una risposta dell'analisi del rischio
   Dato un template finalità in bozza con un'analisi del rischio valida

@@ -91,7 +91,7 @@ public class PurposeTemplateSteps {
         // Usato negli scenari con id ERROR_207
         PurposeTemplate purposeTemplate = entityStore.getLastOrThrow(PurposeTemplate.class);
         purposeTemplateUseCase.attemptUpdatePurposeTemplateWithFreeTextAnswer(
-                purposeTemplate, Tenant.fromTenantType(TenantKind.PA), answerText
+                purposeTemplate, purposeTemplate.getTargetTenantKind(), answerText
         );
     }
 

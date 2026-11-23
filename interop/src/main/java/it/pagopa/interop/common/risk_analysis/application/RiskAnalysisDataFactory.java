@@ -42,7 +42,11 @@ public class RiskAnalysisDataFactory {
     }
 
     public Map<String, List<String>> getTemplateForTenant(Tenant tenant, boolean completed) {
-        String templateKey = tenant.getTenantType() == TenantKind.PA ? "PA" : "Privato/GSP";
+        return getTemplateForTenantKind(tenant.getTenantType(), completed);
+    }
+
+    public Map<String, List<String>> getTemplateForTenantKind(TenantKind tenantKind, boolean completed) {
+        String templateKey = tenantKind == TenantKind.PA ? "PA" : "Privato/GSP";
         var template = riskAnalysisData.get(templateKey);
 
         if (template == null)

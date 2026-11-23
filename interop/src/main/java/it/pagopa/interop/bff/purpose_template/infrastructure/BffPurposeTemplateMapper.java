@@ -4,6 +4,7 @@ import it.pagopa.interop.bff.infrastructure.mapping.BffCommonMapper;
 import it.pagopa.interop.common.infrastructure.SharedMapper;
 import it.pagopa.interop.common.infrastructure.config.TestMapperConfig;
 import it.pagopa.interop.common.kernel.domain.Document;
+import it.pagopa.interop.common.kernel.domain.TenantKind;
 import it.pagopa.interop.common.purpose_template.domain.PurposeTemplate;
 import it.pagopa.interop.common.purpose_template.domain.PurposeTemplateState;
 import it.pagopa.interop.common.risk_analysis.domain.RiskAnalysisAnswerTemplate;
@@ -33,6 +34,7 @@ import java.util.UUID;
 public interface BffPurposeTemplateMapper {
 
     @Mapping(target = "creatorId", source = "creator.id")
+    @Mapping(target = "targetTenantKind", source = "targetTenantKind")
     @Mapping(target = "title", source = "purposeTitle")
     @Mapping(target = "description", source = "purposeDescription")
     @Mapping(target = "createdAt", source = "createdAt", qualifiedByName = "mapStringToInstant")
@@ -119,7 +121,12 @@ public interface BffPurposeTemplateMapper {
                 ? mapped.getAnnotationDocuments()
                 : (existing.getAnnotationDocuments() != null ? existing.getAnnotationDocuments() : List.of());
 
+        TenantKind targetTenantKind = mapped.getTargetTenantKind() != null
+                ? mapped.getTargetTenantKind()
+                : existing.getTargetTenantKind();
+
         return mapped.toBuilder()
+                .targetTenantKind(targetTenantKind)
                 .clearLinkedEServiceIds()
                 .linkedEServiceIds(existing.getLinkedEServiceIds() != null ? existing.getLinkedEServiceIds() : List.of())
                 .clearLinkedResourceIds()

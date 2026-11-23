@@ -6,6 +6,7 @@ import it.pagopa.interop.common.kernel.domain.Channel;
 import it.pagopa.interop.common.kernel.domain.EServiceRef;
 import it.pagopa.interop.common.kernel.domain.EServiceTemplateRef;
 import it.pagopa.interop.common.kernel.domain.Tenant;
+import it.pagopa.interop.common.kernel.domain.TenantKind;
 import it.pagopa.interop.common.purpose_template.application.PurposeTemplateGateway;
 import it.pagopa.interop.common.purpose_template.domain.PurposeTemplate;
 import it.pagopa.interop.common.purpose_template.domain.PurposeTemplateState;
@@ -291,10 +292,10 @@ public class BffPurposeTemplateGateway implements PurposeTemplateGateway {
     @Override
     public void attemptUpdatePurposeTemplate(
             PurposeTemplate purposeTemplate,
-            Tenant targetTenant,
+            TenantKind targetTenantKind,
             RiskAnalysisForm riskAnalysisForm
     ) {
-        PurposeTemplateSeed payload = requestFactory.creationRequest(targetTenant, riskAnalysisForm);
+        PurposeTemplateSeed payload = requestFactory.creationRequest(targetTenantKind, riskAnalysisForm);
         restClient.updatePurposeTemplate(purposeTemplate.getId(), payload).withoutPolling();
     }
 

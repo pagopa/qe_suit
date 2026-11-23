@@ -142,13 +142,13 @@ class PurposeTemplateStepsTest {
 
     @Test
     void attemptsToUpdatePurposeTemplateWithLinkInRiskAnalysisFreeTextAnswer() {
-        var template = PurposeTemplate.builder().id(UUID.randomUUID()).build();
+        var template = PurposeTemplate.builder().id(UUID.randomUUID()).targetTenantKind(TenantKind.PRIVATE).build();
         when(entityStore.getLastOrThrow(PurposeTemplate.class)).thenReturn(template);
 
         steps.attemptUpdatePurposeTemplateWithLinkInRiskAnalysisFreeTextAnswer("Motivazione https://example.org");
 
         verify(useCase).attemptUpdatePurposeTemplateWithFreeTextAnswer(
-                template, Tenant.fromTenantType(TenantKind.PA), "Motivazione https://example.org"
+                template, TenantKind.PRIVATE, "Motivazione https://example.org"
         );
     }
 

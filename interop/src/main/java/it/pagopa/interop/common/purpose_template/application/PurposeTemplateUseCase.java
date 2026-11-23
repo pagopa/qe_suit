@@ -3,6 +3,7 @@ package it.pagopa.interop.common.purpose_template.application;
 import it.pagopa.interop.common.eservice.domain.EService;
 import it.pagopa.interop.common.kernel.domain.Document;
 import it.pagopa.interop.common.kernel.domain.Tenant;
+import it.pagopa.interop.common.kernel.domain.TenantKind;
 import it.pagopa.interop.common.purpose_template.domain.PurposeTemplate;
 import it.pagopa.interop.common.risk_analysis.application.RiskAnalysisDataFactory;
 import it.pagopa.interop.common.risk_analysis.application.RiskAnalysisGateway;
@@ -111,12 +112,12 @@ public class PurposeTemplateUseCase {
 
     public void attemptUpdatePurposeTemplateWithFreeTextAnswer(
             PurposeTemplate purposeTemplate,
-            Tenant targetTenant,
+            TenantKind targetTenantKind,
             String freeTextAnswer
     ) {
-        RiskAnalysisFormConfig latestConfig = riskAnalysisGateway.getLatestRiskAnalysisConfig(targetTenant);
+        RiskAnalysisFormConfig latestConfig = riskAnalysisGateway.getLatestRiskAnalysisConfig(targetTenantKind);
         Map<String, List<String>> answers = new LinkedHashMap<>(
-                riskAnalysisDataFactory.getTemplateForTenant(targetTenant, true)
+                riskAnalysisDataFactory.getTemplateForTenantKind(targetTenantKind, true)
         );
         String freeTextKey = resolveFreeTextQuestionKey(latestConfig, answers);
         answers.put(freeTextKey, List.of(freeTextAnswer));
@@ -126,7 +127,7 @@ public class PurposeTemplateUseCase {
                 .answers(answers)
                 .build();
 
-        purposeTemplateGateway.attemptUpdatePurposeTemplate(purposeTemplate, targetTenant, form);
+        purposeTemplateGateway.attemptUpdatePurposeTemplate(purposeTemplate, targetTenantKind, form);
     }
 
     public void attemptAddRiskAnalysisAnswerWithAnnotation(

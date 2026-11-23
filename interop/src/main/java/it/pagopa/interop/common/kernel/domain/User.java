@@ -15,6 +15,7 @@ public enum User implements InteropActor {
     S_MATTIA(ADMIN, UUID.fromString("5d717b97-5308-49a5-8682-187663278f24"), "s.mattia", "test", new Tenant[]{COMUNE_DI_MILANO, COMUNE_DI_POZZALLO, COMUNE_DI_COMUN_NUOVO, PAGO_PA, KYMA}),
     E_ZANARDI(API, UUID.fromString("e3f51f86-3814-4f7f-96f6-552e086bae8d"), "e.zanardi", "test", new Tenant[]{COMUNE_DI_MILANO, COMUNE_DI_POZZALLO, COMUNE_DI_COMUN_NUOVO}),
     TIMOTEO_PINTO(API_SECURITY, UUID.fromString("e0477bcc-3baf-4755-aa31-375c051acb44"), "timoteo.pinto", "test", new Tenant[]{COMUNE_DI_MILANO, COMUNE_DI_POZZALLO, COMUNE_DI_COMUN_NUOVO}),
+    TIMOTEO_PINTO_SECURITY(SECURITY, UUID.fromString("e0477bcc-3baf-4755-aa31-375c051acb44"), "timoteo.pinto", "test", new Tenant[]{PAGO_PA, KYMA}),
     G_PEDRONI(SECURITY, UUID.fromString("1d3d77d0-c1bd-420a-b748-998e373f7c81"), "g.pedroni", "test", new Tenant[]{COMUNE_DI_MILANO, COMUNE_DI_POZZALLO, COMUNE_DI_COMUN_NUOVO}),
     G_PEDRONI_SUPPORT(SUPPORT, UUID.fromString("1d3d77d0-c1bd-420a-b748-998e373f7c81"), "g.pedroni", "test", new Tenant[]{COMUNE_DI_MILANO, COMUNE_DI_POZZALLO, COMUNE_DI_COMUN_NUOVO}),
     CESARE(REVIEWER, UUID.fromString("f8cda410-622d-47a6-9365-506b361258cf"), "cesare", "password123", new Tenant[]{AGID, COMUNE_DI_POZZALLO, COMUNE_DI_COMUN_NUOVO, PAGO_PA, KYMA}),

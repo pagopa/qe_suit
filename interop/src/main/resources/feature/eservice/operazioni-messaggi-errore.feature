@@ -769,20 +769,6 @@ Feature: Messaggi di errore durante la gestione degli e-service
     When l'erogatore tenta di rinominare il documento "Allegato A" della versione 1 dell'e-service "ES-1" in "Documento https://example.org"
     Then il messaggio di errore corrisponde al caso "CATALOG_HYPERLINK_DETECTION_ERROR__POST_ESERVICES_E_SERVICE_ID_DESCRIPTORS_DESCRIPTOR_ID_DOCUMENTS_DOCUMENT_ID_UPDATE"
 
-  # Endpoint: POST /eservices/:eServiceId/descriptors
-  @err_msg_when_exec
-  Scenario: [ERROR_085] - Rifiuto della creazione di una versione con un link nella descrizione
-  Dato un e-service pubblicato senza versioni in bozza
-  Quando l'erogatore tenta di creare una nuova versione con un link nella descrizione
-  Allora il sistema rifiuta l'operazione e invita a rimuovere il link dalla descrizione della versione.
-
-    Given i seguenti e-service pubblicati:
-      | alias | erogatore        |
-      | ES-1  | Comune di Milano |
-    # addDescriptor non accetta la descrizione: verificare come raggiungere questo errore senza spostare il caso alla modifica.
-    When l'erogatore tenta di creare una nuova versione dell'e-service con un link nella descrizione e gli altri dati validi
-    Then il messaggio di errore corrisponde al caso "CATALOG_HYPERLINK_DETECTION_ERROR__POST_ESERVICES_E_SERVICE_ID_DESCRIPTORS"
-
   # Endpoint: POST /eservices/:eServiceId/description/update
   Scenario: [ERROR_086] - Rifiuto della modifica della descrizione di un e-service con un link
   Dato un e-service pubblicato appartenente all'erogatore

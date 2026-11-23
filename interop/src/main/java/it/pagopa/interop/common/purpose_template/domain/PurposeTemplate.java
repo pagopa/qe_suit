@@ -3,6 +3,7 @@ package it.pagopa.interop.common.purpose_template.domain;
 import it.pagopa.domain.Identifiable;
 import it.pagopa.interop.common.kernel.domain.Document;
 import it.pagopa.interop.common.kernel.domain.PurposeTemplateRef;
+import it.pagopa.interop.common.kernel.domain.TenantKind;
 import it.pagopa.interop.common.risk_analysis.domain.RiskAnalysisFormTemplate;
 import lombok.Builder;
 import lombok.Singular;
@@ -20,6 +21,7 @@ import java.util.UUID;
 public class PurposeTemplate implements Identifiable {
     UUID id;
     UUID creatorId;
+    TenantKind targetTenantKind;
     String title;
     String description;
     PurposeTemplateState state;

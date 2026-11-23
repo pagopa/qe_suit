@@ -4,6 +4,7 @@ import it.pagopa.interop.common.kernel.domain.Channel;
 import it.pagopa.interop.common.kernel.domain.EServiceRef;
 import it.pagopa.interop.common.kernel.domain.EServiceTemplateRef;
 import it.pagopa.interop.common.kernel.domain.Tenant;
+import it.pagopa.interop.common.kernel.domain.TenantKind;
 import it.pagopa.interop.common.purpose_template.domain.PurposeTemplate;
 import it.pagopa.interop.common.risk_analysis.domain.RiskAnalysisForm;
 import it.pagopa.interop.common.risk_analysis.domain.RiskAnalysisFormConfig;
@@ -54,7 +55,7 @@ public interface PurposeTemplateGateway extends Plugin<Channel> {
 
     void attemptUpdatePurposeTemplate(
             PurposeTemplate purposeTemplate,
-            Tenant targetTenant,
+            TenantKind targetTenantKind,
             RiskAnalysisForm riskAnalysisForm
     );
 
