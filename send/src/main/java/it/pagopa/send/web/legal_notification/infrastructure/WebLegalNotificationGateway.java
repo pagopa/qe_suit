@@ -41,9 +41,10 @@ public class WebLegalNotificationGateway implements LegalNotificationGateway {
         command.getRecipients().forEach(this::addRecipient);
     }
 
+    /** Compila il destinatario nel passo "Destinatari", in un nuovo blocco se il precedente è già compilato. */
     @Override
     public void addRecipient(RecipientSpec recipient) {
-        throw new UnsupportedOperationException("addRecipient non è stato ancora implementato per il canale Web");
+        browser.bind(CreateNotificationPage.class).compileDestinatario(recipient);
     }
 
     @Override
