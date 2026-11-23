@@ -17,6 +17,11 @@ public interface DocumentazioneStep extends Component {
     @XPath(".//*[@id=\"file-input\"]")
     Uploadable attachment();
 
+    default void fillFields(String title, String absoluteFilePath) {
+        documentTitle().write(title);
+        attachment().upload(absoluteFilePath);
+    }
+
     default void fillFields(NotificationData data) {
         documentTitle().write(data.getDocumentTitle());
         attachment().upload(data.getDocumentFilePath());

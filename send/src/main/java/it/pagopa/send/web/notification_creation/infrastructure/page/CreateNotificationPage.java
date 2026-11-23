@@ -132,6 +132,8 @@ public interface CreateNotificationPage extends Page, CreateNotificationForm {
      * del portale.
      */
     default void continueToNextStep() {
+        // anche il banner dei cookie può comparire a metà della procedura e coprire il pulsante
+        oneTrustBanner().ifPresent(OneTrustBanner::acceptIfShown);
         errorSnackbar().ifPresent(ErrorSnackbar::closeIfShown);
         continueButton().click();
     }
