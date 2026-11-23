@@ -5,12 +5,15 @@ import io.restassured.RestAssured;
 import io.restassured.builder.RequestSpecBuilder;
 import io.restassured.specification.RequestSpecification;
 import it.pagopa.application.TestKind;
+import it.pagopa.infrastructure.channel.CurrentChannel;
+import it.pagopa.infrastructure.http.restassured.AcceptLanguageFilter;
 import it.pagopa.application.context.TestContext;
 import it.pagopa.infrastructure.http.restassured.HttpLoggingFilter;
 import it.pagopa.infrastructure.http.restassured.TestPolicyFilterResolver;
 import it.pagopa.interop.common.kernel.context.AuthSession;
 import it.pagopa.interop.common.client.domain.Client;
 import it.pagopa.interop.common.kernel.domain.InteropActor;
+import it.pagopa.interop.common.kernel.domain.Channel;
 import it.pagopa.kernel.security.DPoPProofService;
 import org.springframework.beans.factory.ObjectProvider;
 import org.springframework.beans.factory.annotation.Qualifier;
@@ -34,19 +37,22 @@ public class M2Mv3AuthenticatedRequestFactory {
     private final TestPolicyFilterResolver testPolicyFilterResolver;
     private final M2Mv3AccessTokenProvider accessTokenProvider;
     private final DPoPProofService dPoPProofService;
+    private final ObjectProvider<CurrentChannel<Channel>> currentChannelProvider;
 
     public M2Mv3AuthenticatedRequestFactory(
             ObjectProvider<TestContext> testKindProvider,
             ObjectProvider<AuthSession> currentApiClientSessions,
             @Qualifier("m2mV3TestPolicyFilterResolver") TestPolicyFilterResolver testPolicyFilterResolver,
             M2Mv3AccessTokenProvider accessTokenProvider,
-            DPoPProofService dPoPProofService
+            DPoPProofService dPoPProofService,
+            ObjectProvider<CurrentChannel<Channel>> currentChannelProvider
     ) {
         this.testKindProvider = testKindProvider;
         this.currentApiClientSessions = currentApiClientSessions;
         this.testPolicyFilterResolver = testPolicyFilterResolver;
         this.accessTokenProvider = accessTokenProvider;
         this.dPoPProofService = dPoPProofService;
+        this.currentChannelProvider = currentChannelProvider;
     }
 
     public RequestSpecBuilder create() {
@@ -77,6 +83,10 @@ public class M2Mv3AuthenticatedRequestFactory {
                                                 .defaultObjectMapper(jackson())
                                 )
                         );
+
+        // The language is selected per request from the active scenario context.
+        builder.addFilter(new AcceptLanguageFilter(
+                () -> currentChannelProvider.getObject().getCurrentLanguage()));
 
         builder.addFilter(
                 new it.pagopa.infrastructure.http.restassured.DPoPAuthenticationFilter(
