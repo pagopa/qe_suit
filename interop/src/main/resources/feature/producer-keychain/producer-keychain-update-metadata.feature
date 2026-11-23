@@ -75,40 +75,57 @@ Feature: Modifica dei metadati dei portachiavi erogatore
 
   @work-item:QA-19036
   @channel:Given=BFF,When=BFF,Then=BFF
-  Scenario: [PRODUCER_KEYCHAIN_METADATA_PROTECTION_1] - Rifiuto atomico di un metadato valido insieme a un valore non ammesso
-  Dato una risorsa modificabile da un attore autorizzato,
-  quando l’attore invia una modifica con un metadato valido e un altro non valido,
+  @channel:Given=BFF,When=M2M,Then=M2M
+  Scenario: [PRODUCER_KEYCHAIN_METADATA_PROTECTION_1] - Rifiuto atomico della richiesta di modifica di un portachiavi erogatore con un metadato valido insieme a un valore non ammesso
+  Dato un portachiavi erogatore modificabile da un ruolo autorizzato,
+  quando la modifica viene inviata con un metadato valido e un altro non valido,
   allora il sistema rifiuta tutta la modifica e mantiene invariata la risorsa.
 
-    Given un portachiavi erogatore "K-1" del Comune di Milano con chiavi, membri e associazioni a e-service
-    When un admin del Comune di Milano richiede la modifica dei metadati della risorsa "K-1" con un valore valido e uno non ammesso
-    Then la modifica della risorsa "K-1" viene rifiutata
-    And la risorsa "K-1" conserva metadati, stati, versioni e relazioni iniziali
+    Given un portachiavi "K-1" creato dal Comune di Milano in cui è presente un utente admin e una coppia di chiavi crittografiche
+    And un EService creato dal Comune di Milano con una richiesta di fruizione associata dal Comune di Pozzallo
+    And un admin del Comune di Milano ha associato l'e-service al portachiavi "K-1"
+    And i dati e le associazioni del portachiavi "K-1" allo stato attuale appuntati come riferimento
+    When un admin del Comune di Milano tenta di modificare i metadati del portachiavi "K-1":
+      | campo       | valore            |
+      | nome        | ab                |
+      | descrizione | prima descrizione |
+    Then la richiesta di modifica dei metadati del portachiavi erogatore fallisce come operazione malformata
+    And il portachiavi "K-1" conserva le associazioni e i dati di riferimento
+
+    When un admin del Comune di Milano tenta di modificare i metadati del portachiavi "K-1":
+      | campo       | valore     |
+      | nome        | primo nome |
+      | descrizione | xy         |
+    Then la richiesta di modifica dei metadati del portachiavi erogatore fallisce come operazione malformata
+    And il portachiavi "K-1" conserva le associazioni e i dati di riferimento
 
   @work-item:QA-19036
   @channel:Given=BFF,When=BFF,Then=BFF
-  Scenario: [PRODUCER_KEYCHAIN_METADATA_PROTECTION_3] - Ripetizione dei metadati correnti senza effetti operativi
-  Dato una risorsa i cui metadati sono modificabili,
-  quando l’attore ripete una modifica già applicata,
-  allora la ripetizione ha successo senza modificare versioni stati o relazioni.
+  @channel:Given=BFF,When=M2M,Then=M2M
+  Scenario: [PURPOSE_TEMPLATE_METADATA_PROTECTION_2] - Ripetizione parziale e completa dei metadati correnti della richiesta di modifica di un portachiavi erogatore senza effetti operativi
+  Dato un portachiavi erogatore modificabile da un ruolo autorizzato,
+  quando la modifica viene inviata con metadati già presenti,
+  allora la richiesta ha successo senza modificare dati o relazioni.
 
-    Given un portachiavi erogatore "K-1" del Comune di Milano con chiavi, membri e associazioni a e-service
-    When un admin del Comune di Milano aggiorna i metadati della risorsa "R-1" con nuovi valori validi
-    And un admin del Comune di Milano ripete gli stessi valori per la risorsa "R-1"
-    Then la ripetizione della modifica della risorsa "R-1" viene accettata
-    And la risorsa "R-1" conserva stati, versioni e relazioni
+    Given un portachiavi "K-1" creato dal Comune di Milano in cui è presente un utente admin e una coppia di chiavi crittografiche
+    And un EService creato dal Comune di Milano con una richiesta di fruizione associata dal Comune di Pozzallo
+    And un admin del Comune di Milano ha associato l'e-service al portachiavi "K-1"
+    And un admin del Comune di Milano modifica i metadati del portachiavi "K-1":
+      | campo       | valore            |
+      | nome        | primo nome        |
+      | descrizione | prima descrizione |
+    And i dati e le associazioni del portachiavi "K-1" allo stato attuale appuntati come riferimento
+    When un admin del Comune di Milano modifica i metadati del portachiavi "K-1":
+      | campo       | valore            |
+      | nome        | primo nome        |
+      | descrizione | prima descrizione |
+    Then il portachiavi "K-1" conserva le associazioni e i dati di riferimento
 
-  @work-item:QA-19036
-  @channel:Given=BFF,When=BFF,Then=BFF
-  Scenario: [PRODUCER_KEYCHAIN_METADATA_PROTECTION_4] - Valori modificati e invariati nella stessa richiesta
-  Dato una risorsa con metadati già valorizzati,
-  quando l’attore modifica un campo e conferma esplicitamente il valore di un altro,
-  allora il sistema applica solo il valore modificato senza alterare dati operativi.
-
-    Given un portachiavi erogatore "K-1" del Comune di Milano con chiavi, membri e associazioni a e-service
-    When un admin del Comune di Milano richiede la modifica di un metadato della risorsa "K-1" confermando gli altri valori correnti
-    Then la risorsa "K-1" presenta il metadato aggiornato
-    And la risorsa "K-1" conserva stati, versioni, relazioni e metadati invariati
+    When un admin del Comune di Milano modifica i metadati del portachiavi "K-1":
+      | campo       | valore            |
+      | nome        | primo nome        |
+      | descrizione | nuova descrizione |
+    Then il portachiavi "K-1" conserva le associazioni e i dati di riferimento eccetto la descrizione
 
   @work-item:QA-19036
   @channel:Given=BFF,When=BFF,Then=BFF
