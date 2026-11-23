@@ -191,29 +191,38 @@ Feature: Modifica dei metadati dei client
 
   @work-item:QA-19036
   @channel:Given=BFF,When=BFF,Then=BFF
-  Scenario: [CLIENT_CONSUMER_PROTECTION_1] - Rifiuto atomico di un metadato valido insieme a un valore non ammesso
+  @channel:Given=BFF,When=M2M,Then=BFF
+  Scenario: [CLIENT_CONSUMER_PROTECTION_1A] - Rifiuto atomico di un metadato valido insieme a un valore non ammesso
   Dato una risorsa modificabile da un attore autorizzato,
   quando l’attore invia una modifica con un metadato valido e un altro non valido,
   allora il sistema rifiuta tutta la modifica e mantiene invariata la risorsa.
 
     Given un EService creato dal Comune di Milano con una richiesta di fruizione e una finalità associate da PagoPA
     And un client "CL-1" CONSUMER creato da PagoPA, associato alla finalità creata, in cui è presente un utente admin e una coppia di chiavi crittografiche
-    When un admin da PagoPA richiede la modifica dei metadati della risorsa "CL-1" con un valore valido e uno non ammesso
-    Then la modifica della risorsa "CL-1" viene rifiutata
-    And la risorsa "CL-1" conserva metadati, stati, versioni e relazioni iniziali
+    And i dati e le associazioni del client "CL-1" allo stato attuale appuntati come riferimento
+    When un admin di PagoPA tenta di modificare i metadati del client "CL-1":
+      | campo       | valore |
+      | descrizione | ab     |
+    Then la richiesta di modifica fallisce come operazione malformata
+    And il client "CL-1" conserva le associazioni e i dati di riferimento
+    And l'admin di PagoPA richiede la generazione del voucher per il client e la finalità attiva
 
   @work-item:QA-19036
   @channel:Given=BFF,When=BFF,Then=BFF
-  Scenario: [CLIENT_API_PROTECTION_1] - Rifiuto atomico di un metadato valido insieme a un valore non ammesso
+  @channel:Given=BFF,When=M2M,Then=BFF
+  Scenario: [CLIENT_API_PROTECTION_1B] - Rifiuto atomico di un metadato valido insieme a un valore non ammesso
   Dato una risorsa modificabile da un attore autorizzato,
   quando l’attore invia una modifica con un metadato valido e un altro non valido,
   allora il sistema rifiuta tutta la modifica e mantiene invariata la risorsa.
 
-    Given un EService creato dal Comune di Milano con una richiesta di fruizione e una finalità associate da PagoPA
-    And un client "CL-1" API creato dal Comune di Milano, associato alla finalità creata, in cui è presente un utente admin e una coppia di chiavi crittografiche
-    When un admin del Comune di Milano richiede la modifica dei metadati della risorsa "CL-1" con un valore valido e uno non ammesso
-    Then la modifica della risorsa "CL-1" viene rifiutata
-    And la risorsa "CL-1" conserva metadati, stati, versioni e relazioni iniziali
+    Given un client "CL-1" API creato dal Comune di Pozzallo in cui è presente un utente admin e una coppia di chiavi crittografiche
+    And i dati e le associazioni del client "CL-1" allo stato attuale appuntati come riferimento
+    When un admin del Comune di Pozzallo tenta di modificare i metadati del client "CL-1":
+      | campo       | valore |
+      | nome        | ab     |
+    Then la richiesta di modifica fallisce come operazione malformata
+    And il client "CL-1" conserva le associazioni e i dati di riferimento
+    And l'admin del Comune di Pozzallo richiede la generazione del voucher per il client interop
 
   @work-item:QA-19036
   @channel:Given=BFF,When=BFF,Then=BFF

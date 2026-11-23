@@ -74,4 +74,8 @@ public class ClientUseCase {
     public void shouldFailToUpdateMetadataAsForbidden() {
         clientGateway.shouldFailToUpdateMetadataAsForbidden();
     }
+
+    public void shouldFailToUpdateMetadataAsMalformed() {
+        clientGateway.shouldFailToUpdateMetadataAsMalformed();
+    }
 }

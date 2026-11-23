@@ -104,6 +104,16 @@ public class M2MClientGateway implements ClientGateway {
     }
 
     @Override
+    public void shouldFailToUpdateMetadataAsMalformed() {
+        assertThat(lastApiResponseStore.getLastResponse())
+                .as("Risposta al tentativo di modifica dei metadati del client")
+                .isNotNull()
+                .extracting(ApiResponse::getStatusCode)
+                .as("Modifica dei metadati del client vietata perché malformata")
+                .isEqualTo(400);
+    }
+
+    @Override
     public Client setAdmin(Client client, UserRef admin) {
         throw unsupportedOperation();
     }

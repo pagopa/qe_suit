@@ -179,6 +179,16 @@ public class BffClientGateway implements ClientGateway {
     }
 
     @Override
+    public void shouldFailToUpdateMetadataAsMalformed() {
+        assertThat(lastApiResponseStore.getLastResponse())
+                .as("Risposta al tentativo di modifica dei metadati del client")
+                .isNotNull()
+                .extracting(ApiResponse::getStatusCode)
+                .as("Modifica dei metadati del client malformata")
+                .isEqualTo(400);
+    }
+
+    @Override
     public Client setAdmin(Client client, UserRef admin) {
         return restClient.setAdmin(client.getId(), admin.getUser().getUserId())
                 .withPolling(PollingStrategy.UNTIL_SUCCESS)

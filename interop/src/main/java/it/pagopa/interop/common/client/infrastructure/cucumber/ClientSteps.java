@@ -168,6 +168,11 @@ public class ClientSteps {
         clientUseCase.shouldFailToUpdateMetadataAsForbidden();
     }
 
+    @Then("la richiesta di modifica fallisce come operazione malformata")
+    public void shouldFailToUpdateMetadataAsMalformed() {
+        clientUseCase.shouldFailToUpdateMetadataAsMalformed();
+    }
+
     private MetadataUpdate readMetadataUpdate(Client client, DataTable dataTable) {
         List<List<String>> rows = dataTable.cells();
 
