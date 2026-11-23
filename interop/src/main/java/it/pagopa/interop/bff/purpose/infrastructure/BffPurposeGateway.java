@@ -164,6 +164,28 @@ public class BffPurposeGateway implements PurposeGateway {
     }
 
     @Override
+    public Purpose archivePurpose(PurposeRef purposeRef, PurposeVersionRef purposeVersionRef) {
+        var response = restClient.archivePurposeVersion(purposeRef.id(), purposeVersionRef.id()).withoutPolling();
+        if (!response.getRaw().isSuccess()) {
+            String status = response.getRaw() instanceof ApiResponse apiResponse
+                    ? Integer.toString(apiResponse.getStatusCode()) : "unknown";
+            throw new IllegalStateException(
+                    "Purpose-version archive request was rejected for purpose " + purposeRef.id()
+                            + " and version " + purposeVersionRef.id() + " (HTTP status " + status + ")"
+            );
+        }
+        response.get();
+
+        return PollingUtils.pollUntil(
+                () -> getPurpose(purposeRef),
+                purpose -> purpose.findVersionById(purposeVersionRef.id())
+                        .map(version -> version.getPurposeVersionState() == PurposeVersionState.ARCHIVED)
+                        .orElse(false),
+                "Purpose version " + purposeVersionRef.id() + " did not become ARCHIVED for purpose " + purposeRef.id()
+        );
+    }
+
+    @Override
     public void assignRiskAnalysisReviewers(
             PurposeRef purposeRef,
             RiskAnalysisReviewMode reviewMode,

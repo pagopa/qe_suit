@@ -89,6 +89,10 @@ public class PurposeUseCase {
         return purposeGateway.suspendPurpose(purpose.getRef(), purposeVersion.getRef(), delegationRef);
     }
 
+    public Purpose archivePurpose(Purpose purpose, PurposeVersion purposeVersion) {
+        return purposeGateway.archivePurpose(purpose.getRef(), purposeVersion.getRef());
+    }
+
     public void assignRiskAnalysisReviewers(
             Purpose purpose,
             RiskAnalysisReviewMode reviewMode,

@@ -6,6 +6,7 @@ import it.pagopa.interop.common.journey.application.PurposeJourney;
 import it.pagopa.interop.common.kernel.domain.EServiceRiskAnalysis;
 import it.pagopa.interop.common.purpose.application.PurposeUseCase;
 import it.pagopa.interop.common.purpose.domain.Purpose;
+import it.pagopa.interop.common.purpose.domain.PurposeVersion;
 import it.pagopa.interop.common.purpose.domain.PurposeVersionState;
 import it.pagopa.interop.common.purpose_template.domain.PurposeTemplate;
 import it.pagopa.interop.common.risk_analysis.domain.RiskAnalysisReviewMode;
@@ -114,6 +115,11 @@ public class PurposeJourneyImpl implements PurposeJourney<PurposeJourneyImpl> {
                 suspendPipeline(activatedPurpose);
             }
 
+            case ARCHIVED -> {
+                Purpose activatedPurpose = activatePipeline(purpose);
+                archivePipeline(activatedPurpose);
+            }
+
             default -> throw new UnsupportedOperationException(
                     String.format("La transizione allo stato %s) non è ancora supportata nel Journey.", targetState)
             );
@@ -128,5 +134,13 @@ public class PurposeJourneyImpl implements PurposeJourney<PurposeJourneyImpl> {
 
     private Purpose suspendPipeline(Purpose purpose) {
         return purposeUseCase.suspendPurpose(purpose, purpose.getLastActiveVersion(), null);
+    }
+
+    private Purpose archivePipeline(Purpose purpose) {
+        PurposeVersion activeVersion = purpose.getLastActiveVersion();
+        if (activeVersion == null) {
+            throw new IllegalStateException("No active purpose version found to archive for purpose " + purpose.getId());
+        }
+        return purposeUseCase.archivePurpose(purpose, activeVersion);
     }
 }

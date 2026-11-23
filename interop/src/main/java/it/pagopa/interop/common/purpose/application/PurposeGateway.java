@@ -37,6 +37,10 @@ public interface PurposeGateway extends Plugin<Channel> {
 
     Purpose suspendPurpose(PurposeRef purposeRef, PurposeVersionRef purposeVersionRef, @Nullable DelegationRef delegationRef);
 
+    default Purpose archivePurpose(PurposeRef purposeRef, PurposeVersionRef purposeVersionRef) {
+        throw new UnsupportedOperationException("Purpose archiving is not supported by this gateway implementation");
+    }
+
     void assignRiskAnalysisReviewers(PurposeRef purposeRef, RiskAnalysisReviewMode reviewMode, List<UUID> reviewerIds);
 
     void submitRiskAnalysis(PurposeRef purposeRef);
