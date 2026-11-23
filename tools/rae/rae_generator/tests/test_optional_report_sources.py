@@ -109,14 +109,18 @@ def test_contract_wrong_summary_fails_alone(tmp_path):
         collect_reports(tmp_path)
 
 
-def test_duplicate_ids_across_sources_fails(tmp_path):
+def test_duplicate_ids_across_sources_get_report_suffix(tmp_path):
     _cucumber(tmp_path)
     path = _contract(tmp_path)
     data = json.loads(path.read_text(encoding='utf-8'))
     data['groups'][0]['scenarios'][0]['id_test'] = 'Scenario Cucumber'
     path.write_text(json.dumps(data), encoding='utf-8')
-    with pytest.raises(ReportError, match='duplicato'):
-        collect_reports(tmp_path)
+    failures = collect_reports(tmp_path)
+
+    assert [(f.id_test, f.source) for f in failures] == [
+        ('Scenario Cucumber [results.json]', 'cucumber'),
+        ('Scenario Cucumber [report.json]', 'contract-json'),
+    ]
 
 
 @pytest.mark.parametrize('source', ['cucumber', 'contract'])
