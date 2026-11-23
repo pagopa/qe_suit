@@ -152,6 +152,8 @@ public interface CreateNotificationPage extends Page, CreateNotificationForm {
     }
 
     default void compileInformazioniPreliminari(LegalNotificationCreationRequest request) {
+        // il banner dei cookie può comparire dopo il caricamento della pagina e coprire i campi
+        oneTrustBanner().ifPresent(OneTrustBanner::acceptIfShown);
         informazioniPreliminariStep().fillFields(request);
     }
 

@@ -12,6 +12,7 @@ import it.pagopa.send.common.legal_notification.domain.RecipientSpec;
 import it.pagopa.send.common.legal_notification.infrastructure.factory.LegalNotificationRequestFactory;
 import it.pagopa.send.common.user.domain.User;
 import it.pagopa.send.web.mittente.infrastructure.page.NotificationSuccessPage;
+import it.pagopa.send.web.notification_details.infrastructure.page.MittenteNotificationDetailsPage;
 import it.pagopa.send.web.notification_creation.infrastructure.page.CreateNotificationPage;
 import it.pagopa.utils.async.PollingUtils;
 import lombok.RequiredArgsConstructor;
@@ -113,9 +114,20 @@ public class WebLegalNotificationGateway implements LegalNotificationGateway {
                 String.format("La notifica %s non ha raggiunto lo stato %s", iun, targetStatus));
     }
 
+    /** Annulla la notifica dal suo dettaglio nel portale della PA e attende che risulti annullata, come il canale BFF. */
     @Override
     public void deleteNotification(String iun) {
-        throw new UnsupportedOperationException("deleteNotification non è stato ancora implementato per il canale Web");
+        MittenteNotificationDetailsPage details = browser.bind(MittenteNotificationDetailsPage.class);
+        details.navigateTo(iun);
+        details.assertLoaded();
+        details.cancelNotificationButton().click();
+        details.confirmCancelNotificationButton().click();
+        PollingUtils.pollUntil(
+                () -> readNotification(iun).getStatus(),
+                status -> status == NotificationStatus.CANCELLED,
+                STATUS_TIMEOUT,
+                STATUS_INTERVAL,
+                String.format("La notifica %s non risulta annullata", iun));
     }
 
     /** Legge il dettaglio della notifica nel portale della PA e lo registra come ultima notifica, come il canale BFF. */

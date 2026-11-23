@@ -14,6 +14,7 @@ public enum NotificationStatusLabel {
     DELIVERING("Invio in corso", NotificationStatus.DELIVERING),
     DELIVERED("Consegnata", NotificationStatus.DELIVERED),
     EFFECTIVE_DATE("Perfezionata per decorrenza termini", NotificationStatus.EFFECTIVE_DATE),
+    CANCELLATION_IN_PROGRESS("Annullamento in corso", NotificationStatus.CANCELLATION_IN_PROGRESS),
     CANCELLED("Annullata", NotificationStatus.CANCELLED);
 
     private final String label;
