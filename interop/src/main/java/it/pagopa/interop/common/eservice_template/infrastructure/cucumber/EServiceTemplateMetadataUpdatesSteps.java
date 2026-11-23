@@ -86,14 +86,17 @@ public class EServiceTemplateMetadataUpdatesSteps {
                 .updateEServiceTemplateMetadata(command);
     }
 
+    @Given("un sistema informatico autenticato con ruolo {userM2MRole} di/del {tenant} tenta la modifica dei metadati del template e-service {string}:")
     @Given("un {userRole} di/del {tenant} tenta la modifica dei metadati del template e-service {string}:")
-    public void tryUpdateMetadata(UserRole role, Tenant producer, String alias, List<EServiceTemplateMetadataUpdateConfiguration> metadata) {
+    public void tryUpdateMetadata(InteropRole role, Tenant producer, String alias, List<EServiceTemplateMetadataUpdateConfiguration> metadata) {
         tryUpdateMetadata(role, producer, entityStore.getByAliasOrThrow(alias, EServiceTemplate.class), metadata);
     }
 
+    @Given("un sistema informatico autenticato con ruolo {userM2MRole} di/del {tenant} tenta la modifica dei metadati dell'{currentEServiceTemplate}:")
+    @Given("un sistema informatico autenticato con ruolo {userM2MRole} di/del {tenant} tenta la modifica dei metadati del {currentEServiceTemplate}:")
     @Given("un {userRole} di/del {tenant} tenta la modifica dei metadati dell'{currentEServiceTemplate}:")
     @Given("un {userRole} di/del {tenant} tenta la modifica dei metadati del {currentEServiceTemplate}:")
-    public void tryUpdateMetadata(UserRole role, Tenant producer, EServiceTemplate eServiceTemplate, List<EServiceTemplateMetadataUpdateConfiguration> metadata) {
+    public void tryUpdateMetadata(InteropRole role, Tenant producer, EServiceTemplate eServiceTemplate, List<EServiceTemplateMetadataUpdateConfiguration> metadata) {
         initialEServiceTemplate = eServiceTemplate.toBuilder()
                 // .versions(eServiceTemplate.getVersions())
                 .build();
@@ -104,8 +107,9 @@ public class EServiceTemplateMetadataUpdatesSteps {
                 .tryUpdateEServiceTemplateMetadata(command);
     }
 
+    @When("un sistema informatico autenticato con ruolo {userM2MRole} di/del {tenant} richiede di assegnare al template e-service {string} il nome del template e-service {string} cambiandone soltanto le maiuscole e una nuova descrizione")
     @When("un {userRole} di/del {tenant} richiede di assegnare al template e-service {string} il nome del template e-service {string} cambiandone soltanto le maiuscole e una nuova descrizione")
-    public void renameEServiceTemplateWithExisting(UserRole role, Tenant producer, String targetAlias, String originAlias) {
+    public void renameEServiceTemplateWithExisting(InteropRole role, Tenant producer, String targetAlias, String originAlias) {
         var originTemplate = entityStore.getByAliasOrThrow(originAlias, EServiceTemplate.class);
         UpdateEServiceTemplateCommand command = requestFactory.defaultUpdateEServiceTemplateCommand(true)
                 .alias(targetAlias)
@@ -177,17 +181,18 @@ public class EServiceTemplateMetadataUpdatesSteps {
         return value == null ? null : Enum.valueOf(enumType, value);
     }
 
+    @When("un sistema informatico autenticato con ruolo {userM2MRole} di/del {tenant} tenta la modifica del campo {string} del template e-service {string} con un valore di {int} caratteri")
     @When("un {userRole} di/del {tenant} tenta la modifica del campo {string} del template e-service {string} con un valore di {int} caratteri")
-    public void tryUpdateEServiceTemplateField(UserRole role, Tenant producer, String fieldName, String alias, int fieldLength) {
+    public void tryUpdateEServiceTemplateField(InteropRole role, Tenant producer, String fieldName, String alias, int fieldLength) {
         updateEServiceTemplateField(role, producer, fieldName, alias, fieldLength, true);
     }
 
     @When("un {userRole} di/del {tenant} richiede la modifica del campo {string} del template e-service {string} con un valore di {int} caratteri")
-    public void updateEServiceTemplateField(UserRole role, Tenant producer, String fieldName, String alias, int fieldLength) {
+    public void updateEServiceTemplateField(InteropRole role, Tenant producer, String fieldName, String alias, int fieldLength) {
         updateEServiceTemplateField(role, producer, fieldName, alias, fieldLength, false);
     }
 
-    private void updateEServiceTemplateField(UserRole role, Tenant producer, String fieldName, String alias, int fieldLength, boolean onlyTry) {
+    private void updateEServiceTemplateField(InteropRole role, Tenant producer, String fieldName, String alias, int fieldLength, boolean onlyTry) {
         if (fieldLength < 0) {
             throw new IllegalArgumentException("La lunghezza del campo non può essere negativa: " + fieldLength);
         }
@@ -216,8 +221,9 @@ public class EServiceTemplateMetadataUpdatesSteps {
         }
     }
 
+    @When("un sistema informatico autenticato con ruolo {userM2MRole} di/del {tenant} richiede la modifica del template e-service {string} con un payload vuoto")
     @When("un {userRole} di/del {tenant} richiede la modifica del template e-service {string} con un payload vuoto")
-    public void updateEServiceTemplateFieldWithEmptyPayload(UserRole role, Tenant producer, String alias) {
+    public void updateEServiceTemplateFieldWithEmptyPayload(InteropRole role, Tenant producer, String alias) {
         EServiceTemplate currentEServiceTemplate = entityStore.getByAliasOrThrow(alias, EServiceTemplate.class);
         initialEServiceTemplate = currentEServiceTemplate.toBuilder().build();
         requestedMetadata = Map.of();
