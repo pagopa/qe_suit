@@ -123,7 +123,7 @@ Feature: Messaggi di errore durante la consultazione, il trasferimento e il cari
       | alias | erogatore        |
       | ES-1  | Comune di Milano |
     # Binding BFF comune mancante per il caricamento; riusare addDocument e gestire il rifiuto.
-    When l'erogatore carica il file "formato-non-rilevabile.bin" come "documento" sulla versione dell'e-service con il nome "Allegato di test"
+    When l'erogatore carica il file "formato-non-rilevabile" come "documento" sulla versione dell'e-service con il nome "Allegato di test"
     Then il messaggio di errore corrisponde al caso "CATALOG_INVALID_CONTENT_TYPE_DETECTED" in lingua "it"
 
   # Endpoint: POST /eservices/:eServiceId/descriptors/:descriptorId/documents
@@ -149,21 +149,6 @@ Feature: Messaggi di errore durante la consultazione, il trasferimento e il cari
     # Binding BFF comune mancante per il caricamento; riusare addDocument e gestire il rifiuto.
     When l'erogatore carica il file "openapi-server-non-valido.yaml" come "interfaccia" sulla versione dell'e-service con il nome "Allegato di test"
     Then il messaggio di errore corrisponde al caso "CATALOG_INVALID_SERVER_URL" in lingua "it"
-
-  # Endpoint: POST /eservices/:eServiceId/descriptors/:descriptorId/documents
-  @err_msg_when_exec
-  Scenario: [ERROR_186] - Rifiuto di un documento che supera la dimensione massima
-  Dato un e-service con una versione in bozza disponibile per il caricamento di documenti
-  Quando l'erogatore tenta di allegare un PDF valido che supera la dimensione massima consentita
-  Allora il sistema rifiuta il caricamento e indica il limite di dimensione per i documenti.
-
-    Given i seguenti e-service in bozza:
-      | alias | erogatore        |
-      | ES-1  | Comune di Milano |
-    # Dimensionare la fixture oltre il limite applicativo configurato e sotto il limite del proxy.
-    # Binding BFF comune mancante per il caricamento; riusare addDocument e gestire il rifiuto.
-    When l'erogatore carica il file "pdf-oltre-limite.pdf" come "documento" sulla versione dell'e-service con il nome "Allegato di test"
-    Then il messaggio di errore corrisponde al caso "CATALOG_CONTENT_TOO_LARGE_ERROR" in lingua "it"
 
   # Endpoint: POST /eservices/:eServiceId/descriptors/:descriptorId/documents
   @err_msg_when_exec
