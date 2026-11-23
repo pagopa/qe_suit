@@ -623,7 +623,7 @@
                             <typeMappings>
                                 <typeMapping>OffsetDateTime=java.lang.String</typeMapping>
                             </typeMappings>
-                            <inputSpec>https://raw.githubusercontent.com/pagopa/pn-zendesk-auth/a085f2391cfdd3c6bc345d7957bc05a4ecb17e1b/docs/openapi/aws/api-zendesk-auth-WEB-aws.yaml</inputSpec>
+                            <inputSpec>https://raw.githubusercontent.com/pagopa/pn-zendesk-auth/refs/tags/v1.3.2-RC.1/docs/openapi/aws/api-zendesk-auth-WEB-aws.yaml</inputSpec>
                             <generatorName>java</generatorName>
                             <library>rest-assured</library>
                             <generateApiTests>false</generateApiTests>
