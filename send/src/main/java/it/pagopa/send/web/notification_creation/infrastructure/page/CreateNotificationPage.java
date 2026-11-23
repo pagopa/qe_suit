@@ -11,7 +11,6 @@ import it.pagopa.send.common.legal_notification.domain.RecipientSpec;
 import it.pagopa.send.web.infrastructure.page.component.ErrorSnackbar;
 import it.pagopa.send.web.login.infrastructure.page.component.OneTrustBanner;
 import it.pagopa.send.web.mittente.infrastructure.page.DashboardPage;
-import it.pagopa.send.web.notification_creation.application.NotificationData;
 import it.pagopa.send.web.notification_creation.infrastructure.page.component.DestinatariStep;
 import it.pagopa.send.web.notification_creation.infrastructure.page.component.DettaglioPosizioneDebitoriaStep;
 import it.pagopa.send.web.notification_creation.infrastructure.page.component.DocumentazioneStep;
@@ -103,25 +102,25 @@ public interface CreateNotificationPage extends Page, CreateNotificationForm {
 
     // i passi dopo il primo si raggiungono compilando i precedenti con dati validi: la notifica parte solo con "Invia"
 
-    default void goToRecipientsStep(NotificationData data) {
-        compileInformazioniPreliminari(data);
+    default void goToRecipientsStep(LegalNotificationCreationRequest request) {
+        compileInformazioniPreliminari(request);
         continueToNextStep();
     }
 
-    default void goToDebtPositionStep(NotificationData data) {
-        goToRecipientsStep(data);
-        compileDestinatari(data);
+    default void goToDebtPositionStep(LegalNotificationCreationRequest request, RecipientSpec recipient) {
+        goToRecipientsStep(request);
+        compileDestinatario(recipient);
         continueToNextStep();
     }
 
-    default void goToDebtPositionDetailStep(NotificationData data) {
-        goToDebtPositionStep(data);
+    default void goToDebtPositionDetailStep(LegalNotificationCreationRequest request, RecipientSpec recipient) {
+        goToDebtPositionStep(request, recipient);
         pagoPaRadio().select();
         continueToNextStep();
     }
 
-    default void goToDocumentsStep(NotificationData data) {
-        goToDebtPositionStep(data);
+    default void goToDocumentsStep(LegalNotificationCreationRequest request, RecipientSpec recipient) {
+        goToDebtPositionStep(request, recipient);
         noPaymentRadio().select();
         continueToNextStep();
     }
@@ -151,10 +150,6 @@ public interface CreateNotificationPage extends Page, CreateNotificationForm {
         });
     }
 
-    default void compileInformazioniPreliminari(NotificationData data) {
-       informazioniPreliminariStep().fillFields(data);
-    }
-
     default void compileInformazioniPreliminari(LegalNotificationCreationRequest request) {
         // il banner dei cookie può comparire dopo il caricamento della pagina e coprire i campi
         oneTrustBanner().ifPresent(OneTrustBanner::acceptIfShown);
@@ -163,17 +158,5 @@ public interface CreateNotificationPage extends Page, CreateNotificationForm {
 
     default void compileDestinatario(RecipientSpec recipient) {
         destinatariStep().nextEmptyRecipientBox().fillFields(recipient);
-    }
-
-    default void compileDestinatari(NotificationData data) {
-        destinatariStep().fillFields(data);
-    }
-
-    default void compileDettaglioPosizioneDebitoria(NotificationData data) {
-        dettaglioPosizioneDebitoriaStep().fillFields(data);
-    }
-
-    default void compileDocumentazione(NotificationData data) {
-        documentazioneStep().fillFields(data);
     }
 }

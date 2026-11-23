@@ -7,13 +7,16 @@ import it.pagopa.infrastructure.suit.component.Button;
 import it.pagopa.send.TestBootApp;
 import it.pagopa.send.common.infrastructure.WebBrowserContractValidator;
 import it.pagopa.send.common.infrastructure.config.JunitContextConfig;
+import it.pagopa.send.common.legal_notification.domain.LegalNotificationCreationCommand;
+import it.pagopa.send.common.legal_notification.domain.LegalNotificationCreationRequest;
+import it.pagopa.send.common.legal_notification.domain.RecipientSpec;
+import it.pagopa.send.common.legal_notification.infrastructure.factory.LegalNotificationRequestFactory;
+import it.pagopa.send.common.legal_notification.infrastructure.factory.RecipientSpecFactory;
 import it.pagopa.send.common.user.domain.User;
 import it.pagopa.send.common.user.domain.UserAlias;
 import it.pagopa.send.common.user.domain.UserProvider;
 import it.pagopa.send.web.infrastructure.config.WebJUnitSuitConfig;
 import it.pagopa.send.web.mittente.infrastructure.page.DashboardPage;
-import it.pagopa.send.web.notification_creation.application.NotificationData;
-import it.pagopa.send.web.notification_creation.infrastructure.factory.WebNotificationFactory;
 import it.pagopa.send.web.notification_creation.infrastructure.page.CreateNotificationPage;
 import it.pagopa.send.web.notification_creation.infrastructure.page.component.ExitDialog;
 import lombok.RequiredArgsConstructor;
@@ -24,6 +27,7 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.TestConstructor;
 
 import java.util.List;
+import java.util.Map;
 import java.util.stream.Stream;
 
 /**
@@ -36,8 +40,8 @@ import java.util.stream.Stream;
  *     <li>richiesta di conferma "Vuoi uscire?" quando si lascia la pagina;</li>
  *     <li>accesso dalla dashboard con "Invia una nuova notifica".</li>
  * </ul>
- * I passi dopo il primo si raggiungono compilando i precedenti con i dati fissi di {@code simple_notification}, uguali per
- * tutte le utenze: "Dettaglio posizione debitoria" scegliendo "Avviso pagoPA", "Documentazione" scegliendo "Nessun
+ * I passi dopo il primo si raggiungono compilando i precedenti con i dati di default della creazione di una notifica e
+ * con User_1 come destinatario senza pagamenti, uguali per tutte le utenze: "Dettaglio posizione debitoria" scegliendo "Avviso pagoPA", "Documentazione" scegliendo "Nessun
  * pagamento". Nessuno scenario preme "Invia", quindi nessuna notifica viene creata. L'obbligatorietà del gruppo dipende
  * dai gruppi dell'ente e non viene verificata.
  */
@@ -183,14 +187,13 @@ public class WebNewNotificationPaContractTest {
     private static final String CANCEL = "Annulla";
     private static final String EXIT = "Esci";
 
-    // dati di prova: i passi si compilano con il modello della creazione di una notifica semplice
-
-    private static final String NOTIFICATION_TEMPLATE = "simple_notification";
     private static final String ANY_TEXT = "a";
 
     private final WebBrowserContractValidator webContractValidator;
     private final UserProvider userProvider;
-    private final WebNotificationFactory notificationFactory;
+    private final LegalNotificationRequestFactory requestFactory;
+    private final LegalNotificationCreationRequest request;
+    private final RecipientSpecFactory recipientSpecFactory;
 
     /**
      * Intestazione della pagina: breadcrumb "Notifiche" > "Nuova notifica", titolo, sottotitolo con il link "scopri come
@@ -282,7 +285,7 @@ public class WebNewNotificationPaContractTest {
      */
     @TestFactory
     Stream<DynamicTest> shouldShowRecipientsStep() {
-        NotificationData data = notificationFactory.load(NOTIFICATION_TEMPLATE);
+        LegalNotificationCreationRequest data = preliminaryData();
         return webContractValidator.as(sender())
                 .on(CreateNotificationPage.class)
                 .tests(Stream.of(
@@ -324,13 +327,14 @@ public class WebNewNotificationPaContractTest {
      */
     @TestFactory
     Stream<DynamicTest> shouldShowDebtPositionStep() {
-        NotificationData data = notificationFactory.load(NOTIFICATION_TEMPLATE);
+        LegalNotificationCreationRequest data = preliminaryData();
+        RecipientSpec recipient = recipient();
         return webContractValidator.as(sender())
                 .on(CreateNotificationPage.class)
                 .tests(Stream.of(
                         new WebScenario<>(
                                 "testi del passo posizione debitoria",
-                                page -> page.goToDebtPositionStep(data),
+                                page -> page.goToDebtPositionStep(data, recipient),
                                 page -> {
                                     page.stepTitle().readAndAssert(h -> Assertions.assertThat(h).isEqualTo(DEBT_POSITION));
                                     Assertions.assertThat(page.visibleTexts(page.sectionTitles())).containsExactly(WHICH_PAYMENT);
@@ -342,7 +346,7 @@ public class WebNewNotificationPaContractTest {
 
                         new WebScenario<>(
                                 "stato iniziale del passo posizione debitoria",
-                                page -> page.goToDebtPositionStep(data),
+                                page -> page.goToDebtPositionStep(data, recipient),
                                 page -> {
                                     Assertions.assertThat(page.pagoPaRadio().isSelected()).isFalse();
                                     Assertions.assertThat(page.f24Radio().isSelected()).isFalse();
@@ -361,13 +365,14 @@ public class WebNewNotificationPaContractTest {
      */
     @TestFactory
     Stream<DynamicTest> shouldShowDebtPositionDetailStep() {
-        NotificationData data = notificationFactory.load(NOTIFICATION_TEMPLATE);
+        LegalNotificationCreationRequest data = preliminaryData();
+        RecipientSpec recipient = recipient();
         return webContractValidator.as(sender())
                 .on(CreateNotificationPage.class)
                 .tests(Stream.of(
                         new WebScenario<>(
                                 "testi del passo dettaglio posizione debitoria",
-                                page -> page.goToDebtPositionDetailStep(data),
+                                page -> page.goToDebtPositionDetailStep(data, recipient),
                                 page -> {
                                     page.stepTitle().readAndAssert(h -> Assertions.assertThat(h).isEqualTo(DEBT_POSITION_DETAIL));
                                     Assertions.assertThat(page.visibleTexts(page.sectionTitles())).containsExactly(DEBT_POSITION_DETAIL_SECTIONS);
@@ -383,7 +388,7 @@ public class WebNewNotificationPaContractTest {
 
                         new WebScenario<>(
                                 "stato iniziale del passo dettaglio posizione debitoria",
-                                page -> page.goToDebtPositionDetailStep(data),
+                                page -> page.goToDebtPositionDetailStep(data, recipient),
                                 page -> {
                                     Assertions.assertThat(page.flatRateRadio().isSelected()).isFalse();
                                     Assertions.assertThat(page.deliveryModeRadio().isSelected()).isFalse();
@@ -401,13 +406,14 @@ public class WebNewNotificationPaContractTest {
      */
     @TestFactory
     Stream<DynamicTest> shouldShowDocumentsStep() {
-        NotificationData data = notificationFactory.load(NOTIFICATION_TEMPLATE);
+        LegalNotificationCreationRequest data = preliminaryData();
+        RecipientSpec recipient = recipient();
         return webContractValidator.as(sender())
                 .on(CreateNotificationPage.class)
                 .tests(Stream.of(
                         new WebScenario<>(
                                 "testi del passo documentazione",
-                                page -> page.goToDocumentsStep(data),
+                                page -> page.goToDocumentsStep(data, recipient),
                                 page -> {
                                     page.stepTitle().readAndAssert(h -> Assertions.assertThat(h).isEqualTo(ATTACHED_DOCUMENTS));
                                     page.requiredFieldsLabel().readAndAssert(h -> Assertions.assertThat(h).isEqualTo(REQUIRED_FIELDS));
@@ -422,7 +428,7 @@ public class WebNewNotificationPaContractTest {
 
                         new WebScenario<>(
                                 "stato iniziale del passo documentazione",
-                                page -> page.goToDocumentsStep(data),
+                                page -> page.goToDocumentsStep(data, recipient),
                                 page -> {
                                     page.documentTitleInput().readAndAssert(h -> Assertions.assertThat(h).isEmpty());
                                     Assertions.assertThat(page.submitButton().isDisabled()).isTrue();
@@ -491,6 +497,17 @@ public class WebNewNotificationPaContractTest {
                                 dashboard -> dashboard.createNotification().assertLoaded()
                         )
                 ));
+    }
+
+    // dati di prova: i default di dominio della creazione di una notifica, che non chiamano API
+    private LegalNotificationCreationRequest preliminaryData() {
+        requestFactory.applyPreliminaryData(request, new LegalNotificationCreationCommand());
+        return request;
+    }
+
+    private RecipientSpec recipient() {
+        return recipientSpecFactory.build(userProvider.resolve(UserAlias.USER_1),
+                Map.of("pagoPA_number", "0", "F24_number", "0"));
     }
 
     private User sender() {
