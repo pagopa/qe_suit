@@ -14,8 +14,10 @@ import lombok.RequiredArgsConstructor;
 import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.DynamicTest;
 import org.junit.jupiter.api.TestFactory;
+import org.junit.jupiter.api.Tag;
     import org.springframework.test.context.junit.jupiter.EnabledIf;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.core.env.Environment;
 import org.springframework.test.context.TestConstructor;
 
 import java.net.URI;
@@ -33,6 +35,7 @@ import java.util.stream.Stream;
  * <p>
  * Gira solo negli ambienti in cui il BackOffice PT è disponibile ({@code partner-tecnologico.enabled}).
  */
+@Tag("backofficePt")
 @EnabledIf(expression = "${partner-tecnologico.enabled}", loadContext = true)
 @SpringBootTest(classes = {
         TestBootApp.class,
@@ -47,13 +50,13 @@ public class WebPtHeaderFooterContractTest {
 
     private static final String SERCQ_STATEMENT =
             "https://notifichedigitali.it/assets/MO_006_Service_Practice_Statement_Pago_PA_S_p_A_v_1_6_signed_0d50fefc36.pdf";
-    private static final String ACCESSIBILITY = "https://form.agid.gov.it/view/978876c0-df2d-11ef-8637-9f856ac3da10";
     private static final String PRIVACY_POLICY_PATH = "/informativa-privacy";
     private static final String TERMS_OF_SERVICE_PATH = "/termini-di-servizio";
     private static final String ASSISTANCE = "Assistenza";
 
     private final WebBrowserContractValidator webContractValidator;
     private final UserProvider userProvider;
+    private final Environment environment;
 
     /**
      * Link dell'header e del footer:
@@ -95,7 +98,7 @@ public class WebPtHeaderFooterContractTest {
                         new WebScenario<>(
                                 "footer: accessibilità",
                                 page -> {},
-                                page -> Assertions.assertThat(href(page.footer().accessibilityLink())).isEqualTo(ACCESSIBILITY)
+                                page -> Assertions.assertThat(href(page.footer().accessibilityLink())).isEqualTo(environment.getRequiredProperty("url.notifiche.accessibilita"))
                         )
                 ));
     }

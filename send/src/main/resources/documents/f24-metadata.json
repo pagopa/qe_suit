@@ -1,0 +1,51 @@
+{
+    "f24Simplified": {
+        "taxPayer": {
+            "taxCode": "RSSMRA80A01F205X",
+            "personalData": {
+                "surname": "ROSSI",
+                "name": "MARIO",
+                "birthDate": "01-01-1980",
+                "sex": "M",
+                "birthPlace": "MILANO",
+                "birthProvince": "MI"
+            },
+            "office": "FRH",
+            "document": "29542848644",
+            "relativePersonTaxCode": "TDITLC46H54C619Q",
+            "id": "9W"
+        },
+        "payments": {
+            "records": [
+                {
+                    "applyCost": false,
+                    "section": "ER",
+                    "taxType": "TSC1",
+                    "municipality": "1211",
+                    "reconsideration": true,
+                    "propertiesChanges": false,
+                    "advancePayment": true,
+                    "fullPayment": false,
+                    "numberOfProperties": "124",
+                    "installment": "0101",
+                    "year": "2000",
+                    "debit": "604"
+                },
+                {
+                    "applyCost": false,
+                    "section": "ER",
+                    "taxType": "TSC1",
+                    "municipality": "1211",
+                    "reconsideration": true,
+                    "propertiesChanges": true,
+                    "advancePayment": true,
+                    "fullPayment": true,
+                    "numberOfProperties": "268",
+                    "installment": "0202",
+                    "year": "2001",
+                    "debit": "605"
+                }
+            ]
+        }
+    }
+}
