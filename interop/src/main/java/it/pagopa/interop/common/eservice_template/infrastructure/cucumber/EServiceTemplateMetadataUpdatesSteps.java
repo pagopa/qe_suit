@@ -98,7 +98,6 @@ public class EServiceTemplateMetadataUpdatesSteps {
     @Given("un {userRole} di/del {tenant} tenta la modifica dei metadati del {currentEServiceTemplate}:")
     public void tryUpdateMetadata(InteropRole role, Tenant producer, EServiceTemplate eServiceTemplate, List<EServiceTemplateMetadataUpdateConfiguration> metadata) {
         initialEServiceTemplate = eServiceTemplate.toBuilder()
-                // .versions(eServiceTemplate.getVersions())
                 .build();
         UpdateEServiceTemplateCommand command = requestFactory.defaultUpdateEServiceTemplateCommand(true);
         requestedMetadata = configurationMapper.apply(metadata, command);

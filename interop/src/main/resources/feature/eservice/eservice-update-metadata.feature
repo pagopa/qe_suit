@@ -331,54 +331,6 @@ Feature: Modifica dei metadati degli e-service
       | descrizione | Descrizione aggiornata del servizio |
     Then l'e-service "ES-1" presenta i metadati richiesti e conserva quelli non modificati, le versioni, gli stati e le configurazioni dei descrittori
 
-  # TODO Questo scenario sarà scomposto in due integration test:
-  # - il primo verifica la mappatura della UI con i dati ricevuti da BFF
-  # - il secondo verifica i dati inviati all'endpoint BFF
-  #  @work-item:QA-19036
-  #  @channel:Given=BFF,When=WEB,Then=WEB
-  #  Scenario: [ESERVICE_METADATA_WEB_1] - Form precompilato e conferma dopo il salvataggio
-  #  Dato un e-service modificabile con metadati già valorizzati,
-  #  quando l’utente apre il form modifica e salva nuovi valori,
-  #  allora il sistema mostra la conferma e il form riaperto presenta i nuovi metadati.
-  #    Given i seguenti e-service in bozza:
-  #      | alias | erogatore        | nome                   |
-  #      | ES-1  | Comune di Milano | E-service Tempo Attivo |
-  #    When un admin del Comune di Milano apre la modifica dei metadati della risorsa "ES-1"
-  #    Then il form della risorsa "ES-1" mostra i metadati correnti e i campi previsti
-  #    When un admin del Comune di Milano modifica e salva i metadati della risorsa "ES-1"
-  #    Then il sistema conferma il salvataggio e chiude il form
-  #    And il dettaglio e il form riaperto della risorsa "ES-1" presentano i metadati aggiornati
-
-  #  @work-item:QA-19036
-  #  @channel:Given=BFF,When=WEB,Then=WEB
-  #  Scenario: [ESERVICE_METADATA_WEB_2] - Conservazione degli input in presenza di un errore di validazione
-  #  Dato un form di modifica aperto e compilato,
-  #  quando l’utente tenta di salvare un valore non valido,
-  #  allora il form resta aperto con i testi inseriti e indica il campo errato.
-  #
-  #    Given i seguenti e-service in bozza:
-  #      | alias | erogatore        | nome                   |
-  #      | ES-1  | Comune di Milano | E-service Tempo Attivo |
-  #    When il form di modifica dei metadati di una risorsa "ES-1" del Comune di Milano aperto
-  #    And un admin del Comune di Milano inserisce metadati non validi nel form della risorsa "ES-1" e richiede il salvataggio
-  #    Then il form della risorsa "ES-1" rimane aperto con i testi inseriti
-  #    And il campo non valido mostra il messaggio di errore previsto
-  #
-  #  @work-item:QA-19036
-  #  @channel:Given=BFF,When=WEB,Then=WEB
-  #  Scenario: [ESERVICE_METADATA_WEB_3] - Conservazione degli input in presenza di un conflitto di scrittura
-  #  Dato un form di modifica aperto su metadati che sono stati modificati nel frattempo,
-  #  quando l’utente prova a salvare i propri valori,
-  #  allora il form conserva gli input e segnala che il salvataggio non è avvenuto.
-  #
-  #    Given i seguenti e-service in bozza:
-  #      | alias | erogatore        | nome                   |
-  #      | ES-1  | Comune di Milano | E-service Tempo Attivo |
-  #    When il form di modifica dei metadati della risorsa "ES-1" del Comune di Milano aperto con una modifica concorrente
-  #    And un admin del Comune di Milano richiede il salvataggio dei metadati nel form della risorsa "ES-1"
-  #    Then il form della risorsa "R-1" rimane aperto con i testi inseriti
-  #    And il sistema segnala il mancato salvataggio della risorsa "ES-1"
-
   @work-item:QA-19036
   @channel:Given=BFF,When=BFF,Then=BFF
   Scenario Outline: [ESERVICE_METADATA_PROTECTION_1] - Rifiuto della richiesta di modifica in presenza di metadati non ammessi
@@ -391,16 +343,22 @@ Feature: Modifica dei metadati degli e-service
       | ES-1  | Comune di Milano | E-service Tempo Attivo |
     And la versione 1 dell'e-service "ES-1" del Comune di Milano pubblicata
     When un admin del Comune di Milano tenta la modifica dei metadati dell'e-service "ES-1":
-      | campo    | valore    |
-      | <campo1> | <valore_ammesso> |
+      | campo    | valore               |
+      | <campo1> | <valore_ammesso>     |
       | <campo2> | <valore_non_ammesso> |
     Then la modifica dei metadati dell'e-service "ES-1" viene rifiutata per <errore>
 
     Examples:
-      | campo1 | valore_ammesso                 | campo2      | valore_non_ammesso | errore                       |
-      | nome   | Servizio anagrafico aggiornato | descrizione | desc               | INVALID_DATA                 |
-      | nome   | Servizio anagrafico aggiornato | technology  | REST               | OUT_OF_DRAFT_OPERATION_FIELD |
-      | nome   | Servizio anagrafico aggiornato | technology  | %last-used%        | OUT_OF_DRAFT_OPERATION_FIELD |
+      | campo1 | valore_ammesso                 | campo2                | valore_non_ammesso | errore                       |
+      | nome   | Servizio anagrafico aggiornato | descrizione           | desc               | INVALID_DATA                 |
+      | nome   | Servizio anagrafico aggiornato | technology            | REST               | OUT_OF_DRAFT_OPERATION_FIELD |
+      | nome   | Servizio anagrafico aggiornato | technology            | %last-used         | OUT_OF_DRAFT_OPERATION_FIELD |
+      | nome   | Servizio anagrafico aggiornato | mode                  | DELIVER            | OUT_OF_DRAFT_OPERATION_FIELD |
+      | nome   | Servizio anagrafico aggiornato | signalHubEnabled      | false              | OUT_OF_DRAFT_OPERATION_FIELD |
+      | nome   | Servizio anagrafico aggiornato | consumerDelegable     | false              | OUT_OF_DRAFT_OPERATION_FIELD |
+      | nome   | Servizio anagrafico aggiornato | clientAccessDelegable | false              | OUT_OF_DRAFT_OPERATION_FIELD |
+      | nome   | Servizio anagrafico aggiornato | handlePersonalData    | false              | OUT_OF_DRAFT_OPERATION_FIELD |
+      | nome   | Servizio anagrafico aggiornato | asyncExchange         | false              | OUT_OF_DRAFT_OPERATION_FIELD |
 
   @work-item:QA-19036 @m2m
   @channel:Given=BFF,When=M2M,Then=BFF
@@ -414,16 +372,22 @@ Feature: Modifica dei metadati degli e-service
       | ES-1  | Comune di Milano | E-service Tempo Attivo |
     And la versione 1 dell'e-service "ES-1" del Comune di Milano pubblicata
     When un sistema informatico autenticato con ruolo M2M_ADMIN per conto del Comune di Milano tenta la modifica dei metadati dell'e-service "ES-1":
-      | campo    | valore    |
-      | <campo1> | <valore_ammesso> |
+      | campo    | valore               |
+      | <campo1> | <valore_ammesso>     |
       | <campo2> | <valore_non_ammesso> |
     Then la modifica dei metadati dell'e-service "ES-1" viene rifiutata per <errore>
 
     Examples:
-      | campo1 | valore_ammesso                 | campo2      | valore_non_ammesso | errore                       |
-      | nome   | Servizio anagrafico aggiornato | descrizione | desc               | INVALID_DATA                 |
-      | nome   | Servizio anagrafico aggiornato | technology  | REST               | OUT_OF_DRAFT_OPERATION_FIELD |
-      | nome   | Servizio anagrafico aggiornato | technology  | %last-used%        | OUT_OF_DRAFT_OPERATION_FIELD |
+      | campo1 | valore_ammesso                 | campo2                | valore_non_ammesso | errore                       |
+      | nome   | Servizio anagrafico aggiornato | descrizione           | desc               | INVALID_DATA                 |
+      | nome   | Servizio anagrafico aggiornato | technology            | REST               | OUT_OF_DRAFT_OPERATION_FIELD |
+      | nome   | Servizio anagrafico aggiornato | technology            | %last-used         | OUT_OF_DRAFT_OPERATION_FIELD |
+      | nome   | Servizio anagrafico aggiornato | mode                  | DELIVER            | OUT_OF_DRAFT_OPERATION_FIELD |
+      | nome   | Servizio anagrafico aggiornato | signalHubEnabled      | false              | OUT_OF_DRAFT_OPERATION_FIELD |
+      | nome   | Servizio anagrafico aggiornato | consumerDelegable     | false              | OUT_OF_DRAFT_OPERATION_FIELD |
+      | nome   | Servizio anagrafico aggiornato | clientAccessDelegable | false              | OUT_OF_DRAFT_OPERATION_FIELD |
+      | nome   | Servizio anagrafico aggiornato | handlePersonalData    | false              | OUT_OF_DRAFT_OPERATION_FIELD |
+      | nome   | Servizio anagrafico aggiornato | asyncExchange         | false              | OUT_OF_DRAFT_OPERATION_FIELD |
 
   @work-item:QA-19036
   @channel:Given=BFF,When=BFF,Then=BFF
@@ -440,9 +404,9 @@ Feature: Modifica dei metadati degli e-service
       | nome        | Nuovo nome        |
       | descrizione | Nuova descrizione |
     And un admin del Comune di Milano richiede la modifica dei metadati dell'e-service "ES-1":
-      | campo       | valore      |
-      | nome        | %last-used% |
-      | descrizione | %last-used% |
+      | campo       | valore     |
+      | nome        | %last-used |
+      | descrizione | %last-used |
     Then l'e-service "ES-1" presenta i metadati richiesti e conserva quelli non modificati, le versioni, gli stati e le configurazioni dei descrittori
 
   @work-item:QA-19036 @m2m
@@ -460,9 +424,9 @@ Feature: Modifica dei metadati degli e-service
       | nome        | Nuovo nome        |
       | descrizione | Nuova descrizione |
     And un sistema informatico autenticato con ruolo M2M_ADMIN per conto del Comune di Milano richiede la modifica dei metadati dell'e-service "ES-1":
-      | campo       | valore      |
-      | nome        | %last-used% |
-      | descrizione | %last-used% |
+      | campo       | valore     |
+      | nome        | %last-used |
+      | descrizione | %last-used |
     Then l'e-service "ES-1" presenta i metadati richiesti e conserva quelli non modificati, le versioni, gli stati e le configurazioni dei descrittori
 
   @work-item:QA-19036
