@@ -78,12 +78,20 @@ public class M2MEServiceTemplateGateway implements EServiceTemplateGateway {
             UpdateEServiceTemplateCommand command
     ) {
         M2MUpdateEServiceTemplateCommand m2mCommand = requireM2MCommand(command);
-        return restClient.updateEServiceTemplateMetadata(templateRef.id(), m2mCommand.getM2mUpdatePayload())
-                .withoutPolling()
-                .map(remote -> mapper.toTemplate(
-                        remote,
-                        entityStore.getById(templateRef.id(), EServiceTemplate.class).orElse(null)
-                ))
+        var updateAction = restClient
+                .updateEServiceTemplateMetadata(templateRef.id(), m2mCommand.getM2mUpdatePayload())
+                .withoutPolling();
+        EServiceTemplate existing = entityStore.getById(templateRef.id(), EServiceTemplate.class)
+                .orElseThrow(() -> new IllegalStateException(
+                        "E-service template " + templateRef.id() + " not found in entity store after patch attempt"
+                ));
+
+        if (!updateAction.getRaw().isSuccess()) {
+            return existing;
+        }
+
+        return updateAction
+                .map(remote -> mapper.toTemplate(remote, existing))
                 .updateContext()
                 .get();
     }
