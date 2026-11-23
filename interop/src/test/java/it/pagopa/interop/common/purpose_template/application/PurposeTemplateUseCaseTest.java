@@ -48,15 +48,20 @@ class PurposeTemplateUseCaseTest {
                 .title("new title")
                 .description("new description")
                 .targetDescription("new target")
+                .purposeIsFreeOfCharge(false)
+                .purposeDailyCalls(500)
+                .handlesPersonalData(true)
                 .build();
         when(gateway.getPurposeTemplate(purposeTemplate.getId())).thenReturn(updatedTemplate);
         var useCase = new PurposeTemplateUseCase(
                 gateway, mock(RiskAnalysisGateway.class), mock(RiskAnalysisDataFactory.class));
 
-        assertThat(useCase.updateMetadata(purposeTemplate, "new title", "new description", "new target"))
+        assertThat(useCase.updateMetadata(
+                purposeTemplate, "new title", "new description", "new target", false, 500, true))
                 .isEqualTo(updatedTemplate);
 
-        verify(gateway).updateMetadata(purposeTemplate, "new title", "new description", "new target");
+        verify(gateway).updateMetadata(purposeTemplate, "new title", "new description", "new target",
+                false, 500, true);
         verify(gateway).getPurposeTemplate(purposeTemplate.getId());
         verifyNoMoreInteractions(gateway);
     }

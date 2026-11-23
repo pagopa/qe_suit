@@ -46,6 +46,9 @@ class M2MPurposeTemplateGatewayTest {
             .title("new title")
             .description("new description")
             .targetDescription("new target")
+            .purposeIsFreeOfCharge(false)
+            .purposeDailyCalls(500)
+            .handlesPersonalData(true)
             .build();
     private M2MPurposeTemplateGateway gateway;
 
@@ -84,7 +87,8 @@ class M2MPurposeTemplateGatewayTest {
                   "purposeTitle": "new title",
                   "purposeDescription": "new description",
                   "purposeIsFreeOfCharge": false,
-                  "handlesPersonalData": false
+                  "purposeDailyCalls": 500,
+                  "handlesPersonalData": true
                 }
                 """.formatted(templateId, UUID.randomUUID());
         when(update.execute(any())).thenAnswer(invocation -> {
@@ -97,7 +101,8 @@ class M2MPurposeTemplateGatewayTest {
         });
         when(mapper.toPurposeTemplate(any(), eq(original))).thenReturn(updated);
 
-        assertThat(gateway.updateMetadata(original, "new title", "new description", "new target"))
+        assertThat(gateway.updateMetadata(
+                original, "new title", "new description", "new target", false, 500, true))
                 .isSameAs(updated);
 
         var order = inOrder(api, update, read);
@@ -108,7 +113,10 @@ class M2MPurposeTemplateGatewayTest {
         order.verify(update).body(new PurposeTemplateDraftUpdateSeed()
                 .purposeTitle("new title")
                 .purposeDescription("new description")
-                .targetDescription("new target"));
+                .targetDescription("new target")
+                .purposeIsFreeOfCharge(false)
+                .purposeDailyCalls(500)
+                .handlesPersonalData(true));
         order.verify(update).execute(any());
         order.verify(api).getPurposeTemplate();
         order.verify(read).purposeTemplateIdPath(templateId);

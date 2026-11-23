@@ -117,7 +117,13 @@ public class PurposeTemplateSteps {
             journey.withConsumer(creator, role);
         }
         purposeTemplateUseCase.updateMetadata(
-                purposeTemplate, metadata.name(), metadata.description(), metadata.targetDescription());
+                purposeTemplate,
+                metadata.name(),
+                metadata.description(),
+                metadata.targetDescription(),
+                metadata.purposeIsFreeOfCharge(),
+                metadata.purposeDailyCalls(),
+                metadata.handlesPersonalData());
     }
 
     @When("un {userRole} di/del {tenant} tenta di modificare i metadati del template finalità:")
@@ -131,7 +137,13 @@ public class PurposeTemplateSteps {
             journey.withConsumer(creator, role);
         }
         purposeTemplateUseCase.tryToUpdateMetadata(
-                purposeTemplate, metadata.name(), metadata.description(), metadata.targetDescription());
+                purposeTemplate,
+                metadata.name(),
+                metadata.description(),
+                metadata.targetDescription(),
+                metadata.purposeIsFreeOfCharge(),
+                metadata.purposeDailyCalls(),
+                metadata.handlesPersonalData());
     }
 
     @Then("la richiesta di modifica dei metadati del template finalità fallisce come operazione malformata")
@@ -162,10 +174,13 @@ public class PurposeTemplateSteps {
         String name = purposeTemplate.getTitle();
         String description = purposeTemplate.getDescription();
         String targetDescription = purposeTemplate.getTargetDescription();
+        Boolean purposeIsFreeOfCharge = null;
+        Integer purposeDailyCalls = null;
+        Boolean handlesPersonalData = null;
         Set<String> updatedFields = new HashSet<>();
 
         for (List<String> row : rows.subList(1, rows.size())) {
-            if (row.size() != 2 || row.get(0) == null) {
+            if (row.size() != 2 || row.get(0) == null || row.get(1) == null) {
                 throw new IllegalArgumentException(
                         "Ogni riga dei metadati del template finalità deve contenere campo e valore");
             }
@@ -176,26 +191,56 @@ public class PurposeTemplateSteps {
             }
 
             String value = row.get(1);
-            if (uniqueValues) {
+            if (uniqueValues && Set.of("purposeTitle", "purposeDescription", "targetDescription").contains(field)) {
                 value = withUniqueSuffix(value);
             }
             switch (field) {
                 case "purposeTitle" -> name = value;
                 case "purposeDescription" -> description = value;
                 case "targetDescription" -> targetDescription = value;
+                case "purposeIsFreeOfCharge" -> purposeIsFreeOfCharge = parseBoolean(field, value);
+                case "purposeDailyCalls" -> purposeDailyCalls = parseInteger(field, value);
+                case "handlesPersonalData" -> handlesPersonalData = parseBoolean(field, value);
                 default -> throw new IllegalArgumentException(
                         "Campo metadato template finalità non supportato: " + field);
             }
         }
 
-        return new MetadataUpdate(name, description, targetDescription);
+        return new MetadataUpdate(
+                name,
+                description,
+                targetDescription,
+                purposeIsFreeOfCharge,
+                purposeDailyCalls,
+                handlesPersonalData);
+    }
+
+    private Boolean parseBoolean(String field, String value) {
+        if (!"true".equalsIgnoreCase(value) && !"false".equalsIgnoreCase(value)) {
+            throw new IllegalArgumentException("Valore booleano non valido per " + field + ": " + value);
+        }
+        return Boolean.valueOf(value);
+    }
+
+    private Integer parseInteger(String field, String value) {
+        try {
+            return Integer.valueOf(value);
+        } catch (NumberFormatException exception) {
+            throw new IllegalArgumentException("Valore numerico non valido per " + field + ": " + value, exception);
+        }
     }
 
     private String withUniqueSuffix(String value) {
         return value + " " + RandomUtils.randomAlphanumeric(10);
     }
 
-    private record MetadataUpdate(String name, String description, String targetDescription) {}
+    private record MetadataUpdate(
+            String name,
+            String description,
+            String targetDescription,
+            Boolean purposeIsFreeOfCharge,
+            Integer purposeDailyCalls,
+            Boolean handlesPersonalData) {}
 
     public enum PurposeTemplateMetadataField {
         NAME(Set.of("title"), "il nome"),

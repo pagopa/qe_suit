@@ -82,11 +82,26 @@ public class BffPurposeTemplateGateway implements PurposeTemplateGateway {
 
     @Override
     public PurposeTemplate updateMetadata(
-            PurposeTemplate purposeTemplate, String name, String description, String targetDescription) {
+            PurposeTemplate purposeTemplate,
+            String name,
+            String description,
+            String targetDescription,
+            Boolean purposeIsFreeOfCharge,
+            Integer purposeDailyCalls,
+            Boolean handlesPersonalData) {
         PatchUpdatePurposeTemplateSeed payload = new PatchUpdatePurposeTemplateSeed()
                 .purposeTitle(name)
                 .purposeDescription(description)
                 .targetDescription(targetDescription);
+        if (purposeIsFreeOfCharge != null) {
+            payload.purposeIsFreeOfCharge(purposeIsFreeOfCharge);
+        }
+        if (purposeDailyCalls != null) {
+            payload.purposeDailyCalls(purposeDailyCalls);
+        }
+        if (handlesPersonalData != null) {
+            payload.handlesPersonalData(handlesPersonalData);
+        }
 
         return restClient.updatePurposeTemplate(purposeTemplate.getId(), payload)
                 .withPolling(PollingStrategy.UNTIL_SUCCESS)
@@ -97,11 +112,26 @@ public class BffPurposeTemplateGateway implements PurposeTemplateGateway {
 
     @Override
     public void tryToUpdateMetadata(
-            PurposeTemplate purposeTemplate, String name, String description, String targetDescription) {
+            PurposeTemplate purposeTemplate,
+            String name,
+            String description,
+            String targetDescription,
+            Boolean purposeIsFreeOfCharge,
+            Integer purposeDailyCalls,
+            Boolean handlesPersonalData) {
         PatchUpdatePurposeTemplateSeed payload = new PatchUpdatePurposeTemplateSeed()
                 .purposeTitle(name)
                 .purposeDescription(description)
                 .targetDescription(targetDescription);
+        if (purposeIsFreeOfCharge != null) {
+            payload.purposeIsFreeOfCharge(purposeIsFreeOfCharge);
+        }
+        if (purposeDailyCalls != null) {
+            payload.purposeDailyCalls(purposeDailyCalls);
+        }
+        if (handlesPersonalData != null) {
+            payload.handlesPersonalData(handlesPersonalData);
+        }
 
         restClient.updatePurposeTemplate(purposeTemplate.getId(), payload)
                 .withoutPolling();

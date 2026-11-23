@@ -22,6 +22,9 @@ public class PurposeTemplate implements Identifiable {
     String title;
     String description;
     String targetDescription;
+    Boolean purposeIsFreeOfCharge;
+    Integer purposeDailyCalls;
+    Boolean handlesPersonalData;
     PurposeTemplateState state;
     Instant createdAt;
     Instant updatedAt;

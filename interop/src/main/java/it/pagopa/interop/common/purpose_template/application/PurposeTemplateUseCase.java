@@ -26,22 +26,54 @@ public class PurposeTemplateUseCase {
     }
 
     public PurposeTemplate updateMetadata(
-            PurposeTemplate purposeTemplate, String name, String description, String targetDescription) {
-        purposeTemplateGateway.updateMetadata(purposeTemplate, name, description, targetDescription);
+            PurposeTemplate purposeTemplate,
+            String name,
+            String description,
+            String targetDescription,
+            Boolean purposeIsFreeOfCharge,
+            Integer purposeDailyCalls,
+            Boolean handlesPersonalData) {
+        purposeTemplateGateway.updateMetadata(
+                purposeTemplate,
+                name,
+                description,
+                targetDescription,
+                purposeIsFreeOfCharge,
+                purposeDailyCalls,
+                handlesPersonalData);
 
         return PollingUtils.pollUntil(
                 () -> getPurposeTemplate(purposeTemplate),
                 refreshed -> Objects.equals(name, refreshed.getTitle())
                         && Objects.equals(description, refreshed.getDescription())
-                        && Objects.equals(targetDescription, refreshed.getTargetDescription()),
+                        && Objects.equals(targetDescription, refreshed.getTargetDescription())
+                        && (purposeIsFreeOfCharge == null
+                                || Objects.equals(purposeIsFreeOfCharge, refreshed.getPurposeIsFreeOfCharge()))
+                        && (purposeDailyCalls == null
+                                || Objects.equals(purposeDailyCalls, refreshed.getPurposeDailyCalls()))
+                        && (handlesPersonalData == null
+                                || Objects.equals(handlesPersonalData, refreshed.getHandlesPersonalData())),
                 "Purpose template " + purposeTemplate.getId()
-                        + " metadata did not reach the requested name, description and target description"
+                        + " metadata did not reach the requested values"
         );
     }
 
     public void tryToUpdateMetadata(
-            PurposeTemplate purposeTemplate, String name, String description, String targetDescription) {
-        purposeTemplateGateway.tryToUpdateMetadata(purposeTemplate, name, description, targetDescription);
+            PurposeTemplate purposeTemplate,
+            String name,
+            String description,
+            String targetDescription,
+            Boolean purposeIsFreeOfCharge,
+            Integer purposeDailyCalls,
+            Boolean handlesPersonalData) {
+        purposeTemplateGateway.tryToUpdateMetadata(
+                purposeTemplate,
+                name,
+                description,
+                targetDescription,
+                purposeIsFreeOfCharge,
+                purposeDailyCalls,
+                handlesPersonalData);
     }
 
     public void shouldFailToUpdateMetadataAsMalformed() {

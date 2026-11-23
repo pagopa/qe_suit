@@ -113,13 +113,66 @@ class PurposeTemplateStepsTest {
                 List.of("campo", "valore"),
                 List.of("purposeTitle", "Titolo aggiornato"),
                 List.of("purposeDescription", "Descrizione aggiornata"),
-                List.of("targetDescription", "Destinatari aggiornati")
+                List.of("targetDescription", "Destinatari aggiornati"),
+                List.of("purposeIsFreeOfCharge", "false"),
+                List.of("purposeDailyCalls", "500"),
+                List.of("handlesPersonalData", "true")
         ));
 
         steps.updatePurposeTemplateMetadata(UserRole.ADMIN, Tenant.COMUNE_DI_POZZALLO, dataTable);
 
         verify(journey).withConsumer(Tenant.COMUNE_DI_POZZALLO);
         verify(useCase).updateMetadata(
-                template, "Titolo aggiornato", "Descrizione aggiornata", "Destinatari aggiornati");
+                template,
+                "Titolo aggiornato",
+                "Descrizione aggiornata",
+                "Destinatari aggiornati",
+                false,
+                500,
+                true);
+    }
+
+    @Test
+    void leavesOptionalOperationalMetadataUnsetWhenNotProvided() {
+        var entityStore = mock(EntityStore.class);
+        var journey = mock(InteropJourney.class, RETURNS_SELF);
+        var useCase = mock(PurposeTemplateUseCase.class);
+        var template = PurposeTemplate.builder()
+                .id(UUID.randomUUID())
+                .title("Titolo iniziale")
+                .description("Descrizione iniziale")
+                .targetDescription("Destinatari iniziali")
+                .build();
+        when(entityStore.getLastOrThrow(PurposeTemplate.class)).thenReturn(template);
+        var steps = new PurposeTemplateSteps(entityStore, journey, useCase);
+        DataTable dataTable = DataTable.create(List.of(
+                List.of("campo", "valore"),
+                List.of("purposeDescription", "Descrizione aggiornata")
+        ));
+
+        steps.updatePurposeTemplateMetadata(UserRole.ADMIN, Tenant.COMUNE_DI_POZZALLO, dataTable);
+
+        verify(useCase).updateMetadata(template, "Titolo iniziale", "Descrizione aggiornata",
+                "Destinatari iniziali", null, null, null);
+    }
+
+    @Test
+    void rejectsInvalidOptionalOperationalMetadataValues() {
+        var entityStore = mock(EntityStore.class);
+        var useCase = mock(PurposeTemplateUseCase.class);
+        var template = PurposeTemplate.builder().id(UUID.randomUUID()).build();
+        when(entityStore.getLastOrThrow(PurposeTemplate.class)).thenReturn(template);
+        var steps = new PurposeTemplateSteps(entityStore, mock(InteropJourney.class), useCase);
+        DataTable dataTable = DataTable.create(List.of(
+                List.of("campo", "valore"),
+                List.of("purposeIsFreeOfCharge", "yes")
+        ));
+
+        assertThatThrownBy(() ->
+                steps.updatePurposeTemplateMetadata(UserRole.ADMIN, Tenant.COMUNE_DI_POZZALLO, dataTable))
+                .isInstanceOf(IllegalArgumentException.class)
+                .hasMessageContaining("Valore booleano non valido");
+
+        verifyNoInteractions(useCase);
     }
 }

@@ -20,6 +20,9 @@ public interface M2MPurposeTemplateMapper {
 
     @Mapping(target = "title", source = "purposeTitle")
     @Mapping(target = "description", source = "purposeDescription")
+    @Mapping(target = "purposeIsFreeOfCharge", source = "purposeIsFreeOfCharge")
+    @Mapping(target = "purposeDailyCalls", source = "purposeDailyCalls")
+    @Mapping(target = "handlesPersonalData", source = "handlesPersonalData")
     @Mapping(target = "createdAt", source = "createdAt", qualifiedByName = "mapStringToInstant")
     @Mapping(target = "updatedAt", source = "updatedAt", qualifiedByName = "mapStringToInstant")
     @Mapping(target = "riskAnalysisFormTemplate", ignore = true)
