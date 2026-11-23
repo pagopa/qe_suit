@@ -574,7 +574,6 @@ Feature: Modifica dei metadati delle finalità
     Then la richiesta di modifica dei metadati della finalità fallisce per conflitto di risorsa
     And la finalità conserva lo stato e i dati di riferimento
 
-
   @work-item:QA-19036
   @channel:Given=BFF,When=BFF,Then=BFF
   @channel:Given=BFF,When=M2M,Then=M2M
@@ -597,4 +596,48 @@ Feature: Modifica dei metadati delle finalità
       | freeOfChargeReason | test campi operativi |
       | dailyCalls         | 500                  |
     Then la richiesta di modifica dei metadati della finalità fallisce per conflitto di risorsa
+    And la finalità conserva lo stato e i dati di riferimento
+
+  @work-item:QA-19036
+  @channel:Given=BFF,When=BFF,Then=BFF
+  @channel:Given=BFF,When=M2M,Then=M2M
+  Scenario: [PURPOSE_METADATA_OPERATIONAL_FIELDS_3A] - Aggiornando una finalità in bozza con metadati e un campo operativo non valido, la modifica è rifiutata
+  Data una finalità in bozza modificabile da un ruolo autorizzato,
+  quando la modifica viene inviata con un metadato valido e un campo operativo non valido,
+  allora la modifica viene rifiutata e i dati vengono conservati.
+
+    Given un EService creato dal Comune di Milano con una richiesta di fruizione in stato ACTIVE e una finalità in stato DRAFT associate dal Comune di Pozzallo
+    And i dati della finalità allo stato attuale appuntati come riferimento
+    When un admin del Comune di Pozzallo tenta di modificare i metadati della finalità:
+      | campo              | valore               |
+      | title              | primo nome           |
+      | description        | prima descrizione    |
+      | isFreeOfCharge     | true                 |
+      | freeOfChargeReason | test campi operativi |
+      | dailyCalls         | 0                    |
+    Then la richiesta di modifica dei metadati della finalità fallisce come operazione malformata
+    And la finalità conserva lo stato e i dati di riferimento
+
+  @work-item:QA-19036
+  @channel:Given=BFF,When=BFF,Then=BFF
+  @channel:Given=BFF,When=M2M,Then=M2M
+  Scenario: [PURPOSE_METADATA_OPERATIONAL_FIELDS_3B] - Aggiornando una finalità inversa in bozza con metadati e un campo operativo non valido, la modifica è rifiutata
+  Data una finalità inversa in bozza modificabile da un ruolo autorizzato,
+  quando la modifica viene inviata con un metadato valido e un campo operativo non valido,
+  allora la modifica viene rifiutata e i dati vengono conservati.
+
+    Given i seguenti e-service pubblicati:
+      | alias | erogatore        | nome           | modalità  |
+      | ES-1  | Comune di Milano | E-service Test | ricezione |
+    And l'e-service "ES-1" del Comune di Milano sottoscritto dal Comune di Pozzallo con una richiesta di fruizione attiva
+    And l'e-service con una finalità inversa in stato DRAFT associata dal Comune di Pozzallo
+    And i dati della finalità allo stato attuale appuntati come riferimento
+    When un admin del Comune di Pozzallo tenta di modificare i metadati della finalità:
+      | campo              | valore               |
+      | title              | primo nome           |
+      | description        | prima descrizione    |
+      | isFreeOfCharge     | true                 |
+      | freeOfChargeReason | test campi operativi |
+      | dailyCalls         | 0                    |
+    Then la richiesta di modifica dei metadati della finalità fallisce come operazione malformata
     And la finalità conserva lo stato e i dati di riferimento
