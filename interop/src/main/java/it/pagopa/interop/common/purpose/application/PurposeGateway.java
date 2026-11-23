@@ -23,6 +23,10 @@ public interface PurposeGateway extends Plugin<Channel> {
 
     Purpose createPurpose(PurposeCreateCommand createCommand);
 
+    default void deletePurpose(PurposeRef purposeRef) {
+        throw new UnsupportedOperationException("Purpose deletion is not supported by this gateway implementation");
+    }
+
     Purpose createReversePurpose(EServiceRef eServiceRef, EServiceRiskAnalysisRef riskAnalysisRef);
 
     Purpose createPurposeFromTemplate(PurposeTemplateRef purposeTemplateRef, EServiceRef eServiceRef);

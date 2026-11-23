@@ -1,15 +1,24 @@
 package it.pagopa.interop.suite.integration;
 
 import it.pagopa.infrastructure.contract.browser.WebScenario;
+import it.pagopa.infrastructure.channel.CurrentChannel;
+import it.pagopa.domain.Identifiable;
 import it.pagopa.interop.TestBootApp;
+import it.pagopa.interop.common.agreement.application.AgreementGateway;
+import it.pagopa.interop.common.agreement.domain.Agreement;
+import it.pagopa.interop.common.eservice.application.EServiceGateway;
 import it.pagopa.interop.common.eservice.domain.EService;
+import it.pagopa.interop.common.eservice.domain.GracePeriodDays;
 import it.pagopa.interop.common.infrastructure.WebBrowserContractValidator;
 import it.pagopa.interop.common.infrastructure.config.JunitContextConfig;
 import it.pagopa.interop.common.journey.application.InteropJourney;
+import it.pagopa.interop.common.kernel.context.AuthSession;
+import it.pagopa.interop.common.kernel.domain.Channel;
 import it.pagopa.interop.common.kernel.domain.Tenant;
 import it.pagopa.interop.common.kernel.domain.User;
 import it.pagopa.interop.common.kernel.domain.UserRole;
 import it.pagopa.interop.common.purpose.application.PurposeUseCase;
+import it.pagopa.interop.common.purpose.application.PurposeGateway;
 import it.pagopa.interop.common.purpose.domain.Purpose;
 import it.pagopa.interop.common.purpose.domain.PurposeVersionState;
 import it.pagopa.interop.common.risk_analysis.domain.RiskAnalysisReviewMode;
@@ -18,6 +27,7 @@ import it.pagopa.interop.web.riskanalysis.infrastructure.suit.page.ReviewerRiskA
 import it.pagopa.utils.RandomUtils;
 import it.pagopa.utils.async.PollingUtils;
 import lombok.RequiredArgsConstructor;
+import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.DynamicTest;
 import org.junit.jupiter.api.TestFactory;
@@ -30,6 +40,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.UUID;
+import java.util.function.Consumer;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
@@ -61,6 +72,11 @@ class WebIntegrationReviewerRiskAnalysisTest {
 
     private final InteropJourney interopJourney;
     private final PurposeUseCase purposeUseCase;
+    private final PurposeGateway purposeGateway;
+    private final AgreementGateway agreementGateway;
+    private final EServiceGateway eServiceGateway;
+    private final AuthSession authSession;
+    private final CurrentChannel<Channel> currentChannel;
     private final Tenant consumer = Tenant.PAGO_PA;
     private final User reviewer = User.getTenantUser(consumer, UserRole.REVIEWER);
     private final Tenant producer = Tenant.COMUNE_DI_MILANO;
@@ -69,6 +85,64 @@ class WebIntegrationReviewerRiskAnalysisTest {
     private final String newerEServiceName = RandomUtils.randomAlphanumericName("risk-analysis-approve-and-rejected");
     private final String intermediateEServiceName = RandomUtils.randomAlphanumericName("risk-analysis-intermediate");
     private final String lastEServiceName = RandomUtils.randomAlphanumericName("risk-analysis-last-created");
+    private final List<Purpose> ownedPurposes = new ArrayList<>();
+    private final List<Agreement> ownedAgreements = new ArrayList<>();
+    private final List<EService> ownedEServices = new ArrayList<>();
+
+    @AfterEach
+    void cleanUpFixtures() {
+        if (ownedPurposes.isEmpty() && ownedAgreements.isEmpty() && ownedEServices.isEmpty()) return;
+        IllegalStateException failure = new IllegalStateException("Risk-analysis fixture cleanup did not complete");
+        Channel previousChannel = currentChannel.getCurrentChannel();
+        try {
+            currentChannel.setCurrentChannel(Channel.BFF);
+            try (AuthSession.Snapshot ignored = authSession.snapshot()) {
+                cleanUpOwned(ownedPurposes, consumer, purpose -> purposeGateway.deletePurpose(purpose.getRef()), failure);
+                cleanUpOwned(ownedAgreements, consumer, agreementGateway::archiveAgreement, failure);
+                cleanUpOwned(ownedEServices, producer,
+                        eService -> eServiceGateway.archiveEService(eService.getRef(), GracePeriodDays.NUMBER_60), failure);
+            }
+        } catch (RuntimeException | AssertionError error) {
+            failure.addSuppressed(new IllegalStateException("Fixture cleanup session failed", error));
+        } finally {
+            try {
+                currentChannel.setCurrentChannel(previousChannel);
+            } catch (RuntimeException | AssertionError error) {
+                failure.addSuppressed(new IllegalStateException("Failed to restore fixture channel", error));
+            }
+        }
+        if (failure.getSuppressed().length != 0) throw failure;
+    }
+
+    private <T extends Identifiable> void cleanUpOwned(
+            List<T> fixtures, Tenant owner, Consumer<T> cleanup, IllegalStateException failure
+    ) {
+        for (int i = fixtures.size() - 1; i >= 0; i--) {
+            T fixture = fixtures.get(i);
+            try {
+                authSession.set(User.getTenantAdmin(owner), owner);
+                cleanup.accept(fixture);
+            } catch (RuntimeException | AssertionError error) {
+                failure.addSuppressed(new IllegalStateException(
+                        "Failed to clean up " + fixture.getClass().getSimpleName() + " " + fixture.getId(), error));
+            }
+        }
+    }
+
+    private EService registerFixture(EService eService) {
+        ownedEServices.add(eService);
+        Agreement agreement = interopJourney.get(Agreement.class);
+        if (!eService.getId().equals(agreement.getEserviceId())) {
+            throw new IllegalStateException("Agreement does not belong to created e-service " + eService.getId());
+        }
+        ownedAgreements.add(agreement);
+        Purpose purpose = interopJourney.get(Purpose.class);
+        if (!eService.getId().equals(purpose.getEserviceId())) {
+            throw new IllegalStateException("Purpose does not belong to created e-service " + eService.getId());
+        }
+        ownedPurposes.add(purpose);
+        return eService;
+    }
 
     /**
      * Creates two e-services with two purposes each: compilation and signed for the
@@ -85,9 +159,9 @@ class WebIntegrationReviewerRiskAnalysisTest {
                 .as("At least two reviewers must be configured for the consumer")
                 .hasSizeGreaterThanOrEqualTo(2);
 
-        EService olderEService = interopJourney.withConsumer(consumer, UserRole.ADMIN)
+        EService olderEService = registerFixture(interopJourney.withConsumer(consumer, UserRole.ADMIN)
                 .setUpRiskAnalysisToCompile(olderEServiceName, producer, consumer, reviewer)
-                .get(EService.class);
+                .get(EService.class));
         createAndSignRiskAnalysis(olderEService);
 
         EService newerEService = createToApproveRiskAnalysisWithTwoReviewers(reviewers, newerEServiceName);
@@ -161,31 +235,27 @@ class WebIntegrationReviewerRiskAnalysisTest {
 
     PaginatedRiskAnalyses createPaginatedRiskAnalyses() {
         List<Purpose> purposes = new ArrayList<>();
-        EService oldestService = interopJourney.withConsumer(consumer, UserRole.ADMIN)
-                .setUpRiskAnalysisToApprove(olderEServiceName, producer, consumer, reviewer).get(EService.class);
+        EService oldestService = registerFixture(interopJourney.withConsumer(consumer, UserRole.ADMIN)
+                .setUpRiskAnalysisToApprove(olderEServiceName, producer, consumer, reviewer).get(EService.class));
         purposes.add(interopJourney.get(Purpose.class));
 
-        EService intermediateService = interopJourney.withConsumer(consumer, UserRole.ADMIN)
-                .setUpRiskAnalysisToApprove(intermediateEServiceName, producer, consumer, reviewer).get(EService.class);
+        EService intermediateService = registerFixture(interopJourney.withConsumer(consumer, UserRole.ADMIN)
+                .setUpRiskAnalysisToApprove(intermediateEServiceName, producer, consumer, reviewer).get(EService.class));
         purposes.add(interopJourney.get(Purpose.class));
 
         for (int i = 1; i < PAGE_SIZE - 1; i++) {
-            createAdditionalRiskAnalysisToApprove(intermediateService);
-            purposes.add(interopJourney.get(Purpose.class));
+            purposes.add(createAdditionalRiskAnalysisToApprove(intermediateService));
         }
-        EService newestService = interopJourney.withConsumer(consumer, UserRole.ADMIN)
-                .setUpRiskAnalysisToApprove(lastEServiceName, producer, consumer, reviewer).get(EService.class);
+        EService newestService = registerFixture(interopJourney.withConsumer(consumer, UserRole.ADMIN)
+                .setUpRiskAnalysisToApprove(lastEServiceName, producer, consumer, reviewer).get(EService.class));
         purposes.add(interopJourney.get(Purpose.class));
 
         List<Purpose> completed = new ArrayList<>();
-        createAdditionalRiskAnalysisToApprove(oldestService);
-        completed.add(interopJourney.get(Purpose.class));
+        completed.add(createAdditionalRiskAnalysisToApprove(oldestService));
         for (int i = 0; i < PAGE_SIZE - 1; i++) {
-            createAdditionalRiskAnalysisToApprove(intermediateService);
-            completed.add(interopJourney.get(Purpose.class));
+            completed.add(createAdditionalRiskAnalysisToApprove(intermediateService));
         }
-        createAdditionalRiskAnalysisToApprove(newestService);
-        completed.add(interopJourney.get(Purpose.class));
+        completed.add(createAdditionalRiskAnalysisToApprove(newestService));
         completeRiskAnalyses(completed);
         return new PaginatedRiskAnalyses(List.copyOf(purposes), List.copyOf(completed));
     }
@@ -269,7 +339,7 @@ class WebIntegrationReviewerRiskAnalysisTest {
     private EService createToApproveRiskAnalysisWithTwoReviewers(List<User> reviewers, String eServiceName) {
         List<User> assignedReviewers = reviewers.subList(0, 2);
 
-        return interopJourney
+        return registerFixture(interopJourney
                 .withConsumer(consumer, UserRole.ADMIN)
                 .setUpRiskAnalysisToApprove(
                         eServiceName,
@@ -277,7 +347,7 @@ class WebIntegrationReviewerRiskAnalysisTest {
                         consumer,
                         assignedReviewers
                 )
-                .get(EService.class);
+                .get(EService.class));
     }
 
     private void verifyCompletedTab(ReviewerRiskAnalysisPage page) {
@@ -403,14 +473,20 @@ class WebIntegrationReviewerRiskAnalysisTest {
                 .withConsumer(consumer, reviewer).rejectRiskAnalysis(RISK_ANALYSIS_REJECTION_REASON);
     }
 
-    private void createAdditionalRiskAnalysisToApprove(EService eService) {
+    private Purpose createAdditionalRiskAnalysisToApprove(EService eService) {
         interopJourney.withConsumer(consumer, UserRole.ADMIN)
-                .createPurposeAndLinkToEService(eService, PurposeVersionState.DRAFT)
-                .assignRiskAnalysisReviewers(
+                .createPurposeAndLinkToEService(eService, PurposeVersionState.DRAFT);
+        Purpose purpose = interopJourney.get(Purpose.class);
+        if (!eService.getId().equals(purpose.getEserviceId())) {
+            throw new IllegalStateException("Purpose does not belong to created e-service " + eService.getId());
+        }
+        ownedPurposes.add(purpose);
+        interopJourney.assignRiskAnalysisReviewers(
                         RiskAnalysisReviewMode.ADMIN_WRITES_REVIEWER_SIGNS,
                         List.of(reviewer.getUserId())
                 )
                 .submitRiskAnalysis();
+        return purpose;
     }
 
     /**

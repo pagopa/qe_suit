@@ -480,7 +480,7 @@ public class WebConsumerPurposeSummaryContractTest {
         assertNotBlank(card.purposeAnswerLabel().read(), "Purpose Answer");
 
         card.specificPurposeQuestionLabel().readAndAssert(Q_SPECIFIC_PURPOSE);
-        assertNotBlank(card.purposeAnswerLabel().read(), "Specific Purpose Answer");
+        assertNotBlank(card.specificPurposeAnswerLabel().read(), "Specific Purpose Answer");
         assertNotBlank(card.purposeNoteLabel().read(), "Specific Purpose Note");
 
         card.personalDataQuestionLabel().readAndAssert(Q_PERSONAL_DATA);

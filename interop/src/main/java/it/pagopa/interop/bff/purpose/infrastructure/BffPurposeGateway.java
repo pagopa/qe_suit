@@ -1,6 +1,7 @@
 package it.pagopa.interop.bff.purpose.infrastructure;
 
 import it.pagopa.infrastructure.response.ApiResponse;
+import it.pagopa.infrastructure.response.RawResponse;
 import it.pagopa.infrastructure.template.action.strategy.PollingStrategy;
 import it.pagopa.interop.bff.purpose.application.BffPurposeCreateCommand;
 import it.pagopa.interop.common.kernel.domain.Channel;
@@ -29,6 +30,8 @@ import java.util.Map;
 import java.util.Objects;
 import java.util.Optional;
 import java.util.UUID;
+import java.util.function.Predicate;
+import java.util.function.Supplier;
 import java.util.stream.Collectors;
 
 @Service
@@ -73,6 +76,24 @@ public class BffPurposeGateway implements PurposeGateway {
                 .map(createdResource -> getPurpose(PurposeRef.of(createdResource.getId())))
                 .updateContext()
                 .get();
+    }
+
+    @Override
+    public void deletePurpose(PurposeRef purposeRef) {
+        restClient.deletePurpose(purposeRef.id()).withoutPolling().assertStatusCode(204);
+        Supplier<RawResponse> read = () -> restClient.getPurpose(purposeRef.id()).withoutPolling().getRaw();
+        Predicate<RawResponse> absent = response -> {
+            if (!(response instanceof ApiResponse apiResponse)) {
+                throw new IllegalStateException("Cannot read deletion status for purpose " + purposeRef.id());
+            }
+            if (apiResponse.getStatusCode() == 404) return true;
+            if (apiResponse.isSuccess()) return false;
+            throw new IllegalStateException("Purpose deletion read failed for " + purposeRef.id()
+                    + " (HTTP status " + apiResponse.getStatusCode() + ")");
+        };
+        if (!absent.test(read.get())) {
+            PollingUtils.pollUntil(read, absent, "Purpose " + purposeRef.id() + " remains visible after deletion");
+        }
     }
 
     @Override
@@ -186,11 +207,7 @@ public class BffPurposeGateway implements PurposeGateway {
     }
 
     @Override
-    public void assignRiskAnalysisReviewers(
-            PurposeRef purposeRef,
-            RiskAnalysisReviewMode reviewMode,
-            List<UUID> reviewerIds
-    ) {
+    public void assignRiskAnalysisReviewers(PurposeRef purposeRef, RiskAnalysisReviewMode reviewMode, List<UUID> reviewerIds) {
         RiskAnalysisAssignmentSeed assignment = new RiskAnalysisAssignmentSeed()
                 .reviewMode(toBffReviewMode(reviewMode))
                 .reviewerIds(List.copyOf(reviewerIds));
@@ -211,15 +228,13 @@ public class BffPurposeGateway implements PurposeGateway {
                 purpose -> {
                     ReviewerWorkflow workflow = purpose.getReviewerWorkflow();
                     if (workflow == null || workflow.getReviewers() == null) {
-                        log.debug("Reviewer assignment for purpose {}, reviewMode {}: workflow or reviewers absent",
-                                purposeRef.id(), reviewMode);
+                        log.debug("Reviewer assignment for purpose {}, reviewMode {}: workflow or reviewers absent", purposeRef.id(), reviewMode);
                         return false;
                     }
-                    List<UUID> actualIds = workflow.getReviewers().stream()
-                            .map(Reviewer::getUserId).sorted().toList();
-                    log.debug("Reviewer assignment for purpose {}, reviewMode {}: expected IDs {}, actual IDs {}",
-                            purposeRef.id(), reviewMode, expectedIds, actualIds);
-                    return actualIds.equals(expectedIds);
+                    List<UUID> actualIds = workflow.getReviewers().stream().map(Reviewer::getUserId).sorted().toList();
+                    log.debug("Reviewer assignment for purpose {}: expected mode {}, actual mode {}, expected IDs {}, actual IDs {}",
+                            purposeRef.id(), assignment.getReviewMode(), purpose.getRiskAnalysisReviewMode(), expectedIds, actualIds);
+                    return actualIds.equals(expectedIds) && assignment.getReviewMode() == purpose.getRiskAnalysisReviewMode();
                 },
                 "Reviewer assignment did not become visible for purpose " + purposeRef.id()
                         + ", reviewMode " + reviewMode + "; expected reviewer IDs: " + expectedIds
@@ -228,7 +243,10 @@ public class BffPurposeGateway implements PurposeGateway {
 
     @Override
     public void submitRiskAnalysis(PurposeRef purposeRef) {
-        restClient.submitRiskAnalysis(purposeRef.id(), commandFactory.riskAnalysisSubmissionRequest())
+        RiskAnalysisForm savedForm = getRiskAnalysisForm(purposeRef);
+        RiskAnalysisSubmissionSeed submission = new RiskAnalysisSubmissionSeed()
+                .riskAnalysisForm(toRiskAnalysisFormSeed(savedForm));
+        restClient.submitRiskAnalysis(purposeRef.id(), submission)
                 .withPolling(PollingStrategy.UNTIL_SUCCESS)
                 .get();
 
@@ -258,7 +276,7 @@ public class BffPurposeGateway implements PurposeGateway {
             throw new IllegalStateException("Risk-analysis form read failed for purpose " + purposeRef.id());
         }
         var form = Objects.requireNonNull(response.get()).getRiskAnalysisForm();
-        if (form == null) {
+        if (form == null || form.getVersion() == null || form.getVersion().isBlank() || form.getAnswers() == null) {
             return Optional.empty();
         }
         var answers = form.getAnswers().entrySet().stream().collect(
@@ -275,12 +293,7 @@ public class BffPurposeGateway implements PurposeGateway {
             PurposeRef purposeRef, RiskAnalysisForm form
     ) {
         Objects.requireNonNull(form, "Risk-analysis form must not be null");
-        var payload = new RiskAnalysisFormSeed().version(form.getVersion())
-                .answers(form.getAnswers().entrySet().stream().collect(
-                        Collectors.toMap(
-                                Map.Entry::getKey, entry -> List.copyOf(entry.getValue())
-                        )
-                ));
+        var payload = toRiskAnalysisFormSeed(form);
         var expected = RiskAnalysisForm.builder()
                 .version(payload.getVersion()).answers(Map.copyOf(payload.getAnswers())).build();
         var response = restClient.saveRiskAnalysisForm(purposeRef.id(), payload).withoutPolling();
@@ -292,6 +305,13 @@ public class BffPurposeGateway implements PurposeGateway {
                 formSnapshot -> formSnapshot.filter(expected::equals).isPresent(),
                 "Saved risk-analysis form did not become visible for purpose " + purposeRef.id()
         );
+    }
+
+    private static RiskAnalysisFormSeed toRiskAnalysisFormSeed(RiskAnalysisForm form) {
+        return new RiskAnalysisFormSeed().version(form.getVersion())
+                .answers(form.getAnswers().entrySet().stream().collect(
+                        Collectors.toMap(Map.Entry::getKey, entry -> List.copyOf(entry.getValue()))
+                ));
     }
 
     @Override

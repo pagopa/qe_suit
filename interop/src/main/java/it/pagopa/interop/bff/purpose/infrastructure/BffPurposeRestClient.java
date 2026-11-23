@@ -36,6 +36,13 @@ public class BffPurposeRestClient extends RestClient {
         );
     }
 
+    public TestChain<Void> deletePurpose(@Nonnull UUID purposeId) {
+        return execute(
+                () -> purposesApi.deletePurpose().purposeIdPath(purposeId).execute(Function.identity()),
+                Void.class
+        );
+    }
+
     public TestChain<PurposeVersionResource> createPurposeVersion(@Nonnull UUID purposeId, @Nonnull PurposeVersionSeed payload) {
         return execute(
                 () -> purposesApi.createPurposeVersion()

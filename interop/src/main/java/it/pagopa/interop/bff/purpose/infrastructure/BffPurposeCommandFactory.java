@@ -94,11 +94,6 @@ public class BffPurposeCommandFactory implements PurposeCommandFactory {
                 .create();
     }
 
-    public RiskAnalysisSubmissionSeed riskAnalysisSubmissionRequest() {
-        return new RiskAnalysisSubmissionSeed()
-                .riskAnalysisForm(riskAnalysisFormSeed(authSession.getTenant()));
-    }
-
     public PurposeUpdateContent updateRequest() {
         Tenant consumer = authSession.getTenant();
         return Instancio.of(PurposeUpdateContent.class)
