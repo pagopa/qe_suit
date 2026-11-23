@@ -263,7 +263,7 @@ Feature: Modifica dei metadati delle finalità
   @work-item:QA-19036
   @channel:Given=BFF,When=BFF,Then=BFF
   Scenario Outline: [PURPOSE_METADATA_UNIQUENESS_1A] - Aggiornamento nome finalità con stesso nome di un'altra finalità per stesso e-service rifiutato
-  Dato un solo e-service e una finalità con metadati già valorizzati,
+  Dati un solo e-service e una finalità con metadati già valorizzati,
   quando l'utente aggiorna i metadati inserendo un nome già esistente per una finalità,
   allora la modifica viene rifiutata per conflitto di risorsa e vengono preservati i dati operativi.
 
@@ -291,7 +291,7 @@ Feature: Modifica dei metadati delle finalità
   @work-item:QA-19036
   @channel:Given=BFF,When=BFF,Then=BFF
   Scenario Outline: [PURPOSE_METADATA_UNIQUENESS_1B] - Aggiornamento nome finalità inversa con stesso nome di un'altra finalità per stesso e-service rifiutato
-  Data un solo e-service e una finalità inversa con metadati già valorizzati,
+  Dati un solo e-service e una finalità inversa con metadati già valorizzati,
   quando l'utente aggiorna i metadati inserendo un nome già esistente per una finalità,
   allora la modifica viene rifiutata per conflitto di risorsa e vengono preservati i dati operativi.
 
@@ -319,7 +319,7 @@ Feature: Modifica dei metadati delle finalità
   @work-item:QA-19036
   @channel:Given=BFF,When=BFF,Then=BFF
   Scenario Outline: [PURPOSE_METADATA_UNIQUENESS_2A] - Aggiornamento nome finalità con stesso nome di un'altra finalità per diversi e-service ammessa
-  Dato un e-service e una finalità con metadati già valorizzati,
+  Dati un e-service e una finalità con metadati già valorizzati,
   quando l'utente aggiorna i metadati inserendo un nome già esistente per una finalità di un altro e-service,
   allora la modifica viene applicata e vengono preservati i dati operativi.
 
@@ -350,7 +350,7 @@ Feature: Modifica dei metadati delle finalità
   @work-item:QA-19036
   @channel:Given=BFF,When=BFF,Then=BFF
   Scenario Outline: [PURPOSE_METADATA_UNIQUENESS_2B] - Aggiornamento nome finalità inversa con stesso nome di un'altra finalità per diversi e-service ammessa
-  Data un e-service e una finalità inversa con metadati già valorizzati,
+  Dati un e-service e una finalità inversa con metadati già valorizzati,
   quando l'utente aggiorna i metadati inserendo un nome già esistente per una finalità di un altro e-service,
   allora la modifica viene applicata e vengono preservati i dati operativi.
 
@@ -380,19 +380,118 @@ Feature: Modifica dei metadati delle finalità
 
   @work-item:QA-19036
   @channel:Given=BFF,When=BFF,Then=BFF
-  Scenario Outline: [PURPOSE_METADATA_VALIDATION_1] - Rispetto dei limiti di lunghezza dei metadati
-  Dato una risorsa modificabile con un campo soggetto a limiti di lunghezza,
-  quando l’attore propone un testo alla lunghezza di confine,
-  allora il sistema accetta i valori ammessi e rifiuta gli altri senza modifiche parziali.
+  Scenario: [PURPOSE_METADATA_VALIDATION_1A] - Aggiornamento metadati di una finalità non ammesso ai ruoli esclusi o ad altri enti
+  Data una finalità, se un ruolo non autorizzato (api, api,security, security, support, reviewer, viewer)
+  tenta di aggiornare i metadati, o un admin di un altro ente,
+  allora la richiesta di modifica risulta vietata.
 
-    Given una finalità "P-1" del Comune di Milano modificabile nei metadati
-    When un admin del Comune di Milano richiede un valore di <lunghezza> caratteri per il campo <campo> della risorsa "P-1"
-    Then la modifica della risorsa "P-1" ha esito <esito>
-    And in caso di rifiuto la risorsa "P-1" conserva tutti i dati iniziali
+    Given un EService creato dal Comune di Milano con una richiesta di fruizione in stato ACTIVE e una finalità in stato ACTIVE associate dal Comune di Pozzallo
+    And i dati della finalità allo stato attuale appuntati come riferimento
+    When un admin del Comune di Comun Nuovo tenta di modificare i metadati della finalità:
+      | campo       | valore            |
+      | nome        | primo nome        |
+      | descrizione | prima descrizione |
+    Then la richiesta di modifica dei metadati della finalità fallisce come operazione vietata
 
-    Examples:
-      | campo       | lunghezza | esito     |
-      | titolo      | 4         | rifiutata |
-      | titolo      | 60        | accettata |
-      | descrizione | 9         | rifiutata |
-      | descrizione | 250       | accettata |
+    When un api del Comune di Pozzallo tenta di modificare i metadati della finalità:
+      | campo       | valore            |
+      | nome        | primo nome        |
+      | descrizione | prima descrizione |
+    Then la richiesta di modifica dei metadati della finalità fallisce come operazione vietata
+    And la finalità conserva lo stato e i dati di riferimento
+
+    When un api,security del Comune di Pozzallo tenta di modificare i metadati della finalità:
+      | campo       | valore            |
+      | nome        | primo nome        |
+      | descrizione | prima descrizione |
+    Then la richiesta di modifica dei metadati della finalità fallisce come operazione vietata
+    And la finalità conserva lo stato e i dati di riferimento
+
+    When un security del Comune di Pozzallo tenta di modificare i metadati della finalità:
+      | campo       | valore            |
+      | nome        | primo nome        |
+      | descrizione | prima descrizione |
+    Then la richiesta di modifica dei metadati della finalità fallisce come operazione vietata
+    And la finalità conserva lo stato e i dati di riferimento
+
+    When un support del Comune di Pozzallo tenta di modificare i metadati della finalità:
+      | campo       | valore            |
+      | nome        | primo nome        |
+      | descrizione | prima descrizione |
+    Then la richiesta di modifica dei metadati della finalità fallisce come operazione vietata
+    And la finalità conserva lo stato e i dati di riferimento
+
+    When un reviewer del Comune di Pozzallo tenta di modificare i metadati della finalità:
+      | campo       | valore            |
+      | nome        | primo nome        |
+      | descrizione | prima descrizione |
+    Then la richiesta di modifica dei metadati della finalità fallisce come operazione vietata
+    And la finalità conserva lo stato e i dati di riferimento
+
+    When un viewer del Comune di Pozzallo tenta di modificare i metadati della finalità:
+      | campo       | valore            |
+      | nome        | primo nome        |
+      | descrizione | prima descrizione |
+    Then la richiesta di modifica dei metadati della finalità fallisce come operazione vietata
+    And la finalità conserva lo stato e i dati di riferimento
+
+  @work-item:QA-19036
+  @channel:Given=BFF,When=BFF,Then=BFF
+  Scenario: [PURPOSE_METADATA_VALIDATION_1B] - Aggiornamento metadati di una finalità inversa non ammesso ai ruoli esclusi o ad altri enti
+  Data una finalità inversa, se un ruolo non autorizzato (api, api,security, security, support, reviewer, viewer)
+  tenta di aggiornare i metadati, o un admin di un altro ente,
+  allora la richiesta di modifica risulta vietata.
+
+    Given i seguenti e-service pubblicati:
+      | alias | erogatore        | nome           | modalità  |
+      | ES-1  | Comune di Milano | E-service Test | ricezione |
+    And l'e-service "ES-1" del Comune di Milano sottoscritto dal Comune di Pozzallo con una richiesta di fruizione attiva
+    And l'e-service con una finalità inversa in stato ACTIVE associata dal Comune di Pozzallo
+    And i dati della finalità allo stato attuale appuntati come riferimento
+    When un admin del Comune di Comun Nuovo tenta di modificare i metadati della finalità:
+      | campo       | valore            |
+      | nome        | primo nome        |
+      | descrizione | prima descrizione |
+    Then la richiesta di modifica dei metadati della finalità fallisce come operazione vietata
+
+    When un api del Comune di Pozzallo tenta di modificare i metadati della finalità:
+      | campo       | valore            |
+      | nome        | primo nome        |
+      | descrizione | prima descrizione |
+    Then la richiesta di modifica dei metadati della finalità fallisce come operazione vietata
+    And la finalità conserva lo stato e i dati di riferimento
+
+    When un api,security del Comune di Pozzallo tenta di modificare i metadati della finalità:
+      | campo       | valore            |
+      | nome        | primo nome        |
+      | descrizione | prima descrizione |
+    Then la richiesta di modifica dei metadati della finalità fallisce come operazione vietata
+    And la finalità conserva lo stato e i dati di riferimento
+
+    When un security del Comune di Pozzallo tenta di modificare i metadati della finalità:
+      | campo       | valore            |
+      | nome        | primo nome        |
+      | descrizione | prima descrizione |
+    Then la richiesta di modifica dei metadati della finalità fallisce come operazione vietata
+    And la finalità conserva lo stato e i dati di riferimento
+
+    When un support del Comune di Pozzallo tenta di modificare i metadati della finalità:
+      | campo       | valore            |
+      | nome        | primo nome        |
+      | descrizione | prima descrizione |
+    Then la richiesta di modifica dei metadati della finalità fallisce come operazione vietata
+    And la finalità conserva lo stato e i dati di riferimento
+
+    When un reviewer del Comune di Pozzallo tenta di modificare i metadati della finalità:
+      | campo       | valore            |
+      | nome        | primo nome        |
+      | descrizione | prima descrizione |
+    Then la richiesta di modifica dei metadati della finalità fallisce come operazione vietata
+    And la finalità conserva lo stato e i dati di riferimento
+
+    When un viewer del Comune di Pozzallo tenta di modificare i metadati della finalità:
+      | campo       | valore            |
+      | nome        | primo nome        |
+      | descrizione | prima descrizione |
+    Then la richiesta di modifica dei metadati della finalità fallisce come operazione vietata
+    And la finalità conserva lo stato e i dati di riferimento
