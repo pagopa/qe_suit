@@ -1,5 +1,7 @@
 package it.pagopa.send.suite.contract;
 
+import it.pagopa.send.common.legal_notification.domain.FeePolicy;
+import it.pagopa.send.common.legal_notification.domain.PhysicalCommunicationType;
 import it.pagopa.infrastructure.contract.browser.WebScenario;
 import it.pagopa.send.TestBootApp;
 import it.pagopa.send.common.user.domain.User;
@@ -7,6 +9,7 @@ import it.pagopa.send.common.user.domain.UserAlias;
 import it.pagopa.send.common.user.domain.UserProvider;
 import it.pagopa.send.common.infrastructure.WebBrowserContractValidator;
 import it.pagopa.send.common.infrastructure.config.JunitContextConfig;
+import it.pagopa.send.common.legal_notification.domain.LegalNotificationCreationCommand;
 import it.pagopa.send.common.legal_notification.domain.LegalNotificationDomain;
 import it.pagopa.send.common.legal_notification.domain.NotificationStatus;
 import it.pagopa.send.web.mittente.infrastructure.page.DashboardPage;
@@ -63,14 +66,13 @@ public class WebNotificationTimelineContractTest {
         ));
 
         LegalNotificationDomain createdNotification = sendJourney
-                .withSender(sender)
-                .prepareNotification(Map.of(
-                        "subject", "Comunicazione di test multi-destinatario",
-                        "physicalCommunication", "REGISTERED_LETTER_890",
-                        "feePolicy", "FLAT_RATE"
-                ))
-                .withRecipient(lucrezia)
-                .withRecipient(recipient)
+                .prepareNotification(new LegalNotificationCreationCommand()
+                        .sender(sender)
+                        .subject("Comunicazione di test multi-destinatario")
+                        .physicalCommunication(PhysicalCommunicationType.REGISTERED_LETTER_890)
+                        .feePolicy(FeePolicy.FLAT_RATE)
+                        .recipient(lucrezia)
+                        .recipient(recipient))
                 .sendNotification(sender, NotificationStatus.ACCEPTED)
                 .waitForNotificationStatus(NotificationStatus.EFFECTIVE_DATE)
                 .get(LegalNotificationDomain.class);
