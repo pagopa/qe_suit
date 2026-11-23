@@ -1,6 +1,7 @@
 """Cucumber JSON, JUnit/Surefire XML and JUnit Platform Open Test Reporting parsers."""
 from __future__ import annotations
 
+from collections import Counter
 import json
 import re
 import xml.etree.ElementTree as ET
@@ -263,15 +264,22 @@ def collect_reports(root: Path, *, cucumber_only: bool = False) -> list[Failure]
             f'Cucumber JSON ({cucumber_dir}/*.json) oppure un Contract JSON ({contract})'
         )
 
-    result: list[Failure] = []
+    # Keep report provenance until duplicate IDs have been resolved.
+    collected: list[tuple[Failure, str]] = []
     for cucumber in cucumber_files:
-        result.extend(_parse_cucumber(cucumber))
+        collected.extend((failure, cucumber.name) for failure in _parse_cucumber(cucumber))
     if contract.is_file():
-        result.extend(collect_contract_failures(contract))
+        collected.extend((failure, contract.name) for failure in collect_contract_failures(contract))
 
-    ids: set[str] = set()
-    for failure in result:
-        if failure.id_test in ids:
-            raise ReportError(f'ID KO duplicato tra report: {failure.id_test}')
-        ids.add(failure.id_test)
+    counts = Counter(failure.id_test for failure, _ in collected)
+    result: list[Failure] = []
+    final_ids: set[str] = set()
+    for failure, report_name in collected:
+        test_id = failure.id_test
+        if counts[test_id] > 1:
+            test_id = f'{test_id} [{report_name}]'
+        if test_id in final_ids:
+            raise ReportError(f'ID KO duplicato anche dopo il suffisso del report: {test_id}')
+        final_ids.add(test_id)
+        result.append(Failure(test_id, failure.error_log, failure.source))
     return result
