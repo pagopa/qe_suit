@@ -20,6 +20,7 @@ def main(argv: list[str] | None = None) -> int:
     for flag in ('reports', 'history', 'suite', 'environment', 'executor', 'source-branch', 'run-url', 'metadata', 'output'):
         generate.add_argument('--' + flag, required=True)
     generate.add_argument('--namespace', required=True, help='RAE storage namespace (e.g. interop, send)')
+    generate.add_argument('--ignore-rules', type=Path, help='Regole di normalizzazione versionate per il matching')
     finalize = sub.add_parser('finalize', help='Validate YAML and generate Markdown')
     finalize.add_argument('yaml_file', type=Path)
     finalize.add_argument('--write', action='store_true', help='Write MD next to YAML')
@@ -38,7 +39,7 @@ def main(argv: list[str] | None = None) -> int:
                               suite=args.suite, environment=args.environment,
                               executor=args.executor, source_branch=args.source_branch,
                               run_url=args.run_url, data_ora=metadata['data_ora'],
-                              durata=metadata['durata'])
+                              durata=metadata['durata'], ignore_rules_path=args.ignore_rules)
             write_yaml(data, output)
             print(f'Generated {args.output}: {data["rae"]["numero_ko"]} KO')
         else:
