@@ -9,6 +9,7 @@ import it.pagopa.send.generated.openapi.clients.bff.ApiClient;
 import lombok.RequiredArgsConstructor;
 import org.junit.jupiter.api.DynamicTest;
 import org.junit.jupiter.api.TestFactory;
+import org.junit.jupiter.api.Tag;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.TestConstructor;
 import org.springframework.test.context.junit.jupiter.EnabledIf;
@@ -25,6 +26,7 @@ import java.util.stream.Stream;
  * <p>
  * Gira solo negli ambienti in cui il BackOffice PT è disponibile ({@code partner-tecnologico.enabled}).
  */
+@Tag("backofficePt")
 @EnabledIf(expression = "${partner-tecnologico.enabled}", loadContext = true)
 @SpringBootTest(
         classes = {TestBootApp.class, JunitContextConfig.class, BffApiContractConfig.class},

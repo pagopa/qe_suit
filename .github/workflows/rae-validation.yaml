@@ -29,7 +29,7 @@ jobs:
         run: |
           set -euo pipefail
 
-          if [[ ( "$PR_HEAD" == rae/rae_* || "$PR_HEAD" == feature/rae_* ) \
+          if [[ ( "$PR_HEAD" == rae/*/rae_* || "$PR_HEAD" == rae/rae_* || "$PR_HEAD" == feature/rae_* ) \
                 && "$PR_BASE" == develop \
                 && "$PR_REPO" == "$THIS_REPO" ]]; then
             echo 'eligible=true' >> "$GITHUB_OUTPUT"
@@ -53,6 +53,7 @@ jobs:
           ref: ${{ github.event.pull_request.head.sha }}
           path: rae_pr
           persist-credentials: false
+          fetch-depth: 0
 
       - name: Install Python
         if: steps.eligibility.outputs.eligible == 'true'
@@ -64,32 +65,59 @@ jobs:
         if: steps.eligibility.outputs.eligible == 'true'
         run: |
           python -m pip install \
-            -r trusted/tools/rae-generator/requirements.txt
+            -r trusted/tools/rae/rae_generator/requirements.txt
 
       - name: Validate, render, and check Markdown
         if: steps.eligibility.outputs.eligible == 'true'
         working-directory: rae_pr
         env:
           RAE_HEAD_REF: ${{ github.event.pull_request.head.ref }}
+          RAE_JIRA_HOSTS: pagopa.atlassian.net  # Canonical Jira tenant; syntax and host, not ticket existence
         run: |
           set -euo pipefail
 
-          # Supports:
-          #   rae/rae_NrtStandardSuiteTest_TIMESTAMP
-          #   feature/rae_NrtStandardSuiteTest_TIMESTAMP
-          NAME="${RAE_HEAD_REF#*/}"
-          YAML="rae/${NAME}.yaml"
+          # New branches: rae/<namespace>/rae_<suite>_<timestamp>
+          # Legacy in-flight branches still use rae/rae_* or feature/rae_*.
+          # Never infer a namespace from YAML contents or PR-controlled paths.
+          if [[ "$RAE_HEAD_REF" =~ ^rae/([A-Za-z0-9][A-Za-z0-9_.-]*)/(rae_[A-Za-z0-9_.-]+_[0-9]{14})$ ]]; then
+            NAMESPACE="${BASH_REMATCH[1]}"
+            NAME="${BASH_REMATCH[2]}"
+            [[ "$NAMESPACE" != "." && "$NAMESPACE" != ".." ]] || exit 1
+            YAML="rae/${NAMESPACE}/${NAME}.yaml"
+          elif [[ "$RAE_HEAD_REF" =~ ^(rae|feature)/(rae_[A-Za-z0-9_.-]+_[0-9]{14})$ ]]; then
+            NAME="${BASH_REMATCH[2]}"
+            YAML="rae/${NAME}.yaml"
+          else
+            echo "Invalid RAE branch name: $RAE_HEAD_REF"
+            exit 1
+          fi
 
           test -f "$YAML" || {
             echo "Missing $YAML"
             exit 1
           }
 
-          PYTHONPATH="$GITHUB_WORKSPACE/trusted/tools/rae-generator" \
-            python -m rae_generator finalize "$YAML" --write
+          # Retrieve the originally generated proposal from immutable Git history.
+          # GitHub Actions MUST NOT rewrite pending_confirmation in the YAML.
+          FIRST_COMMIT="$(git log --diff-filter=A --format=%H --reverse -- "$YAML" | head -1)"
+          if [[ -n "$FIRST_COMMIT" ]] && git show "$FIRST_COMMIT:$YAML" > /tmp/rae_original.yaml; then
+            # Require an actual non-automation YAML commit after generation.
+            # A bot-only push cannot certify that QA reviewed the proposal.
+            if git log --format='%ae' "${FIRST_COMMIT}..HEAD" -- "$YAML" \
+                | grep -Eiv '(^$|\[bot\]|noreply\.github\.com|rae-automation)' >/dev/null; then
+              QA_ARGS=(--qa-reviewed --original-yaml /tmp/rae_original.yaml)
+            else
+              QA_ARGS=()
+            fi
+          else
+            QA_ARGS=()
+          fi
 
-          PYTHONPATH="$GITHUB_WORKSPACE/trusted/tools/rae-generator" \
-            python -m rae_generator check "$YAML"
+          PYTHONPATH="$GITHUB_WORKSPACE/trusted/tools/rae/rae_generator" \
+            python -m rae_generator finalize "$YAML" --write "${QA_ARGS[@]}"
+
+          PYTHONPATH="$GITHUB_WORKSPACE/trusted/tools/rae/rae_generator" \
+            python -m rae_generator check "$YAML" "${QA_ARGS[@]}"
 
           echo "rae_yaml=$YAML" >> "$GITHUB_ENV"
           echo "rae_md=${YAML%.yaml}.md" >> "$GITHUB_ENV"
