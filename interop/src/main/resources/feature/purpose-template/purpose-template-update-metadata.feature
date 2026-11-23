@@ -267,3 +267,62 @@ Feature: Modifica dei metadati dei template finalità
       | purposeDescription | prima descrizione |
     Then un admin del Comune di Comun Nuovo
     And la richiesta di modifica dei metadati del template finalità fallisce come operazione vietata
+
+  @work-item:QA-19036
+  @channel:Given=BFF,When=BFF,Then=BFF
+  @channel:Given=BFF,When=M2M,Then=M2M
+  Scenario: [PURPOSE_TEMPLATE_METADATA_OPERATIONAL_FIELDS_1] - In bozza è possibile aggiornare i metadati con i campi operativi per un template finalità
+  Dato un template finalità in bozza modificabile da un ruolo autorizzato,
+  quando la modifica viene inviata con un metadato valido e dei campi operativi validi,
+  allora la modifica viene applicata correttamente.
+
+    Given un template finalità creato dal Comune di Comun Nuovo in stato in bozza
+    And un admin del Comune di Comun Nuovo modifica i metadati del template finalità:
+      | campo              | valore            |
+      | purposeDescription | prima descrizione |
+      | purposeIsFreeOfCharge     | false      |
+      | purposeDailyCalls         | 500        |
+      | handlesPersonalData       | false      |
+    And i dati del template finalità allo stato attuale appuntati come riferimento
+    When un admin del Comune di Comun Nuovo modifica i metadati del template finalità:
+      | campo              | valore            |
+      | purposeDescription | nuova descrizione |
+    Then il template finalità conserva lo stato e i dati di riferimento eccetto la descrizione
+
+  @work-item:QA-19036
+  @channel:Given=BFF,When=BFF,Then=BFF
+  @channel:Given=BFF,When=M2M,Then=M2M
+  Scenario: [PURPOSE_TEMPLATE_METADATA_OPERATIONAL_FIELDS_2] - In stato pubblicato non è possibile aggiornare i metadati con i campi operativi per un template finalità
+  Dato un template finalità pubblicato modificabile da un ruolo autorizzato,
+  quando la modifica viene inviata con un metadato valido e dei campi operativi validi,
+  allora la modifica viene rifiutata per conflitto di risorsa (campi operativi non più modificabili).
+
+    Given un template finalità creato dal Comune di Comun Nuovo in stato pubblicato
+    And i dati del template finalità allo stato attuale appuntati come riferimento
+    When un admin del Comune di Comun Nuovo tenta di modificare i metadati del template finalità:
+      | campo              | valore            |
+      | purposeDescription | prima descrizione |
+      | purposeIsFreeOfCharge     | false      |
+      | purposeDailyCalls         | 500        |
+      | handlesPersonalData       | false      |
+    Then la richiesta di modifica dei metadati del template finalità fallisce per conflitto di risorsa
+    And il template finalità conserva lo stato e i dati di riferimento
+
+  @work-item:QA-19036
+  @channel:Given=BFF,When=BFF,Then=BFF
+  @channel:Given=BFF,When=M2M,Then=M2M
+  Scenario: [PURPOSE_TEMPLATE_METADATA_OPERATIONAL_FIELDS_3] - In stato pubblicato non è possibile aggiornare i metadati con i campi operativi per un template finalità
+  Dato un template finalità pubblicato modificabile da un ruolo autorizzato,
+  quando la modifica viene inviata con un metadato valido e dei campi operativi validi,
+  allora la modifica viene rifiutata per conflitto di risorsa (campi operativi non più modificabili).
+
+    Given un template finalità creato dal Comune di Comun Nuovo in stato in bozza
+    And i dati del template finalità allo stato attuale appuntati come riferimento
+    When un admin del Comune di Comun Nuovo tenta di modificare i metadati del template finalità:
+      | campo              | valore            |
+      | purposeDescription | prima descrizione |
+      | purposeIsFreeOfCharge     | false      |
+      | purposeDailyCalls         | 0          |
+      | handlesPersonalData       | false      |
+    Then la richiesta di modifica dei metadati del template finalità fallisce come operazione malformata
+    And il template finalità conserva lo stato e i dati di riferimento
