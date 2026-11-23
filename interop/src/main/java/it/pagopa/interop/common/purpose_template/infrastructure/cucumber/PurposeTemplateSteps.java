@@ -49,6 +49,21 @@ public class PurposeTemplateSteps {
         };
     }
 
+    @Then("il template finalità conserva lo stato e i dati di riferimento")
+    public void assertPurposeTemplatePreserved() {
+        assertThat(purposeTemplateReference)
+                .as("Riferimento del template finalità salvato prima della modifica")
+                .isNotNull();
+        PurposeTemplate purposeTemplate = entityStore.getLastOrThrow(PurposeTemplate.class);
+        purposeTemplate = purposeTemplateUseCase.getPurposeTemplate(purposeTemplate);
+
+        assertThat(purposeTemplate)
+                .as("Stato e dati del template finalità")
+                .usingRecursiveComparison()
+                .ignoringFields("updatedAt")
+                .isEqualTo(purposeTemplateReference);
+    }
+
     @Then("il template finalità conserva lo stato e i dati di riferimento eccetto {purposeTemplateMetadataField}")
     public void assertPurposeTemplatePreservedExceptField(PurposeTemplateMetadataField excludedField) {
         assertThat(purposeTemplateReference)
