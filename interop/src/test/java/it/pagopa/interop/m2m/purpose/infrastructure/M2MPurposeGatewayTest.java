@@ -114,10 +114,12 @@ class M2MPurposeGatewayTest {
             return handler.apply(response(403, "{}"));
         });
 
-        gateway.tryToUpdatePurposeMetadata(original.getRef(), "new title", "new description");
+        gateway.tryToUpdatePurposeMetadata(
+                original.getRef(), "new title", "new description", false, "fee exemption", 123);
 
         verify(updatePurpose).body(
-                new UpdateDraftPurposeRequest().title("new title").description("new description"));
+                new UpdateDraftPurposeRequest().title("new title").description("new description")
+                        .isFreeOfCharge(false).freeOfChargeReason("fee exemption").dailyCalls(123));
         verify(updatePurpose).execute(any());
         verifyNoInteractions(read, updateReversePurpose, mapper);
         assertThat(store.getByAliasOrThrow("purpose", Purpose.class)).isSameAs(original);
@@ -130,7 +132,8 @@ class M2MPurposeGatewayTest {
             return handler.apply(response(403, "{}"));
         });
 
-        gateway.tryToUpdateReversePurposeMetadata(original.getRef(), "new title", "new description");
+        gateway.tryToUpdateReversePurposeMetadata(
+                original.getRef(), "new title", "new description", null, null, null);
 
         verify(updateReversePurpose).body(
                 new ReversePurposeDraftUpdateSeed().title("new title").description("new description"));
@@ -152,7 +155,8 @@ class M2MPurposeGatewayTest {
         });
         when(mapper.toPurpose(any())).thenReturn(renamed);
 
-        assertThat(gateway.updatePurposeMetadata(original.getRef(), "new title", "new description"))
+        assertThat(gateway.updatePurposeMetadata(
+                original.getRef(), "new title", "new description", null, null, null))
                 .isSameAs(renamed);
 
         var order = inOrder(api, updatePurpose, read);
@@ -181,13 +185,15 @@ class M2MPurposeGatewayTest {
         });
         when(mapper.toPurpose(any())).thenReturn(renamed);
 
-        assertThat(gateway.updateReversePurposeMetadata(original.getRef(), "new title", "new description"))
+        assertThat(gateway.updateReversePurposeMetadata(
+                original.getRef(), "new title", "new description", false, "fee exemption", 123))
                 .isSameAs(renamed);
 
         verify(api).updateDraftReversePurpose();
         verify(updateReversePurpose).purposeIdPath(original.getId());
         verify(updateReversePurpose).body(
-                new ReversePurposeDraftUpdateSeed().title("new title").description("new description"));
+                new ReversePurposeDraftUpdateSeed().title("new title").description("new description")
+                        .isFreeOfCharge(false).freeOfChargeReason("fee exemption").dailyCalls(123));
         verify(updateReversePurpose).execute(any());
         verify(read).execute(any());
         assertThat(store.getByAliasOrThrow("purpose", Purpose.class)).isSameAs(renamed);

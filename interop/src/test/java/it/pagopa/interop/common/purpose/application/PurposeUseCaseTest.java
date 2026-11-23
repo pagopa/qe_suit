@@ -58,9 +58,10 @@ class PurposeUseCaseTest {
         Purpose updated = purpose.toBuilder().title("new title").description("new description").build();
         when(gateway.getPurpose(purpose.getRef())).thenReturn(updated);
 
-        assertThat(useCase.updatePurposeMetadata(purpose, "new title", "new description")).isSameAs(updated);
+        assertThat(useCase.updatePurposeMetadata(purpose, "new title", "new description", null, null, null))
+                .isSameAs(updated);
 
-        verify(gateway).updatePurposeMetadata(purpose.getRef(), "new title", "new description");
+        verify(gateway).updatePurposeMetadata(purpose.getRef(), "new title", "new description", null, null, null);
         verify(gateway).getPurpose(purpose.getRef());
         verifyNoMoreInteractions(gateway);
     }
@@ -70,10 +71,11 @@ class PurposeUseCaseTest {
         Purpose updated = purpose.toBuilder().title("new title").description("new description").build();
         when(gateway.getPurpose(purpose.getRef())).thenReturn(updated);
 
-        assertThat(useCase.updateReversePurposeMetadata(purpose, "new title", "new description"))
+        assertThat(useCase.updateReversePurposeMetadata(purpose, "new title", "new description", null, null, null))
                 .isSameAs(updated);
 
-        verify(gateway).updateReversePurposeMetadata(purpose.getRef(), "new title", "new description");
+        verify(gateway).updateReversePurposeMetadata(
+                purpose.getRef(), "new title", "new description", null, null, null);
         verify(gateway).getPurpose(purpose.getRef());
         verifyNoMoreInteractions(gateway);
     }

@@ -125,9 +125,13 @@ public class PurposeSteps {
             interopJourney.withConsumer(consumer, role);
         }
         if (eService.getMode() == EServiceMode.RECEIVE) {
-            purposeUseCase.updateReversePurposeMetadata(purpose, metadata.name(), metadata.description());
+            purposeUseCase.updateReversePurposeMetadata(
+                    purpose, metadata.name(), metadata.description(), metadata.isFreeOfCharge(),
+                    metadata.freeOfChargeReason(), metadata.dailyCalls());
         } else if (eService.getMode() == EServiceMode.DELIVER) {
-            purposeUseCase.updatePurposeMetadata(purpose, metadata.name(), metadata.description());
+            purposeUseCase.updatePurposeMetadata(
+                    purpose, metadata.name(), metadata.description(), metadata.isFreeOfCharge(),
+                    metadata.freeOfChargeReason(), metadata.dailyCalls());
         } else {
             throw new IllegalStateException("E-service mode is missing for purpose " + purpose.getId());
         }
@@ -148,9 +152,13 @@ public class PurposeSteps {
             interopJourney.withConsumer(consumer, role);
         }
         if (eService.getMode() == EServiceMode.RECEIVE) {
-            purposeUseCase.tryToUpdateReversePurposeMetadata(purpose, metadata.name(), metadata.description());
+            purposeUseCase.tryToUpdateReversePurposeMetadata(
+                    purpose, metadata.name(), metadata.description(), metadata.isFreeOfCharge(),
+                    metadata.freeOfChargeReason(), metadata.dailyCalls());
         } else if (eService.getMode() == EServiceMode.DELIVER) {
-            purposeUseCase.tryToUpdatePurposeMetadata(purpose, metadata.name(), metadata.description());
+            purposeUseCase.tryToUpdatePurposeMetadata(
+                    purpose, metadata.name(), metadata.description(), metadata.isFreeOfCharge(),
+                    metadata.freeOfChargeReason(), metadata.dailyCalls());
         } else {
             throw new IllegalStateException("E-service mode is missing for purpose " + purpose.getId());
         }
@@ -181,6 +189,9 @@ public class PurposeSteps {
 
         String name = purpose.getTitle();
         String description = purpose.getDescription();
+        Boolean isFreeOfCharge = null;
+        String freeOfChargeReason = null;
+        Integer dailyCalls = null;
         Set<String> updatedFields = new HashSet<>();
 
         for (List<String> row : rows.subList(1, rows.size())) {
@@ -195,16 +206,43 @@ public class PurposeSteps {
 
             String value = "%empty".equals(row.get(1)) ? "" : row.get(1);
             switch (field) {
-                case "nome" -> name = value;
-                case "descrizione" -> description = value;
+                case "title" -> name = value;
+                case "description" -> description = value;
+                case "isFreeOfCharge" -> isFreeOfCharge = parseBoolean(field, value);
+                case "freeOfChargeReason" -> freeOfChargeReason = value;
+                case "dailyCalls" -> dailyCalls = parseInteger(field, value);
                 default -> throw new IllegalArgumentException("Campo metadato finalita non supportato: " + field);
             }
         }
 
-        return new MetadataUpdate(name, description);
+        return new MetadataUpdate(name, description, isFreeOfCharge, freeOfChargeReason, dailyCalls);
     }
 
-    private record MetadataUpdate(String name, String description) {}
+    private Boolean parseBoolean(String field, String value) {
+        if ("true".equalsIgnoreCase(value)) {
+            return true;
+        }
+        if ("false".equalsIgnoreCase(value)) {
+            return false;
+        }
+        throw new IllegalArgumentException("Valore booleano non valido per il campo " + field + ": " + value);
+    }
+
+    private Integer parseInteger(String field, String value) {
+        try {
+            return Integer.valueOf(value);
+        } catch (NumberFormatException exception) {
+            throw new IllegalArgumentException("Valore intero non valido per il campo " + field + ": " + value, exception);
+        }
+    }
+
+    private record MetadataUpdate(
+            String name,
+            String description,
+            Boolean isFreeOfCharge,
+            String freeOfChargeReason,
+            Integer dailyCalls
+    ) {}
 
     @Given("l'e-service con una finalità in stato {purposeState} associata da/dal {tenant}")
     public void createPurposeForEService(PurposeVersionState purposeState, Tenant consumer) {

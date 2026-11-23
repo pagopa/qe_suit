@@ -61,24 +61,30 @@ public class M2MPurposeRestClient extends RestClient {
     }
 
     public TestChain<Purpose> updatePurposeMetadata(
-            @Nonnull UUID purposeId, @Nonnull String title, @Nonnull String description) {
+            @Nonnull UUID purposeId, @Nonnull String title, @Nonnull String description,
+            Boolean isFreeOfCharge, String freeOfChargeReason, Integer dailyCalls) {
         return execute(
                 () -> purposesApi.updateDraftPurpose()
                         .purposeIdPath(purposeId)
                         .reqSpec(reqSpec -> reqSpec.setContentType("application/merge-patch+json; charset=UTF-8"))
-                        .body(new UpdateDraftPurposeRequest().title(title).description(description))
+                        .body(new UpdateDraftPurposeRequest().title(title).description(description)
+                                .isFreeOfCharge(isFreeOfCharge).freeOfChargeReason(freeOfChargeReason)
+                                .dailyCalls(dailyCalls))
                         .execute(Function.identity()),
                 Purpose.class
         );
     }
 
     public TestChain<Purpose> updateReversePurposeMetadata(
-            @Nonnull UUID purposeId, @Nonnull String title, @Nonnull String description) {
+            @Nonnull UUID purposeId, @Nonnull String title, @Nonnull String description,
+            Boolean isFreeOfCharge, String freeOfChargeReason, Integer dailyCalls) {
         return execute(
                 () -> purposesApi.updateDraftReversePurpose()
                         .purposeIdPath(purposeId)
                         .reqSpec(reqSpec -> reqSpec.setContentType("application/merge-patch+json; charset=UTF-8"))
-                        .body(new ReversePurposeDraftUpdateSeed().title(title).description(description))
+                        .body(new ReversePurposeDraftUpdateSeed().title(title).description(description)
+                                .isFreeOfCharge(isFreeOfCharge).freeOfChargeReason(freeOfChargeReason)
+                                .dailyCalls(dailyCalls))
                         .execute(Function.identity()),
                 Purpose.class
         );

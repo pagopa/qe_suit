@@ -14,13 +14,21 @@ import org.springframework.plugin.core.Plugin;
 public interface PurposeGateway extends Plugin<Channel> {
     Purpose getPurpose(PurposeRef purposeRef);
 
-    Purpose updatePurposeMetadata(PurposeRef purposeRef, String name, String description);
+    Purpose updatePurposeMetadata(
+            PurposeRef purposeRef, String name, String description,
+            @Nullable Boolean isFreeOfCharge, @Nullable String freeOfChargeReason, @Nullable Integer dailyCalls);
 
-    Purpose updateReversePurposeMetadata(PurposeRef purposeRef, String name, String description);
+    Purpose updateReversePurposeMetadata(
+            PurposeRef purposeRef, String name, String description,
+            @Nullable Boolean isFreeOfCharge, @Nullable String freeOfChargeReason, @Nullable Integer dailyCalls);
 
-    void tryToUpdatePurposeMetadata(PurposeRef purposeRef, String name, String description);
+    void tryToUpdatePurposeMetadata(
+            PurposeRef purposeRef, String name, String description,
+            @Nullable Boolean isFreeOfCharge, @Nullable String freeOfChargeReason, @Nullable Integer dailyCalls);
 
-    void tryToUpdateReversePurposeMetadata(PurposeRef purposeRef, String name, String description);
+    void tryToUpdateReversePurposeMetadata(
+            PurposeRef purposeRef, String name, String description,
+            @Nullable Boolean isFreeOfCharge, @Nullable String freeOfChargeReason, @Nullable Integer dailyCalls);
 
     void shouldFailToUpdatePurposeMetadataAsMalformed();
 

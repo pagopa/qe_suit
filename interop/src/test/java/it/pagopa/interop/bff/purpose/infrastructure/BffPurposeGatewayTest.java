@@ -109,13 +109,15 @@ class BffPurposeGatewayTest {
         });
         when(mapper.toPurpose(any())).thenReturn(renamed);
 
-        assertThat(gateway.updateReversePurposeMetadata(original.getRef(), "new title", "new description"))
+        assertThat(gateway.updateReversePurposeMetadata(
+                original.getRef(), "new title", "new description", false, "fee exemption", 123))
                 .isSameAs(renamed);
 
         verify(api).patchUpdateReversePurpose();
         verify(patchReversePurpose).purposeIdPath(original.getId());
         verify(patchReversePurpose).body(
-                new PatchReversePurposeUpdateContent().title("new title").description("new description"));
+                new PatchReversePurposeUpdateContent().title("new title").description("new description")
+                        .isFreeOfCharge(false).freeOfChargeReason("fee exemption").dailyCalls(123));
         verify(patchReversePurpose).execute(any());
         verify(read).execute(any());
         assertThat(store.getByAliasOrThrow("purpose", Purpose.class)).isSameAs(renamed);

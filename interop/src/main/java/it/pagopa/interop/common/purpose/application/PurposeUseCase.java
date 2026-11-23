@@ -24,24 +24,36 @@ public class PurposeUseCase {
         return purposeGateway.getPurpose(purpose.getRef());
     }
 
-    public Purpose updatePurposeMetadata(Purpose purpose, String name, String description) {
-        purposeGateway.updatePurposeMetadata(purpose.getRef(), name, description);
+    public Purpose updatePurposeMetadata(
+            Purpose purpose, String name, String description,
+            Boolean isFreeOfCharge, String freeOfChargeReason, Integer dailyCalls) {
+        purposeGateway.updatePurposeMetadata(
+                purpose.getRef(), name, description, isFreeOfCharge, freeOfChargeReason, dailyCalls);
 
         return pollForUpdatedMetadata(purpose, name, description);
     }
 
-    public Purpose updateReversePurposeMetadata(Purpose purpose, String name, String description) {
-        purposeGateway.updateReversePurposeMetadata(purpose.getRef(), name, description);
+    public Purpose updateReversePurposeMetadata(
+            Purpose purpose, String name, String description,
+            Boolean isFreeOfCharge, String freeOfChargeReason, Integer dailyCalls) {
+        purposeGateway.updateReversePurposeMetadata(
+                purpose.getRef(), name, description, isFreeOfCharge, freeOfChargeReason, dailyCalls);
 
         return pollForUpdatedMetadata(purpose, name, description);
     }
 
-    public void tryToUpdatePurposeMetadata(Purpose purpose, String name, String description) {
-        purposeGateway.tryToUpdatePurposeMetadata(purpose.getRef(), name, description);
+    public void tryToUpdatePurposeMetadata(
+            Purpose purpose, String name, String description,
+            Boolean isFreeOfCharge, String freeOfChargeReason, Integer dailyCalls) {
+        purposeGateway.tryToUpdatePurposeMetadata(
+                purpose.getRef(), name, description, isFreeOfCharge, freeOfChargeReason, dailyCalls);
     }
 
-    public void tryToUpdateReversePurposeMetadata(Purpose purpose, String name, String description) {
-        purposeGateway.tryToUpdateReversePurposeMetadata(purpose.getRef(), name, description);
+    public void tryToUpdateReversePurposeMetadata(
+            Purpose purpose, String name, String description,
+            Boolean isFreeOfCharge, String freeOfChargeReason, Integer dailyCalls) {
+        purposeGateway.tryToUpdateReversePurposeMetadata(
+                purpose.getRef(), name, description, isFreeOfCharge, freeOfChargeReason, dailyCalls);
     }
 
     public void shouldFailToUpdatePurposeMetadataAsMalformed() {

@@ -76,10 +76,15 @@ public class BffPurposeGateway implements PurposeGateway {
     }
 
     @Override
-    public Purpose updatePurposeMetadata(PurposeRef purposeRef, String name, String description) {
+    public Purpose updatePurposeMetadata(
+            PurposeRef purposeRef, String name, String description,
+            @Nullable Boolean isFreeOfCharge, @Nullable String freeOfChargeReason, @Nullable Integer dailyCalls) {
         PatchPurposeUpdateContent payload = new PatchPurposeUpdateContent()
                 .title(name)
-                .description(description);
+                .description(description)
+                .isFreeOfCharge(isFreeOfCharge)
+                .freeOfChargeReason(freeOfChargeReason)
+                .dailyCalls(dailyCalls);
 
         return restClient.patchUpdatePurpose(purposeRef.id(), payload)
                 .withPolling(PollingStrategy.UNTIL_SUCCESS)
@@ -89,10 +94,15 @@ public class BffPurposeGateway implements PurposeGateway {
     }
 
     @Override
-    public Purpose updateReversePurposeMetadata(PurposeRef purposeRef, String name, String description) {
+    public Purpose updateReversePurposeMetadata(
+            PurposeRef purposeRef, String name, String description,
+            @Nullable Boolean isFreeOfCharge, @Nullable String freeOfChargeReason, @Nullable Integer dailyCalls) {
         PatchReversePurposeUpdateContent payload = new PatchReversePurposeUpdateContent()
                 .title(name)
-                .description(description);
+                .description(description)
+                .isFreeOfCharge(isFreeOfCharge)
+                .freeOfChargeReason(freeOfChargeReason)
+                .dailyCalls(dailyCalls);
 
         return restClient.patchUpdateReversePurpose(purposeRef.id(), payload)
                 .withPolling(PollingStrategy.UNTIL_SUCCESS)
@@ -102,18 +112,28 @@ public class BffPurposeGateway implements PurposeGateway {
     }
 
     @Override
-    public void tryToUpdatePurposeMetadata(PurposeRef purposeRef, String name, String description) {
+    public void tryToUpdatePurposeMetadata(
+            PurposeRef purposeRef, String name, String description,
+            @Nullable Boolean isFreeOfCharge, @Nullable String freeOfChargeReason, @Nullable Integer dailyCalls) {
         PatchPurposeUpdateContent payload = new PatchPurposeUpdateContent()
                 .title(name)
-                .description(description);
+                .description(description)
+                .isFreeOfCharge(isFreeOfCharge)
+                .freeOfChargeReason(freeOfChargeReason)
+                .dailyCalls(dailyCalls);
         restClient.patchUpdatePurpose(purposeRef.id(), payload).withoutPolling();
     }
 
     @Override
-    public void tryToUpdateReversePurposeMetadata(PurposeRef purposeRef, String name, String description) {
+    public void tryToUpdateReversePurposeMetadata(
+            PurposeRef purposeRef, String name, String description,
+            @Nullable Boolean isFreeOfCharge, @Nullable String freeOfChargeReason, @Nullable Integer dailyCalls) {
         PatchReversePurposeUpdateContent payload = new PatchReversePurposeUpdateContent()
                 .title(name)
-                .description(description);
+                .description(description)
+                .isFreeOfCharge(isFreeOfCharge)
+                .freeOfChargeReason(freeOfChargeReason)
+                .dailyCalls(dailyCalls);
         restClient.patchUpdateReversePurpose(purposeRef.id(), payload).withoutPolling();
     }
 

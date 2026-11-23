@@ -210,16 +210,21 @@ class PurposeStepsTest {
         when(entities.getById(eService.getId(), EService.class)).thenReturn(Optional.of(eService));
         DataTable dataTable = DataTable.create(List.of(
                 List.of("campo", "valore"),
-                List.of("nome", "Nuovo titolo"),
-                List.of("descrizione", "Nuova descrizione")
+                List.of("title", "Nuovo titolo"),
+                List.of("description", "Nuova descrizione"),
+                List.of("isFreeOfCharge", "false"),
+                List.of("freeOfChargeReason", "Esenzione richiesta"),
+                List.of("dailyCalls", "123")
         ));
 
         steps.updatePurposeMetadata(UserRole.ADMIN, Tenant.COMUNE_DI_COMUN_NUOVO, dataTable);
 
         if (mode == EServiceMode.RECEIVE) {
-            verify(useCase).updateReversePurposeMetadata(purpose, "Nuovo titolo", "Nuova descrizione");
+            verify(useCase).updateReversePurposeMetadata(
+                    purpose, "Nuovo titolo", "Nuova descrizione", false, "Esenzione richiesta", 123);
         } else {
-            verify(useCase).updatePurposeMetadata(purpose, "Nuovo titolo", "Nuova descrizione");
+            verify(useCase).updatePurposeMetadata(
+                    purpose, "Nuovo titolo", "Nuova descrizione", false, "Esenzione richiesta", 123);
         }
         verifyNoMoreInteractions(useCase);
     }
@@ -234,7 +239,7 @@ class PurposeStepsTest {
         when(entities.getById(eService.getId(), EService.class)).thenReturn(Optional.of(eService));
 
         steps.tryToUpdatePurposeMetadata(role, Tenant.COMUNE_DI_COMUN_NUOVO, DataTable.create(List.of(
-                List.of("campo", "valore"), List.of("nome", "Nuovo titolo"))));
+                List.of("campo", "valore"), List.of("title", "Nuovo titolo"))));
 
         var order = inOrder(interopJourney, useCase);
         if (role == UserRole.ADMIN) {
@@ -244,12 +249,34 @@ class PurposeStepsTest {
         }
         if (mode == EServiceMode.RECEIVE) {
             order.verify(useCase).tryToUpdateReversePurposeMetadata(
-                    purpose, "Nuovo titolo", "Descrizione iniziale");
+                    purpose, "Nuovo titolo", "Descrizione iniziale", null, null, null);
         } else {
             order.verify(useCase).tryToUpdatePurposeMetadata(
-                    purpose, "Nuovo titolo", "Descrizione iniziale");
+                    purpose, "Nuovo titolo", "Descrizione iniziale", null, null, null);
         }
         verifyNoMoreInteractions(interopJourney, useCase);
+    }
+
+    @Test
+    void rejectsInvalidOptionalMetadataValuesBeforeCallingTheUseCase() {
+        var eService = EService.builder().id(UUID.randomUUID()).mode(EServiceMode.DELIVER).build();
+        var purpose = Purpose.builder().id(UUID.randomUUID()).eserviceId(eService.getId()).build();
+        when(entities.getLastOrThrow(Purpose.class)).thenReturn(purpose);
+        when(entities.getById(eService.getId(), EService.class)).thenReturn(Optional.of(eService));
+
+        assertThatThrownBy(() -> steps.updatePurposeMetadata(
+                UserRole.ADMIN, Tenant.COMUNE_DI_COMUN_NUOVO, DataTable.create(List.of(
+                        List.of("campo", "valore"), List.of("isFreeOfCharge", "yes")))))
+                .isInstanceOf(IllegalArgumentException.class)
+                .hasMessageContaining("Valore booleano non valido");
+
+        assertThatThrownBy(() -> steps.updatePurposeMetadata(
+                UserRole.ADMIN, Tenant.COMUNE_DI_COMUN_NUOVO, DataTable.create(List.of(
+                        List.of("campo", "valore"), List.of("dailyCalls", "many")))))
+                .isInstanceOf(IllegalArgumentException.class)
+                .hasMessageContaining("Valore intero non valido");
+
+        verifyNoInteractions(interopJourney, useCase);
     }
 
     @ParameterizedTest

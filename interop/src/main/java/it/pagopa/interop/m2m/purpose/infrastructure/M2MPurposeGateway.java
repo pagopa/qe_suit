@@ -63,8 +63,11 @@ public class M2MPurposeGateway implements PurposeGateway {
     }
 
     @Override
-    public Purpose updatePurposeMetadata(PurposeRef purposeRef, String name, String description) {
-        return restClient.updatePurposeMetadata(purposeRef.id(), name, description)
+    public Purpose updatePurposeMetadata(
+            PurposeRef purposeRef, String name, String description,
+            Boolean isFreeOfCharge, String freeOfChargeReason, Integer dailyCalls) {
+        return restClient.updatePurposeMetadata(
+                        purposeRef.id(), name, description, isFreeOfCharge, freeOfChargeReason, dailyCalls)
                 .withPolling(PollingStrategy.UNTIL_SUCCESS)
                 .map(ignored -> getPurpose(purposeRef))
                 .updateContext()
@@ -72,8 +75,11 @@ public class M2MPurposeGateway implements PurposeGateway {
     }
 
     @Override
-    public Purpose updateReversePurposeMetadata(PurposeRef purposeRef, String name, String description) {
-        return restClient.updateReversePurposeMetadata(purposeRef.id(), name, description)
+    public Purpose updateReversePurposeMetadata(
+            PurposeRef purposeRef, String name, String description,
+            Boolean isFreeOfCharge, String freeOfChargeReason, Integer dailyCalls) {
+        return restClient.updateReversePurposeMetadata(
+                        purposeRef.id(), name, description, isFreeOfCharge, freeOfChargeReason, dailyCalls)
                 .withPolling(PollingStrategy.UNTIL_SUCCESS)
                 .map(ignored -> getPurpose(purposeRef))
                 .updateContext()
@@ -81,13 +87,19 @@ public class M2MPurposeGateway implements PurposeGateway {
     }
 
     @Override
-    public void tryToUpdatePurposeMetadata(PurposeRef purposeRef, String name, String description) {
-        restClient.updatePurposeMetadata(purposeRef.id(), name, description).withoutPolling();
+    public void tryToUpdatePurposeMetadata(
+            PurposeRef purposeRef, String name, String description,
+            Boolean isFreeOfCharge, String freeOfChargeReason, Integer dailyCalls) {
+        restClient.updatePurposeMetadata(
+                purposeRef.id(), name, description, isFreeOfCharge, freeOfChargeReason, dailyCalls).withoutPolling();
     }
 
     @Override
-    public void tryToUpdateReversePurposeMetadata(PurposeRef purposeRef, String name, String description) {
-        restClient.updateReversePurposeMetadata(purposeRef.id(), name, description).withoutPolling();
+    public void tryToUpdateReversePurposeMetadata(
+            PurposeRef purposeRef, String name, String description,
+            Boolean isFreeOfCharge, String freeOfChargeReason, Integer dailyCalls) {
+        restClient.updateReversePurposeMetadata(
+                purposeRef.id(), name, description, isFreeOfCharge, freeOfChargeReason, dailyCalls).withoutPolling();
     }
 
     @Override
