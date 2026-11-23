@@ -23,6 +23,10 @@ public interface PurposeTemplateGateway extends Plugin<Channel> {
 
     void shouldFailToUpdateMetadataAsMalformed();
 
+    void shouldFailToUpdateMetadataAsForbidden();
+
+    void shouldFailToUpdateMetadataAsConflict();
+
     PurposeTemplate createPurposeTemplate(
             Tenant targetTenant, RiskAnalysisForm riskAnalysisForm, RiskAnalysisFormConfig config);
 

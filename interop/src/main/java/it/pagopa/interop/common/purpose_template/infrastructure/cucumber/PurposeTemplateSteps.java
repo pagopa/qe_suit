@@ -139,6 +139,16 @@ public class PurposeTemplateSteps {
         purposeTemplateUseCase.shouldFailToUpdateMetadataAsMalformed();
     }
 
+    @Then("la richiesta di modifica dei metadati del template finalità fallisce per conflitto di risorsa")
+    public void shouldFailToUpdatePurposeTemplateMetadataAsConflict() {
+        purposeTemplateUseCase.shouldFailToUpdateMetadataAsConflict();
+    }
+
+    @Then("la richiesta di modifica dei metadati del template finalità fallisce come operazione vietata")
+    public void shouldFailToUpdatePurposeTemplateMetadataAsForbidden() {
+        purposeTemplateUseCase.shouldFailToUpdateMetadataAsForbidden();
+    }
+
     private MetadataUpdate readMetadataUpdate(PurposeTemplate purposeTemplate, DataTable dataTable) {
         List<List<String>> rows = dataTable.cells();
         if (rows.size() < 2 || (!rows.get(0).equals(List.of("campo", "valore unico"))

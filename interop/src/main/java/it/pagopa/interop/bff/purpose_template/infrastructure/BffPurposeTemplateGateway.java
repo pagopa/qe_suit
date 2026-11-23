@@ -49,6 +49,26 @@ public class BffPurposeTemplateGateway implements PurposeTemplateGateway {
     }
 
     @Override
+    public void shouldFailToUpdateMetadataAsForbidden() {
+        assertThat(lastApiResponseStore.getLastResponse())
+                .as("Risposta al tentativo di modifica dei metadati del template finalità")
+                .isNotNull()
+                .extracting(ApiResponse::getStatusCode)
+                .as("Modifica dei metadati del template finalità vietata")
+                .isEqualTo(403);
+    }
+
+    @Override
+    public void shouldFailToUpdateMetadataAsConflict() {
+        assertThat(lastApiResponseStore.getLastResponse())
+                .as("Risposta al tentativo di modifica dei metadati del template finalità")
+                .isNotNull()
+                .extracting(ApiResponse::getStatusCode)
+                .as("Modifica dei metadati del template finalità in conflitto")
+                .isEqualTo(409);
+    }
+
+    @Override
     public PurposeTemplate getPurposeTemplate(UUID purposeTemplateId) {
         return restClient.getPurposeTemplate(purposeTemplateId)
                 .withPolling(PollingStrategy.UNTIL_SUCCESS)

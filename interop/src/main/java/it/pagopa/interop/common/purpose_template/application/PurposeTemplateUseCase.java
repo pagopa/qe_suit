@@ -48,6 +48,14 @@ public class PurposeTemplateUseCase {
         purposeTemplateGateway.shouldFailToUpdateMetadataAsMalformed();
     }
 
+    public void shouldFailToUpdateMetadataAsForbidden() {
+        purposeTemplateGateway.shouldFailToUpdateMetadataAsForbidden();
+    }
+
+    public void shouldFailToUpdateMetadataAsConflict() {
+        purposeTemplateGateway.shouldFailToUpdateMetadataAsConflict();
+    }
+
     /**
      * Crea (con l'identità corrente come creatore) un purpose template DRAFT per il tenant target,
      * con risposte di riferimento e configurazione per distinguere suggerimenti e valori fissi.
