@@ -17,6 +17,7 @@ import it.pagopa.send.web.notification_creation.infrastructure.page.component.De
 import it.pagopa.send.web.notification_creation.infrastructure.page.component.DocumentazioneStep;
 import it.pagopa.send.web.notification_creation.infrastructure.page.component.ExitDialog;
 import it.pagopa.send.web.notification_creation.infrastructure.page.component.InformazioniPreliminariStep;
+import it.pagopa.send.web.notification_creation.infrastructure.page.component.PaymentDetailStep;
 import it.pagopa.utils.async.PollingUtils;
 import org.assertj.core.api.Assertions;
 
@@ -54,6 +55,9 @@ public interface CreateNotificationPage extends Page, CreateNotificationForm {
 
     @XPath("//*[@id=\"root\"]/div[1]/div/main/div/div/div/form")
     DettaglioPosizioneDebitoriaStep dettaglioPosizioneDebitoriaStep();
+
+    @XPath("//*[@id=\"root\"]/div[1]/div/main/div/div/div/form")
+    PaymentDetailStep paymentDetailStep();
 
     @XPath("//*[@id=\"root\"]/div[1]/div/main/div/div/div/form")
     DocumentazioneStep documentazioneStep();

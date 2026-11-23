@@ -60,6 +60,7 @@ public class BffLegalNotificationGateway implements LegalNotificationGateway {
     @Override
     public void sendNotification(User sender, NotificationStatus targetStatus) {
         requestFactory.applySender(request, sender);
+        requestFactory.applyPaymentAttachments(request);
 
         NewNotificationRequestV26 bffRequest = mapper.toBffRequest(request);
         BffNotificationStatus bffTargetStatus = mapper.toBffStatus(targetStatus);

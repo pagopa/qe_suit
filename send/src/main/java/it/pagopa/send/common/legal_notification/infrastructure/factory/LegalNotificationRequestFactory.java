@@ -98,8 +98,8 @@ public class LegalNotificationRequestFactory {
 
     /**
      * Risolve un destinatario (identità, indirizzo/domicilio già decisi da {@link RecipientSpec},
-     * pagamenti con posizione debitoria e allegato reali) pronto per essere aggiunto alla request
-     * in preparazione.
+     * pagamenti con la posizione debitoria reale) pronto per essere aggiunto alla request in
+     * preparazione; gli allegati dei pagamenti si caricano a parte con {@link #applyPaymentAttachments}.
      */
     public ResolvedRecipient resolveRecipient(RecipientSpec spec) {
         User recipient = spec.recipient();
@@ -111,6 +111,20 @@ public class LegalNotificationRequestFactory {
                 .toList();
 
         return new ResolvedRecipient(recipient.getType(), taxId, denomination, spec.physicalAddress(), spec.digitalDomicile(), resolvedPayments);
+    }
+
+    /**
+     * Carica con il preload del BFF gli allegati dei pagamenti dei destinatari (PDF dell'avviso pagoPA, metadati
+     * dell'F24): serve solo al canale che invia la request via API (sul portale si caricano dalla procedura guidata).
+     */
+    public void applyPaymentAttachments(LegalNotificationCreationRequest request) {
+        List<ResolvedRecipient> recipients = request.getRecipients().stream()
+                .map(recipient -> new ResolvedRecipient(recipient.type(), recipient.taxId(), recipient.denomination(),
+                        recipient.physicalAddress(), recipient.digitalDomicile(),
+                        recipient.payments().stream().map(this::withAttachment).toList()))
+                .toList();
+        request.clearRecipients();
+        recipients.forEach(request::addRecipient);
     }
 
     /**
@@ -144,11 +158,19 @@ public class LegalNotificationRequestFactory {
 
     private ResolvedPagoPaPayment buildPagoPaPayment(PagoPaPaymentSpec spec, String denomination, String taxId) {
         String noticeCode = "3" + debtPositionService.createDebtPosition(PAGOPA_TEST_CREDITOR_TAX_ID, denomination, taxId, spec.amount());
-        return new ResolvedPagoPaPayment(noticeCode, PAGOPA_TEST_CREDITOR_TAX_ID, buildAttachment());
+        return new ResolvedPagoPaPayment(noticeCode, PAGOPA_TEST_CREDITOR_TAX_ID, null);
     }
 
     private ResolvedF24Payment buildF24Payment(F24PaymentSpec spec) {
-        return new ResolvedF24Payment(spec.title(),
+        return new ResolvedF24Payment(spec.title(), null);
+    }
+
+    private ResolvedPayment withAttachment(ResolvedPayment payment) {
+        if (payment instanceof ResolvedPagoPaPayment pagoPa) {
+            return new ResolvedPagoPaPayment(pagoPa.noticeCode(), pagoPa.creditorTaxId(), buildAttachment());
+        }
+        ResolvedF24Payment f24 = (ResolvedF24Payment) payment;
+        return new ResolvedF24Payment(f24.title(),
                 toDocumentRef(documentPreloadService.preloadF24Metadata("f24-" + UUID.randomUUID()), F24_METADATA_CONTENT_TYPE));
     }
 
