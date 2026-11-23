@@ -10,6 +10,7 @@ import it.pagopa.send.common.journey.application.SendJourney;
 import it.pagopa.send.common.kernel.context.CurrentUserSession;
 import it.pagopa.send.common.legal_notification.application.LegalNotificationUseCase;
 import it.pagopa.send.common.legal_notification.domain.LegalNotificationDomain;
+import it.pagopa.send.common.legal_notification.domain.LegalNotificationRequestOutcome;
 import it.pagopa.send.common.legal_notification.domain.NotificationStatus;
 import it.pagopa.send.common.legal_notification.infrastructure.factory.RecipientSpecFactory;
 import it.pagopa.send.common.user.domain.User;
@@ -55,10 +56,24 @@ public class LegalNotificationSteps {
         sendJourney.sendNotification(currentUserSession.getUser(), NotificationStatus.ACCEPTED);
     }
 
+    /** Invia la notifica predisposta con dati non conformi: la validazione la deve rifiutare (REFUSED). */
+    @When("la notifica non conforme viene sottomessa")
+    public void submitNonCompliantNotification() {
+        sendJourney.sendNotification(currentUserSession.getUser(), NotificationStatus.REFUSED);
+    }
+
     /** Attende lo stato dell'ultima notifica, creata con gli step standard o con uno step che usa il Command. */
     @And("la notifica raggiunge lo stato {string}")
     public void waitForNotificationStatus(String targetStatus) {
         sendJourney.waitForNotificationStatus(NotificationStatus.fromValue(targetStatus));
+    }
+
+    /** La richiesta dell'ultima notifica sottomessa è stata rifiutata, con il codice d'errore che ne è la causa. */
+    @Then("la richiesta di notifica risulta rifiutata con l'errore {string}")
+    public void assertRequestRefused(String errorCode) {
+        LegalNotificationRequestOutcome outcome = entityStore.getLastOrThrow(LegalNotificationRequestOutcome.class);
+        Assertions.assertThat(outcome.status()).isEqualTo(NotificationStatus.REFUSED);
+        Assertions.assertThat(outcome.errorCodes()).contains(errorCode);
     }
 
     @Then("la notifica legale creata è in stato {string}")
