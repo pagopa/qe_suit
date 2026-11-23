@@ -155,120 +155,115 @@ Feature: Modifica dei metadati dei template finalità
 
   @work-item:QA-19036
   @channel:Given=BFF,When=BFF,Then=BFF
-  Scenario Outline: [PURPOSE_TEMPLATE_METADATA_PROTECTION_2] - Rifiuto atomico di campi operativi non modificabili
-  Dato una risorsa fuori bozza con configurazione operativa,
-  quando l’attore invia un metadato valido insieme a un campo operativo vietato,
-  allora il sistema rifiuta l’aggiornamento anche quando il campo operativo conserva il valore precedente.
+  @channel:Given=BFF,When=M2M,Then=M2M
+  Scenario Outline: [PURPOSE_TEMPLATE_METADATA_PROTECTION_2] - Ripetizione parziale dei metadati correnti della richiesta di modifica di un template finalità senza effetti operativi
+  Data un template finalità modificabile da un ruolo autorizzato,
+  quando la modifica viene inviata con metadati già presenti,
+  allora la richiesta ha successo senza modificare versioni, stati o relazioni.
 
-    Given un template finalità "TP-1" creato dal Comune di Milano con le seguenti finalità derivate:
-      | alias | stato  |
-      | P-1   | ACTIVE  |
-    When un admin del Comune di Milano richiede la modifica dei metadati della risorsa "TP-1" insieme a un campo operativo vietato <variazione>
-    Then la modifica della risorsa "TP-1" viene rifiutata
-    And la risorsa "TP-1" conserva metadati, stati, versioni e relazioni iniziali
-
-    Examples:
-      | variazione           |
-      | con valore nuovo     |
-      | con valore invariato |
-
-  @work-item:QA-19036
-  @channel:Given=BFF,When=BFF,Then=BFF
-  Scenario: [PURPOSE_TEMPLATE_METADATA_PROTECTION_3] - Ripetizione dei metadati correnti senza effetti operativi
-  Dato una risorsa i cui metadati sono modificabili,
-  quando l’attore ripete una modifica già applicata,
-  allora la ripetizione ha successo senza modificare versioni stati o relazioni.
-
-    Given un template finalità "TP-1" creato dal Comune di Milano con le seguenti finalità derivate:
-      | alias | stato  |
-      | P-1   | DRAFT  |
-    When un admin del Comune di Milano aggiorna i metadati della risorsa "TP-1" con nuovi valori validi
-    And un admin del Comune di Milano ripete gli stessi valori per la risorsa "TP-1"
-    Then la ripetizione della modifica della risorsa "TP-1" viene accettata
-    And la risorsa "TP-1" conserva stati, versioni e relazioni
-
-  @work-item:QA-19036
-  @channel:Given=BFF,When=BFF,Then=BFF
-  Scenario: [PURPOSE_TEMPLATE_METADATA_PROTECTION_4] - Valori modificati e invariati nella stessa richiesta
-  Dato una risorsa con metadati già valorizzati,
-  quando l’attore modifica un campo e conferma esplicitamente il valore di un altro,
-  allora il sistema applica solo il valore modificato senza alterare dati operativi.
-
-    Given un template finalità "TP-1" creato dal Comune di Milano con le seguenti finalità derivate:
-      | alias | stato  |
-      | P-1   | DRAFT  |
-    When un admin del Comune di Milano richiede la modifica di un metadato della risorsa "TP-1" confermando gli altri valori correnti
-    Then la risorsa "TP-1" presenta il metadato aggiornato
-    And la risorsa "TP-1" conserva stati, versioni, relazioni e metadati invariati
-
-  @work-item:QA-19036
-  @channel:Given=BFF,When=BFF,Then=BFF
-  Scenario Outline: [PURPOSE_TEMPLATE_METADATA_PROTECTION_5] - Impossibilità di modificare direttamente metadati di una finalità derivata
-  Dato una finalità derivata da un template,
-  quando il fruitore tenta di aggiornarne i metadati governati dal template,
-  allora la finalità e il template rimangono invariati.
-
-    Given una finalità "P-1" di PagoPA derivata dal template finalità "TP-1"
-    When un admin di PagoPA richiede la modifica dei metadati della finalità "P-1":
-      | campo   | valore   |
-      | <campo> | <valore> |
-    Then la modifica dei metadati della finalità "P-1" viene rifiutata
-    And la finalità "P-1" e il template finalità "TP-1" conservano i metadati iniziali
+    Given un template finalità creato dal Comune di Comun Nuovo in stato <stato>
+    And un admin del Comune di Comun Nuovo modifica i metadati del template finalità:
+      | campo       | valore                |
+      | descrizione | descrizione esistente |
+    And i dati del template finalità allo stato attuale appuntati come riferimento
+    When un admin del Comune di Comun Nuovo modifica i metadati del template finalità:
+      | campo       | valore                |
+      | descrizione | descrizione esistente |
+    Then il template finalità conserva lo stato e i dati di riferimento
 
     Examples:
-      | campo       | valore                               |
-      | titolo      | Nuovo titolo della finalità          |
-      | descrizione | Nuova descrizione della finalità     |
+      | stato      |
+      | in bozza   |
+      | pubblicato |
 
   @work-item:QA-19036
   @channel:Given=BFF,When=BFF,Then=BFF
-  Scenario: [PURPOSE_TEMPLATE_METADATA_UNIQUENESS_1] - Rifiuto della rinomina in conflitto per un template finalità
-  Dato due risorse nello stesso ambito di unicità con nomi distinti,
-  quando l’attore rinomina una risorsa usando il nome dell’altra e una descrizione valida,
-  allora la modifica è respinta integralmente lasciando intatte entrambe le risorse.
+  @channel:Given=BFF,When=M2M,Then=M2M
+  Scenario Outline: [PURPOSE_TEMPLATE_METADATA_UNIQUENESS_1] - Aggiornamento nome template finalità con stesso nome di un altro template rifiutato
 
-    Given due template finalità "TP-1" e "TP-2" nel medesimo ambito di unicità
-    When un admin del Comune di Milano richiede di assegnare alla risorsa "TP-1" il nome di "TP-2" e una nuova descrizione
-    Then la modifica della risorsa "TP-1" viene rifiutata
-    And le risorse "TP-1" e "TP-2" conservano tutti i dati iniziali
+    Given un template finalità creato dal Comune di Comun Nuovo in stato <stato>
+    And un admin del Comune di Comun Nuovo tenta di modificare i metadati del template finalità:
+      | campo       | valore         |
+      | nome        | nome esistente |
+    And un template finalità creato dal Comune di Comun Nuovo in stato <stato>
+    And i dati del template finalità allo stato attuale appuntati come riferimento
+    When un admin del Comune di Comun Nuovo tenta di modificare i metadati del template finalità:
+      | campo       | valore         |
+      | nome        | nome esistente |
+    Then la richiesta di modifica dei metadati del template finalità fallisce per conflitto di risorsa
+    And il template finalità conserva lo stato e i dati di riferimento
 
-  @work-item:QA-19036
-  @channel:Given=BFF,When=BFF,Then=BFF
-  Scenario: [PURPOSE_TEMPLATE_METADATA_UNIQUENESS_2] - Unicità non aggirabile con differenze di maiuscole e minuscole per un template finalità
-  Dato due risorse nello stesso ambito di unicità,
-  quando l’attore richiede un nome che coincide con quello dell’altra salvo le maiuscole,
-  allora la rinomina viene rifiutata senza applicare anche la descrizione valida.
-
-    Given due template finalità "TP-1" e "TP-2" nel medesimo ambito di unicità
-    When un admin del Comune di Milano richiede per "TP-1" il nome di "TP-2" cambiandone soltanto le maiuscole e una nuova descrizione
-    Then la modifica della risorsa "TP-1" viene rifiutata
-    And le risorse "TP-1" e "TP-2" conservano tutti i dati iniziali
-
-  @work-item:QA-19036
-  @channel:Given=BFF,When=BFF,Then=BFF
-  Scenario: [PURPOSE_TEMPLATE_METADATA_UNIQUENESS_3] - Omonimia consentita tra template finalità in ambiti distinti
-  Dato due risorse in ambiti di unicità distinti,
-  quando l’attore assegna alla prima il nome della seconda,
-  allora il sistema consente la rinomina e non modifica l’altra risorsa.
-
-    Given due template finalità "TP-1" e "TP-2" in ambiti di unicità distinti
-    When un admin del Comune di Milano richiede di assegnare alla risorsa "TP-1" il nome di "TP-2"
-    Then la rinomina della risorsa "TP-1" viene accettata
-    And la risorsa "TP-2" conserva tutti i dati iniziali
-
-  @work-item:QA-19036
-  @channel:Given=BFF,When=BFF,Then=BFF
-  Scenario Outline: [PURPOSE_TEMPLATE_METADATA_VALIDATION_1] - Rispetto dei limiti di lunghezza dei metadati
-  Dato una risorsa modificabile con un campo soggetto a limiti di lunghezza,
-  quando l’attore propone un testo alla lunghezza di confine,
-  allora il sistema accetta i valori ammessi e rifiuta gli altri senza modifiche parziali.
-
-    Given un template finalità "TP-1" del Comune di Milano modificabile nei metadati
-    When un admin del Comune di Milano richiede un valore di <lunghezza> caratteri per il campo <campo> della risorsa "TP-1"
-    Then la modifica della risorsa "TP-1" ha esito <esito>
-    And in caso di rifiuto la risorsa "TP-1" conserva tutti i dati iniziali
+    When un admin del Comune di Comun Nuovo tenta di modificare i metadati del template finalità:
+      | campo       | valore         |
+      | nome        | NOME Esistente |
+    Then la richiesta di modifica dei metadati del template finalità fallisce per conflitto di risorsa
+    And il template finalità conserva lo stato e i dati di riferimento
 
     Examples:
-      | campo       | lunghezza | esito     |
-      | titolo      | 60        | accettata |
-      | descrizione | 251       | rifiutata |
+      | stato      |
+      | in bozza   |
+      | pubblicato |
+
+  @work-item:QA-19036
+  @channel:Given=BFF,When=BFF,Then=BFF
+  Scenario: [PURPOSE_TEMPLATE_METADATA_VALIDATION_1] - Aggiornamento metadati di un template finalità non ammesso ai ruoli esclusi o ad altri enti
+  Dato un template finalità, se un ruolo non autorizzato (api, api,security, security, support, reviewer, viewer)
+  tenta di aggiornare i metadati, o un admin di un altro ente,
+  allora la richiesta di modifica risulta vietata.
+
+    Given un template finalità creato dal Comune di Comun Nuovo in stato pubblicato
+    And i dati del template finalità allo stato attuale appuntati come riferimento
+    When un api del Comune di Comun Nuovo tenta di modificare i metadati del template finalità:
+      | campo       | valore unico      |
+      | nome        | primo nome        |
+      | descrizione | prima descrizione |
+    Then la richiesta di modifica dei metadati del template finalità fallisce come operazione vietata
+    And un admin del Comune di Comun Nuovo
+    And il template finalità conserva lo stato e i dati di riferimento
+
+    When un api,security del Comune di Comun Nuovo tenta di modificare i metadati del template finalità:
+      | campo       | valore unico      |
+      | nome        | primo nome        |
+      | descrizione | prima descrizione |
+    Then la richiesta di modifica dei metadati del template finalità fallisce come operazione vietata
+    And un admin del Comune di Comun Nuovo
+    And il template finalità conserva lo stato e i dati di riferimento
+
+    When un security del Comune di Comun Nuovo tenta di modificare i metadati del template finalità:
+      | campo       | valore unico      |
+      | nome        | primo nome        |
+      | descrizione | prima descrizione |
+    Then la richiesta di modifica dei metadati del template finalità fallisce come operazione vietata
+    And un admin del Comune di Comun Nuovo
+    And il template finalità conserva lo stato e i dati di riferimento
+
+    When un support del Comune di Comun Nuovo tenta di modificare i metadati del template finalità:
+      | campo       | valore unico      |
+      | nome        | primo nome        |
+      | descrizione | prima descrizione |
+    Then la richiesta di modifica dei metadati del template finalità fallisce come operazione vietata
+    And un admin del Comune di Comun Nuovo
+    And il template finalità conserva lo stato e i dati di riferimento
+
+    When un reviewer del Comune di Comun Nuovo tenta di modificare i metadati del template finalità:
+      | campo       | valore unico      |
+      | nome        | primo nome        |
+      | descrizione | prima descrizione |
+    Then la richiesta di modifica dei metadati del template finalità fallisce come operazione vietata
+    And un admin del Comune di Comun Nuovo
+    And il template finalità conserva lo stato e i dati di riferimento
+
+    When un viewer del Comune di Comun Nuovo tenta di modificare i metadati del template finalità:
+      | campo       | valore unico      |
+      | nome        | primo nome        |
+      | descrizione | prima descrizione |
+    Then la richiesta di modifica dei metadati del template finalità fallisce come operazione vietata
+    And un admin del Comune di Comun Nuovo
+    And il template finalità conserva lo stato e i dati di riferimento
+
+    When un admin del Comune di Pozzallo tenta di modificare i metadati del template finalità:
+      | campo       | valore unico      |
+      | nome        | primo nome        |
+      | descrizione | prima descrizione |
+    Then un admin del Comune di Comun Nuovo
+    And la richiesta di modifica dei metadati del template finalità fallisce come operazione vietata
