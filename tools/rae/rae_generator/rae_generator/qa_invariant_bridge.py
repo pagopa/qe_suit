@@ -14,7 +14,7 @@ def _key(row):
             str(row.get('id_test', '')).strip().casefold())
 
 
-def build_learning(history):
+def build_learning(history, ignore_rules=None):
     indexed = {_key(row): row for row in history if row.get('id_test') and row.get('error_log')}
     parent = {k: k for k in indexed}
 
@@ -63,7 +63,7 @@ def build_learning(history):
         for row in rows:
             try:
                 engine.approve(Approval(
-                    Observation(suite, test, str(row['error_log'])),
+                    Observation(suite, test, ignore_rules.normalize(str(row['error_log'])) if ignore_rules else str(row['error_log'])),
                     ticket, group_id, 'approved-history', '|'.join(_key(row))))
             except ValueError:
                 break
@@ -73,7 +73,7 @@ def build_learning(history):
     return engine, candidates
 
 
-def evaluate(engine, candidates, test_id, error, suite):
+def evaluate(engine, candidates, test_id, error, suite, ignore_rules=None):
     """Return (status, historical candidate, diagnostics) or None if no QA group.
 
     A conservative QA result vetoes any more permissive Drain3 auto-match.
@@ -81,7 +81,7 @@ def evaluate(engine, candidates, test_id, error, suite):
     if not any(s == suite and t.casefold() == test_id.strip().casefold()
                for s, t, _ in candidates):
         return None
-    decision = engine.classify(Observation(suite, test_id, error))
+    decision = engine.classify(Observation(suite, test_id, ignore_rules.normalize(error) if ignore_rules else error))
     historical = candidates.get((suite, test_id, decision.group_id)) if decision.group_id else None
     if historical is None and decision.status == 'proposed' and decision.group_id:
         historical = next((r for (s, t, gid), r in candidates.items()
