@@ -49,8 +49,8 @@ Feature: Modifica dei metadati delle finalità
   allora la modifica viene applicata senza alterare lo stato e i dati non modificati.
 
     Given i seguenti e-service pubblicati:
-      | alias | erogatore        | nome                 | modalità  |
-      | ES-1  | Comune di Milano | E-service Notificato | ricezione |
+      | alias | erogatore        | nome           | modalità  |
+      | ES-1  | Comune di Milano | E-service Test | ricezione |
     And l'e-service "ES-1" del Comune di Milano sottoscritto dal Comune di Pozzallo con una richiesta di fruizione attiva
     And l'e-service con una finalità inversa in stato <stato> associata dal Comune di Pozzallo
     And i dati della finalità allo stato attuale appuntati come riferimento
@@ -136,6 +136,7 @@ Feature: Modifica dei metadati delle finalità
 
   @work-item:QA-19036
   @channel:Given=BFF,When=BFF,Then=BFF
+  @channel:Given=BFF,When=M2M,Then=M2M
   Scenario Outline: [PURPOSE_METADATA_PROTECTION_1A] - Rifiuto atomico della richiesta di modifica di una finalità con un metadato valido insieme a un valore non ammesso
   Data una finalità modificabile da un ruolo autorizzato,
   quando la modifica viene inviata con un metadato valido e un altro non valido,
@@ -165,14 +166,15 @@ Feature: Modifica dei metadati delle finalità
 
   @work-item:QA-19036
   @channel:Given=BFF,When=BFF,Then=BFF
+  @channel:Given=BFF,When=M2M,Then=M2M
   Scenario Outline: [PURPOSE_METADATA_PROTECTION_1B] - Rifiuto atomico della richiesta di modifica di una finalità inversa con un metadato valido insieme a un valore non ammesso
   Data una finalità inversa modificabile da un ruolo autorizzato,
   quando la modifica viene inviata con un metadato valido e un altro non valido,
   allora il sistema rifiuta tutta la modifica e mantiene invariata la risorsa.
 
     Given i seguenti e-service pubblicati:
-      | alias | erogatore        | nome                 | modalità  |
-      | ES-1  | Comune di Milano | E-service Notificato | ricezione |
+      | alias | erogatore        | nome           | modalità  |
+      | ES-1  | Comune di Milano | E-service Test | ricezione |
     And l'e-service "ES-1" del Comune di Milano sottoscritto dal Comune di Pozzallo con una richiesta di fruizione attiva
     And l'e-service con una finalità inversa in stato <stato> associata dal Comune di Pozzallo
     And i dati della finalità allo stato attuale appuntati come riferimento
@@ -198,6 +200,7 @@ Feature: Modifica dei metadati delle finalità
 
   @work-item:QA-19036
   @channel:Given=BFF,When=BFF,Then=BFF
+  @channel:Given=BFF,When=M2M,Then=M2M
   Scenario Outline: [PURPOSE_METADATA_PROTECTION_2A] - Ripetizione parziale e completa dei metadati correnti della richiesta di modifica di una finalità senza effetti operativi
   Data una finalità modificabile da un ruolo autorizzato,
   quando la modifica viene inviata con metadati già presenti,
@@ -228,14 +231,15 @@ Feature: Modifica dei metadati delle finalità
 
   @work-item:QA-19036
   @channel:Given=BFF,When=BFF,Then=BFF
+  @channel:Given=BFF,When=M2M,Then=M2M
   Scenario Outline: [PURPOSE_METADATA_PROTECTION_2B] - Ripetizione parziale e completa dei metadati correnti della richiesta di modifica di una finalità inversa senza effetti operativi
   Data una finalità inversa modificabile da un ruolo autorizzato,
   quando la modifica viene inviata con metadati già presenti,
   allora la richiesta ha successo senza modificare versioni stati o relazioni.
 
     Given i seguenti e-service pubblicati:
-      | alias | erogatore        | nome                 | modalità  |
-      | ES-1  | Comune di Milano | E-service Notificato | ricezione |
+      | alias | erogatore        | nome           | modalità  |
+      | ES-1  | Comune di Milano | E-service Test | ricezione |
     And l'e-service "ES-1" del Comune di Milano sottoscritto dal Comune di Pozzallo con una richiesta di fruizione attiva
     And l'e-service con una finalità inversa in stato <stato> associata dal Comune di Pozzallo
     And un admin del Comune di Pozzallo modifica i metadati della finalità:
@@ -262,6 +266,7 @@ Feature: Modifica dei metadati delle finalità
 
   @work-item:QA-19036
   @channel:Given=BFF,When=BFF,Then=BFF
+  @channel:Given=BFF,When=M2M,Then=M2M
   Scenario Outline: [PURPOSE_METADATA_UNIQUENESS_1A] - Aggiornamento nome finalità con stesso nome di un'altra finalità per stesso e-service rifiutato
   Dati un solo e-service e una finalità con metadati già valorizzati,
   quando l'utente aggiorna i metadati inserendo un nome già esistente per una finalità,
@@ -290,14 +295,15 @@ Feature: Modifica dei metadati delle finalità
 
   @work-item:QA-19036
   @channel:Given=BFF,When=BFF,Then=BFF
+  @channel:Given=BFF,When=M2M,Then=M2M
   Scenario Outline: [PURPOSE_METADATA_UNIQUENESS_1B] - Aggiornamento nome finalità inversa con stesso nome di un'altra finalità per stesso e-service rifiutato
   Dati un solo e-service e una finalità inversa con metadati già valorizzati,
   quando l'utente aggiorna i metadati inserendo un nome già esistente per una finalità,
   allora la modifica viene rifiutata per conflitto di risorsa e vengono preservati i dati operativi.
 
     Given i seguenti e-service pubblicati:
-      | alias | erogatore        | nome                 | modalità  | soglia fruitore | soglia totale |
-      | ES-1  | Comune di Milano | E-service Notificato | ricezione | 10              | 20            |
+      | alias | erogatore        | nome           | modalità  | soglia fruitore | soglia totale |
+      | ES-1  | Comune di Milano | E-service Test | ricezione | 10              | 20            |
     And l'e-service "ES-1" del Comune di Milano sottoscritto dal Comune di Pozzallo con una richiesta di fruizione attiva
     And l'e-service con una finalità inversa in stato <stato> associata dal Comune di Pozzallo
     And un admin del Comune di Pozzallo modifica i metadati della finalità:
@@ -318,22 +324,23 @@ Feature: Modifica dei metadati delle finalità
 
   @work-item:QA-19036
   @channel:Given=BFF,When=BFF,Then=BFF
+  @channel:Given=BFF,When=M2M,Then=M2M
   Scenario Outline: [PURPOSE_METADATA_UNIQUENESS_2A] - Aggiornamento nome finalità con stesso nome di un'altra finalità per diversi e-service ammessa
   Dati un e-service e una finalità con metadati già valorizzati,
   quando l'utente aggiorna i metadati inserendo un nome già esistente per una finalità di un altro e-service,
   allora la modifica viene applicata e vengono preservati i dati operativi.
 
     Given i seguenti e-service pubblicati:
-      | alias | erogatore        | nome                 |
-      | ES-1  | Comune di Milano | E-service Notificato |
+      | alias | erogatore        | nome           |
+      | ES-1  | Comune di Milano | E-service Test |
     And l'e-service "ES-1" del Comune di Milano sottoscritto dal Comune di Pozzallo con una richiesta di fruizione attiva
     And l'e-service con una finalità in stato <stato> associata dal Comune di Pozzallo
     And un admin del Comune di Pozzallo modifica i metadati della finalità:
       | campo       | valore            |
       | nome        | primo nome        |
     And i seguenti e-service pubblicati:
-      | alias | erogatore        | nome                 |
-      | ES-2  | Comune di Milano | E-service Notificato |
+      | alias | erogatore        | nome           |
+      | ES-2  | Comune di Milano | E-service Test |
     And l'e-service "ES-2" del Comune di Milano sottoscritto dal Comune di Pozzallo con una richiesta di fruizione attiva
     And l'e-service con una finalità in stato <stato> associata dal Comune di Pozzallo
     And i dati della finalità allo stato attuale appuntati come riferimento
@@ -349,22 +356,23 @@ Feature: Modifica dei metadati delle finalità
 
   @work-item:QA-19036
   @channel:Given=BFF,When=BFF,Then=BFF
+  @channel:Given=BFF,When=M2M,Then=M2M
   Scenario Outline: [PURPOSE_METADATA_UNIQUENESS_2B] - Aggiornamento nome finalità inversa con stesso nome di un'altra finalità per diversi e-service ammessa
   Dati un e-service e una finalità inversa con metadati già valorizzati,
   quando l'utente aggiorna i metadati inserendo un nome già esistente per una finalità di un altro e-service,
   allora la modifica viene applicata e vengono preservati i dati operativi.
 
     Given i seguenti e-service pubblicati:
-      | alias | erogatore        | nome                 | modalità  |
-      | ES-1  | Comune di Milano | E-service Notificato | ricezione |
+      | alias | erogatore        | nome           | modalità  |
+      | ES-1  | Comune di Milano | E-service Test | ricezione |
     And l'e-service "ES-1" del Comune di Milano sottoscritto dal Comune di Pozzallo con una richiesta di fruizione attiva
     And l'e-service con una finalità inversa in stato <stato> associata dal Comune di Pozzallo
     And un admin del Comune di Pozzallo modifica i metadati della finalità:
       | campo       | valore            |
       | nome        | primo nome        |
     And i seguenti e-service pubblicati:
-      | alias | erogatore        | nome                 | modalità  |
-      | ES-2  | Comune di Milano | E-service Notificato | ricezione |
+      | alias | erogatore        | nome           | modalità  |
+      | ES-2  | Comune di Milano | E-service Test | ricezione |
     And l'e-service "ES-2" del Comune di Milano sottoscritto dal Comune di Pozzallo con una richiesta di fruizione attiva
     And l'e-service con una finalità inversa in stato <stato> associata dal Comune di Pozzallo
     And i dati della finalità allo stato attuale appuntati come riferimento
