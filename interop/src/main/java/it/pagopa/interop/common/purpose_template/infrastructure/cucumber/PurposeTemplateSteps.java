@@ -107,11 +107,13 @@ public class PurposeTemplateSteps {
 
     private MetadataUpdate readMetadataUpdate(PurposeTemplate purposeTemplate, DataTable dataTable) {
         List<List<String>> rows = dataTable.cells();
-        if (rows.size() < 2 || !rows.get(0).equals(List.of("campo", "valore unico"))) {
+        if (rows.size() < 2 || (!rows.get(0).equals(List.of("campo", "valore unico"))
+                && !rows.get(0).equals(List.of("campo", "valore")))) {
             throw new IllegalArgumentException(
-                    "La tabella dei metadati del template finalità deve avere le colonne 'campo' e 'valore unico' e almeno un campo"
+                    "La tabella dei metadati del template finalità deve avere le colonne 'campo' e 'valore' o 'valore unico' e almeno un campo"
             );
         }
+        boolean uniqueValues = rows.get(0).equals(List.of("campo", "valore unico"));
 
         String name = purposeTemplate.getTitle();
         String description = purposeTemplate.getDescription();
@@ -129,10 +131,14 @@ public class PurposeTemplateSteps {
                 throw new IllegalArgumentException("Campo metadato template finalità duplicato: " + field);
             }
 
+            String value = row.get(1);
+            if (uniqueValues) {
+                value = withUniqueSuffix(value);
+            }
             switch (field) {
-                case "nome" -> name = withUniqueSuffix(row.get(1));
-                case "descrizione" -> description = withUniqueSuffix(row.get(1));
-                case "destinatari" -> targetDescription = withUniqueSuffix(row.get(1));
+                case "nome" -> name = value;
+                case "descrizione" -> description = value;
+                case "destinatari" -> targetDescription = value;
                 default -> throw new IllegalArgumentException(
                         "Campo metadato template finalità non supportato: " + field);
             }
