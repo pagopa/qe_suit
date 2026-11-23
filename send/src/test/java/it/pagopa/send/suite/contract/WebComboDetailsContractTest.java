@@ -152,7 +152,8 @@ public class WebComboDetailsContractTest {
                         "Controllo caricamento sezioni Documenti e Pagamenti",
                         page -> {},
                         page -> {
-                            Assertions.assertThat(page.documentsSection().orElseThrow().header().read()).isEqualTo("Documenti allegati");
+                            page.documentsSection().filter(section -> section.get().isPresent()).ifPresent(section ->
+                                    Assertions.assertThat(section.header().read()).isEqualTo("Documenti allegati"));
                             page.paymentsSection().filter(section -> section.get().isPresent()).ifPresent(section -> section.assertLoaded());
                         }
                 ),

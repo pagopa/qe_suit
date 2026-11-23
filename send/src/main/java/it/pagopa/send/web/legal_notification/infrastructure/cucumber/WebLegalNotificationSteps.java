@@ -5,6 +5,7 @@ import io.cucumber.java.en.Then;
 import io.cucumber.java.en.When;
 import it.pagopa.application.context.EntityStore;
 import it.pagopa.send.common.user.domain.User;
+import it.pagopa.send.common.legal_notification.domain.LegalNotificationCreationCommand;
 import it.pagopa.send.common.legal_notification.domain.LegalNotificationDomain;
 import it.pagopa.send.common.legal_notification.domain.NotificationStatus;
 import it.pagopa.send.common.journey.infrastructure.LegalNotificationJourneyImpl;
@@ -51,8 +52,7 @@ public class WebLegalNotificationSteps {
         overrides.putAll(recipientOverrides);
         RecipientSpec recipientSpec = recipientSpecFactory.build(recipient, overrides);
 
-        journey.prepareNotification(Map.of())
-                .withRecipient(recipientSpec)
+        journey.prepareNotification(new LegalNotificationCreationCommand().sender(sender).recipient(recipientSpec))
                 .sendNotification(sender, NotificationStatus.ACCEPTED);
 
         log.info("Notifica legale generata: {}", entityStore.getLastOrThrow(LegalNotificationDomain.class));
