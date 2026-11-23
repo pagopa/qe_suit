@@ -7,6 +7,8 @@ import it.frontend.e2e.framework.web.capability.core.Readable;
 import it.frontend.e2e.framework.web.capability.core.Writable;
 import it.frontend.e2e.framework.web.domain.Component;
 import it.pagopa.infrastructure.suit.component.Button;
+import it.pagopa.infrastructure.suit.component.RadioButton;
+import it.pagopa.send.common.legal_notification.domain.LegalNotificationCreationRequest;
 import it.pagopa.send.web.notification_creation.application.NotificationData;
 
 import java.util.List;
@@ -27,6 +29,13 @@ public interface InformazioniPreliminariStep extends Component {
 
     @XPath(".//input[@id='taxonomyCode']")
     Writable<String> taxonomyCode();
+
+    // tipologia di comunicazione fisica: il valore del radio è il nome della tipologia
+    @XPath(".//*[@data-testid='comunicationTypeRadio'][.//input[@value='REGISTERED_LETTER_890']]")
+    RadioButton registeredLetter890();
+
+    @XPath(".//*[@data-testid='comunicationTypeRadio'][.//input[@value='AR_REGISTERED_LETTER']]")
+    RadioButton registeredLetter();
 
     // Group combobox — clicks to open the dropdown
     @XPath(".//*[@id='group']")
@@ -50,6 +59,25 @@ public interface InformazioniPreliminariStep extends Component {
         if (data.getGroup() != null) {
             selectGroup(option -> data.getGroup().equals(option.read()));
         } else if (groupLabel().read().endsWith("*")) {
+            selectGroup(option -> true);
+        }
+    }
+
+    /**
+     * Compila il passo con i dati preliminari della request di dominio, compresa la tipologia di comunicazione
+     * fisica; il gruppo non è ancora noto (dipende dal mittente): se l'ente ha dei gruppi, e quindi è obbligatorio,
+     * si sceglie il primo disponibile.
+     */
+    default void fillFields(LegalNotificationCreationRequest request) {
+        subject().write(request.getSubject());
+        description().write(request.getAbstractText());
+        protocolNumber().write(request.getPaProtocolNumber());
+        taxonomyCode().write(request.getTaxonomyCode());
+        switch (request.getPhysicalCommunication()) {
+            case REGISTERED_LETTER_890 -> registeredLetter890().select();
+            case AR_REGISTERED_LETTER -> registeredLetter().select();
+        }
+        if (groupLabel().read().endsWith("*")) {
             selectGroup(option -> true);
         }
     }

@@ -59,9 +59,9 @@ public class LegalNotificationRequestFactory {
 
     /**
      * Prepara una nuova notifica: compila i campi base (indipendenti dal mittente e dai destinatari) con i
-     * default statici del template, sovrascritti dai soli campi valorizzati nel command, e svuota i destinatari,
-     * che altrimenti
-     * resterebbero dalla notifica precedente quando la richiesta è condivisa (es. tra i contract test).
+     * default statici del template, sovrascritti dai soli campi valorizzati nel command, e svuota destinatari e
+     * documento, che altrimenti resterebbero dalla notifica precedente quando la richiesta è condivisa (es. tra i
+     * contract test); il documento si carica a parte con {@link #applyDocument}.
      */
     public void applyPreliminaryData(LegalNotificationCreationRequest request, LegalNotificationCreationCommand command) {
         NotificationDefaults defaults = defaultsLoader.load();
@@ -70,7 +70,7 @@ public class LegalNotificationRequestFactory {
                 .paProtocolNumber(generateParProtocolNumber())
                 .subject(defaults.subject())
                 .abstractText(defaults.abstractText())
-                .document(buildAttachment())
+                .document(null)
                 .feePolicy(FeePolicy.valueOf(defaults.notificationFeePolicy()))
                 .physicalCommunication(PhysicalCommunicationType.valueOf(defaults.physicalCommunicationType()))
                 .taxonomyCode(defaults.taxonomyCode())
@@ -86,6 +86,14 @@ public class LegalNotificationRequestFactory {
         Optional.ofNullable(command.getSubject()).ifPresent(request::subject);
         Optional.ofNullable(command.getPhysicalCommunication()).ifPresent(request::physicalCommunication);
         Optional.ofNullable(command.getFeePolicy()).ifPresent(request::feePolicy);
+    }
+
+    /**
+     * Carica il documento della notifica con il preload del BFF: serve solo al canale che invia la request via API
+     * (sul portale il documento si carica dalla procedura guidata).
+     */
+    public void applyDocument(LegalNotificationCreationRequest request) {
+        request.document(buildAttachment());
     }
 
     /**

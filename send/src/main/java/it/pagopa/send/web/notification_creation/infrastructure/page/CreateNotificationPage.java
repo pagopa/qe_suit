@@ -6,6 +6,7 @@ import it.frontend.e2e.framework.core.capability.core.Clickable;
 import it.frontend.e2e.framework.web.capability.core.Readable;
 import it.frontend.e2e.framework.web.domain.Page;
 import it.pagopa.infrastructure.suit.component.Button;
+import it.pagopa.send.common.legal_notification.domain.LegalNotificationCreationRequest;
 import it.pagopa.send.web.infrastructure.page.component.ErrorSnackbar;
 import it.pagopa.send.web.login.infrastructure.page.component.OneTrustBanner;
 import it.pagopa.send.web.mittente.infrastructure.page.DashboardPage;
@@ -145,6 +146,10 @@ public interface CreateNotificationPage extends Page, CreateNotificationForm {
 
     default void compileInformazioniPreliminari(NotificationData data) {
        informazioniPreliminariStep().fillFields(data);
+    }
+
+    default void compileInformazioniPreliminari(LegalNotificationCreationRequest request) {
+        informazioniPreliminariStep().fillFields(request);
     }
 
     default void compileDestinatari(NotificationData data) {
