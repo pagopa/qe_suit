@@ -28,6 +28,7 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.ValueSource;
 
+import java.util.Locale;
 import java.util.Map;
 import java.util.UUID;
 import java.util.function.Function;
@@ -44,6 +45,8 @@ class BffEServiceTemplateInstanceGatewayTest {
                 ExpectedErrorMessages.load().text(messageId, "it")));
         var client = mock(ApiClient.class);
         var api = mock(EservicesApi.class);
+        var currentChannel = mock(it.pagopa.infrastructure.channel.CurrentChannel.class);
+        when(currentChannel.getCurrentLanguage()).thenReturn(Locale.ITALIAN);
         var operation = mock(EservicesApi.CreateEServiceInstanceFromTemplateOper.class);
         when(client.eservices()).thenReturn(api);
         when(api.createEServiceInstanceFromTemplate()).thenReturn(operation);
@@ -72,7 +75,7 @@ class BffEServiceTemplateInstanceGatewayTest {
 
         if (status == 400) {
             steps.attemptToCreateTemplateInstanceWithLinkInLabel(template);
-            new BffErrorMessageSteps(responses).assertErrorMessage(messageId, "it");
+            new BffErrorMessageSteps(responses, currentChannel).assertErrorMessage(messageId);
         } else {
             assertThatThrownBy(() -> steps.attemptToCreateTemplateInstanceWithLinkInLabel(template))
                     .isInstanceOf(AssertionError.class);
