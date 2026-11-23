@@ -8,20 +8,25 @@ from yaml.emitter import ScalarAnalysis
 from .history import load_history
 from .progressive import ProgressiveMatcher, analysis_digest
 from .parsers import collect_reports
+from .ignore_rules import IgnoreRules
+from .review_evidence import snapshot  # RAE_REVIEW_PANEL_V1
 
 FIELDS = ('id_test', 'error_log', 'procedure', 'result', 'link_prod_bug', 'link_suite_bug')
 
 
 def create_rae(report_root: Path, history_dir: Path, *, suite: str, environment: str,
                executor: str, source_branch: str, run_url: str, data_ora: str,
-               durata: str) -> dict:
+               durata: str, ignore_rules_path: Path | None = None) -> dict:
     if not re.fullmatch(r'[A-Za-z0-9_.-]+', suite):
         raise ValueError('Runner name non valido')
     if environment not in ('qa', 'dev'):
         raise ValueError('Ambiente non valido')
+    if ignore_rules_path is None:
+        ignore_rules_path = Path(__file__).resolve().parents[1] / 'config' / 'ignore_rules.yaml'
+    rules = IgnoreRules.load(ignore_rules_path)
     failures = collect_reports(report_root)
     history = load_history(history_dir, suite)
-    matcher = ProgressiveMatcher(history) if history and failures else None
+    matcher = ProgressiveMatcher(history, ignore_rules=rules) if history and failures else None
     data = {
         'rae': {'release': '', 'scope': 'NIGHTLY', 'issue_jira': '', 'data_ora': data_ora,
                 'durata': durata, 'numero_ko': len(failures), 'run': run_url,
@@ -30,7 +35,7 @@ def create_rae(report_root: Path, history_dir: Path, *, suite: str, environment:
         'ko_know': [], 'ko': []
     }
     for failure in failures:
-        decision, previous = (matcher.classify(failure.id_test, failure.error_log)
+        decision, previous = (matcher.classify(failure.id_test, failure.error_log, suite=suite)
                               if matcher else ('new', None))
         entry = {'id_test': failure.id_test, 'error_log': failure.error_log}
         for field in FIELDS[2:]:
@@ -43,6 +48,11 @@ def create_rae(report_root: Path, history_dir: Path, *, suite: str, environment:
             }
             if decision == 'proposed':
                 matching['proposed_digest'] = analysis_digest(entry)
+                # Diagnostic snapshot only; never changes classifier decisions.
+                if matcher is not None:
+                    evidence = snapshot(matcher.last_review_reasons)
+                    if evidence:
+                        matching['review_evidence'] = evidence
             entry['matching'] = matching
             logging.info('RAE %s per %s da %s', decision, failure.id_test, previous['_source_file'])
         # The ticket alone can never promote a suggestion to a known KO.

@@ -112,6 +112,7 @@ token:
     garibaldi: ${pn.external.session-token.garibaldi:REPLACE_ME}
     dantealighieri: ${pn.external.session-token.dantealighieri:REPLACE_ME}
     francescopetrarca: ${pn.external.session-token.francescopetrarca:REPLACE_ME}
+    lucioanneoseneca: ${pn.external.session-token.lucioanneoseneca:REPLACE_ME}
     grossini: ${pn.external.session-token.grossini:REPLACE_ME}
     albino63: ${pn.external.session-token.albino63:REPLACE_ME}
     m.curie: ${pn.external.session-token.m.curie:REPLACE_ME}
