@@ -27,7 +27,7 @@ public interface ConsumerPurposeFromTemplateEditPage extends Page {
     @XPath(".//p[normalize-space()='*Campi obbligatori']")
     Label mandatoryFieldsLabel();
 
-    @XPath(".//*[@data-testid='mobileStepper']")
+    @XPath(".//*[@data-testid='desktopWizardStepper']")
     Stepper stepper();
 
     @XPath("//form[@novalidate]")

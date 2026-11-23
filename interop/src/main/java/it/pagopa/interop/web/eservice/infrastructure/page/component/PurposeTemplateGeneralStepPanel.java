@@ -2,7 +2,6 @@ package it.pagopa.interop.web.eservice.infrastructure.page.component;
 
 import it.frontend.e2e.framework.annotation.selector.XPath;
 import it.frontend.e2e.framework.web.domain.Component;
-import it.pagopa.infrastructure.suit.component.Alert;
 import it.pagopa.infrastructure.suit.component.Button;
 import it.pagopa.infrastructure.suit.component.Label;
 import it.pagopa.infrastructure.suit.component.TextField;
@@ -66,8 +65,8 @@ public interface PurposeTemplateGeneralStepPanel extends Component {
     @XPath(".//*[@id='dailyCalls-infoLabel']")
     Label dailyCallsHelpText();
 
-    @XPath(".//*[@role='alert']")
-    Alert thresholdsAlert();
+    @XPath("//div[@role='alert']//span")
+    Label thresholdsAlert();
 
     @XPath(".//div[contains(@class,'MuiAlertTitle-root')]")
     Label thresholdsAlertTitle();

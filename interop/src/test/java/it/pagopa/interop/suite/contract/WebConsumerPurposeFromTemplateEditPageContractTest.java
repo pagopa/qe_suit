@@ -31,7 +31,7 @@ import static org.assertj.core.api.SoftAssertions.assertSoftly;
 @ActiveProfiles(resolver = JunitEnvironmentProfiles.class)
 @SpringBootTest(
         classes = {TestBootApp.class, JunitContextConfig.class, WebJUnitSuitConfig.class},
-        properties = {"channel.web.browser=chrome", "channel.web.headless=false"}
+        properties = {"channel.web.browser=chrome"}
 )
 @TestConstructor(autowireMode = TestConstructor.AutowireMode.ALL)
 @RequiredArgsConstructor
@@ -83,11 +83,19 @@ public class WebConsumerPurposeFromTemplateEditPageContractTest {
                             softly.assertThat(page.mandatoryFieldsLabel().read())
                                     .as("Mandatory fields label")
                                     .isEqualTo("*Campi obbligatori");
-//                            softly.assertThat(page.stepper().steps()).as("Stepper steps must be populated").isNotEmpty();
-//                            Stepper.Step firstStep = page.stepper().steps().get(0);
-//                            softly.assertThat(firstStep.label().read()).as("Step label").isEqualTo("TODO");
-//                            softly.assertThat(firstStep.number().read()).as("Step number").isEqualTo("1");
-//                            softly.assertThat(firstStep.isActive()).as("").isTrue();
+                            softly.assertThat(page.stepper().steps().size())
+                                    .as("Stepper size")
+                                    .isEqualTo(2);
+                            softly.assertThat(page.stepper().steps().get(0).isActiveOnLabel())
+                                    .as("Stepper 1 active")
+                                    .isTrue();
+                            softly.assertThat(page.stepper().steps().get(0).number().read())
+                                    .as("Stepper 1 number")
+                                    .isEqualTo("1");
+                            softly.assertThat(page.stepper().steps().get(0).label().read())
+                                    .as("Stepper 1 label")
+                                    .isEqualTo("Generale");
+
 
                             softly.assertThat(page.generalStepPanel().get().isPresent())
                                     .as("General step panel must be present")
@@ -182,9 +190,9 @@ public class WebConsumerPurposeFromTemplateEditPageContractTest {
                             softly.assertThat(page.generalStepPanel().totalThresholdValue().read())
                                     .as("Daily calls availability value (total)")
                                     .contains("chiamate disponibili su");
-//                            softly.assertThat(page.generalStepPanel().totalThresholdValue().read())
-//                                    .as("TODO ALERT threshold")
-//                                    .isEqualTo("");
+                            softly.assertThat(page.generalStepPanel().thresholdsAlert().read())
+                                    .as("Threshold alert")
+                                    .isEqualTo("Le chiamate disponibili possono variare se l'erogatore riceve altre finalità prima della tua pubblicazione.");
 
                             softly.assertThat(page.generalStepPanel().saveDraftAndContinueButton().read())
                                     .as("Save draft and continue button (first panel)")
@@ -227,6 +235,9 @@ public class WebConsumerPurposeFromTemplateEditPageContractTest {
                             softly.assertThat(page.riskAnalysisStepPanel().institutionalPurposeDetailLabel().read())
                                     .as("Institutional purpose detail label")
                                     .isEqualTo("Specificare il fine perseguito per fini istituzionali che non richiedano prestazioni di elaborazioni aggiuntive*");
+                            softly.assertThat(page.riskAnalysisStepPanel().suggestedAnswersSelector().read())
+                                    .as("Institutional purpose detail value")
+                                    .isNotBlank();
 
                             softly.assertThat(page.riskAnalysisStepPanel().usesPersonalDataLabel().read())
                                     .as("Uses personal data label")
@@ -295,6 +306,15 @@ public class WebConsumerPurposeFromTemplateEditPageContractTest {
                                     .as("Save draft and continue button (second panel)")
                                     .isEqualTo("Salva bozza e prosegui");
 
+                            softly.assertThat(page.stepper().steps().get(1).isActiveOnLabel())
+                                    .as("Stepper 2 active")
+                                    .isTrue();
+                            softly.assertThat(page.stepper().steps().get(1).number().read())
+                                    .as("Stepper 2 number")
+                                    .isEqualTo("2");
+                            softly.assertThat(page.stepper().steps().get(1).label().read())
+                                    .as("Stepper 2 label")
+                                    .isEqualTo("Analisi del rischio");
                         })
                 )
         );

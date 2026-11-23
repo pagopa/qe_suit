@@ -6,6 +6,7 @@ import it.pagopa.infrastructure.suit.component.Alert;
 import it.pagopa.infrastructure.suit.component.Button;
 import it.pagopa.infrastructure.suit.component.Label;
 import it.pagopa.infrastructure.suit.component.RadioButton;
+import it.pagopa.infrastructure.suit.component.TextField;
 
 public interface PurposeTemplateRiskAnalysisStepPanel extends Component {
 
@@ -45,7 +46,7 @@ public interface PurposeTemplateRiskAnalysisStepPanel extends Component {
     Label institutionalPurposeDetailLabel();
 
     @XPath(".//input[@name='suggestedValueConsumer.institutionalPurpose']/preceding-sibling::*[@role='combobox']")
-    Component suggestedAnswersSelector();
+    TextField suggestedAnswersSelector();
 
     // -------------------------------------------------
     // QUESTION 3
