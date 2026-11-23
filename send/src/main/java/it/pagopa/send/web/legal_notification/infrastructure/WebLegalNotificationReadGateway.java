@@ -1,7 +1,7 @@
 package it.pagopa.send.web.legal_notification.infrastructure;
 
 import it.frontend.e2e.framework.web.WebPresentationGateway;
-import it.pagopa.infrastructure.suit.component.TableCell;
+import it.pagopa.infrastructure.suit.component.Table;
 import it.pagopa.infrastructure.suit.component.TableRow;
 import it.pagopa.send.common.legal_notification.domain.LegalNotificationDomain;
 import it.pagopa.send.web.mittente.infrastructure.page.DashboardPage;
@@ -22,9 +22,10 @@ import java.util.Optional;
 @RequiredArgsConstructor
 public class WebLegalNotificationReadGateway {
 
-    private static final int SUBJECT_COLUMN = 2;
-    private static final int IUN_COLUMN = 3;
-    private static final int STATUS_COLUMN = 5;
+    // le colonne si cercano per intestazione: "Gruppi" compare solo in alcuni casi e sposta le successive
+    private static final String SUBJECT_HEADER = "Oggetto";
+    private static final String IUN_HEADER = "Codice IUN";
+    private static final String STATUS_HEADER = "Stato";
 
     private final WebPresentationGateway browser;
 
@@ -46,10 +47,19 @@ public class WebLegalNotificationReadGateway {
         dashboard.navigateTo();
         dashboard.assertLoaded();
         dashboard.searchNotification(filters);
-        return dashboard.notificationsTable().tBody().rows().stream()
+        Table table = dashboard.notificationsTable();
+        List<String> headers = table.getColumnHeaders();
+        int subject = column(headers, SUBJECT_HEADER);
+        int iun = column(headers, IUN_HEADER);
+        int status = column(headers, STATUS_HEADER);
+        return table.tBody().rows().stream()
                 .map(TableRow::cells)
-                .filter(cells -> cells.size() > STATUS_COLUMN)
-                .map(WebLegalNotificationReadGateway::toNotification)
+                .filter(cells -> cells.size() == headers.size())
+                .map(cells -> LegalNotificationDomain.builder()
+                        .iun(cells.get(iun).read())
+                        .subject(cells.get(subject).read())
+                        .status(NotificationStatusLabel.find(cells.get(status).read()).orElse(null))
+                        .build())
                 .toList();
     }
 
@@ -65,11 +75,11 @@ public class WebLegalNotificationReadGateway {
                 .findFirst();
     }
 
-    private static LegalNotificationDomain toNotification(List<TableCell> cells) {
-        return LegalNotificationDomain.builder()
-                .iun(cells.get(IUN_COLUMN).read())
-                .subject(cells.get(SUBJECT_COLUMN).read())
-                .status(NotificationStatusLabel.find(cells.get(STATUS_COLUMN).read()).orElse(null))
-                .build();
+    private static int column(List<String> headers, String header) {
+        int index = headers.indexOf(header);
+        if (index < 0) {
+            throw new IllegalStateException("Colonna " + header + " non presente tra le notifiche della PA: " + headers);
+        }
+        return index;
     }
 }
