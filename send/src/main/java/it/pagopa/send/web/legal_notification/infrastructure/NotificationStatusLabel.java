@@ -13,6 +13,7 @@ public enum NotificationStatusLabel {
     ACCEPTED("Depositata", NotificationStatus.ACCEPTED),
     DELIVERING("Invio in corso", NotificationStatus.DELIVERING),
     DELIVERED("Consegnata", NotificationStatus.DELIVERED),
+    VIEWED("Avvenuto accesso", NotificationStatus.VIEWED),
     EFFECTIVE_DATE("Perfezionata per decorrenza termini", NotificationStatus.EFFECTIVE_DATE),
     CANCELLATION_IN_PROGRESS("Annullamento in corso", NotificationStatus.CANCELLATION_IN_PROGRESS),
     CANCELLED("Annullata", NotificationStatus.CANCELLED);

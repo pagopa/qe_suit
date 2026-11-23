@@ -23,4 +23,9 @@ public enum NotificationStatus {
     public static NotificationStatus fromValue(String value) {
         return valueOf(value);
     }
+
+    /** La notifica ha superato la validazione: ogni stato tranne quello di validazione e il rifiuto. */
+    public boolean isAccepted() {
+        return this != IN_VALIDATION && this != REFUSED;
+    }
 }

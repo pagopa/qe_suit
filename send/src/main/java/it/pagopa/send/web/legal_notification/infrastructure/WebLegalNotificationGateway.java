@@ -110,7 +110,7 @@ public class WebLegalNotificationGateway implements LegalNotificationGateway {
         String iun = entityStore.getLastOrThrow(LegalNotificationDomain.class).getIun();
         PollingUtils.pollUntil(
                 () -> readNotification(iun).getStatus(),
-                status -> status == targetStatus || (targetStatus == NotificationStatus.ACCEPTED && isAccepted(status)),
+                status -> status == targetStatus || (targetStatus == NotificationStatus.ACCEPTED && status.isAccepted()),
                 STATUS_TIMEOUT,
                 STATUS_INTERVAL,
                 String.format("La notifica %s non ha raggiunto lo stato %s", iun, targetStatus));
@@ -149,10 +149,6 @@ public class WebLegalNotificationGateway implements LegalNotificationGateway {
     @Override
     public boolean supports(Channel channel) {
         return channel == Channel.WEB_BROWSER;
-    }
-
-    private static boolean isAccepted(NotificationStatus status) {
-        return status != NotificationStatus.IN_VALIDATION && status != NotificationStatus.REFUSED;
     }
 
     /**

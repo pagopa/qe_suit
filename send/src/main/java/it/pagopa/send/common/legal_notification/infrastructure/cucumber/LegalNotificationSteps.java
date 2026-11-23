@@ -68,6 +68,19 @@ public class LegalNotificationSteps {
         sendJourney.waitForNotificationStatus(NotificationStatus.fromValue(targetStatus));
     }
 
+    /**
+     * L'ultima notifica creata ha superato la validazione, letta dal canale dello step: accettata o già oltre
+     * (consegna, perfezionamento, ...), perché dopo l'accettazione lo stato può avanzare prima della lettura.
+     */
+    @Then("la notifica risulta accettata")
+    public void assertNotificationAccepted() {
+        LegalNotificationDomain created = entityStore.getLastOrThrow(LegalNotificationDomain.class);
+        NotificationStatus status = legalNotificationUseCase.readNotification(created.getIun()).getStatus();
+        Assertions.assertThat(status.isAccepted())
+                .as("La notifica %s non risulta accettata: stato %s", created.getIun(), status)
+                .isTrue();
+    }
+
     /** La richiesta dell'ultima notifica sottomessa è stata rifiutata, con il codice d'errore che ne è la causa. */
     @Then("la richiesta di notifica risulta rifiutata con l'errore {string}")
     public void assertRequestRefused(String errorCode) {
