@@ -3,12 +3,13 @@ package it.pagopa.send.web.legal_notification.infrastructure;
 import it.pagopa.send.common.legal_notification.domain.NotificationStatus;
 
 import java.util.Arrays;
+import java.util.Optional;
 
 /**
  * Etichette con cui il portale della PA mostra lo stato di una notifica (chip del dettaglio), tradotte nello stato di
  * dominio: solo quelle già viste nel portale, un'etichetta diversa è un errore esplicito.
  */
-enum NotificationStatusLabel {
+public enum NotificationStatusLabel {
     ACCEPTED("Depositata", NotificationStatus.ACCEPTED),
     DELIVERING("Invio in corso", NotificationStatus.DELIVERING),
     DELIVERED("Consegnata", NotificationStatus.DELIVERED),
@@ -23,11 +24,15 @@ enum NotificationStatusLabel {
         this.status = status;
     }
 
-    static NotificationStatus toStatus(String label) {
+    public static NotificationStatus toStatus(String label) {
+        return find(label)
+                .orElseThrow(() -> new IllegalStateException("Stato della notifica non riconosciuto nel portale: " + label));
+    }
+
+    public static Optional<NotificationStatus> find(String label) {
         return Arrays.stream(values())
                 .filter(value -> value.label.equals(label))
                 .findFirst()
-                .map(value -> value.status)
-                .orElseThrow(() -> new IllegalStateException("Stato della notifica non riconosciuto nel portale: " + label));
+                .map(value -> value.status);
     }
 }
