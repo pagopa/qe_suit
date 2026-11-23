@@ -48,6 +48,10 @@ public class PurposeUseCase {
         purposeGateway.shouldFailToUpdatePurposeMetadataAsMalformed();
     }
 
+    public void shouldFailToUpdatePurposeMetadataAsForbidden() {
+        purposeGateway.shouldFailToUpdatePurposeMetadataAsForbidden();
+    }
+
     public void shouldFailToUpdatePurposeMetadataAsConflict() {
         purposeGateway.shouldFailToUpdatePurposeMetadataAsConflict();
     }

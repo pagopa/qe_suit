@@ -161,6 +161,11 @@ public class PurposeSteps {
         purposeUseCase.shouldFailToUpdatePurposeMetadataAsMalformed();
     }
 
+    @Then("la richiesta di modifica dei metadati della finalità fallisce come operazione vietata")
+    public void shouldFailToUpdatePurposeMetadataAsForbidden() {
+        purposeUseCase.shouldFailToUpdatePurposeMetadataAsForbidden();
+    }
+
     @Then("la richiesta di modifica dei metadati della finalità fallisce per conflitto di risorsa")
     public void shouldFailToUpdatePurposeMetadataAsConflict() {
         purposeUseCase.shouldFailToUpdatePurposeMetadataAsConflict();

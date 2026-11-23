@@ -24,6 +24,8 @@ public interface PurposeGateway extends Plugin<Channel> {
 
     void shouldFailToUpdatePurposeMetadataAsMalformed();
 
+    void shouldFailToUpdatePurposeMetadataAsForbidden();
+
     void shouldFailToUpdatePurposeMetadataAsConflict();
 
     Purpose updatePurposeDailyCalls(PurposeRef purposeRef, int dailyCalls);

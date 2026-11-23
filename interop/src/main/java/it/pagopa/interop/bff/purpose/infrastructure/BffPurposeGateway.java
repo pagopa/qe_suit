@@ -47,6 +47,16 @@ public class BffPurposeGateway implements PurposeGateway {
     }
 
     @Override
+    public void shouldFailToUpdatePurposeMetadataAsForbidden() {
+        assertThat(lastApiResponseStore.getLastResponse())
+                .as("Risposta al tentativo di modifica dei metadati della finalita")
+                .isNotNull()
+                .extracting(ApiResponse::getStatusCode)
+                .as("Modifica dei metadati della finalita vietata")
+                .isEqualTo(403);
+    }
+
+    @Override
     public void shouldFailToUpdatePurposeMetadataAsConflict() {
         assertThat(lastApiResponseStore.getLastResponse())
                 .as("Risposta al tentativo di modifica dei metadati della finalita")
