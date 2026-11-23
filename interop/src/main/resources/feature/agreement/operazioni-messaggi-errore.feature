@@ -29,7 +29,7 @@ Feature: Messaggi di errore durante la gestione delle richieste di fruizione
     And l'e-service "ES-1" del Comune di Milano sottoscritto da PagoPA con una richiesta di fruizione bozza
     And un admin appartenente al fruitore PagoPA
     When il fruitore tenta di inviare la richiesta di fruizione
-    Then il messaggio di errore corrisponde al caso "AGREEMENT_AGREEMENT_SUBMISSION_FAILED" in lingua "it"
+    Then il messaggio di errore corrisponde al caso "AGREEMENT_AGREEMENT_SUBMISSION_FAILED"
 
   # Endpoint: POST /agreements/:agreementId/approve
   Scenario: [ERROR_149] - Impossibilità di approvare una richiesta di fruizione già attiva
@@ -40,7 +40,7 @@ Feature: Messaggi di errore durante la gestione delle richieste di fruizione
     Given un EService creato dal Comune di Milano con una richiesta di fruizione associata da PagoPA
     And un admin appartenente all'erogatore Comune di Milano
     When l'erogatore tenta di approvare la richiesta di fruizione
-    Then il messaggio di errore corrisponde al caso "AGREEMENT_AGREEMENT_NOT_IN_EXPECTED_STATE__POST_AGREEMENTS_AGREEMENT_ID_APPROVE" in lingua "it"
+    Then il messaggio di errore corrisponde al caso "AGREEMENT_AGREEMENT_NOT_IN_EXPECTED_STATE__POST_AGREEMENTS_AGREEMENT_ID_APPROVE"
 
   # Endpoint: POST /agreements/:agreementId/approve
   Scenario: [ERROR_150] - Impossibilità di approvare una richiesta senza verificare un attributo necessario
@@ -62,7 +62,7 @@ Feature: Messaggi di errore durante la gestione delle richieste di fruizione
     And l'e-service "ES-1" del Comune di Milano sottoscritto da PagoPA con una richiesta di fruizione in attesa di approvazione
     And un admin appartenente all'erogatore Comune di Milano
     When l'erogatore tenta di approvare la richiesta di fruizione
-    Then il messaggio di errore corrisponde al caso "AGREEMENT_AGREEMENT_ACTIVATION_FAILED" in lingua "it"
+    Then il messaggio di errore corrisponde al caso "AGREEMENT_AGREEMENT_ACTIVATION_FAILED"
 
   # Endpoint: POST /agreements/:agreementId/approve
   Scenario: [ERROR_151] - Impossibilità di approvare una richiesta per un descrittore in archiviazione
@@ -74,7 +74,7 @@ Feature: Messaggi di errore durante la gestione delle richieste di fruizione
     And l'e-service del Comune di Milano interamente in archiviazione
     And un admin appartenente all'erogatore Comune di Milano
     When l'erogatore tenta di approvare la richiesta di fruizione
-    Then il messaggio di errore corrisponde al caso "AGREEMENT_DESCRIPTOR_NOT_IN_EXPECTED_STATE__POST_AGREEMENTS_AGREEMENT_ID_APPROVE" in lingua "it"
+    Then il messaggio di errore corrisponde al caso "AGREEMENT_DESCRIPTOR_NOT_IN_EXPECTED_STATE__POST_AGREEMENTS_AGREEMENT_ID_APPROVE"
 
   # Endpoint: POST /agreements/:agreementId/unsuspend
   Scenario: [ERROR_152] - Impossibilità di riattivare una richiesta di fruizione già attiva
@@ -85,7 +85,7 @@ Feature: Messaggi di errore durante la gestione delle richieste di fruizione
     Given un EService creato dal Comune di Milano con una richiesta di fruizione associata da PagoPA
     And un admin appartenente al fruitore PagoPA
     When il fruitore tenta di riattivare la richiesta di fruizione
-    Then il messaggio di errore corrisponde al caso "AGREEMENT_AGREEMENT_NOT_IN_EXPECTED_STATE__POST_AGREEMENTS_AGREEMENT_ID_UNSUSPEND" in lingua "it"
+    Then il messaggio di errore corrisponde al caso "AGREEMENT_AGREEMENT_NOT_IN_EXPECTED_STATE__POST_AGREEMENTS_AGREEMENT_ID_UNSUSPEND"
 
   # Endpoint: POST /agreements/:agreementId/unsuspend
   Scenario: [ERROR_153] - Impossibilità di riattivare una richiesta per una versione archiviata
@@ -100,7 +100,7 @@ Feature: Messaggi di errore durante la gestione delle richieste di fruizione
     And la versione 2 dell'e-service "ES-1" del Comune di Milano pubblicata
     And un admin appartenente al fruitore PagoPA
     When il fruitore tenta di riattivare la richiesta di fruizione
-    Then il messaggio di errore corrisponde al caso "AGREEMENT_DESCRIPTOR_NOT_IN_EXPECTED_STATE__POST_AGREEMENTS_AGREEMENT_ID_UNSUSPEND" in lingua "it"
+    Then il messaggio di errore corrisponde al caso "AGREEMENT_DESCRIPTOR_NOT_IN_EXPECTED_STATE__POST_AGREEMENTS_AGREEMENT_ID_UNSUSPEND"
 
   # Endpoint: POST /agreements/:agreementId/consumer-documents
   Scenario: [ERROR_154] - Impossibilità di allegare un documento a una richiesta di fruizione attiva
@@ -111,7 +111,7 @@ Feature: Messaggi di errore durante la gestione delle richieste di fruizione
     Given un EService creato dal Comune di Milano con una richiesta di fruizione associata da PagoPA
     And un admin appartenente al fruitore PagoPA
     When il fruitore tenta di allegare un documento valido alla richiesta di fruizione
-    Then il messaggio di errore corrisponde al caso "AGREEMENT_DOCUMENTS_CHANGE_NOT_ALLOWED__POST_AGREEMENTS_AGREEMENT_ID_CONSUMER_DOCUMENTS" in lingua "it"
+    Then il messaggio di errore corrisponde al caso "AGREEMENT_DOCUMENTS_CHANGE_NOT_ALLOWED__POST_AGREEMENTS_AGREEMENT_ID_CONSUMER_DOCUMENTS"
 
   # Endpoint: GET /agreements/:agreementId/consumer-documents/:documentId
   Scenario: [ERROR_155] - Impossibilità di scaricare un documento già eliminato dalla richiesta
@@ -136,7 +136,7 @@ Feature: Messaggi di errore durante la gestione delle richieste di fruizione
     And il documento allegato alla richiesta di fruizione viene eliminato
     # Operazione BFF e binding mancanti per il download dell'allegato eliminato.
     When l'utente tenta di scaricare il documento dalla richiesta di fruizione
-    Then il messaggio di errore corrisponde al caso "AGREEMENT_DOCUMENT_NOT_FOUND__GET_AGREEMENTS_AGREEMENT_ID_CONSUMER_DOCUMENTS_DOCUMENT_ID" in lingua "it"
+    Then il messaggio di errore corrisponde al caso "AGREEMENT_DOCUMENT_NOT_FOUND__GET_AGREEMENTS_AGREEMENT_ID_CONSUMER_DOCUMENTS_DOCUMENT_ID"
 
   # Endpoint: DELETE /agreements/:agreementId/consumer-documents/:documentId
   @err_msg_given_exec_1
@@ -162,7 +162,7 @@ Feature: Messaggi di errore durante la gestione delle richieste di fruizione
     And il documento allegato alla richiesta di fruizione viene eliminato
     # Operazione BFF e binding mancanti per l'eliminazione dell'allegato.
     When il fruitore tenta di eliminare il documento dalla richiesta di fruizione
-    Then il messaggio di errore corrisponde al caso "AGREEMENT_DOCUMENT_NOT_FOUND__DELETE_AGREEMENTS_AGREEMENT_ID_CONSUMER_DOCUMENTS_DOCUMENT_ID" in lingua "it"
+    Then il messaggio di errore corrisponde al caso "AGREEMENT_DOCUMENT_NOT_FOUND__DELETE_AGREEMENTS_AGREEMENT_ID_CONSUMER_DOCUMENTS_DOCUMENT_ID"
 
   # Endpoint: DELETE /agreements/:agreementId/consumer-documents/:documentId
   @err_msg_given_exec_1
@@ -195,7 +195,7 @@ Feature: Messaggi di errore durante la gestione delle richieste di fruizione
     And un admin appartenente al fruitore PagoPA
     # Operazione BFF e binding mancanti per l'eliminazione dell'allegato.
     When il fruitore tenta di eliminare il documento dalla richiesta di fruizione
-    Then il messaggio di errore corrisponde al caso "AGREEMENT_DOCUMENTS_CHANGE_NOT_ALLOWED__DELETE_AGREEMENTS_AGREEMENT_ID_CONSUMER_DOCUMENTS_DOCUMENT_ID" in lingua "it"
+    Then il messaggio di errore corrisponde al caso "AGREEMENT_DOCUMENTS_CHANGE_NOT_ALLOWED__DELETE_AGREEMENTS_AGREEMENT_ID_CONSUMER_DOCUMENTS_DOCUMENT_ID"
 
   # Endpoint: POST /agreements/:agreementId/suspend
   Scenario: [ERROR_158] - Impossibilità di sospendere una richiesta di fruizione in bozza
@@ -209,7 +209,7 @@ Feature: Messaggi di errore durante la gestione delle richieste di fruizione
     And l'e-service "ES-1" del Comune di Milano sottoscritto da PagoPA con una richiesta di fruizione bozza
     And un admin appartenente all'erogatore Comune di Milano
     When l'erogatore tenta di sospendere la richiesta di fruizione
-    Then il messaggio di errore corrisponde al caso "AGREEMENT_AGREEMENT_NOT_IN_EXPECTED_STATE__POST_AGREEMENTS_AGREEMENT_ID_SUSPEND" in lingua "it"
+    Then il messaggio di errore corrisponde al caso "AGREEMENT_AGREEMENT_NOT_IN_EXPECTED_STATE__POST_AGREEMENTS_AGREEMENT_ID_SUSPEND"
 
   # Endpoint: POST /agreements/:agreementId/reject
   Scenario: [ERROR_159] - Impossibilità di rifiutare una richiesta di fruizione già attiva
@@ -220,7 +220,7 @@ Feature: Messaggi di errore durante la gestione delle richieste di fruizione
     Given un EService creato dal Comune di Milano con una richiesta di fruizione associata da PagoPA
     And un admin appartenente all'erogatore Comune di Milano
     When l'erogatore tenta di rifiutare la richiesta di fruizione con una motivazione valida
-    Then il messaggio di errore corrisponde al caso "AGREEMENT_AGREEMENT_NOT_IN_EXPECTED_STATE__POST_AGREEMENTS_AGREEMENT_ID_REJECT" in lingua "it"
+    Then il messaggio di errore corrisponde al caso "AGREEMENT_AGREEMENT_NOT_IN_EXPECTED_STATE__POST_AGREEMENTS_AGREEMENT_ID_REJECT"
 
   # Endpoint: POST /agreements/:agreementId/archive
   Scenario: [ERROR_160] - Impossibilità di archiviare una richiesta di fruizione in bozza
@@ -234,7 +234,7 @@ Feature: Messaggi di errore durante la gestione delle richieste di fruizione
     And l'e-service "ES-1" del Comune di Milano sottoscritto da PagoPA con una richiesta di fruizione bozza
     And un admin appartenente al fruitore PagoPA
     When il fruitore tenta di archiviare la richiesta di fruizione
-    Then il messaggio di errore corrisponde al caso "AGREEMENT_AGREEMENT_NOT_IN_EXPECTED_STATE__POST_AGREEMENTS_AGREEMENT_ID_ARCHIVE" in lingua "it"
+    Then il messaggio di errore corrisponde al caso "AGREEMENT_AGREEMENT_NOT_IN_EXPECTED_STATE__POST_AGREEMENTS_AGREEMENT_ID_ARCHIVE"
 
   # Endpoint: POST /agreements
   Scenario: [ERROR_161] - Impossibilità di richiedere la fruizione di una versione deprecata
@@ -244,7 +244,7 @@ Feature: Messaggi di errore durante la gestione delle richieste di fruizione
 
     Given un EService creato dal Comune di Milano con una versione divenuta deprecata dopo la fruizione di PagoPA
     When il sistema impedisce al Comune di Pozzallo di inoltrare una richiesta di fruizione per la versione deprecata dell'EService
-    Then il messaggio di errore corrisponde al caso "AGREEMENT_NOT_LATEST_ESERVICE_DESCRIPTOR" in lingua "it"
+    Then il messaggio di errore corrisponde al caso "AGREEMENT_NOT_LATEST_ESERVICE_DESCRIPTOR"
 
   # Endpoint: POST /agreements
   Scenario: [ERROR_162] - Impossibilità di richiedere la fruizione della versione più recente sospesa
@@ -258,7 +258,7 @@ Feature: Messaggi di errore durante la gestione delle richieste di fruizione
     And la versione 1 dell'e-service "ES-1" del Comune di Milano sospesa
     And un admin appartenente al fruitore PagoPA
     When il fruitore tenta di creare una richiesta di fruizione per la versione più recente dell'e-service "ES-1"
-    Then il messaggio di errore corrisponde al caso "AGREEMENT_DESCRIPTOR_NOT_IN_EXPECTED_STATE__POST_AGREEMENTS" in lingua "it"
+    Then il messaggio di errore corrisponde al caso "AGREEMENT_DESCRIPTOR_NOT_IN_EXPECTED_STATE__POST_AGREEMENTS"
 
   # Endpoint: POST /agreements
   Scenario: [ERROR_163] - Impossibilità di richiedere la fruizione senza un attributo certificato necessario
@@ -278,7 +278,7 @@ Feature: Messaggi di errore durante la gestione delle richieste di fruizione
     And la versione 1 dell'e-service "ES-1" del Comune di Milano pubblicata
     And un admin appartenente al fruitore PagoPA
     When il fruitore tenta di creare una richiesta di fruizione per la versione più recente dell'e-service "ES-1"
-    Then il messaggio di errore corrisponde al caso "AGREEMENT_MISSING_CERTIFIED_ATTRIBUTES_ERROR__POST_AGREEMENTS" in lingua "it"
+    Then il messaggio di errore corrisponde al caso "AGREEMENT_MISSING_CERTIFIED_ATTRIBUTES_ERROR__POST_AGREEMENTS"
 
   # Endpoint: POST /agreements
   Scenario: [ERROR_164] - Impossibilità di creare un'altra richiesta quando la fruizione è già attiva
@@ -292,7 +292,7 @@ Feature: Messaggi di errore durante la gestione delle richieste di fruizione
     And l'e-service "ES-1" del Comune di Milano sottoscritto da PagoPA con una richiesta di fruizione attiva
     And un admin appartenente al fruitore PagoPA
     When il fruitore tenta di creare una richiesta di fruizione per la versione più recente dell'e-service "ES-1"
-    Then il messaggio di errore corrisponde al caso "AGREEMENT_AGREEMENT_ALREADY_EXISTS__POST_AGREEMENTS" in lingua "it"
+    Then il messaggio di errore corrisponde al caso "AGREEMENT_AGREEMENT_ALREADY_EXISTS__POST_AGREEMENTS"
 
   # Endpoint: POST /agreements/:agreementId/clone
   @err_msg_given_exec_1
@@ -322,7 +322,7 @@ Feature: Messaggi di errore durante la gestione delle richieste di fruizione
     And l'attributo certificato "CERT-1" revocato a PagoPA
     And un admin appartenente al fruitore PagoPA
     When il fruitore tenta di duplicare la richiesta di fruizione
-    Then il messaggio di errore corrisponde al caso "AGREEMENT_MISSING_CERTIFIED_ATTRIBUTES_ERROR__POST_AGREEMENTS_AGREEMENT_ID_CLONE" in lingua "it"
+    Then il messaggio di errore corrisponde al caso "AGREEMENT_MISSING_CERTIFIED_ATTRIBUTES_ERROR__POST_AGREEMENTS_AGREEMENT_ID_CLONE"
 
   # Endpoint: POST /agreements/:agreementId/clone
   @err_msg_given_exec_1
@@ -342,7 +342,7 @@ Feature: Messaggi di errore durante la gestione delle richieste di fruizione
     And l'e-service "ES-1" del Comune di Milano sottoscritto da PagoPA con una richiesta di fruizione attiva
     And un admin appartenente al fruitore PagoPA
     When il fruitore tenta di duplicare la richiesta di fruizione "RF-1"
-    Then il messaggio di errore corrisponde al caso "AGREEMENT_AGREEMENT_ALREADY_EXISTS__POST_AGREEMENTS_AGREEMENT_ID_CLONE" in lingua "it"
+    Then il messaggio di errore corrisponde al caso "AGREEMENT_AGREEMENT_ALREADY_EXISTS__POST_AGREEMENTS_AGREEMENT_ID_CLONE"
 
   # Endpoint: GET /agreements/:agreementId/consumer-documents/:documentId
   Scenario: [ERROR_167] - Impossibilità per un operatore di sicurezza di scaricare un allegato della richiesta
@@ -367,4 +367,4 @@ Feature: Messaggi di errore durante la gestione delle richieste di fruizione
     And un security appartenente al fruitore PagoPA
     # Operazione BFF e binding mancanti per il download dell'allegato come utente corrente.
     When l'utente tenta di scaricare il documento dalla richiesta di fruizione
-    Then il messaggio di errore corrisponde al caso "AGREEMENT_UNAUTHORIZED_ERROR" in lingua "it"
+    Then il messaggio di errore corrisponde al caso "AGREEMENT_UNAUTHORIZED_ERROR"

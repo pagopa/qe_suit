@@ -1,5 +1,5 @@
 @error-copy
-@channel:Given=BFF,When=BFF,Then=BFF
+@channel:Given=BFF,When=BFF:en,Then=BFF:en
 Feature: Messaggi di errore durante il caricamento di file nei template e-service
 
   Come erogatore
@@ -21,7 +21,7 @@ Feature: Messaggi di errore durante il caricamento di file nei template e-servic
       | REST       | DRAFT     | openapi3-riferimenti.json |
     And la bozza di e-service template creata viene eliminata
     When l'erogatore allega un file di documentazione all'e-service template in bozza
-    Then il messaggio di errore corrisponde al caso "BFF_ESERVICE_TEMPLATE_VERSION_NOT_FOUND" in lingua "it"
+    Then il messaggio di errore corrisponde al caso "BFF_ESERVICE_TEMPLATE_VERSION_NOT_FOUND"
 
   @work-item:QA-18430
   @err_msg_when_exec
@@ -35,7 +35,7 @@ Feature: Messaggi di errore durante il caricamento di file nei template e-servic
       | tecnologia | stato | interfaccia               |
       | REST       | DRAFT | openapi3-riferimenti.json |
     When l'erogatore allega il file "allegato-a.pdf" come "interfaccia" sulla versione del template con il nome "Allegato di test"
-    Then il messaggio di errore corrisponde al caso "ESERVICE_TEMPLATE_INVALID_ESERVICE_INTERFACE_FILE_DETECTED" in lingua "it"
+    Then il messaggio di errore corrisponde al caso "ESERVICE_TEMPLATE_INVALID_ESERVICE_INTERFACE_FILE_DETECTED"
 
   @work-item:QA-18430
   @err_msg_when_exec
@@ -49,7 +49,7 @@ Feature: Messaggi di errore durante il caricamento di file nei template e-servic
       | tecnologia | stato | interfaccia               |
       | REST       | DRAFT | openapi3-riferimenti.json |
     When l'erogatore allega il file "openapi-versione-non-supportata.yaml" come "interfaccia" sulla versione del template con il nome "Allegato di test"
-    Then il messaggio di errore corrisponde al caso "ESERVICE_TEMPLATE_OPENAPI_VERSION_NOT_RECOGNIZED" in lingua "it"
+    Then il messaggio di errore corrisponde al caso "ESERVICE_TEMPLATE_OPENAPI_VERSION_NOT_RECOGNIZED"
 
   # Ticket chiuso https://pagopa.atlassian.net/browse/PIN-11646
   @work-item:QA-18430
@@ -64,7 +64,7 @@ Feature: Messaggi di errore durante il caricamento di file nei template e-servic
       | tecnologia | stato | interfaccia               |
       | REST       | DRAFT | openapi3-riferimenti.json |
     When l'erogatore allega il file "formato-non-rilevabile" come "documento" sulla versione del template con il nome "Allegato di test"
-    Then il messaggio di errore corrisponde al caso "ESERVICE_TEMPLATE_INVALID_CONTENT_TYPE_DETECTED" in lingua "it"
+    Then il messaggio di errore corrisponde al caso "ESERVICE_TEMPLATE_INVALID_CONTENT_TYPE_DETECTED"
 
   @work-item:QA-18430
   # Endpoint: POST /eservices/templates/:eServiceTemplateId/versions/:eServiceTemplateVersionId/documents
@@ -75,7 +75,7 @@ Feature: Messaggi di errore durante il caricamento di file nei template e-servic
 
     Given un template e-service SOAP in bozza creato dall'erogatore
     When l'erogatore tenta di caricare l'interfaccia SOAP "missing-soap-address.wsdl" sulla versione del template ottenendo un rifiuto per "assenza di soap:address"
-    Then il messaggio di errore corrisponde al caso "ESERVICE_TEMPLATE_INTERFACE_EXTRACTING_SOAP_FIELD_VALUE_ERROR" in lingua "it"
+    Then il messaggio di errore corrisponde al caso "ESERVICE_TEMPLATE_INTERFACE_EXTRACTING_SOAP_FIELD_VALUE_ERROR"
 
   @work-item:QA-18430
   @err_msg_when_exec
@@ -89,7 +89,7 @@ Feature: Messaggi di errore durante il caricamento di file nei template e-servic
       | tecnologia | stato | interfaccia               |
       | REST       | DRAFT | openapi3-riferimenti.json |
     When l'erogatore allega il file "openapi-server-non-valido.yaml" come "interfaccia" sulla versione del template con il nome "Allegato di test"
-    Then il messaggio di errore corrisponde al caso "ESERVICE_TEMPLATE_INVALID_SERVER_URL" in lingua "it"
+    Then il messaggio di errore corrisponde al caso "ESERVICE_TEMPLATE_INVALID_SERVER_URL"
 
   @work-item:QA-18430
   @err_msg_when_exec
@@ -103,4 +103,4 @@ Feature: Messaggi di errore durante il caricamento di file nei template e-servic
       | tecnologia | stato | interfaccia               |
       | REST       | DRAFT | openapi3-riferimenti.json |
     When l'erogatore allega il file "pdf-con-contenuto-non-valido.pdf" come "documento" sulla versione del template con il nome "Allegato di test"
-    Then il messaggio di errore corrisponde al caso "ESERVICE_TEMPLATE_INVALID_FILE_UPLOAD_ERROR" in lingua "it"
+    Then il messaggio di errore corrisponde al caso "ESERVICE_TEMPLATE_INVALID_FILE_UPLOAD_ERROR"

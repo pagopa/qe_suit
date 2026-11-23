@@ -27,7 +27,7 @@ Feature: Messaggi di errore durante la gestione dei client, dei portachiavi e de
     And un portachiavi erogatore creato dal Comune di Pozzallo
     And un admin appartenente al delegato Comune di Pozzallo
     When l'utente tenta di associare il portachiavi erogatore all'e-service "ES-1"
-    Then il messaggio di errore corrisponde al caso "AUTHORIZATION_TENANT_NOT_ALLOWED_ON_ESERVICE__POST_PRODUCER_KEYCHAINS_PRODUCER_KEYCHAIN_ID_ESERVICES" in lingua "it"
+    Then il messaggio di errore corrisponde al caso "AUTHORIZATION_TENANT_NOT_ALLOWED_ON_ESERVICE__POST_PRODUCER_KEYCHAINS_PRODUCER_KEYCHAIN_ID_ESERVICES"
 
   #DA FARE MANUALE
   # Endpoint: POST /producerKeychains/:producerKeychainId/eservices
@@ -43,7 +43,7 @@ Feature: Messaggi di errore durante la gestione dei client, dei portachiavi e de
     And un portachiavi erogatore creato dal Comune di Milano
     And un admin appartenente all'erogatore Comune di Milano
     When l'utente tenta di associare il portachiavi erogatore all'e-service "ES-1"
-    Then il messaggio di errore corrisponde al caso "AUTHORIZATION_ESERVICE_IN_ARCHIVED_STATE__POST_PRODUCER_KEYCHAINS_PRODUCER_KEYCHAIN_ID_ESERVICES" in lingua "it"
+    Then il messaggio di errore corrisponde al caso "AUTHORIZATION_ESERVICE_IN_ARCHIVED_STATE__POST_PRODUCER_KEYCHAINS_PRODUCER_KEYCHAIN_ID_ESERVICES"
 
   # NON REPLICABILE A FRONTEND
   # Endpoint: POST /clients/:clientId/purposes
@@ -56,7 +56,7 @@ Feature: Messaggi di errore durante la gestione dei client, dei portachiavi e de
     And un client CONSUMER creato da PagoPA senza finalità associate
     And un admin appartenente al fruitore PagoPA
     When il fruitore tenta di associare il client alla finalità creata
-    Then il messaggio di errore corrisponde al caso "AUTHORIZATION_NO_ACTIVE_OR_SUSPENDED_PURPOSE_VERSION_FOUND__POST_CLIENTS_CLIENT_ID_PURPOSES" in lingua "it"
+    Then il messaggio di errore corrisponde al caso "AUTHORIZATION_NO_ACTIVE_OR_SUSPENDED_PURPOSE_VERSION_FOUND__POST_CLIENTS_CLIENT_ID_PURPOSES"
 
   # Endpoint: POST /clients/:clientId/keys
   Scenario: [ERROR_100] - Rifiuto della registrazione di una chiave privata nel client
@@ -66,7 +66,7 @@ Feature: Messaggi di errore durante la gestione dei client, dei portachiavi e de
 
     Given un client API creato dal Comune di Milano in cui è presente un utente admin e una coppia di chiavi crittografiche
     When l'erogatore tenta di aggiungere la chiave di test "chiave-privata-effimera-pem" al "client" con il nome "Chiave di test"
-    Then il messaggio di errore corrisponde al caso "AUTHORIZATION_NOT_ALLOWED_PRIVATE_KEY_EXCEPTION__POST_CLIENTS_CLIENT_ID_KEYS" in lingua "it"
+    Then il messaggio di errore corrisponde al caso "AUTHORIZATION_NOT_ALLOWED_PRIVATE_KEY_EXCEPTION__POST_CLIENTS_CLIENT_ID_KEYS"
 
   # Endpoint: POST /clients/:clientId/keys
   Scenario: [ERROR_101] - Rifiuto della registrazione di un certificato X.509 nel client
@@ -76,7 +76,7 @@ Feature: Messaggi di errore durante la gestione dei client, dei portachiavi e de
 
     Given un client API creato dal Comune di Milano in cui è presente un utente admin e una coppia di chiavi crittografiche
     When l'erogatore tenta di aggiungere la chiave di test "certificato-x509" al "client" con il nome "Chiave di test"
-    Then il messaggio di errore corrisponde al caso "AUTHORIZATION_NOT_ALLOWED_CERTIFICATE_EXCEPTION__POST_CLIENTS_CLIENT_ID_KEYS" in lingua "it"
+    Then il messaggio di errore corrisponde al caso "AUTHORIZATION_NOT_ALLOWED_CERTIFICATE_EXCEPTION__POST_CLIENTS_CLIENT_ID_KEYS"
 
   # Endpoint: POST /clients/:clientId/keys
   Scenario: [ERROR_102] - Rifiuto della registrazione di più chiavi pubbliche insieme nel client
@@ -86,7 +86,7 @@ Feature: Messaggi di errore durante la gestione dei client, dei portachiavi e de
 
     Given un client API creato dal Comune di Milano in cui è presente un utente admin e una coppia di chiavi crittografiche
     When l'erogatore tenta di aggiungere la chiave di test "due-chiavi-pubbliche-pem" al "client" con il nome "Chiave di test"
-    Then il messaggio di errore corrisponde al caso "AUTHORIZATION_NOT_ALLOWED_MULTIPLE_KEYS_EXCEPTION__POST_CLIENTS_CLIENT_ID_KEYS" in lingua "it"
+    Then il messaggio di errore corrisponde al caso "AUTHORIZATION_NOT_ALLOWED_MULTIPLE_KEYS_EXCEPTION__POST_CLIENTS_CLIENT_ID_KEYS"
 
   # Endpoint: POST /clients/:clientId/keys
   Scenario: [ERROR_103] - Rifiuto di una chiave pubblica incompleta nel client
@@ -96,7 +96,7 @@ Feature: Messaggi di errore durante la gestione dei client, dei portachiavi e de
 
     Given un client API creato dal Comune di Milano in cui è presente un utente admin e una coppia di chiavi crittografiche
     When l'erogatore tenta di aggiungere la chiave di test "pem-incompleto" al "client" con il nome "Chiave di test"
-    Then il messaggio di errore corrisponde al caso "AUTHORIZATION_INVALID_PUBLIC_KEY__POST_CLIENTS_CLIENT_ID_KEYS" in lingua "it"
+    Then il messaggio di errore corrisponde al caso "AUTHORIZATION_INVALID_PUBLIC_KEY__POST_CLIENTS_CLIENT_ID_KEYS"
 
   # Endpoint: POST /clients/:clientId/keys
   Scenario: [ERROR_104] - Rifiuto di una chiave pubblica non RSA nel client
@@ -106,7 +106,7 @@ Feature: Messaggi di errore durante la gestione dei client, dei portachiavi e de
 
     Given un client API creato dal Comune di Milano in cui è presente un utente admin e una coppia di chiavi crittografiche
     When l'erogatore tenta di aggiungere la chiave di test "ec-pubblica" al "client" con il nome "Chiave di test"
-    Then il messaggio di errore corrisponde al caso "AUTHORIZATION_NOT_AN_RSAKEY__POST_CLIENTS_CLIENT_ID_KEYS" in lingua "it"
+    Then il messaggio di errore corrisponde al caso "AUTHORIZATION_NOT_AN_RSAKEY__POST_CLIENTS_CLIENT_ID_KEYS"
 
   # Endpoint: POST /clients/:clientId/keys
   Scenario: [ERROR_105] - Rifiuto di una chiave RSA con lunghezza insufficiente nel client
@@ -116,7 +116,7 @@ Feature: Messaggi di errore durante la gestione dei client, dei portachiavi e de
 
     Given un client API creato dal Comune di Milano in cui è presente un utente admin e una coppia di chiavi crittografiche
     When l'erogatore tenta di aggiungere la chiave di test "rsa-pubblica-1024-bit" al "client" con il nome "Chiave di test"
-    Then il messaggio di errore corrisponde al caso "AUTHORIZATION_INVALID_KEY_LENGTH__POST_CLIENTS_CLIENT_ID_KEYS" in lingua "it"
+    Then il messaggio di errore corrisponde al caso "AUTHORIZATION_INVALID_KEY_LENGTH__POST_CLIENTS_CLIENT_ID_KEYS"
 
   # Endpoint: POST /clients/:clientId/keys
   Scenario: [ERROR_106] - Impossibilità di registrare nuovamente una chiave già presente nel client
@@ -127,7 +127,7 @@ Feature: Messaggi di errore durante la gestione dei client, dei portachiavi e de
     Given un client API creato dal Comune di Milano in cui è presente un utente admin e una coppia di chiavi crittografiche
     # La fixture identifica la chiave effettiva registrata dal Given, non una nuova chiave RSA.
     When l'erogatore tenta di aggiungere la chiave di test "rsa-pubblica-già-registrata" al "client" con il nome "Chiave di test"
-    Then il messaggio di errore corrisponde al caso "AUTHORIZATION_KEY_ALREADY_EXISTS" in lingua "it"
+    Then il messaggio di errore corrisponde al caso "AUTHORIZATION_KEY_ALREADY_EXISTS"
 
   # Endpoint: DELETE /clients/:clientId/keys/:keyId
   Scenario: [ERROR_107] - Impossibilità per un operatore di sicurezza di eliminare una chiave del client registrata dall'amministratore
@@ -138,7 +138,7 @@ Feature: Messaggi di errore durante la gestione dei client, dei portachiavi e de
     Given un client API creato dal Comune di Milano in cui è presente un utente admin e una coppia di chiavi crittografiche
     And un security appartenente all'erogatore Comune di Milano
     When l'utente tenta di eliminare la chiave del client
-    Then il messaggio di errore corrisponde al caso "AUTHORIZATION_USER_NOT_ALLOWED_TO_DELETE_CLIENT_KEY" in lingua "it"
+    Then il messaggio di errore corrisponde al caso "AUTHORIZATION_USER_NOT_ALLOWED_TO_DELETE_CLIENT_KEY"
 
   # Endpoint: POST /producerKeychains/:producerKeychainId/keys
   Scenario: [ERROR_108] - Rifiuto della registrazione di una chiave privata nel portachiavi
@@ -148,7 +148,7 @@ Feature: Messaggi di errore durante la gestione dei client, dei portachiavi e de
 
     Given un portachiavi erogatore creato dal Comune di Milano
     When l'erogatore tenta di aggiungere la chiave di test "chiave-privata-effimera-pem" al "portachiavi" con il nome "Chiave di test"
-    Then il messaggio di errore corrisponde al caso "AUTHORIZATION_NOT_ALLOWED_PRIVATE_KEY_EXCEPTION__POST_PRODUCER_KEYCHAINS_PRODUCER_KEYCHAIN_ID_KEYS" in lingua "it"
+    Then il messaggio di errore corrisponde al caso "AUTHORIZATION_NOT_ALLOWED_PRIVATE_KEY_EXCEPTION__POST_PRODUCER_KEYCHAINS_PRODUCER_KEYCHAIN_ID_KEYS"
 
   # Endpoint: POST /producerKeychains/:producerKeychainId/keys
   Scenario: [ERROR_109] - Rifiuto della registrazione di un certificato X.509 nel portachiavi
@@ -158,7 +158,7 @@ Feature: Messaggi di errore durante la gestione dei client, dei portachiavi e de
 
     Given un portachiavi erogatore creato dal Comune di Milano
     When l'erogatore tenta di aggiungere la chiave di test "certificato-x509" al "portachiavi" con il nome "Chiave di test"
-    Then il messaggio di errore corrisponde al caso "AUTHORIZATION_NOT_ALLOWED_CERTIFICATE_EXCEPTION__POST_PRODUCER_KEYCHAINS_PRODUCER_KEYCHAIN_ID_KEYS" in lingua "it"
+    Then il messaggio di errore corrisponde al caso "AUTHORIZATION_NOT_ALLOWED_CERTIFICATE_EXCEPTION__POST_PRODUCER_KEYCHAINS_PRODUCER_KEYCHAIN_ID_KEYS"
 
   # Endpoint: POST /producerKeychains/:producerKeychainId/keys
   Scenario: [ERROR_110] - Rifiuto della registrazione di più chiavi pubbliche insieme nel portachiavi
@@ -168,7 +168,7 @@ Feature: Messaggi di errore durante la gestione dei client, dei portachiavi e de
 
     Given un portachiavi erogatore creato dal Comune di Milano
     When l'erogatore tenta di aggiungere la chiave di test "due-chiavi-pubbliche-pem" al "portachiavi" con il nome "Chiave di test"
-    Then il messaggio di errore corrisponde al caso "AUTHORIZATION_NOT_ALLOWED_MULTIPLE_KEYS_EXCEPTION__POST_PRODUCER_KEYCHAINS_PRODUCER_KEYCHAIN_ID_KEYS" in lingua "it"
+    Then il messaggio di errore corrisponde al caso "AUTHORIZATION_NOT_ALLOWED_MULTIPLE_KEYS_EXCEPTION__POST_PRODUCER_KEYCHAINS_PRODUCER_KEYCHAIN_ID_KEYS"
 
   # Endpoint: POST /producerKeychains/:producerKeychainId/keys
   Scenario: [ERROR_111] - Rifiuto di una chiave pubblica incompleta nel portachiavi
@@ -178,7 +178,7 @@ Feature: Messaggi di errore durante la gestione dei client, dei portachiavi e de
 
     Given un portachiavi erogatore creato dal Comune di Milano
     When l'erogatore tenta di aggiungere la chiave di test "pem-incompleto" al "portachiavi" con il nome "Chiave di test"
-    Then il messaggio di errore corrisponde al caso "AUTHORIZATION_INVALID_PUBLIC_KEY__POST_PRODUCER_KEYCHAINS_PRODUCER_KEYCHAIN_ID_KEYS" in lingua "it"
+    Then il messaggio di errore corrisponde al caso "AUTHORIZATION_INVALID_PUBLIC_KEY__POST_PRODUCER_KEYCHAINS_PRODUCER_KEYCHAIN_ID_KEYS"
 
   # Endpoint: POST /producerKeychains/:producerKeychainId/keys
   Scenario: [ERROR_112] - Rifiuto di una chiave pubblica non RSA nel portachiavi
@@ -188,7 +188,7 @@ Feature: Messaggi di errore durante la gestione dei client, dei portachiavi e de
 
     Given un portachiavi erogatore creato dal Comune di Milano
     When l'erogatore tenta di aggiungere la chiave di test "ec-pubblica" al "portachiavi" con il nome "Chiave di test"
-    Then il messaggio di errore corrisponde al caso "AUTHORIZATION_NOT_AN_RSAKEY__POST_PRODUCER_KEYCHAINS_PRODUCER_KEYCHAIN_ID_KEYS" in lingua "it"
+    Then il messaggio di errore corrisponde al caso "AUTHORIZATION_NOT_AN_RSAKEY__POST_PRODUCER_KEYCHAINS_PRODUCER_KEYCHAIN_ID_KEYS"
 
   # Endpoint: POST /producerKeychains/:producerKeychainId/keys
   Scenario: [ERROR_113] - Rifiuto di una chiave RSA con lunghezza insufficiente nel portachiavi
@@ -198,7 +198,7 @@ Feature: Messaggi di errore durante la gestione dei client, dei portachiavi e de
 
     Given un portachiavi erogatore creato dal Comune di Milano
     When l'erogatore tenta di aggiungere la chiave di test "rsa-pubblica-1024-bit" al "portachiavi" con il nome "Chiave di test"
-    Then il messaggio di errore corrisponde al caso "AUTHORIZATION_INVALID_KEY_LENGTH__POST_PRODUCER_KEYCHAINS_PRODUCER_KEYCHAIN_ID_KEYS" in lingua "it"
+    Then il messaggio di errore corrisponde al caso "AUTHORIZATION_INVALID_KEY_LENGTH__POST_PRODUCER_KEYCHAINS_PRODUCER_KEYCHAIN_ID_KEYS"
 
   # Endpoint: POST /clientsConsumer
   Scenario: [ERROR_114] - Rifiuto della creazione di un client di fruizione con un link nel nome
@@ -207,7 +207,7 @@ Feature: Messaggi di errore durante la gestione dei client, dei portachiavi e de
   Allora il sistema rifiuta la creazione e invita l'amministratore a rimuovere il collegamento.
 
     When l'utente tenta di creare un client "CONSUMER" con il nome "Client https://example.org"
-    Then il messaggio di errore corrisponde al caso "AUTHORIZATION_HYPERLINK_DETECTION_ERROR__POST_CLIENTS_CONSUMER" in lingua "it"
+    Then il messaggio di errore corrisponde al caso "AUTHORIZATION_HYPERLINK_DETECTION_ERROR__POST_CLIENTS_CONSUMER"
 
   # Endpoint: POST /clientsApi
   Scenario: [ERROR_115] - Rifiuto della creazione di un client API con un link nel nome
@@ -216,7 +216,7 @@ Feature: Messaggi di errore durante la gestione dei client, dei portachiavi e de
   Allora il sistema rifiuta la creazione e invita l'amministratore a rimuovere il collegamento.
 
     When l'utente tenta di creare un client "API" con il nome "Client https://example.org"
-    Then il messaggio di errore corrisponde al caso "AUTHORIZATION_HYPERLINK_DETECTION_ERROR__POST_CLIENTS_API" in lingua "it"
+    Then il messaggio di errore corrisponde al caso "AUTHORIZATION_HYPERLINK_DETECTION_ERROR__POST_CLIENTS_API"
 
   # Endpoint: POST /clients/:clientId/keys
   Scenario: [ERROR_116] - Rifiuto di una chiave del client con un link nel nome
@@ -226,7 +226,7 @@ Feature: Messaggi di errore durante la gestione dei client, dei portachiavi e de
 
     Given un client API creato dal Comune di Milano in cui è presente un utente admin e una coppia di chiavi crittografiche
     When l'erogatore tenta di aggiungere la chiave di test "rsa-pubblica-valida" al "client" con il nome "Chiave https://example.org"
-    Then il messaggio di errore corrisponde al caso "AUTHORIZATION_HYPERLINK_DETECTION_ERROR__POST_CLIENTS_CLIENT_ID_KEYS" in lingua "it"
+    Then il messaggio di errore corrisponde al caso "AUTHORIZATION_HYPERLINK_DETECTION_ERROR__POST_CLIENTS_CLIENT_ID_KEYS"
 
   # Endpoint: POST /producerKeychains
   Scenario: [ERROR_117] - Rifiuto della creazione di un portachiavi con un link nel nome
@@ -235,7 +235,7 @@ Feature: Messaggi di errore durante la gestione dei client, dei portachiavi e de
   Allora il sistema rifiuta la creazione e invita l'amministratore a rimuovere il collegamento.
 
     When l'utente tenta di creare un portachiavi di erogazione con il nome "Portachiavi https://example.org"
-    Then il messaggio di errore corrisponde al caso "AUTHORIZATION_HYPERLINK_DETECTION_ERROR__POST_PRODUCER_KEYCHAINS" in lingua "it"
+    Then il messaggio di errore corrisponde al caso "AUTHORIZATION_HYPERLINK_DETECTION_ERROR__POST_PRODUCER_KEYCHAINS"
 
   # Endpoint: POST /producerKeychains/:producerKeychainId/keys
   Scenario: [ERROR_118] - Rifiuto di una chiave del portachiavi con un link nel nome
@@ -245,7 +245,7 @@ Feature: Messaggi di errore durante la gestione dei client, dei portachiavi e de
 
     Given un portachiavi erogatore creato dal Comune di Milano
     When l'erogatore tenta di aggiungere la chiave di test "rsa-pubblica-valida" al "portachiavi" con il nome "Chiave https://example.org"
-    Then il messaggio di errore corrisponde al caso "AUTHORIZATION_HYPERLINK_DETECTION_ERROR__POST_PRODUCER_KEYCHAINS_PRODUCER_KEYCHAIN_ID_KEYS" in lingua "it"
+    Then il messaggio di errore corrisponde al caso "AUTHORIZATION_HYPERLINK_DETECTION_ERROR__POST_PRODUCER_KEYCHAINS_PRODUCER_KEYCHAIN_ID_KEYS"
 
   # Endpoint: PATCH /clients/:clientId
   # PRENDI STEP WHEN DA MODIFICA NOME
@@ -258,7 +258,7 @@ Feature: Messaggi di errore durante la gestione dei client, dei portachiavi e de
     # Operazione BFF e binding negativo parametrico mancanti; verificare il contratto PATCH di rilascio.
     # Non rimappare questo ID su un'altra operazione.
     When l'utente tenta di modificare i dati del "client" con il nome "Valore https://example.org"
-    Then il messaggio di errore corrisponde al caso "AUTHORIZATION_HYPERLINK_DETECTION_ERROR__PATCH_CLIENTS_CLIENT_ID" in lingua "it"
+    Then il messaggio di errore corrisponde al caso "AUTHORIZATION_HYPERLINK_DETECTION_ERROR__PATCH_CLIENTS_CLIENT_ID"
 
   # Endpoint: PATCH /producerKeychains/:producerKeychainId
   # PRENDI STEP WHEN DA MODIFICA NOME
@@ -271,4 +271,4 @@ Feature: Messaggi di errore durante la gestione dei client, dei portachiavi e de
     # Operazione BFF e binding negativo parametrico mancanti; verificare il contratto PATCH di rilascio.
     # Non rimappare questo ID su un'altra operazione.
     When l'utente tenta di modificare i dati del "portachiavi" con il nome "Valore https://example.org"
-    Then il messaggio di errore corrisponde al caso "AUTHORIZATION_HYPERLINK_DETECTION_ERROR__PATCH_PRODUCER_KEYCHAINS_PRODUCER_KEYCHAIN_ID" in lingua "it"
+    Then il messaggio di errore corrisponde al caso "AUTHORIZATION_HYPERLINK_DETECTION_ERROR__PATCH_PRODUCER_KEYCHAINS_PRODUCER_KEYCHAIN_ID"

@@ -20,7 +20,7 @@ Feature: Messaggi di errore durante la creazione degli attributi nel registro
       | alias  |
       | CERT-1 |
     When l'erogatore tenta di creare un attributo "certificato" con il nome dell'attributo "CERT-1"
-    Then il messaggio di errore corrisponde al caso "ATTRIBUTE_REGISTRY_ATTRIBUTE_DUPLICATE__POST_CERTIFIED_ATTRIBUTES" in lingua "it"
+    Then il messaggio di errore corrisponde al caso "ATTRIBUTE_REGISTRY_ATTRIBUTE_DUPLICATE__POST_CERTIFIED_ATTRIBUTES"
 
   # Endpoint: POST /certifiedDiscreteAttributes
   Scenario: [ERROR_094] - Impossibilità di creare un attributo certificato discreto con un nome già presente
@@ -32,7 +32,7 @@ Feature: Messaggi di errore durante la creazione degli attributi nel registro
       | alias  |
       | DISC-1 |
     When l'erogatore tenta di creare un attributo "certificato discreto" con il nome dell'attributo "DISC-1"
-    Then il messaggio di errore corrisponde al caso "ATTRIBUTE_REGISTRY_ATTRIBUTE_DUPLICATE__POST_CERTIFIED_DISCRETE_ATTRIBUTES" in lingua "it"
+    Then il messaggio di errore corrisponde al caso "ATTRIBUTE_REGISTRY_ATTRIBUTE_DUPLICATE__POST_CERTIFIED_DISCRETE_ATTRIBUTES"
 
   # Endpoint: POST /declaredAttributes
   Scenario: [ERROR_095] - Impossibilità di creare un attributo dichiarato con un nome già presente
@@ -44,7 +44,7 @@ Feature: Messaggi di errore durante la creazione degli attributi nel registro
       | alias  |
       | DECL-1 |
     When l'erogatore tenta di creare un attributo "dichiarato" con il nome dell'attributo "DECL-1"
-    Then il messaggio di errore corrisponde al caso "ATTRIBUTE_REGISTRY_ATTRIBUTE_DUPLICATE__POST_DECLARED_ATTRIBUTES" in lingua "it"
+    Then il messaggio di errore corrisponde al caso "ATTRIBUTE_REGISTRY_ATTRIBUTE_DUPLICATE__POST_DECLARED_ATTRIBUTES"
 
   # Endpoint: POST /verifiedAttributes
   Scenario: [ERROR_096] - Impossibilità di creare un attributo verificato con un nome già presente
@@ -56,7 +56,7 @@ Feature: Messaggi di errore durante la creazione degli attributi nel registro
       | alias |
       | VER-1 |
     When l'erogatore tenta di creare un attributo "verificato" con il nome dell'attributo "VER-1"
-    Then il messaggio di errore corrisponde al caso "ATTRIBUTE_REGISTRY_ATTRIBUTE_DUPLICATE__POST_VERIFIED_ATTRIBUTES" in lingua "it"
+    Then il messaggio di errore corrisponde al caso "ATTRIBUTE_REGISTRY_ATTRIBUTE_DUPLICATE__POST_VERIFIED_ATTRIBUTES"
 
   # Endpoint: POST /certifiedAttributes
   Scenario: [ERROR_097] - Rifiuto di un attributo certificato con un link nel nome
@@ -65,7 +65,7 @@ Feature: Messaggi di errore durante la creazione degli attributi nel registro
   Allora il sistema rifiuta la creazione e invita l'amministratore a rimuovere il collegamento dal nome.
 
     When l'erogatore tenta di creare un attributo "certificato" con un link all'interno del nome
-    Then il messaggio di errore corrisponde al caso "ATTRIBUTE_REGISTRY_HYPERLINK_DETECTION_ERROR__POST_CERTIFIED_ATTRIBUTES" in lingua "it"
+    Then il messaggio di errore corrisponde al caso "ATTRIBUTE_REGISTRY_HYPERLINK_DETECTION_ERROR__POST_CERTIFIED_ATTRIBUTES"
 
   # Endpoint: POST /declaredAttributes
   Scenario: [ERROR_098] - Rifiuto di un attributo dichiarato con un link nel nome
@@ -74,7 +74,7 @@ Feature: Messaggi di errore durante la creazione degli attributi nel registro
   Allora il sistema rifiuta la creazione e invita l'amministratore a rimuovere il collegamento dal nome.
 
     When l'erogatore tenta di creare un attributo "dichiarato" con un link all'interno del nome
-    Then il messaggio di errore corrisponde al caso "ATTRIBUTE_REGISTRY_HYPERLINK_DETECTION_ERROR__POST_DECLARED_ATTRIBUTES" in lingua "it"
+    Then il messaggio di errore corrisponde al caso "ATTRIBUTE_REGISTRY_HYPERLINK_DETECTION_ERROR__POST_DECLARED_ATTRIBUTES"
 
   # Endpoint: POST /verifiedAttributes
   Scenario: [ERROR_099] - Rifiuto di un attributo verificato con un link nel nome
@@ -83,4 +83,4 @@ Feature: Messaggi di errore durante la creazione degli attributi nel registro
   Allora il sistema rifiuta la creazione e invita l'amministratore a rimuovere il collegamento dal nome.
 
     When l'erogatore tenta di creare un attributo "verificato" con un link all'interno del nome
-    Then il messaggio di errore corrisponde al caso "ATTRIBUTE_REGISTRY_HYPERLINK_DETECTION_ERROR__POST_VERIFIED_ATTRIBUTES" in lingua "it"
+    Then il messaggio di errore corrisponde al caso "ATTRIBUTE_REGISTRY_HYPERLINK_DETECTION_ERROR__POST_VERIFIED_ATTRIBUTES"

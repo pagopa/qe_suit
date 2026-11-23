@@ -29,7 +29,7 @@ Feature: Messaggi di errore durante la gestione dei template finalità e delle a
     And un admin appartenente al fruitore PagoPA
     # Binding negativo mancante; riusare linkResource con ES-2, non con il template di origine T-1.
     When l'operatore tenta di aggiungere l'e-service "ES-2" agli e-service suggeriti del template finalità
-    Then il messaggio di errore corrisponde al caso "PURPOSE_TEMPLATE_ASSOCIATION_ESERVICES_FOR_PURPOSE_TEMPLATE_FAILED__POST_PURPOSE_TEMPLATES_PURPOSE_TEMPLATE_ID_LINK_RESOURCE" in lingua "it"
+    Then il messaggio di errore corrisponde al caso "PURPOSE_TEMPLATE_ASSOCIATION_ESERVICES_FOR_PURPOSE_TEMPLATE_FAILED__POST_PURPOSE_TEMPLATES_PURPOSE_TEMPLATE_ID_LINK_RESOURCE"
 
   # Endpoint: PUT /purposeTemplates/:purposeTemplateId
   @err_msg_when_exec
@@ -45,7 +45,7 @@ Feature: Messaggi di errore durante la gestione dei template finalità e delle a
     And un admin appartenente al fruitore PagoPA
     # Operazione BFF e binding negativo mancanti; modificare una risposta del questionario, non un'annotazione.
     When l'operatore tenta di modificare il template finalità inserendo "Motivazione https://example.org" in una risposta a testo libero dell'analisi del rischio
-    Then il messaggio di errore corrisponde al caso "PURPOSE_TEMPLATE_RISK_ANALYSIS_VALIDATION_FAILED__PUT_PURPOSE_TEMPLATES_PURPOSE_TEMPLATE_ID" in lingua "it"
+    Then il messaggio di errore corrisponde al caso "PURPOSE_TEMPLATE_RISK_ANALYSIS_VALIDATION_FAILED__PUT_PURPOSE_TEMPLATES_PURPOSE_TEMPLATE_ID"
 
   # Endpoint: POST /purposeTemplates/:purposeTemplateId/unsuspend
   Scenario: [ERROR_138] - Impossibilità di riattivare un template con un e-service suggerito sospeso
@@ -61,7 +61,7 @@ Feature: Messaggi di errore durante la gestione dei template finalità e delle a
     And la versione 1 dell'e-service "ES-1" del Comune di Milano sospesa
     And un admin appartenente al fruitore PagoPA
     When l'operatore tenta di riattivare il purpose template
-    Then il messaggio di errore corrisponde al caso "PURPOSE_TEMPLATE_INVALID_ASSOCIATED_ESERVICE_FOR_PUBLICATION_ERROR__POST_PURPOSE_TEMPLATES_PURPOSE_TEMPLATE_ID_UNSUSPEND" in lingua "it"
+    Then il messaggio di errore corrisponde al caso "PURPOSE_TEMPLATE_INVALID_ASSOCIATED_ESERVICE_FOR_PUBLICATION_ERROR__POST_PURPOSE_TEMPLATES_PURPOSE_TEMPLATE_ID_UNSUSPEND"
 
   # Endpoint: POST /purposeTemplates/:purposeTemplateId/publish
   Scenario: [ERROR_139] - Impossibilità di pubblicare un template con un e-service suggerito sospeso
@@ -76,7 +76,7 @@ Feature: Messaggi di errore durante la gestione dei template finalità e delle a
     And la versione 1 dell'e-service "ES-1" del Comune di Milano sospesa
     And un admin appartenente al fruitore PagoPA
     When l'operatore tenta di pubblicare il purpose template
-    Then il messaggio di errore corrisponde al caso "PURPOSE_TEMPLATE_INVALID_ASSOCIATED_ESERVICE_FOR_PUBLICATION_ERROR__POST_PURPOSE_TEMPLATES_PURPOSE_TEMPLATE_ID_PUBLISH" in lingua "it"
+    Then il messaggio di errore corrisponde al caso "PURPOSE_TEMPLATE_INVALID_ASSOCIATED_ESERVICE_FOR_PUBLICATION_ERROR__POST_PURPOSE_TEMPLATES_PURPOSE_TEMPLATE_ID_PUBLISH"
 
   # Endpoint: POST /purposeTemplates/:purposeTemplateId/riskAnalysis/answers/:answerId/annotation/documents
   @err_msg_given_exec_2
@@ -94,7 +94,7 @@ Feature: Messaggi di errore durante la gestione dei template finalità e delle a
       | Allegato A | allegato-a.pdf |
     # Operazione BFF e binding negativo comuni mancanti per gli allegati alle annotazioni.
     When l'operatore allega il file "allegato-b.pdf" all'annotazione del template finalità con il nome "Allegato A"
-    Then il messaggio di errore corrisponde al caso "PURPOSE_TEMPLATE_CONFLICT_DOCUMENT_PRETTY_NAME_DUPLICATE__POST_PURPOSE_TEMPLATES_PURPOSE_TEMPLATE_ID_RISK_ANALYSIS_ANSWERS_ANSWER_ID_ANNOTATION_DOCUMENTS" in lingua "it"
+    Then il messaggio di errore corrisponde al caso "PURPOSE_TEMPLATE_CONFLICT_DOCUMENT_PRETTY_NAME_DUPLICATE__POST_PURPOSE_TEMPLATES_PURPOSE_TEMPLATE_ID_RISK_ANALYSIS_ANSWERS_ANSWER_ID_ANNOTATION_DOCUMENTS"
 
   # Endpoint: POST /purposeTemplates/:purposeTemplateId/riskAnalysis/answers/:answerId/annotation/documents
   @err_msg_given_exec_2
@@ -112,7 +112,7 @@ Feature: Messaggi di errore durante la gestione dei template finalità e delle a
       | Allegato A | allegato-a.pdf |
     # Operazione BFF e binding negativo comuni mancanti per gli allegati alle annotazioni.
     When l'operatore allega il file "allegato-a.pdf" all'annotazione del template finalità con il nome "Allegato B"
-    Then il messaggio di errore corrisponde al caso "PURPOSE_TEMPLATE_CONFLICT_DUPLICATED_DOCUMENT" in lingua "it"
+    Then il messaggio di errore corrisponde al caso "PURPOSE_TEMPLATE_CONFLICT_DUPLICATED_DOCUMENT"
 
   # Endpoint: POST /purposeTemplates/:purposeTemplateId/riskAnalysis/answers
   @err_msg_given_exec_2
@@ -126,7 +126,7 @@ Feature: Messaggi di errore durante la gestione dei template finalità e delle a
     Given un template finalità in bozza con una domanda predisposta per le annotazioni
     # Operazione BFF e binding negativo mancanti per l'aggiunta della risposta annotata.
     When l'operatore tenta di aggiungere una risposta al template finalità con l'annotazione "Motivazione https://example.org"
-    Then il messaggio di errore corrisponde al caso "PURPOSE_TEMPLATE_HYPERLINK_DETECTION_ERROR__POST_PURPOSE_TEMPLATES_PURPOSE_TEMPLATE_ID_RISK_ANALYSIS_ANSWERS" in lingua "it"
+    Then il messaggio di errore corrisponde al caso "PURPOSE_TEMPLATE_HYPERLINK_DETECTION_ERROR__POST_PURPOSE_TEMPLATES_PURPOSE_TEMPLATE_ID_RISK_ANALYSIS_ANSWERS"
 
   # Endpoint: PUT /purposeTemplates/:purposeTemplateId/riskAnalysis/answers/:answerId/annotation
   @err_msg_given_exec_2
@@ -140,7 +140,7 @@ Feature: Messaggi di errore durante la gestione dei template finalità e delle a
     Given un template finalità in bozza con una risposta annotata
     # Operazione BFF e binding negativo mancanti per la modifica dell'annotazione.
     When l'operatore tenta di aggiornare l'annotazione del template finalità con il testo "Motivazione https://example.org"
-    Then il messaggio di errore corrisponde al caso "PURPOSE_TEMPLATE_HYPERLINK_DETECTION_ERROR__PUT_PURPOSE_TEMPLATES_PURPOSE_TEMPLATE_ID_RISK_ANALYSIS_ANSWERS_ANSWER_ID_ANNOTATION" in lingua "it"
+    Then il messaggio di errore corrisponde al caso "PURPOSE_TEMPLATE_HYPERLINK_DETECTION_ERROR__PUT_PURPOSE_TEMPLATES_PURPOSE_TEMPLATE_ID_RISK_ANALYSIS_ANSWERS_ANSWER_ID_ANNOTATION"
 
   # Endpoint: POST /purposeTemplates/:purposeTemplateId/riskAnalysis/answers/:answerId/annotation/documents/:documentId/update
   @err_msg_given_exec_2
@@ -159,7 +159,7 @@ Feature: Messaggi di errore durante la gestione dei template finalità e delle a
       | Allegato B | allegato-b.pdf |
     # Operazione BFF e binding negativo mancanti per la rinomina dell'allegato.
     When l'operatore tenta di rinominare l'allegato "Allegato B" dell'annotazione del template finalità in "Allegato A"
-    Then il messaggio di errore corrisponde al caso "PURPOSE_TEMPLATE_CONFLICT_DOCUMENT_PRETTY_NAME_DUPLICATE__POST_PURPOSE_TEMPLATES_PURPOSE_TEMPLATE_ID_RISK_ANALYSIS_ANSWERS_ANSWER_ID_ANNOTATION_DOCUMENTS_DOCUMENT_ID_UPDATE" in lingua "it"
+    Then il messaggio di errore corrisponde al caso "PURPOSE_TEMPLATE_CONFLICT_DOCUMENT_PRETTY_NAME_DUPLICATE__POST_PURPOSE_TEMPLATES_PURPOSE_TEMPLATE_ID_RISK_ANALYSIS_ANSWERS_ANSWER_ID_ANNOTATION_DOCUMENTS_DOCUMENT_ID_UPDATE"
 
   # Endpoint: GET /purposeTemplates/:purposeTemplateId/riskAnalysisDocument/signed
   @err_msg_given_exec_2
@@ -175,7 +175,7 @@ Feature: Messaggi di errore durante la gestione dei template finalità e delle a
     And un security appartenente al fruitore PagoPA
     # Operazione BFF e binding negativo mancanti per il download con l'utente corrente.
     When l'utente tenta di scaricare il documento firmato di analisi del rischio del template finalità
-    Then il messaggio di errore corrisponde al caso "PURPOSE_TEMPLATE_UNAUTHORIZED_ERROR" in lingua "it"
+    Then il messaggio di errore corrisponde al caso "PURPOSE_TEMPLATE_UNAUTHORIZED_ERROR"
 
   # NON REPLICABILE A FRONTEND
   # Endpoint: PATCH /purposeTemplates/:purposeTemplateId
@@ -193,7 +193,7 @@ Feature: Messaggi di errore durante la gestione dei template finalità e delle a
     # Operazione BFF e binding negativo mancanti; il client attuale espone PUT, non PATCH.
     # Verificare il contratto di rilascio e non rimappare questo ID su un'altra operazione.
     When l'operatore tenta di modificare i dati del template finalità "TF-2" con il nome del template "TF-1"
-    Then il messaggio di errore corrisponde al caso "PURPOSE_TEMPLATE_PURPOSE_TEMPLATE_TITLE_CONFLICT__PATCH_PURPOSE_TEMPLATES_PURPOSE_TEMPLATE_ID" in lingua "it"
+    Then il messaggio di errore corrisponde al caso "PURPOSE_TEMPLATE_PURPOSE_TEMPLATE_TITLE_CONFLICT__PATCH_PURPOSE_TEMPLATES_PURPOSE_TEMPLATE_ID"
 
   # Endpoint: PATCH /purposeTemplates/:purposeTemplateId
   # PRENDI STEP WHEN DA MODIFICA NOME
@@ -209,4 +209,4 @@ Feature: Messaggi di errore durante la gestione dei template finalità e delle a
     # Operazione BFF e binding negativo mancanti; il client attuale espone PUT, non PATCH.
     # Verificare il contratto di rilascio e non rimappare questo ID su un'altra operazione.
     When l'operatore tenta di modificare i dati del template finalità "TF-1" con il nome "Valore https://example.org"
-    Then il messaggio di errore corrisponde al caso "PURPOSE_TEMPLATE_HYPERLINK_DETECTION_ERROR__PATCH_PURPOSE_TEMPLATES_PURPOSE_TEMPLATE_ID" in lingua "it"
+    Then il messaggio di errore corrisponde al caso "PURPOSE_TEMPLATE_HYPERLINK_DETECTION_ERROR__PATCH_PURPOSE_TEMPLATES_PURPOSE_TEMPLATE_ID"

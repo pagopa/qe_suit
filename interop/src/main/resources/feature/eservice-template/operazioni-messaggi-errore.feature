@@ -19,7 +19,7 @@ Feature: Messaggi di errore durante la creazione e la modifica dei template e-se
       | alias | erogatore        | nome               | tecnologia |
       | T-1   | Comune di Milano | Catalogo duplicato | REST       |
     When l'erogatore tenta di creare un template e-service duplicando il nome del template "T-1"
-    Then il messaggio di errore corrisponde al caso "ESERVICE_TEMPLATE_ESERVICE_TEMPLATE_DUPLICATE__POST_ESERVICES_TEMPLATES" in lingua "it"
+    Then il messaggio di errore corrisponde al caso "ESERVICE_TEMPLATE_ESERVICE_TEMPLATE_DUPLICATE__POST_ESERVICES_TEMPLATES"
 
   # Endpoint: POST /eservices/templates/:eServiceTemplateId/riskAnalysis
   @err_msg_given_exec_2
@@ -33,7 +33,7 @@ Feature: Messaggi di errore durante la creazione e la modifica dei template e-se
     # Operazione BFF e binding di setup mancanti per le analisi del rischio del template.
     And un'analisi del rischio completa associata al template
     When l'erogatore tenta di aggiungere al template un'analisi del rischio con il nome dell'analisi esistente
-    Then il messaggio di errore corrisponde al caso "ESERVICE_TEMPLATE_RISK_ANALYSIS_NAME_DUPLICATE" in lingua "it"
+    Then il messaggio di errore corrisponde al caso "ESERVICE_TEMPLATE_RISK_ANALYSIS_NAME_DUPLICATE"
 
   # Endpoint: POST /eservices/templates/:eServiceTemplateId/name/update
   Scenario: [ERROR_126] - Impossibilità di rinominare un template con il nome di un altro template
@@ -46,7 +46,7 @@ Feature: Messaggi di errore durante la creazione e la modifica dei template e-se
       | T-1   | Comune di Milano | Catalogo esistente    | REST       |
       | T-2   | Comune di Milano | Catalogo da rinominare | REST       |
     When l'erogatore tenta di rinominare il template "T-2" con il nome del template "T-1"
-    Then il messaggio di errore corrisponde al caso "ESERVICE_TEMPLATE_ESERVICE_TEMPLATE_DUPLICATE__POST_ESERVICES_TEMPLATES_E_SERVICE_TEMPLATE_ID_NAME_UPDATE" in lingua "it"
+    Then il messaggio di errore corrisponde al caso "ESERVICE_TEMPLATE_ESERVICE_TEMPLATE_DUPLICATE__POST_ESERVICES_TEMPLATES_E_SERVICE_TEMPLATE_ID_NAME_UPDATE"
 
   # Endpoint: POST /eservices/templates
   Scenario: [ERROR_128] - Rifiuto della creazione di un template con un link nel nome
@@ -55,7 +55,7 @@ Feature: Messaggi di errore durante la creazione e la modifica dei template e-se
   Allora il sistema rifiuta la creazione e invita l'erogatore a rimuovere il collegamento.
 
     When l'erogatore tenta di creare un template e-service con il nome "Valore https://example.org"
-    Then il messaggio di errore corrisponde al caso "ESERVICE_TEMPLATE_HYPERLINK_DETECTION_ERROR__POST_ESERVICES_TEMPLATES" in lingua "it"
+    Then il messaggio di errore corrisponde al caso "ESERVICE_TEMPLATE_HYPERLINK_DETECTION_ERROR__POST_ESERVICES_TEMPLATES"
 
   # Endpoint: POST /eservices/templates/:eServiceTemplateId/versions/:eServiceTemplateVersionId
   Scenario: [ERROR_129] - Rifiuto della modifica di una versione in bozza con un link nella descrizione
@@ -67,7 +67,7 @@ Feature: Messaggi di errore durante la creazione e la modifica dei template e-se
       | alias | tecnologia | stato | interfaccia               |
       | T-1   | REST       | DRAFT | openapi3-riferimenti.json |
     When l'erogatore tenta di modificare la descrizione della versione 1 del template "T-1" in "Valore https://example.org"
-    Then il messaggio di errore corrisponde al caso "ESERVICE_TEMPLATE_HYPERLINK_DETECTION_ERROR__POST_ESERVICES_TEMPLATES_E_SERVICE_TEMPLATE_ID_VERSIONS_E_SERVICE_TEMPLATE_VERSION_ID" in lingua "it"
+    Then il messaggio di errore corrisponde al caso "ESERVICE_TEMPLATE_HYPERLINK_DETECTION_ERROR__POST_ESERVICES_TEMPLATES_E_SERVICE_TEMPLATE_ID_VERSIONS_E_SERVICE_TEMPLATE_VERSION_ID"
 
   # Endpoint: POST /eservices/templates/:eServiceTemplateId/intendedTarget/update
   Scenario: [ERROR_132] - Rifiuto di un link nel destinatario di un template pubblicato
@@ -79,7 +79,7 @@ Feature: Messaggi di errore durante la creazione e la modifica dei template e-se
       | alias | tecnologia | stato     | interfaccia               |
       | T-1   | REST       | PUBLISHED | openapi3-riferimenti.json |
     When l'erogatore tenta di aggiornare il campo "destinatario" del template "T-1" con il valore "Valore https://example.org"
-    Then il messaggio di errore corrisponde al caso "ESERVICE_TEMPLATE_HYPERLINK_DETECTION_ERROR__POST_ESERVICES_TEMPLATES_E_SERVICE_TEMPLATE_ID_INTENDED_TARGET_UPDATE" in lingua "it"
+    Then il messaggio di errore corrisponde al caso "ESERVICE_TEMPLATE_HYPERLINK_DETECTION_ERROR__POST_ESERVICES_TEMPLATES_E_SERVICE_TEMPLATE_ID_INTENDED_TARGET_UPDATE"
 
   # Endpoint: POST /eservices/templates/:eServiceTemplateId/description/update
   Scenario: [ERROR_133] - Rifiuto di un link nella descrizione di un template pubblicato
@@ -91,7 +91,7 @@ Feature: Messaggi di errore durante la creazione e la modifica dei template e-se
       | alias | tecnologia | stato     | interfaccia               |
       | T-1   | REST       | PUBLISHED | openapi3-riferimenti.json |
     When l'erogatore tenta di aggiornare il campo "descrizione" del template "T-1" con il valore "Valore https://example.org"
-    Then il messaggio di errore corrisponde al caso "ESERVICE_TEMPLATE_HYPERLINK_DETECTION_ERROR__POST_ESERVICES_TEMPLATES_E_SERVICE_TEMPLATE_ID_DESCRIPTION_UPDATE" in lingua "it"
+    Then il messaggio di errore corrisponde al caso "ESERVICE_TEMPLATE_HYPERLINK_DETECTION_ERROR__POST_ESERVICES_TEMPLATES_E_SERVICE_TEMPLATE_ID_DESCRIPTION_UPDATE"
 
   # Endpoint: POST /eservices/templates/:eServiceTemplateId/name/update
   Scenario: [ERROR_134] - Rifiuto di un link nel nome di un template pubblicato
@@ -103,7 +103,7 @@ Feature: Messaggi di errore durante la creazione e la modifica dei template e-se
       | alias | tecnologia | stato     | interfaccia               |
       | T-1   | REST       | PUBLISHED | openapi3-riferimenti.json |
     When l'erogatore tenta di aggiornare il campo "nome" del template "T-1" con il valore "Valore https://example.org"
-    Then il messaggio di errore corrisponde al caso "ESERVICE_TEMPLATE_HYPERLINK_DETECTION_ERROR__POST_ESERVICES_TEMPLATES_E_SERVICE_TEMPLATE_ID_NAME_UPDATE" in lingua "it"
+    Then il messaggio di errore corrisponde al caso "ESERVICE_TEMPLATE_HYPERLINK_DETECTION_ERROR__POST_ESERVICES_TEMPLATES_E_SERVICE_TEMPLATE_ID_NAME_UPDATE"
 
   # NON REPLICABILE A FRONTEND
   # Endpoint: PATCH /eservices/templates/:eServiceTemplateId
@@ -122,7 +122,7 @@ Feature: Messaggi di errore durante la creazione e la modifica dei template e-se
     # Binding negativo mancante; verificare il contratto PATCH di rilascio: updateEServiceTemplate usa POST.
     # Non rimappare questo caso su updateTemplateName o sull'aggiornamento POST.
     When l'erogatore tenta di modificare i dati generali del template "T-2" con il nome del template "T-1"
-    Then il messaggio di errore corrisponde al caso "ESERVICE_TEMPLATE_ESERVICE_TEMPLATE_DUPLICATE__PATCH_ESERVICES_TEMPLATES_E_SERVICE_TEMPLATE_ID" in lingua "it"
+    Then il messaggio di errore corrisponde al caso "ESERVICE_TEMPLATE_ESERVICE_TEMPLATE_DUPLICATE__PATCH_ESERVICES_TEMPLATES_E_SERVICE_TEMPLATE_ID"
 
   # Endpoint: PATCH /eservices/templates/:eServiceTemplateId
   # PRENDI STEP WHEN DA MODIFICA NOME
@@ -147,7 +147,7 @@ Feature: Messaggi di errore durante la creazione e la modifica dei template e-se
     # Binding negativo mancante; verificare il contratto PATCH di rilascio: updateEServiceTemplate usa POST.
     # Non rimappare questo caso su updateTemplateName o sull'aggiornamento POST.
     When l'erogatore tenta di modificare i dati generali del template "T-1" con il nuovo nome predisposto
-    Then il messaggio di errore corrisponde al caso "ESERVICE_TEMPLATE_INSTANCE_NAME_CONFLICT__PATCH_ESERVICES_TEMPLATES_E_SERVICE_TEMPLATE_ID" in lingua "it"
+    Then il messaggio di errore corrisponde al caso "ESERVICE_TEMPLATE_INSTANCE_NAME_CONFLICT__PATCH_ESERVICES_TEMPLATES_E_SERVICE_TEMPLATE_ID"
 
   # Endpoint: PATCH /eservices/templates/:eServiceTemplateId
   # PRENDI STEP WHEN DA MODIFICA NOME
@@ -162,4 +162,4 @@ Feature: Messaggi di errore durante la creazione e la modifica dei template e-se
     # Binding negativo mancante; verificare il contratto PATCH di rilascio: updateEServiceTemplate usa POST.
     # Non rimappare questo caso su updateTemplateName o sull'aggiornamento POST; mantenere gli altri dati validi.
     When l'erogatore tenta di modificare i dati generali del template "T-1" con il nome "Valore https://example.org"
-    Then il messaggio di errore corrisponde al caso "ESERVICE_TEMPLATE_HYPERLINK_DETECTION_ERROR__PATCH_ESERVICES_TEMPLATES_E_SERVICE_TEMPLATE_ID" in lingua "it"
+    Then il messaggio di errore corrisponde al caso "ESERVICE_TEMPLATE_HYPERLINK_DETECTION_ERROR__PATCH_ESERVICES_TEMPLATES_E_SERVICE_TEMPLATE_ID"

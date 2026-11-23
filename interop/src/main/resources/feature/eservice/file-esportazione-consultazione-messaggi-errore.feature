@@ -20,7 +20,7 @@ Feature: Messaggi di errore durante la consultazione, il trasferimento e il cari
     And la delega in erogazione viene revocata dal Comune di Milano
     And un admin appartenente al delegato Comune di Pozzallo
     When l'utente tenta di consultare i dettagli dell'e-service in erogazione
-    Then il messaggio di errore corrisponde al caso "BFF_INVALID_ESERVICE_REQUESTER__GET_PRODUCERS_ESERVICES_ESERVICE_ID" in lingua "it"
+    Then il messaggio di errore corrisponde al caso "BFF_INVALID_ESERVICE_REQUESTER__GET_PRODUCERS_ESERVICES_ESERVICE_ID"
 
   @producer-delegation-settings
   # Endpoint: GET /producers/eservices/:eserviceId/descriptors/:descriptorId
@@ -33,7 +33,7 @@ Feature: Messaggi di errore durante la consultazione, il trasferimento e il cari
     And la delega in erogazione viene revocata dal Comune di Milano
     And un admin appartenente al delegato Comune di Pozzallo
     When l'utente tenta di consultare i dettagli della versione 1 dell'e-service in erogazione
-    Then il messaggio di errore corrisponde al caso "BFF_INVALID_ESERVICE_REQUESTER__GET_PRODUCERS_ESERVICES_ESERVICE_ID_DESCRIPTORS_DESCRIPTOR_ID" in lingua "it"
+    Then il messaggio di errore corrisponde al caso "BFF_INVALID_ESERVICE_REQUESTER__GET_PRODUCERS_ESERVICES_ESERVICE_ID_DESCRIPTORS_DESCRIPTOR_ID"
 
   # Endpoint: GET /export/eservices/:eserviceId/descriptors/:descriptorId
   Scenario: [ERROR_171] - Impossibilità per il delegato di esportare una versione dell'e-service
@@ -44,7 +44,7 @@ Feature: Messaggi di errore durante la consultazione, il trasferimento e il cari
     Given un e-service pubblicato dal Comune di Milano con una delega in erogazione al Comune di Pozzallo in stato ACTIVE
     And un admin appartenente al delegato Comune di Pozzallo
     When l'utente tenta di esportare la versione 1 dell'e-service
-    Then il messaggio di errore corrisponde al caso "BFF_INVALID_ESERVICE_REQUESTER__GET_EXPORT_ESERVICES_ESERVICE_ID_DESCRIPTORS_DESCRIPTOR_ID" in lingua "it"
+    Then il messaggio di errore corrisponde al caso "BFF_INVALID_ESERVICE_REQUESTER__GET_EXPORT_ESERVICES_ESERVICE_ID_DESCRIPTORS_DESCRIPTOR_ID"
 
   # Endpoint: POST /eservices/:eServiceId/descriptors/:descriptorId/documents
   Scenario: [ERROR_172] - Impossibilità di allegare un documento a una versione eliminata
@@ -58,7 +58,7 @@ Feature: Messaggi di errore durante la consultazione, il trasferimento e il cari
     And la versione 2 dell'e-service "ES-1" del Comune di Milano in bozza
     And la versione in bozza appena creata dell'e-service viene eliminata
     When l'erogatore tenta di caricare un file valido come documentazione per la versione 2 dell'e-service "ES-1"
-    Then il messaggio di errore corrisponde al caso "BFF_ESERVICE_DESCRIPTOR_NOT_FOUND" in lingua "it"
+    Then il messaggio di errore corrisponde al caso "BFF_ESERVICE_DESCRIPTOR_NOT_FOUND"
 
   # Endpoint: POST /import/eservices
   @err_msg_when_exec
@@ -70,7 +70,7 @@ Feature: Messaggi di errore durante la consultazione, il trasferimento e il cari
     # Fixture da predisporre: ZIP leggibile, privo di configuration.json e con gli altri contenuti validi.
     # Operazione BFF e binding mancanti per l'importazione da file.
     When l'erogatore tenta di importare un e-service dal file "zip-senza-configurazione.zip"
-    Then il messaggio di errore corrisponde al caso "BFF_INVALID_ZIP_STRUCTURE" in lingua "it"
+    Then il messaggio di errore corrisponde al caso "BFF_INVALID_ZIP_STRUCTURE"
 
   @producer-delegation-settings
   # Endpoint: GET /export/eservices/:eserviceId/descriptors/:descriptorId
@@ -82,7 +82,7 @@ Feature: Messaggi di errore durante la consultazione, il trasferimento e il cari
     Given un e-service pubblicato dal Comune di Milano con una delega in erogazione al Comune di Pozzallo in stato ACTIVE
     And un admin appartenente all'erogatore Comune di Milano
     When l'utente tenta di esportare la versione 1 dell'e-service
-    Then il messaggio di errore corrisponde al caso "BFF_DELEGATED_ESERVICE_NOT_EXPORTABLE" in lingua "it"
+    Then il messaggio di errore corrisponde al caso "BFF_DELEGATED_ESERVICE_NOT_EXPORTABLE"
 
   # Endpoint: POST /eservices/:eServiceId/descriptors/:descriptorId/documents
   @err_msg_when_exec
@@ -96,7 +96,7 @@ Feature: Messaggi di errore durante la consultazione, il trasferimento e il cari
       | ES-1  | Comune di Milano |
     # Binding BFF comune mancante per il caricamento; riusare addDocument e gestire il rifiuto.
     When l'erogatore carica il file "allegato-a.pdf" come "interfaccia" sulla versione dell'e-service con il nome "Allegato di test"
-    Then il messaggio di errore corrisponde al caso "CATALOG_INVALID_ESERVICE_INTERFACE_FILE_DETECTED" in lingua "it"
+    Then il messaggio di errore corrisponde al caso "CATALOG_INVALID_ESERVICE_INTERFACE_FILE_DETECTED"
 
   # Endpoint: POST /eservices/:eServiceId/descriptors/:descriptorId/documents
   @err_msg_when_exec
@@ -110,7 +110,7 @@ Feature: Messaggi di errore durante la consultazione, il trasferimento e il cari
       | ES-1  | Comune di Milano |
     # Binding BFF comune mancante per il caricamento; riusare addDocument e gestire il rifiuto.
     When l'erogatore carica il file "openapi-versione-non-supportata.yaml" come "interfaccia" sulla versione dell'e-service con il nome "Allegato di test"
-    Then il messaggio di errore corrisponde al caso "CATALOG_OPENAPI_VERSION_NOT_RECOGNIZED__POST_ESERVICES_E_SERVICE_ID_DESCRIPTORS_DESCRIPTOR_ID_DOCUMENTS" in lingua "it"
+    Then il messaggio di errore corrisponde al caso "CATALOG_OPENAPI_VERSION_NOT_RECOGNIZED__POST_ESERVICES_E_SERVICE_ID_DESCRIPTORS_DESCRIPTOR_ID_DOCUMENTS"
 
   # Endpoint: POST /eservices/:eServiceId/descriptors/:descriptorId/documents
   @err_msg_when_exec
@@ -124,7 +124,7 @@ Feature: Messaggi di errore durante la consultazione, il trasferimento e il cari
       | ES-1  | Comune di Milano |
     # Binding BFF comune mancante per il caricamento; riusare addDocument e gestire il rifiuto.
     When l'erogatore carica il file "formato-non-rilevabile.bin" come "documento" sulla versione dell'e-service con il nome "Allegato di test"
-    Then il messaggio di errore corrisponde al caso "CATALOG_INVALID_CONTENT_TYPE_DETECTED" in lingua "it"
+    Then il messaggio di errore corrisponde al caso "CATALOG_INVALID_CONTENT_TYPE_DETECTED"
 
   # Endpoint: POST /eservices/:eServiceId/descriptors/:descriptorId/documents
   Scenario: [ERROR_184] - Rifiuto di un'interfaccia SOAP senza indirizzo del servizio
@@ -134,7 +134,7 @@ Feature: Messaggi di errore durante la consultazione, il trasferimento e il cari
 
     Given un e-service SOAP in bozza creato dall'erogatore
     When l'erogatore tenta di caricare l'interfaccia SOAP "missing-soap-address.wsdl" sul descrittore dell'e-service ottenendo un rifiuto per "assenza di soap:address"
-    Then il messaggio di errore corrisponde al caso "CATALOG_INTERFACE_EXTRACTING_SOAP_FIELD_VALUE_ERROR" in lingua "it"
+    Then il messaggio di errore corrisponde al caso "CATALOG_INTERFACE_EXTRACTING_SOAP_FIELD_VALUE_ERROR"
 
   # Endpoint: POST /eservices/:eServiceId/descriptors/:descriptorId/documents
   @err_msg_when_exec
@@ -148,7 +148,7 @@ Feature: Messaggi di errore durante la consultazione, il trasferimento e il cari
       | ES-1  | Comune di Milano |
     # Binding BFF comune mancante per il caricamento; riusare addDocument e gestire il rifiuto.
     When l'erogatore carica il file "openapi-server-non-valido.yaml" come "interfaccia" sulla versione dell'e-service con il nome "Allegato di test"
-    Then il messaggio di errore corrisponde al caso "CATALOG_INVALID_SERVER_URL" in lingua "it"
+    Then il messaggio di errore corrisponde al caso "CATALOG_INVALID_SERVER_URL"
 
   # Endpoint: POST /eservices/:eServiceId/descriptors/:descriptorId/documents
   @err_msg_when_exec
@@ -163,7 +163,7 @@ Feature: Messaggi di errore durante la consultazione, il trasferimento e il cari
     # Dimensionare la fixture oltre il limite applicativo configurato e sotto il limite del proxy.
     # Binding BFF comune mancante per il caricamento; riusare addDocument e gestire il rifiuto.
     When l'erogatore carica il file "pdf-oltre-limite.pdf" come "documento" sulla versione dell'e-service con il nome "Allegato di test"
-    Then il messaggio di errore corrisponde al caso "CATALOG_CONTENT_TOO_LARGE_ERROR" in lingua "it"
+    Then il messaggio di errore corrisponde al caso "CATALOG_CONTENT_TOO_LARGE_ERROR"
 
   # Endpoint: POST /eservices/:eServiceId/descriptors/:descriptorId/documents
   @err_msg_when_exec
@@ -177,4 +177,4 @@ Feature: Messaggi di errore durante la consultazione, il trasferimento e il cari
       | ES-1  | Comune di Milano |
     # Binding BFF comune mancante per il caricamento; riusare addDocument e gestire il rifiuto.
     When l'erogatore carica il file "pdf-con-contenuto-non-valido.pdf" come "documento" sulla versione dell'e-service con il nome "Allegato di test"
-    Then il messaggio di errore corrisponde al caso "CATALOG_INVALID_FILE_UPLOAD_ERROR" in lingua "it"
+    Then il messaggio di errore corrisponde al caso "CATALOG_INVALID_FILE_UPLOAD_ERROR"
