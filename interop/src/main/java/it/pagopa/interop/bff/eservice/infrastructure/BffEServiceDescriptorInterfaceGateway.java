@@ -116,7 +116,7 @@ public class BffEServiceDescriptorInterfaceGateway {
         String fileName;
 //        fileName = Objects.requireNonNullElseGet(name, () -> RandomUtils.randomAlphanumericName("interface") + ".yaml");
         EService eService = entityStore.getById(serviceRef.id(), EService.class).orElse(null);
-        EServiceDescriptor eServiceDescriptor = entityStore.getById(descriptorRef.id(), EServiceDescriptor.class).orElse(null);
+        EServiceDescriptor eServiceDescriptor = Objects.requireNonNull(eService).findDescriptor(descriptorRef.id());
         Tenant producer = Tenant.fromOrganizationId(UUID.fromString(Objects.requireNonNull(eService).getProducerId()));
         String separator = "_";
         fileName = "Specifica API" + separator + Objects.requireNonNull(eService).getName() + separator + producer.getName() + separator + "v" + Objects.requireNonNull(eServiceDescriptor).getVersion();
