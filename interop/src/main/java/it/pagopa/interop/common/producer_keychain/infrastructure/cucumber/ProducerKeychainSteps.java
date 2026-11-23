@@ -41,6 +41,21 @@ public class ProducerKeychainSteps {
         };
     }
 
+    @Then("la richiesta di modifica dei metadati del portachiavi erogatore fallisce come operazione malformata")
+    public void shouldFailToUpdateMetadataAsMalformed() {
+        useCase.shouldFailToUpdateMetadataAsMalformed();
+    }
+
+    @Then("la richiesta di modifica dei metadati del portachiavi erogatore fallisce come operazione vietata")
+    public void shouldFailToUpdateMetadataAsForbidden() {
+        useCase.shouldFailToUpdateMetadataAsForbidden();
+    }
+
+    @Then("la richiesta di modifica dei metadati del portachiavi erogatore fallisce per conflitto di risorsa")
+    public void shouldFailToUpdateMetadataAsConflict() {
+        useCase.shouldFailToUpdateMetadataAsConflict();
+    }
+
     @Then("il portachiavi {string} conserva le associazioni e i dati di riferimento")
     public void assertKeychainPreserved(String keychainAlias) {
         assertKeychainPreserved(keychainAlias, Set.of(), "Dati e associazioni del portachiavi " + keychainAlias);

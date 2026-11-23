@@ -25,5 +25,7 @@ public interface ProducerKeychainGateway extends Plugin<Channel> {
     void addEService(ProducerKeychainRef ref, EServiceRef eservice);
     ProducerKeychain updateMetadata(ProducerKeychainRef ref, String name, String description);
     void tryToUpdateMetadata(ProducerKeychainRef ref, String name, String description);
+    void shouldFailToUpdateMetadataAsMalformed();
+    void shouldFailToUpdateMetadataAsForbidden();
+    void shouldFailToUpdateMetadataAsConflict();
 }
-

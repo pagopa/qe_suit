@@ -50,6 +50,18 @@ public class ProducerKeychainUseCase {
         gateway.tryToUpdateMetadata(ref, name, description);
     }
 
+    public void shouldFailToUpdateMetadataAsMalformed() {
+        gateway.shouldFailToUpdateMetadataAsMalformed();
+    }
+
+    public void shouldFailToUpdateMetadataAsForbidden() {
+        gateway.shouldFailToUpdateMetadataAsForbidden();
+    }
+
+    public void shouldFailToUpdateMetadataAsConflict() {
+        gateway.shouldFailToUpdateMetadataAsConflict();
+    }
+
     public ProducerKeychain getProducerKeychain(ProducerKeychainRef ref) {
         return gateway.getProducerKeychain(ref);
     }
@@ -83,5 +95,4 @@ public class ProducerKeychainUseCase {
         }
     }
 }
-
 

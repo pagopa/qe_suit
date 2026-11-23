@@ -1,6 +1,8 @@
 package it.pagopa.interop.m2m.producer_keychain.infrastructure;
 
 import it.pagopa.application.context.EntityStore;
+import it.pagopa.application.context.LastApiResponseStore;
+import it.pagopa.infrastructure.response.ApiResponse;
 import it.pagopa.infrastructure.template.action.strategy.PollingStrategy;
 import it.pagopa.interop.common.kernel.domain.Channel;
 import it.pagopa.interop.common.kernel.domain.EServiceRef;
@@ -27,11 +29,14 @@ import java.util.List;
 import java.util.Objects;
 import java.util.Set;
 
+import static org.assertj.core.api.Assertions.assertThat;
+
 @Service
 @RequiredArgsConstructor
 public class M2MProducerKeychainGateway implements ProducerKeychainGateway {
     private final M2MProducerKeychainRestClient restClient;
     private final EntityStore entityStore;
+    private final LastApiResponseStore lastApiResponseStore;
 
     @Override
     public ProducerKeychain createProducerKeychain(ProducerKeychainCreationCommand command) {
@@ -122,7 +127,32 @@ public class M2MProducerKeychainGateway implements ProducerKeychainGateway {
 
     @Override
     public void tryToUpdateMetadata(ProducerKeychainRef ref, String name, String description) {
-        throw new UnsupportedOperationException("Updating producer keychain metadata is not supported on M2M v3");
+        restClient.updateProducerKeychain(ref.id(), new ProducerKeychainUpdateSeed()
+                .name(name).description(description)).withoutPolling();
+    }
+
+    @Override
+    public void shouldFailToUpdateMetadataAsMalformed() {
+        assertUpdateMetadataStatus(400);
+    }
+
+    @Override
+    public void shouldFailToUpdateMetadataAsForbidden() {
+        assertUpdateMetadataStatus(403);
+    }
+
+    @Override
+    public void shouldFailToUpdateMetadataAsConflict() {
+        assertUpdateMetadataStatus(409);
+    }
+
+    private void assertUpdateMetadataStatus(int expectedStatus) {
+        assertThat(lastApiResponseStore.getLastResponse())
+                .as("Risposta al tentativo di modifica dei metadati del portachiavi erogatore")
+                .isNotNull()
+                .extracting(ApiResponse::getStatusCode)
+                .as("Esito della modifica dei metadati del portachiavi erogatore")
+                .isEqualTo(expectedStatus);
     }
 
     @Override

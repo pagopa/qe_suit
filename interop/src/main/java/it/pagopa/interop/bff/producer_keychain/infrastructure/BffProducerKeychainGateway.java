@@ -1,6 +1,8 @@
 package it.pagopa.interop.bff.producer_keychain.infrastructure;
 
 import it.pagopa.application.context.EntityStore;
+import it.pagopa.application.context.LastApiResponseStore;
+import it.pagopa.infrastructure.response.ApiResponse;
 import it.pagopa.infrastructure.template.action.strategy.PollingStrategy;
 import it.pagopa.interop.bff.producer_keychain.application.BffProducerKeyCreationCommand;
 import it.pagopa.interop.bff.producer_keychain.application.BffProducerKeychainCreationCommand;
@@ -26,12 +28,15 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 
+import static org.assertj.core.api.Assertions.assertThat;
+
 @Service
 @RequiredArgsConstructor
 public class BffProducerKeychainGateway implements ProducerKeychainGateway {
     private final BffProducerKeychainRestClient restClient;
     private final BffProducerKeychainMapper mapper;
     private final EntityStore entityStore;
+    private final LastApiResponseStore lastApiResponseStore;
 
     @Override
     public ProducerKeychain createProducerKeychain(ProducerKeychainCreationCommand command) {
@@ -131,6 +136,30 @@ public class BffProducerKeychainGateway implements ProducerKeychainGateway {
     @Override
     public void tryToUpdateMetadata(ProducerKeychainRef ref, String name, String description) {
         restClient.updateProducerKeychain(ref.id(), updateSeed(name, description)).withoutPolling();
+    }
+
+    @Override
+    public void shouldFailToUpdateMetadataAsMalformed() {
+        assertUpdateMetadataStatus(400);
+    }
+
+    @Override
+    public void shouldFailToUpdateMetadataAsForbidden() {
+        assertUpdateMetadataStatus(403);
+    }
+
+    @Override
+    public void shouldFailToUpdateMetadataAsConflict() {
+        assertUpdateMetadataStatus(409);
+    }
+
+    private void assertUpdateMetadataStatus(int expectedStatus) {
+        assertThat(lastApiResponseStore.getLastResponse())
+                .as("Risposta al tentativo di modifica dei metadati del portachiavi erogatore")
+                .isNotNull()
+                .extracting(ApiResponse::getStatusCode)
+                .as("Esito della modifica dei metadati del portachiavi erogatore")
+                .isEqualTo(expectedStatus);
     }
 
     private static ProducerKeychainUpdateSeed updateSeed(String name, String description) {
