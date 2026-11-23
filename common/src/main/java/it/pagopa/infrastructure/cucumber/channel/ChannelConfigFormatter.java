@@ -2,6 +2,7 @@ package it.pagopa.infrastructure.cucumber.channel;
 
 import it.pagopa.application.ChannelKind;
 
+import java.util.Locale;
 import java.util.Objects;
 
 final class ChannelConfigFormatter<C extends Enum<C> & ChannelKind> {
@@ -17,8 +18,16 @@ final class ChannelConfigFormatter<C extends Enum<C> & ChannelKind> {
     String toSuffix(ChannelConfig<C> config) { return "[" + fields(config) + "]"; }
 
     private String fields(ChannelConfig<C> config) {
-        return "Given=" + channelMapping.toGherkin(config.given())
-                + ",When=" + channelMapping.toGherkin(config.when())
-                + ",Then=" + channelMapping.toGherkin(config.then());
+        boolean showLanguages = !Locale.ITALIAN.equals(config.givenLanguage())
+                || !Locale.ITALIAN.equals(config.whenLanguage())
+                || !Locale.ITALIAN.equals(config.thenLanguage());
+        return "Given=" + field(config.given(), config.givenLanguage(), showLanguages)
+                + ",When=" + field(config.when(), config.whenLanguage(), showLanguages)
+                + ",Then=" + field(config.then(), config.thenLanguage(), showLanguages);
+    }
+
+    private String field(C channel, Locale language, boolean showLanguage) {
+        return channelMapping.toGherkin(channel)
+                + (showLanguage ? ":" + language.toLanguageTag() : "");
     }
 }

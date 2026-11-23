@@ -6,6 +6,7 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.LinkedHashMap;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 import java.util.Objects;
 import java.util.Set;
@@ -38,7 +39,7 @@ final class ChannelTagParser<C extends Enum<C> & ChannelKind> {
         if (body.isBlank()) throw new ChannelTagParseException("Empty channel tag body in: " + tag);
 
         Map<String, String> parsed = new LinkedHashMap<>();
-        for (String pair : body.split(",")) {
+        for (String pair : body.split(",", -1)) {
             int eq = pair.indexOf('=');
             if (eq < 0) throw new ChannelTagParseException("Missing '=' in pair '" + pair + "' of tag: " + tag);
 
@@ -54,17 +55,34 @@ final class ChannelTagParser<C extends Enum<C> & ChannelKind> {
             if (!parsed.containsKey(required)) throw new ChannelTagParseException("Missing required key '" + required + "' in tag: " + tag);
         }
 
+        ChannelSelection given = selection(parsed.get("Given"), "Given", tag);
+        ChannelSelection when = selection(parsed.get("When"), "When", tag);
+        ChannelSelection then = selection(parsed.get("Then"), "Then", tag);
         return new ChannelConfig<>(
-                resolveChannel(parsed.get("Given"), "Given", tag),
-                resolveChannel(parsed.get("When"), "When", tag),
-                resolveChannel(parsed.get("Then"), "Then", tag)
+                given.channel(), when.channel(), then.channel(),
+                given.language(), when.language(), then.language()
         );
     }
 
-    private C resolveChannel(String value, String key, String originalTag) {
-        return channelMapping.fromGherkin(value)
+    private ChannelSelection selection(String value, String key, String tag) {
+        int colon = value.indexOf(':');
+        String channelToken = colon < 0 ? value : value.substring(0, colon).trim();
+        String languageToken = colon < 0 ? "it" : value.substring(colon + 1).trim();
+        if (languageToken.isEmpty() || !languageToken.matches("[a-zA-Z]{2,8}(-[a-zA-Z0-9]{1,8})*")) {
+            throw new ChannelTagParseException("Invalid language '" + languageToken + "' for key '" + key + "' in tag: " + tag);
+        }
+        C channel = channelMapping.fromGherkin(channelToken)
                 .orElseThrow(() -> new ChannelTagParseException(
-                        "Unknown channel value '" + value + "' for key '" + key + "' in tag: " + originalTag));
+                        "Unknown channel value '" + channelToken + "' for key '" + key + "' in tag: " + tag));
+        return new ChannelSelection(channel, Locale.forLanguageTag(languageToken));
+    }
+
+    private final class ChannelSelection {
+        private final C channel;
+        private final Locale language;
+        ChannelSelection(C channel, Locale language) { this.channel = channel; this.language = language; }
+        C channel() { return channel; }
+        Locale language() { return language; }
     }
 
     public static final class ChannelTagParseException extends RuntimeException {

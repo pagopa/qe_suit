@@ -12,6 +12,7 @@ import java.nio.file.Path;
 import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
+import java.util.regex.Pattern;
 
 public final class ChannelScenarioExpander<C extends Enum<C> & ChannelKind>
         implements ChannelScenarioExpansion {
@@ -45,7 +46,18 @@ public final class ChannelScenarioExpander<C extends Enum<C> & ChannelKind>
                 feature.getTags().stream().map(Tag::getName).toList());
         String[] lines = sourceText.split("\n", -1);
         List<ScenarioBlock<C>> blocks = extractor.extract(feature, lines, featureConfigs);
-        return blocks.isEmpty() ? sourceText : renderer.render(lines, blocks);
+        if (blocks.isEmpty()) return sourceText;
+
+        // The effective configuration is materialized on each generated scenario.
+        // Remove only inherited feature-level @channel tags so Cucumber cannot
+        // resolve the inherited config before the generated scenario config.
+        for (Tag tag : feature.getTags()) {
+            if (!tag.getName().startsWith(ChannelTagParser.CHANNEL_TAG_PREFIX)) continue;
+            int lineIndex = tag.getLocation().getLine().intValue() - 1;
+            lines[lineIndex] = lines[lineIndex].replaceFirst(
+                    "(?<!\\S)" + Pattern.quote(tag.getName()) + "(?=\\s|$)", "");
+        }
+        return renderer.render(lines, blocks);
     }
 
     private Optional<Feature> parseFeature(Path sourcePath, String sourceText) {

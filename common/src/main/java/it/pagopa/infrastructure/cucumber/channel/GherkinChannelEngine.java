@@ -34,6 +34,7 @@ public class GherkinChannelEngine<C extends Enum<C> & ChannelKind> {
         this.scenarioConfig = config;
         this.lastSemanticType = SemanticStepType.GIVEN;
         currentChannel.setCurrentChannel(config.given());
+        currentChannel.setCurrentLanguage(config.givenLanguage());
         return config;
     }
 
@@ -49,6 +50,11 @@ public class GherkinChannelEngine<C extends Enum<C> & ChannelKind> {
             case THEN -> scenarioConfig.then();
         };
         currentChannel.setCurrentChannel(channel);
+        currentChannel.setCurrentLanguage(switch (semantic) {
+            case GIVEN -> scenarioConfig.givenLanguage();
+            case WHEN -> scenarioConfig.whenLanguage();
+            case THEN -> scenarioConfig.thenLanguage();
+        });
         return channel;
     }
 
