@@ -14,28 +14,28 @@ Feature: Modifica dei metadati dei template finalità
     Given un template finalità creato dal Comune di Comun Nuovo in stato <stato>
     And i dati del template finalità allo stato attuale appuntati come riferimento
     When un admin del Comune di Comun Nuovo modifica i metadati del template finalità:
-      | campo       | valore unico      |
-      | nome        | primo nome        |
+      | campo              | valore unico      |
+      | purposeTitle       | primo nome        |
     Then il template finalità conserva lo stato e i dati di riferimento eccetto il nome
 
     When i dati del template finalità allo stato attuale appuntati come riferimento
     And un admin del Comune di Comun Nuovo modifica i metadati del template finalità:
-      | campo       | valore unico      |
-      | descrizione | prima descrizione |
+      | campo              | valore unico      |
+      | purposeDescription | prima descrizione |
     Then il template finalità conserva lo stato e i dati di riferimento eccetto la descrizione
 
     When i dati del template finalità allo stato attuale appuntati come riferimento
     And un admin del Comune di Comun Nuovo modifica i metadati del template finalità:
-      | campo       | valore unico      |
-      | destinatari | primi destinatari |
+      | campo              | valore unico      |
+      | targetDescription  | primi destinatari |
     Then il template finalità conserva lo stato e i dati di riferimento eccetto i destinatari
 
     When i dati del template finalità allo stato attuale appuntati come riferimento
     And un admin del Comune di Comun Nuovo modifica i metadati del template finalità:
-      | campo       | valore unico      |
-      | nome        | nuovo nome        |
-      | descrizione | nuova descrizione |
-      | destinatari | nuovi destinatari |
+      | campo              | valore unico      |
+      | purposeTitle       | nuovo nome        |
+      | purposeDescription | nuova descrizione |
+      | targetDescription  | nuovi destinatari |
     Then il template finalità conserva lo stato e i dati di riferimento eccetto nome, descrizione e destinatari
 
     Examples:
@@ -61,20 +61,20 @@ Feature: Modifica dei metadati dei template finalità
     And una finalità pubblicata dal Comune di Pozzallo dal template finalità
     And i dati della finalità allo stato attuale appuntati come riferimento
     When un admin del Comune di Pozzallo modifica i metadati del template finalità:
-      | campo       | valore unico      |
-      | nome        | nuovo nome        |
-      | descrizione | nuova descrizione |
-      | destinatari | nuovi destinatari |
+      | campo              | valore unico      |
+      | purposeTitle       | nuovo nome        |
+      | purposeDescription | nuova descrizione |
+      | targetDescription  | nuovi destinatari |
     Then la finalità conserva lo stato e i dati di riferimento
 
     When l'e-service "ES-1" del Comune di Milano sottoscritto dal Comune di Comun Nuovo con una richiesta di fruizione attiva
     And una finalità in bozza creata dal Comune di Comun Nuovo dal template finalità
     And i dati della finalità allo stato attuale appuntati come riferimento
     And un admin del Comune di Pozzallo modifica i metadati del template finalità:
-      | campo       | valore unico      |
-      | nome        | nuovo nome        |
-      | descrizione | nuova descrizione |
-      | destinatari | nuovi destinatari |
+      | campo              | valore unico      |
+      | purposeTitle       | nuovo nome        |
+      | purposeDescription | nuova descrizione |
+      | targetDescription  | nuovi destinatari |
     Then un admin del Comune di Comun Nuovo
     And la finalità conserva lo stato e i dati di riferimento
 
@@ -135,16 +135,16 @@ Feature: Modifica dei metadati dei template finalità
     Given un template finalità creato dal Comune di Comun Nuovo in stato <stato>
     And i dati del template finalità allo stato attuale appuntati come riferimento
     When un admin del Comune di Comun Nuovo tenta di modificare i metadati del template finalità:
-      | campo       | valore            |
-      | nome        | ab                |
-      | descrizione | prima descrizione |
+      | campo              | valore            |
+      | purposeTitle       | ab                |
+      | purposeDescription | prima descrizione |
     Then la richiesta di modifica dei metadati del template finalità fallisce come operazione malformata
     And il template finalità conserva lo stato e i dati di riferimento
 
     When un admin del Comune di Comun Nuovo tenta di modificare i metadati del template finalità:
-      | campo       | valore     |
-      | nome        | primo nome |
-      | descrizione | xy         |
+      | campo              | valore     |
+      | purposeTitle       | primo nome |
+      | purposeDescription | xy         |
     Then la richiesta di modifica dei metadati del template finalità fallisce come operazione malformata
     And il template finalità conserva lo stato e i dati di riferimento
 
@@ -163,12 +163,12 @@ Feature: Modifica dei metadati dei template finalità
 
     Given un template finalità creato dal Comune di Comun Nuovo in stato <stato>
     And un admin del Comune di Comun Nuovo modifica i metadati del template finalità:
-      | campo       | valore                |
-      | descrizione | descrizione esistente |
+      | campo              | valore                |
+      | purposeDescription | descrizione esistente |
     And i dati del template finalità allo stato attuale appuntati come riferimento
     When un admin del Comune di Comun Nuovo modifica i metadati del template finalità:
-      | campo       | valore                |
-      | descrizione | descrizione esistente |
+      | campo              | valore                |
+      | purposeDescription | descrizione esistente |
     Then il template finalità conserva lo stato e i dati di riferimento
 
     Examples:
@@ -183,19 +183,19 @@ Feature: Modifica dei metadati dei template finalità
 
     Given un template finalità creato dal Comune di Comun Nuovo in stato <stato>
     And un admin del Comune di Comun Nuovo tenta di modificare i metadati del template finalità:
-      | campo       | valore         |
-      | nome        | nome esistente |
+      | campo              | valore         |
+      | purposeTitle       | nome esistente |
     And un template finalità creato dal Comune di Comun Nuovo in stato <stato>
     And i dati del template finalità allo stato attuale appuntati come riferimento
     When un admin del Comune di Comun Nuovo tenta di modificare i metadati del template finalità:
-      | campo       | valore         |
-      | nome        | nome esistente |
+      | campo              | valore         |
+      | purposeTitle       | nome esistente |
     Then la richiesta di modifica dei metadati del template finalità fallisce per conflitto di risorsa
     And il template finalità conserva lo stato e i dati di riferimento
 
     When un admin del Comune di Comun Nuovo tenta di modificare i metadati del template finalità:
-      | campo       | valore         |
-      | nome        | NOME Esistente |
+      | campo              | valore         |
+      | purposeTitle       | NOME Esistente |
     Then la richiesta di modifica dei metadati del template finalità fallisce per conflitto di risorsa
     And il template finalità conserva lo stato e i dati di riferimento
 
@@ -214,56 +214,56 @@ Feature: Modifica dei metadati dei template finalità
     Given un template finalità creato dal Comune di Comun Nuovo in stato pubblicato
     And i dati del template finalità allo stato attuale appuntati come riferimento
     When un api del Comune di Comun Nuovo tenta di modificare i metadati del template finalità:
-      | campo       | valore unico      |
-      | nome        | primo nome        |
-      | descrizione | prima descrizione |
+      | campo              | valore unico      |
+      | purposeTitle       | primo nome        |
+      | purposeDescription | prima descrizione |
     Then la richiesta di modifica dei metadati del template finalità fallisce come operazione vietata
     And un admin del Comune di Comun Nuovo
     And il template finalità conserva lo stato e i dati di riferimento
 
     When un api,security del Comune di Comun Nuovo tenta di modificare i metadati del template finalità:
-      | campo       | valore unico      |
-      | nome        | primo nome        |
-      | descrizione | prima descrizione |
+      | campo              | valore unico      |
+      | purposeTitle       | primo nome        |
+      | purposeDescription | prima descrizione |
     Then la richiesta di modifica dei metadati del template finalità fallisce come operazione vietata
     And un admin del Comune di Comun Nuovo
     And il template finalità conserva lo stato e i dati di riferimento
 
     When un security del Comune di Comun Nuovo tenta di modificare i metadati del template finalità:
-      | campo       | valore unico      |
-      | nome        | primo nome        |
-      | descrizione | prima descrizione |
+      | campo              | valore unico      |
+      | purposeTitle       | primo nome        |
+      | purposeDescription | prima descrizione |
     Then la richiesta di modifica dei metadati del template finalità fallisce come operazione vietata
     And un admin del Comune di Comun Nuovo
     And il template finalità conserva lo stato e i dati di riferimento
 
     When un support del Comune di Comun Nuovo tenta di modificare i metadati del template finalità:
-      | campo       | valore unico      |
-      | nome        | primo nome        |
-      | descrizione | prima descrizione |
+      | campo              | valore unico      |
+      | purposeTitle       | primo nome        |
+      | purposeDescription | prima descrizione |
     Then la richiesta di modifica dei metadati del template finalità fallisce come operazione vietata
     And un admin del Comune di Comun Nuovo
     And il template finalità conserva lo stato e i dati di riferimento
 
     When un reviewer del Comune di Comun Nuovo tenta di modificare i metadati del template finalità:
-      | campo       | valore unico      |
-      | nome        | primo nome        |
-      | descrizione | prima descrizione |
+      | campo              | valore unico      |
+      | purposeTitle       | primo nome        |
+      | purposeDescription | prima descrizione |
     Then la richiesta di modifica dei metadati del template finalità fallisce come operazione vietata
     And un admin del Comune di Comun Nuovo
     And il template finalità conserva lo stato e i dati di riferimento
 
     When un viewer del Comune di Comun Nuovo tenta di modificare i metadati del template finalità:
-      | campo       | valore unico      |
-      | nome        | primo nome        |
-      | descrizione | prima descrizione |
+      | campo              | valore unico      |
+      | purposeTitle       | primo nome        |
+      | purposeDescription | prima descrizione |
     Then la richiesta di modifica dei metadati del template finalità fallisce come operazione vietata
     And un admin del Comune di Comun Nuovo
     And il template finalità conserva lo stato e i dati di riferimento
 
     When un admin del Comune di Pozzallo tenta di modificare i metadati del template finalità:
-      | campo       | valore unico      |
-      | nome        | primo nome        |
-      | descrizione | prima descrizione |
+      | campo              | valore unico      |
+      | purposeTitle       | primo nome        |
+      | purposeDescription | prima descrizione |
     Then un admin del Comune di Comun Nuovo
     And la richiesta di modifica dei metadati del template finalità fallisce come operazione vietata

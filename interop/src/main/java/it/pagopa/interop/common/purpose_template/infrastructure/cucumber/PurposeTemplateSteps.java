@@ -180,9 +180,9 @@ public class PurposeTemplateSteps {
                 value = withUniqueSuffix(value);
             }
             switch (field) {
-                case "nome" -> name = value;
-                case "descrizione" -> description = value;
-                case "destinatari" -> targetDescription = value;
+                case "purposeTitle" -> name = value;
+                case "purposeDescription" -> description = value;
+                case "targetDescription" -> targetDescription = value;
                 default -> throw new IllegalArgumentException(
                         "Campo metadato template finalità non supportato: " + field);
             }

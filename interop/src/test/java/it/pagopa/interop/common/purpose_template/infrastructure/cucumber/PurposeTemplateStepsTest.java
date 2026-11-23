@@ -95,4 +95,31 @@ class PurposeTemplateStepsTest {
 
         verifyNoInteractions(journey, useCase);
     }
+
+    @Test
+    void mapsPurposeTemplateMetadataFieldsFromTheDataTable() {
+        var entityStore = mock(EntityStore.class);
+        var journey = mock(InteropJourney.class, RETURNS_SELF);
+        var useCase = mock(PurposeTemplateUseCase.class);
+        var template = PurposeTemplate.builder()
+                .id(UUID.randomUUID())
+                .title("Titolo iniziale")
+                .description("Descrizione iniziale")
+                .targetDescription("Destinatari iniziali")
+                .build();
+        when(entityStore.getLastOrThrow(PurposeTemplate.class)).thenReturn(template);
+        var steps = new PurposeTemplateSteps(entityStore, journey, useCase);
+        DataTable dataTable = DataTable.create(List.of(
+                List.of("campo", "valore"),
+                List.of("purposeTitle", "Titolo aggiornato"),
+                List.of("purposeDescription", "Descrizione aggiornata"),
+                List.of("targetDescription", "Destinatari aggiornati")
+        ));
+
+        steps.updatePurposeTemplateMetadata(UserRole.ADMIN, Tenant.COMUNE_DI_POZZALLO, dataTable);
+
+        verify(journey).withConsumer(Tenant.COMUNE_DI_POZZALLO);
+        verify(useCase).updateMetadata(
+                template, "Titolo aggiornato", "Descrizione aggiornata", "Destinatari aggiornati");
+    }
 }
