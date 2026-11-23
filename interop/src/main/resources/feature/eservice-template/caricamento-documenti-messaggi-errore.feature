@@ -1,5 +1,5 @@
 @error-copy
-@channel:Given=BFF,When=BFF:en,Then=BFF:en
+@channel:Given=BFF,When=BFF,Then=BFF
 Feature: Messaggi di errore durante il caricamento di file nei template e-service
 
   Come erogatore
