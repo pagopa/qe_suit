@@ -77,53 +77,6 @@ Feature: Modifica dei metadati dei template e-service
       | intendedTarget | Nuovo testo dei destinatari         |
     Then il template e-service presenta i metadati richiesti e conserva quelli non modificati
 
-
-  #  @work-item:QA-19036
-  #  @channel:Given=BFF,When=WEB,Then=WEB
-  #  Scenario: [ESERVICE_TEMPLATE_METADATA_WEB_1] - Form precompilato e conferma dopo il salvataggio
-  #  Dato un e-service template modificabile con metadati già valorizzati,
-  #  quando l’utente apre il form modifica e salva nuovi valori,
-  #  allora il sistema mostra la conferma e il form riaperto presenta i nuovi metadati.
-  #
-  #    Given i seguenti template e-service con versioni predisposte:
-  #      | alias | erogatore        | nome                | tecnologia | versioni                 |
-  #      | TE-1  | Comune di Milano | Template anagrafico | REST       | pubblicata e nuova bozza |
-  #    When un admin del Comune di Milano apre la modifica dei metadati della risorsa "TE-1"
-  #    Then il form della risorsa "TE-1" mostra i metadati correnti e i campi previsti
-  #    When un admin del Comune di Milano modifica e salva i metadati della risorsa "TE-1"
-  #    Then il sistema conferma il salvataggio e chiude il form
-  #    And il dettaglio e il form riaperto della risorsa "TE-1" presentano i metadati aggiornati
-
-  #  @work-item:QA-19036
-  #  @channel:Given=BFF,When=WEB,Then=WEB
-  #  Scenario: [ESERVICE_TEMPLATE_METADATA_WEB_2] - Conservazione degli input in presenza di un errore di validazione
-  #  Dato un form di modifica aperto e compilato,
-  #  quando l’utente tenta di salvare un valore non valido,
-  #  allora il form resta aperto con i testi inseriti e indica il campo errato.
-  #
-  #    Given i seguenti template e-service con versioni predisposte:
-  #      | alias | erogatore        | nome                | tecnologia | versioni                 |
-  #      | TE-1  | Comune di Milano | Template anagrafico | REST       | pubblicata e nuova bozza |
-  #    When il form di modifica dei metadati di una risorsa "TE-1" del Comune di Milano aperto
-  #    And un admin del Comune di Milano inserisce metadati non validi nel form della risorsa "TE-1" e richiede il salvataggio
-  #    Then il form della risorsa "TE-1" rimane aperto con i testi inseriti
-  #    And il campo non valido mostra il messaggio di errore previsto
-
-  #  @work-item:QA-19036
-  #  @channel:Given=BFF,When=WEB,Then=WEB
-  #  Scenario: [ESERVICE_TEMPLATE_METADATA_WEB_3] - Conservazione degli input in presenza di un conflitto di scrittura
-  #  Dato un form di modifica aperto su metadati che sono stati modificati nel frattempo,
-  #  quando l’utente prova a salvare i propri valori,
-  #  allora il form conserva gli input e segnala che il salvataggio non è avvenuto.
-  #
-  #    Given i seguenti template e-service con versioni predisposte:
-  #      | alias | erogatore        | nome                | tecnologia | versioni                 |
-  #      | TE-1  | Comune di Milano | Template anagrafico | REST       | pubblicata e nuova bozza |
-  #    When il form di modifica dei metadati della risorsa "TE-1" del Comune di Milano aperto con una modifica concorrente
-  #    And un admin del Comune di Milano richiede il salvataggio dei metadati nel form della risorsa "TE-1"
-  #    Then il form della risorsa "TE-1" rimane aperto con i testi inseriti
-  #    And il sistema segnala il mancato salvataggio della risorsa "TE-1"
-
   @work-item:QA-19036
   @channel:Given=BFF,When=BFF,Then=BFF
   Scenario Outline: [ESERVICE_TEMPLATE_METADATA_PROTECTION_1] - Rifiuto della richiesta di modifica in presenza di metadati non ammessi
@@ -140,10 +93,14 @@ Feature: Modifica dei metadati dei template e-service
     Then la modifica dei metadati del template e-service viene rifiutata per <errore>
 
     Examples:
-      | campo1 | valore_ammesso                 | campo2      | valore_non_ammesso | errore                       |
-      | nome   | Servizio anagrafico aggiornato | descrizione | desc               | INVALID_DATA                 |
-      | nome   | Servizio anagrafico aggiornato | technology  | REST               | OUT_OF_DRAFT_OPERATION_FIELD |
-      | nome   | Servizio anagrafico aggiornato | technology  | %last-used%        | OUT_OF_DRAFT_OPERATION_FIELD |
+      | campo1 | valore_ammesso                 | campo2             | valore_non_ammesso | errore                       |
+      | nome   | Servizio anagrafico aggiornato | descrizione        | desc               | INVALID_DATA                 |
+      | nome   | Servizio anagrafico aggiornato | technology         | REST               | OUT_OF_DRAFT_OPERATION_FIELD |
+      | nome   | Servizio anagrafico aggiornato | technology         | %last-used         | OUT_OF_DRAFT_OPERATION_FIELD |
+      | nome   | Servizio anagrafico aggiornato | mode               | DELIVER            | OUT_OF_DRAFT_OPERATION_FIELD |
+      | nome   | Servizio anagrafico aggiornato | isSignalHubEnabled | false              | OUT_OF_DRAFT_OPERATION_FIELD |
+      | nome   | Servizio anagrafico aggiornato | personalData       | false              | OUT_OF_DRAFT_OPERATION_FIELD |
+      | nome   | Servizio anagrafico aggiornato | asyncExchange      | false              | OUT_OF_DRAFT_OPERATION_FIELD |
 
   @work-item:QA-19036 @m2m
   @channel:Given=BFF,When=M2M,Then=BFF
@@ -161,10 +118,13 @@ Feature: Modifica dei metadati dei template e-service
     Then la modifica dei metadati del template e-service viene rifiutata per <errore>
 
     Examples:
-      | campo1 | valore_ammesso                 | campo2      | valore_non_ammesso | errore                       |
-      | nome   | Servizio anagrafico aggiornato | descrizione | desc               | INVALID_DATA                 |
-      | nome   | Servizio anagrafico aggiornato | technology  | REST               | OUT_OF_DRAFT_OPERATION_FIELD |
-      | nome   | Servizio anagrafico aggiornato | technology  | %last-used%        | OUT_OF_DRAFT_OPERATION_FIELD |
+      | campo1 | valore_ammesso                 | campo2             | valore_non_ammesso | errore                       |
+      | nome   | Servizio anagrafico aggiornato | descrizione        | desc               | INVALID_DATA                 |
+      | nome   | Servizio anagrafico aggiornato | technology         | REST               | OUT_OF_DRAFT_OPERATION_FIELD |
+      | nome   | Servizio anagrafico aggiornato | technology         | %last-used         | OUT_OF_DRAFT_OPERATION_FIELD |
+      | nome   | Servizio anagrafico aggiornato | mode               | DELIVER            | OUT_OF_DRAFT_OPERATION_FIELD |
+      | nome   | Servizio anagrafico aggiornato | isSignalHubEnabled | false              | OUT_OF_DRAFT_OPERATION_FIELD |
+      | nome   | Servizio anagrafico aggiornato | personalData       | false              | OUT_OF_DRAFT_OPERATION_FIELD |
 
   @work-item:QA-19036
   @channel:Given=BFF,When=BFF,Then=BFF
@@ -180,9 +140,9 @@ Feature: Modifica dei metadati dei template e-service
       | nome        | Nuovo nome        |
       | descrizione | Nuova descrizione |
     When un admin del Comune di Milano richiede la modifica dei metadati del template e-service:
-      | campo       | valore      |
-      | nome        | %last-used% |
-      | descrizione | %last-used% |
+      | campo       | valore     |
+      | nome        | %last-used |
+      | descrizione | %last-used |
     Then il template e-service presenta i metadati richiesti e conserva quelli non modificati
 
   @work-item:QA-19036 @m2m
@@ -199,9 +159,9 @@ Feature: Modifica dei metadati dei template e-service
       | nome        | Nuovo nome        |
       | descrizione | Nuova descrizione |
     When un sistema informatico autenticato con ruolo M2M_ADMIN del Comune di Milano richiede la modifica dei metadati del template e-service:
-      | campo       | valore      |
-      | nome        | %last-used% |
-      | descrizione | %last-used% |
+      | campo       | valore     |
+      | nome        | %last-used |
+      | descrizione | %last-used |
     Then il template e-service presenta i metadati richiesti e conserva quelli non modificati
 
   @work-item:QA-19036
@@ -245,15 +205,15 @@ Feature: Modifica dei metadati dei template e-service
   @work-item:QA-19036
   @channel:Given=BFF,When=BFF,Then=BFF
   Scenario Outline: [ESERVICE_TEMPLATE_METADATA_AUTHORIZATION] - Rifiuto della modifica dei metadati per ruolo non autorizzato.
-    Dato un template e-service pubblicato,
-    quando un operatore con ruolo non autorizzato o che non possiede la titolarità tenta la modifica dei metadati,
-    allora il sistema non accetta le richiesta.
+  Dato un template e-service pubblicato,
+  quando un operatore con ruolo non autorizzato o che non possiede la titolarità tenta la modifica dei metadati,
+  allora il sistema non accetta le richiesta.
 
     Given i seguenti template e-service pubblicati:
-      | alias | erogatore          | nome                 | tecnologia |
-      | TPL-1 | Comune di Pozzallo |Template Modello Alfa | REST       |
+      | alias | erogatore          | nome                  | tecnologia |
+      | TPL-1 | Comune di Pozzallo | Template Modello Alfa | REST       |
     When un <ruolo> del <ente> tenta la modifica dei metadati del template e-service:
-      | campo | valore               |
+      | campo | valore                         |
       | nome  | Servizio anagrafico aggiornato |
     Then la modifica dei metadati del template e-service viene rifiutata per UNAUTHORIZED
 
@@ -273,10 +233,10 @@ Feature: Modifica dei metadati dei template e-service
   allora il sistema non accetta le richiesta.
 
     Given i seguenti template e-service pubblicati:
-      | alias | erogatore          | nome                 | tecnologia |
-      | TPL-1 | Comune di Pozzallo |Template Modello Alfa | REST       |
+      | alias | erogatore          | nome                  | tecnologia |
+      | TPL-1 | Comune di Pozzallo | Template Modello Alfa | REST       |
     When un sistema informatico autenticato con ruolo <ruolo> del <ente> tenta la modifica dei metadati del template e-service:
-      | campo | valore               |
+      | campo | valore                         |
       | nome  | Servizio anagrafico aggiornato |
     Then la modifica dei metadati del template e-service viene rifiutata per UNAUTHORIZED
 

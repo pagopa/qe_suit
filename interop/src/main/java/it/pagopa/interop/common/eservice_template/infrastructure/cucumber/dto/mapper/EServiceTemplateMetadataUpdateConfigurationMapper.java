@@ -21,7 +21,7 @@ import java.util.Optional;
 @RequiredArgsConstructor
 public class EServiceTemplateMetadataUpdateConfigurationMapper {
 
-    private static final String LAST_USED = "%last-used%";
+    private static final String LAST_USED = "%last-used";
 
     private final EntityStore entityStore;
 
