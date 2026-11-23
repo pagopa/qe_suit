@@ -39,6 +39,11 @@ public class PurposeTemplateUseCase {
         );
     }
 
+    public void tryToUpdateMetadata(
+            PurposeTemplate purposeTemplate, String name, String description, String targetDescription) {
+        purposeTemplateGateway.tryToUpdateMetadata(purposeTemplate, name, description, targetDescription);
+    }
+
     /**
      * Crea (con l'identità corrente come creatore) un purpose template DRAFT per il tenant target,
      * con risposte di riferimento e configurazione per distinguere suggerimenti e valori fissi.

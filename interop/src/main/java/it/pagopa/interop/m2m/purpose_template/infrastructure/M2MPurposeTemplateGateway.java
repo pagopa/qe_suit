@@ -50,6 +50,18 @@ public class M2MPurposeTemplateGateway implements PurposeTemplateGateway {
     }
 
     @Override
+    public void tryToUpdateMetadata(
+            PurposeTemplate purposeTemplate, String name, String description, String targetDescription) {
+        PurposeTemplateDraftUpdateSeed payload = new PurposeTemplateDraftUpdateSeed()
+                .purposeTitle(name)
+                .purposeDescription(description)
+                .targetDescription(targetDescription);
+
+        restClient.updatePurposeTemplate(purposeTemplate.getId(), payload)
+                .withoutPolling();
+    }
+
+    @Override
     public PurposeTemplate createPurposeTemplate(
             Tenant targetTenant, RiskAnalysisForm riskAnalysisForm, RiskAnalysisFormConfig config) {
         throw unsupportedOperation();

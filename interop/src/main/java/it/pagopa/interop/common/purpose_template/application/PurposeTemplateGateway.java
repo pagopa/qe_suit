@@ -18,6 +18,9 @@ public interface PurposeTemplateGateway extends Plugin<Channel> {
     PurposeTemplate updateMetadata(
             PurposeTemplate purposeTemplate, String name, String description, String targetDescription);
 
+    void tryToUpdateMetadata(
+            PurposeTemplate purposeTemplate, String name, String description, String targetDescription);
+
     PurposeTemplate createPurposeTemplate(
             Tenant targetTenant, RiskAnalysisForm riskAnalysisForm, RiskAnalysisFormConfig config);
 

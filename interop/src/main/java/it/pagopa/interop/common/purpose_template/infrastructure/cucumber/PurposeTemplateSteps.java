@@ -105,6 +105,20 @@ public class PurposeTemplateSteps {
                 purposeTemplate, metadata.name(), metadata.description(), metadata.targetDescription());
     }
 
+    @When("un {userRole} di/del {tenant} tenta di modificare i metadati del template finalità:")
+    public void tryToUpdatePurposeTemplateMetadata(UserRole role, Tenant creator, DataTable dataTable) {
+        PurposeTemplate purposeTemplate = entityStore.getLastOrThrow(PurposeTemplate.class);
+        MetadataUpdate metadata = readMetadataUpdate(purposeTemplate, dataTable);
+
+        if (role == UserRole.ADMIN) {
+            journey.withConsumer(creator);
+        } else {
+            journey.withConsumer(creator, role);
+        }
+        purposeTemplateUseCase.tryToUpdateMetadata(
+                purposeTemplate, metadata.name(), metadata.description(), metadata.targetDescription());
+    }
+
     private MetadataUpdate readMetadataUpdate(PurposeTemplate purposeTemplate, DataTable dataTable) {
         List<List<String>> rows = dataTable.cells();
         if (rows.size() < 2 || (!rows.get(0).equals(List.of("campo", "valore unico"))

@@ -61,6 +61,18 @@ public class BffPurposeTemplateGateway implements PurposeTemplateGateway {
     }
 
     @Override
+    public void tryToUpdateMetadata(
+            PurposeTemplate purposeTemplate, String name, String description, String targetDescription) {
+        PatchUpdatePurposeTemplateSeed payload = new PatchUpdatePurposeTemplateSeed()
+                .purposeTitle(name)
+                .purposeDescription(description)
+                .targetDescription(targetDescription);
+
+        restClient.updatePurposeTemplate(purposeTemplate.getId(), payload)
+                .withoutPolling();
+    }
+
+    @Override
     public PurposeTemplate createPurposeTemplate(Tenant targetTenant, RiskAnalysisForm riskAnalysisForm) {
         PurposeTemplateSeed payload = requestFactory.creationRequest(targetTenant, riskAnalysisForm);
 
