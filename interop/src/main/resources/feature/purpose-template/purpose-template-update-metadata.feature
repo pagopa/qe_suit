@@ -126,17 +126,32 @@ Feature: Modifica dei metadati dei template finalità
 
   @work-item:QA-19036
   @channel:Given=BFF,When=BFF,Then=BFF
-  Scenario: [PURPOSE_TEMPLATE_METADATA_PROTECTION_1] - Rifiuto atomico di un metadato valido insieme a un valore non ammesso
-  Dato una risorsa modificabile da un attore autorizzato,
-  quando l’attore invia una modifica con un metadato valido e un altro non valido,
+  @channel:Given=BFF,When=M2M,Then=M2M
+  Scenario Outline: [PURPOSE_TEMPLATE_METADATA_PROTECTION_1] - Rifiuto atomico della richiesta di modifica di un template finalità con un metadato valido insieme a un valore non ammesso
+  Dato un template finalità modificabile da un ruolo autorizzato,
+  quando la modifica viene inviata con un metadato valido e un altro non valido,
   allora il sistema rifiuta tutta la modifica e mantiene invariata la risorsa.
 
-    Given un template finalità "TP-1" creato dal Comune di Milano con le seguenti finalità derivate:
-      | alias | stato  |
-      | P-1   | ACTIVE  |
-    When un admin del Comune di Milano richiede la modifica dei metadati della risorsa "TP-1" con un valore valido e uno non ammesso
-    Then la modifica della risorsa "TP-1" viene rifiutata
-    And la risorsa "TP-1" conserva metadati, stati, versioni e relazioni iniziali
+    Given un template finalità creato dal Comune di Comun Nuovo in stato <stato>
+    And i dati del template finalità allo stato attuale appuntati come riferimento
+    When un admin del Comune di Comun Nuovo tenta di modificare i metadati del template finalità:
+      | campo       | valore            |
+      | nome        | ab                |
+      | descrizione | prima descrizione |
+    Then la richiesta di modifica dei metadati del template finalità fallisce come operazione malformata
+    And il template finalità conserva lo stato e i dati di riferimento
+
+    When un admin del Comune di Comun Nuovo tenta di modificare i metadati del template finalità:
+      | campo       | valore     |
+      | nome        | primo nome |
+      | descrizione | xy         |
+    Then la richiesta di modifica dei metadati del template finalità fallisce come operazione malformata
+    And il template finalità conserva lo stato e i dati di riferimento
+
+    Examples:
+      | stato      |
+      | in bozza   |
+      | pubblicato |
 
   @work-item:QA-19036
   @channel:Given=BFF,When=BFF,Then=BFF
