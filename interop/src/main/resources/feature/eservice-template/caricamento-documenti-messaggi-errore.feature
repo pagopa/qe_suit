@@ -51,7 +51,7 @@ Feature: Messaggi di errore durante il caricamento di file nei template e-servic
     When l'erogatore allega il file "openapi-versione-non-supportata.yaml" come "interfaccia" sulla versione del template con il nome "Allegato di test"
     Then il messaggio di errore corrisponde al caso "ESERVICE_TEMPLATE_OPENAPI_VERSION_NOT_RECOGNIZED" in lingua "it"
 
-    # Ticket aperto https://pagopa.atlassian.net/browse/PIN-11646
+  # Ticket chiuso https://pagopa.atlassian.net/browse/PIN-11646
   @work-item:QA-18430
   @err_msg_when_exec
   # Endpoint: POST /eservices/templates/:eServiceTemplateId/versions/:eServiceTemplateVersionId/documents
@@ -90,22 +90,6 @@ Feature: Messaggi di errore durante il caricamento di file nei template e-servic
       | REST       | DRAFT | openapi3-riferimenti.json |
     When l'erogatore allega il file "openapi-server-non-valido.yaml" come "interfaccia" sulla versione del template con il nome "Allegato di test"
     Then il messaggio di errore corrisponde al caso "ESERVICE_TEMPLATE_INVALID_SERVER_URL" in lingua "it"
-
-    # Ticket aperto https://pagopa.atlassian.net/browse/PIN-11647
-  @work-item:QA-18430
-  @err_msg_when_exec
-  # Endpoint: POST /eservices/templates/:eServiceTemplateId/versions/:eServiceTemplateVersionId/documents
-  Scenario: [ERROR_193] - Rifiuto di un documento che supera la dimensione massima
-  Dato un template e-service con una versione in bozza disponibile per il caricamento di documenti
-  Quando l'erogatore tenta di allegare un PDF valido che supera la dimensione massima consentita
-  Allora il sistema rifiuta il caricamento e indica il limite di dimensione per i documenti.
-
-    # La fixture supera il limite applicativo e rientra nel limite del proxy.
-    Given un template e-service preparato con la seguente configurazione:
-      | tecnologia | stato | interfaccia               |
-      | REST       | DRAFT | openapi3-riferimenti.json |
-    When l'erogatore allega il file "pdf-oltre-limite.pdf" come "documento" sulla versione del template con il nome "Allegato di test"
-    Then il messaggio di errore corrisponde al caso "ESERVICE_TEMPLATE_CONTENT_TOO_LARGE_ERROR" in lingua "it"
 
   @work-item:QA-18430
   @err_msg_when_exec

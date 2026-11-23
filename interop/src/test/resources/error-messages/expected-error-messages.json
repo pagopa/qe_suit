@@ -660,8 +660,8 @@
       "error": "invalidContentTypeDetected",
       "bffEndpoint": "POST /eservices/templates/:eServiceTemplateId/versions/:eServiceTemplateVersionId/documents",
       "copy": {
-        "it": "Non puoi caricare questo file perché non è stato possibile verificarne il formato.",
-        "en": "You can't upload this file because its format could not be verified."
+        "it": "Il formato del file non è supportato o il contenuto non è valido. Controlla e riprova usando uno dei formati indicati.",
+        "en": "The file format is not supported or the content is invalid. Check the file and try again using one of the supported formats."
       }
     },
     {
