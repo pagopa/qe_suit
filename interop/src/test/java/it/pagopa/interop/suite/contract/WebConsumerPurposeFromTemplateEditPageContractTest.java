@@ -3,6 +3,7 @@ package it.pagopa.interop.suite.contract;
 import it.pagopa.infrastructure.contract.browser.WebScenario;
 import it.pagopa.interop.TestBootApp;
 import it.pagopa.interop.common.agreement.domain.AgreementState;
+import it.pagopa.interop.common.eservice.domain.EService;
 import it.pagopa.interop.common.eservice.domain.EServiceDescriptorState;
 import it.pagopa.interop.common.infrastructure.WebBrowserContractValidator;
 import it.pagopa.interop.common.infrastructure.config.JunitContextConfig;
@@ -45,21 +46,20 @@ public class WebConsumerPurposeFromTemplateEditPageContractTest {
      */
     @TestFactory
     Stream<DynamicTest> consumerPurposeFromTemplateEditPageContract() {
-        Purpose purpose = interopJourney
+        EService eService = interopJourney
                 .withProducer(Tenant.PAGO_PA, UserRole.ADMIN)
                 .createEService(EServiceDescriptorState.PUBLISHED)
                 .withConsumer(Tenant.COMUNE_DI_MILANO, UserRole.ADMIN)
                 .linkAgreement(AgreementState.ACTIVE)
-                .createPurpose(PurposeVersionState.DRAFT)
-                .get(Purpose.class);
+                .get(EService.class);
         PurposeTemplate purposeTemplate = interopJourney
                 .withProducer(Tenant.PAGO_PA, UserRole.ADMIN)
-                .createEService(EServiceDescriptorState.PUBLISHED)
-                .withConsumer(Tenant.COMUNE_DI_MILANO, UserRole.ADMIN)
-                .linkAgreement(AgreementState.ACTIVE)
-                .createPurpose(PurposeVersionState.DRAFT)
                 .createPurposeTemplate(Tenant.COMUNE_DI_MILANO, PurposeTemplateState.PUBLISHED)
                 .get(PurposeTemplate.class);
+        Purpose purpose = interopJourney
+                .withConsumer(Tenant.COMUNE_DI_MILANO, UserRole.ADMIN)
+                .createPurposeFromTemplateAndLinkToEService(purposeTemplate, eService, PurposeVersionState.DRAFT)
+                .get(Purpose.class);
 
         return webContractValidator
                 .as(
@@ -172,18 +172,6 @@ public class WebConsumerPurposeFromTemplateEditPageContractTest {
                             softly.assertThat(page.generalStepPanel().consumerThresholdValue().read())
                                     .as("Daily calls availability value (consumer)")
                                     .isNotBlank();
-                            softly.assertThat(page.generalStepPanel().consumerThresholdLabel().read())
-                                    .as("Daily calls availability label (consumer)")
-                                    .isEqualTo("Per fruitore");
-                            softly.assertThat(page.generalStepPanel().consumerThresholdValue().read())
-                                    .as("Daily calls availability value (consumer)")
-                                    .isNotBlank();
-                            softly.assertThat(page.generalStepPanel().totalThresholdLabel().read())
-                                    .as("Daily calls availability label (total)")
-                                    .isEqualTo("Totali");
-                            softly.assertThat(page.generalStepPanel().totalThresholdValue().read())
-                                    .as("Daily calls availability value (total)")
-                                    .contains("chiamate disponibili su");
                             softly.assertThat(page.generalStepPanel().totalThresholdLabel().read())
                                     .as("Daily calls availability label (total)")
                                     .isEqualTo("Totali");
