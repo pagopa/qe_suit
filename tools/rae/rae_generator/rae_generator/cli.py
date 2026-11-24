@@ -10,6 +10,7 @@ from .renderer import render
 from .validator import read_yaml, validate, ValidationError, validate_original_evidences  # RAE_REVIEW_PANEL_V1
 import yaml
 from .parsers import ReportError
+from .rae_settings import load_append_report_name
 
 
 def main(argv: list[str] | None = None) -> int:
@@ -21,6 +22,7 @@ def main(argv: list[str] | None = None) -> int:
         generate.add_argument('--' + flag, required=True)
     generate.add_argument('--namespace', required=True, help='RAE storage namespace (e.g. interop, send)')
     generate.add_argument('--ignore-rules', type=Path, help='Regole di normalizzazione versionate per il matching')
+    generate.add_argument('--rae-settings', type=Path, help='Politica degli ID test')
     finalize = sub.add_parser('finalize', help='Validate YAML and generate Markdown')
     finalize.add_argument('yaml_file', type=Path)
     finalize.add_argument('--write', action='store_true', help='Write MD next to YAML')
@@ -35,11 +37,15 @@ def main(argv: list[str] | None = None) -> int:
         if args.command == 'generate':
             metadata = json.loads(Path(args.metadata).read_text(encoding='utf-8'))
             output = validate_output_path(Path(args.history), args.namespace, Path(args.output))
+            settings = (args.rae_settings or Path(__file__).resolve().parents[1]
+                        / 'config' / 'rae_settings.yaml')
+            append_report_name = load_append_report_name(settings)
             data = create_rae(Path(args.reports), namespace_dir(Path(args.history), args.namespace),
                               suite=args.suite, environment=args.environment,
                               executor=args.executor, source_branch=args.source_branch,
                               run_url=args.run_url, data_ora=metadata['data_ora'],
-                              durata=metadata['durata'], ignore_rules_path=args.ignore_rules)
+                              durata=metadata['durata'], ignore_rules_path=args.ignore_rules,
+                              append_report_name=append_report_name)
             write_yaml(data, output)
             print(f'Generated {args.output}: {data["rae"]["numero_ko"]} KO')
         else:

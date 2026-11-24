@@ -16,7 +16,8 @@ FIELDS = ('id_test', 'error_log', 'procedure', 'result', 'link_prod_bug', 'link_
 
 def create_rae(report_root: Path, history_dir: Path, *, suite: str, environment: str,
                executor: str, source_branch: str, run_url: str, data_ora: str,
-               durata: str, ignore_rules_path: Path | None = None) -> dict:
+               durata: str, ignore_rules_path: Path | None = None,
+               append_report_name: bool = False) -> dict:
     if not re.fullmatch(r'[A-Za-z0-9_.-]+', suite):
         raise ValueError('Runner name non valido')
     if environment not in ('qa', 'dev'):
@@ -24,7 +25,7 @@ def create_rae(report_root: Path, history_dir: Path, *, suite: str, environment:
     if ignore_rules_path is None:
         ignore_rules_path = Path(__file__).resolve().parents[1] / 'config' / 'ignore_rules.yaml'
     rules = IgnoreRules.load(ignore_rules_path)
-    failures = collect_reports(report_root)
+    failures = collect_reports(report_root, append_report_name=append_report_name)
     history = load_history(history_dir, suite)
     matcher = ProgressiveMatcher(history, ignore_rules=rules) if history and failures else None
     data = {
