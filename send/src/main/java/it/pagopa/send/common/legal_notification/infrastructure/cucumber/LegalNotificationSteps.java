@@ -56,9 +56,9 @@ public class LegalNotificationSteps {
     }
 
     /** Attende lo stato dell'ultima notifica, creata con gli step standard o con uno step che usa il Command. */
-    @And("la notifica raggiunge lo stato {string}")
-    public void waitForNotificationStatus(String targetStatus) {
-        sendJourney.waitForNotificationStatus(NotificationStatus.fromValue(targetStatus));
+    @And("la notifica raggiunge lo stato {notificationStatus}")
+    public void waitForNotificationStatus(NotificationStatus targetStatus) {
+        sendJourney.waitForNotificationStatus(targetStatus);
     }
 
     @Then("la notifica legale creata è in stato {string}")
