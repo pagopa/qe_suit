@@ -59,6 +59,16 @@ public class BffPurposeTemplateGateway implements PurposeTemplateGateway {
     }
 
     @Override
+    public void shouldFailToUpdateMetadataAsNotFound() {
+        assertThat(lastApiResponseStore.getLastResponse())
+                .as("Risposta al tentativo di modifica dei metadati del template finalità")
+                .isNotNull()
+                .extracting(ApiResponse::getStatusCode)
+                .as("Modifica dei metadati del template finalità per risorsa non trovata")
+                .isEqualTo(404);
+    }
+
+    @Override
     public void shouldFailToUpdateMetadataAsConflict() {
         assertThat(lastApiResponseStore.getLastResponse())
                 .as("Risposta al tentativo di modifica dei metadati del template finalità")

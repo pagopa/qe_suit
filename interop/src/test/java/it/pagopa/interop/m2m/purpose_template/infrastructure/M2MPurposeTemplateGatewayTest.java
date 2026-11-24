@@ -7,6 +7,7 @@ import io.restassured.response.Response;
 import io.restassured.builder.RequestSpecBuilder;
 import it.pagopa.application.context.LastApiResponseStore;
 import it.pagopa.infrastructure.context.InMemoryEntityStore;
+import it.pagopa.infrastructure.response.ApiResponse;
 import it.pagopa.infrastructure.template.action.TestChainFactory;
 import it.pagopa.interop.common.purpose_template.domain.PurposeTemplate;
 import it.pagopa.interop.generated.openapi.clients.m2m.v3.ApiClient;
@@ -122,6 +123,17 @@ class M2MPurposeTemplateGatewayTest {
         order.verify(read).purposeTemplateIdPath(templateId);
         order.verify(read).execute(any());
         assertThat(store.getById(templateId, PurposeTemplate.class)).containsSame(updated);
+    }
+
+    @Test
+    void assertsNotFoundWhenUpdatingMetadataForAnUnknownResource() {
+        var response = mock(ApiResponse.class);
+        when(lastApiResponseStore.getLastResponse()).thenReturn(response);
+        when(response.getStatusCode()).thenReturn(404);
+
+        gateway.shouldFailToUpdateMetadataAsNotFound();
+
+        verify(lastApiResponseStore).getLastResponse();
     }
 
     private Response response(int status, String body) {

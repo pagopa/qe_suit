@@ -84,6 +84,10 @@ public class PurposeTemplateUseCase {
         purposeTemplateGateway.shouldFailToUpdateMetadataAsForbidden();
     }
 
+    public void shouldFailToUpdateMetadataAsNotFound() {
+        purposeTemplateGateway.shouldFailToUpdateMetadataAsNotFound();
+    }
+
     public void shouldFailToUpdateMetadataAsConflict() {
         purposeTemplateGateway.shouldFailToUpdateMetadataAsConflict();
     }

@@ -161,6 +161,11 @@ public class PurposeTemplateSteps {
         purposeTemplateUseCase.shouldFailToUpdateMetadataAsForbidden();
     }
 
+    @Then("la richiesta di modifica dei metadati del template finalità fallisce per risorsa non trovata")
+    public void shouldFailToUpdatePurposeTemplateMetadataAsNotFound() {
+        purposeTemplateUseCase.shouldFailToUpdateMetadataAsNotFound();
+    }
+
     private MetadataUpdate readMetadataUpdate(PurposeTemplate purposeTemplate, DataTable dataTable) {
         List<List<String>> rows = dataTable.cells();
         if (rows.size() < 2 || (!rows.get(0).equals(List.of("campo", "valore unico"))

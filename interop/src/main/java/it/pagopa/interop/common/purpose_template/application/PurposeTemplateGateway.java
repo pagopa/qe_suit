@@ -37,6 +37,8 @@ public interface PurposeTemplateGateway extends Plugin<Channel> {
 
     void shouldFailToUpdateMetadataAsForbidden();
 
+    void shouldFailToUpdateMetadataAsNotFound();
+
     void shouldFailToUpdateMetadataAsConflict();
 
     PurposeTemplate createPurposeTemplate(
