@@ -134,16 +134,38 @@ public class WebAgreementProducerPageContractTest {
                                     .as("Rows per page should be initialized to the lowest value")
                                     .isEqualTo(sizeValues.get(0));
 
+                            int nextSize = sizeValues.get(1);
+                            boolean initialPaginationExists = page.pagination().exists();
                             int initialRowCount = page.agreementsTable().tBody().rows().size();
-                            page.rowsPerPageSelector().setSize(sizeValues.get(1));
+
+                            page.rowsPerPageSelector().setSize(nextSize);
                             int updatedRowCount = PollingUtils.pollUntil(
                                     () -> page.agreementsTable().tBody().rows().size(),
-                                    updated -> updated >= initialRowCount,
+                                    updated -> {
+                                        if (initialPaginationExists) {
+                                            return updated > initialRowCount;
+                                        }
+                                        return page.rowsPerPageSelector().get()
+                                                .map(el -> el.getText().trim())
+                                                .filter(text -> !text.isEmpty())
+                                                .map(Integer::parseInt)
+                                                .map(size -> size == nextSize)
+                                                .orElse(false);
+                                    },
                                     Duration.ofSeconds(20),
-                                    Duration.ofSeconds(1),
+                                    Duration.ofMillis(500),
                                     "Records affected by new pagination size have not been rendered yet"
                             );
+
                             page.rowsPerPageSelector().setSize(initialSize);
+                            PollingUtils.pollUntil(
+                                    () -> page.agreementsTable().tBody().rows().size(),
+                                    updated -> updated == initialRowCount,
+                                    Duration.ofSeconds(20),
+                                    Duration.ofMillis(500),
+                                    "Pagination size did not revert to initial value"
+                            );
+
                             if (updatedRowCount > initialRowCount) {
                                 softly.assertThat(page.pagination().exists())
                                         .as("Pagination should be displayed when more rows than the first page are available")
