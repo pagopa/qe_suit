@@ -31,7 +31,6 @@ import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.DynamicTest;
 import org.junit.jupiter.api.TestFactory;
-import org.opentest4j.TestAbortedException;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.TestConstructor;
 
@@ -314,10 +313,10 @@ class WebIntegrationReviewerRiskAnalysisTest {
                 failedAttempts.add(error);
             }
         }
-        TestAbortedException inconclusive = new TestAbortedException(
-                "Inconclusive pagination scan after " + SCAN_ATTEMPTS + " attempts: concurrent changes or missing assignments " + expectedIds);
-        failedAttempts.forEach(inconclusive::addSuppressed);
-        throw inconclusive;
+        AssertionError failure = new AssertionError(
+                "Pagination scan failed after " + SCAN_ATTEMPTS + " attempts: " + expectedIds);
+        failedAttempts.forEach(failure::addSuppressed);
+        throw failure;
     }
 
     private RiskAnalysisPageScan scanUntilAllAssignmentsFound(ReviewerRiskAnalysisPage page, Set<UUID> expectedIds) {

@@ -377,9 +377,27 @@ public class BffPurposeGateway implements PurposeGateway {
         RiskAnalysisRejectionSeed rejectionRequest = new RiskAnalysisRejectionSeed()
                 .rejectionReason(rejectionReason);
 
-        restClient.rejectRiskAnalysis(purposeRef.id(), rejectionRequest)
-                .withPolling(PollingStrategy.UNTIL_SUCCESS)
-                .get();
+        var rejectionResponse = restClient.rejectRiskAnalysis(purposeRef.id(), rejectionRequest)
+                .withoutPolling().getRaw();
+        if (!(rejectionResponse instanceof ApiResponse apiResponse)) {
+            throw new IllegalStateException("Cannot read rejection response for purpose " + purposeRef.id());
+        }
+        if (!apiResponse.isSuccess()) {
+            throw new IllegalStateException("Risk-analysis rejection rejected for purpose " + purposeRef.id()
+                    + " (HTTP status " + apiResponse.getStatusCode() + ")");
+        }
+        PollingUtils.pollUntil(
+                () -> {
+                    var response = restClient.getPurpose(purposeRef.id()).withoutPolling();
+                    if (!response.getRaw().isSuccess()) {
+                        throw new IllegalStateException("Risk-analysis rejection read failed for purpose " + purposeRef.id());
+                    }
+                    return response.get();
+                },
+                purpose -> purpose.getReviewerWorkflow() != null
+                        && purpose.getReviewerWorkflow().getSigningState() == RiskAnalysisSigningState.REJECTED,
+                "Risk analysis did not become REJECTED for purpose " + purposeRef.id()
+        );
     }
 
     private static it.pagopa.interop.generated.openapi.clients.bff.model.RiskAnalysisReviewMode toBffReviewMode(
