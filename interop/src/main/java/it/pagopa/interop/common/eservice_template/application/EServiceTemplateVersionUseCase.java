@@ -100,8 +100,8 @@ public class EServiceTemplateVersionUseCase {
         return eServiceTemplateVersionGateway.getEServiceTemplateVersion(template.getRef(), version.getRef());
     }
 
-    public void suspendEServiceTemplateVersion(EServiceTemplate template) {
-        eServiceTemplateVersionGateway.suspendVersion(template.getRef(), template.getLatestVersion().getRef());
+    public void suspendEServiceTemplateVersion(EServiceTemplate template, EServiceTemplateVersion version) {
+        eServiceTemplateVersionGateway.suspendVersion(template.getRef(), version.getRef());
     }
 
     public EServiceTemplateVersion getEServiceTemplateVersion(EServiceTemplate template, EServiceTemplateVersion version) {
