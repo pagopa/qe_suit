@@ -23,5 +23,5 @@ Feature: Creazione notifica multi-destinatario via BFF
       | pagoPA_number   | 1                |
       | F24_number      | 0                |
     When la notifica viene sottomessa
-    And la notifica raggiunge lo stato "EFFECTIVE_DATE"
+    And la notifica raggiunge lo stato "Perfezionata per decorrenza termini"
 
