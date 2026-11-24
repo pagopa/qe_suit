@@ -78,7 +78,7 @@ public class M2MEServiceRestClient extends RestClient {
                         .updateDraftEService()
                         .eserviceIdPath(eserviceId)
                         .body(payload)
-                        .reqSpec(reqSpec -> reqSpec.setContentType("application/json"))
+                        .reqSpec(reqSpec -> reqSpec.setContentType("application/merge-patch+json; charset=UTF-8"))
                         .execute(Function.identity()),
                 EService.class
         );
