@@ -302,10 +302,10 @@ Feature: Modifica dei metadati delle finalità
   allora la modifica viene rifiutata per conflitto di risorsa e vengono preservati i dati operativi.
 
     Given i seguenti e-service pubblicati:
-      | alias | erogatore        | nome           | modalità  | soglia fruitore | soglia totale |
-      | ES-1  | Comune di Milano | E-service Test | ricezione | 10              | 20            |
+      | alias | erogatore        | nome           | modalità  |
+      | ES-1  | Comune di Milano | E-service Test | ricezione |
     And l'e-service "ES-1" del Comune di Milano sottoscritto dal Comune di Pozzallo con una richiesta di fruizione attiva
-    And l'e-service con una finalità inversa in stato <stato> associata dal Comune di Pozzallo
+    And l'e-service con una finalità inversa in stato DRAFT associata dal Comune di Pozzallo
     And un admin del Comune di Pozzallo modifica i metadati della finalità:
       | campo       | valore            |
       | title       | primo nome        |
