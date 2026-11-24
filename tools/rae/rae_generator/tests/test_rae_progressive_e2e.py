@@ -47,7 +47,9 @@ def save_report(root: Path, namespace: str, name: str, rows: list[dict]):
 def failures(monkeypatch, *, id_test=ID, error=ERROR):
     import rae_generator.generator as generator
     monkeypatch.setattr(generator, 'collect_reports',
-                        lambda _root: [SimpleNamespace(id_test=id_test, error_log=error)])
+                        lambda _root, *, append_report_name=False: [
+                            SimpleNamespace(id_test=id_test, error_log=error)
+                        ])
 
 
 def generate(monkeypatch, root: Path, namespace: str, *, id_test=ID, error=ERROR):
