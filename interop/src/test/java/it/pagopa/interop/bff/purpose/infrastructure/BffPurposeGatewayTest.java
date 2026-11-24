@@ -193,9 +193,10 @@ class BffPurposeGatewayTest {
         var payload = new PurposeCloneSeed()
                 .eserviceId(UUID.randomUUID());
         var command = new BffPurposeCloneCommand(payload);
+        var lastApiResponseStore = mock(LastApiResponseStore.class);
         var adapter = new BffPurposeGateway(
                 new BffPurposeRestClient(new TestChainFactory(responses, store), apiClient),
-                mapper, commandFactory);
+                mapper, commandFactory, lastApiResponseStore);
         when(api.clonePurpose()).thenReturn(clone);
         when(clone.execute(any())).thenAnswer(invocation -> {
             Function<Response, Response> handler = invocation.getArgument(0);

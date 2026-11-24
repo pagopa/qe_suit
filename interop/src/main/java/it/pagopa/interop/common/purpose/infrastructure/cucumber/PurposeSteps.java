@@ -46,7 +46,6 @@ public class PurposeSteps {
     private final PurposeUseCase purposeUseCase;
     private final EServiceRiskAnalysisUseCase eServiceRiskAnalysisUseCase;
     private final AuthSession authSession;
-    private final CurrentChannel<Channel> currentChannel;
     private Purpose purposeReference;
 
     @Given("i dati della finalità allo stato attuale appuntati come riferimento")
