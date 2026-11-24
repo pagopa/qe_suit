@@ -150,7 +150,7 @@ def _signatures(history: list[dict]) -> list[Signature]:
 class ProgressiveMatcher:
     """Learn from approved history and classify without training on current KO."""
 
-    def __init__(self, history: list[dict]):
+    def __init__(self, history: list[dict], *, ignore_rules=None):
         self.history = [r for r in history if r.get('id_test') and r.get('error_log')]
         self.miner = _miner()
         self.cluster_members: dict[int, list[dict]] = defaultdict(list)
@@ -161,14 +161,15 @@ class ProgressiveMatcher:
             if cluster is not None:
                 self.cluster_members[cluster.cluster_id].append(row)
         self.signatures = _signatures(self.history)
-        self.qa_engine, self.qa_candidates = build_learning(self.history)
+        self.ignore_rules = ignore_rules
+        self.qa_engine, self.qa_candidates = build_learning(self.history, ignore_rules=ignore_rules)
         self.last_review_reasons = ()
 
     def classify(self, test_id: str, error: str, *, suite: str | None = None) -> tuple[str, dict | None]:
         """Return ('known' | 'proposed' | 'new', historical entry or None)."""
         self.last_review_reasons = ()
         if suite is not None:
-            qa = evaluate(self.qa_engine, self.qa_candidates, test_id, error, suite)
+            qa = evaluate(self.qa_engine, self.qa_candidates, test_id, error, suite, ignore_rules=self.ignore_rules)
             if qa is not None:
                 status, previous, reasons = qa
                 self.last_review_reasons = tuple(reasons)
