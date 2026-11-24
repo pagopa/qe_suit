@@ -1,7 +1,7 @@
 rae:
-  release: ''
-  scope: NIGHTLY
-  issue_jira: ''
+  release: '[INTEROP]-2.25.0'
+  scope: PROMO
+  issue_jira: https://pagopa.atlassian.net/browse/QA-19704
   data_ora: '2026-11-24T14:32:50Z'
   durata: 00:06:53
   numero_ko: 0
