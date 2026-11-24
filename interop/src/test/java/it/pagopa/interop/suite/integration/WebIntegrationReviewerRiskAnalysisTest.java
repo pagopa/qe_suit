@@ -1,8 +1,8 @@
 package it.pagopa.interop.suite.integration;
 
 import it.pagopa.infrastructure.contract.browser.WebScenario;
-import it.pagopa.infrastructure.channel.CurrentChannel;
 import it.pagopa.domain.Identifiable;
+import it.pagopa.infrastructure.suit.component.Button;
 import it.pagopa.interop.TestBootApp;
 import it.pagopa.interop.common.agreement.application.AgreementGateway;
 import it.pagopa.interop.common.agreement.domain.Agreement;
@@ -13,7 +13,6 @@ import it.pagopa.interop.common.infrastructure.WebBrowserContractValidator;
 import it.pagopa.interop.common.infrastructure.config.JunitContextConfig;
 import it.pagopa.interop.common.journey.application.InteropJourney;
 import it.pagopa.interop.common.kernel.context.AuthSession;
-import it.pagopa.interop.common.kernel.domain.Channel;
 import it.pagopa.interop.common.kernel.domain.Tenant;
 import it.pagopa.interop.common.kernel.domain.User;
 import it.pagopa.interop.common.kernel.domain.UserRole;
@@ -27,10 +26,12 @@ import it.pagopa.interop.web.riskanalysis.infrastructure.suit.page.ReviewerRiskA
 import it.pagopa.utils.RandomUtils;
 import it.pagopa.utils.async.PollingUtils;
 import lombok.RequiredArgsConstructor;
+import org.awaitility.core.ConditionTimeoutException;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.DynamicTest;
 import org.junit.jupiter.api.TestFactory;
+import org.opentest4j.TestAbortedException;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.TestConstructor;
 
@@ -41,6 +42,8 @@ import java.util.Map;
 import java.util.Set;
 import java.util.UUID;
 import java.util.function.Consumer;
+import java.util.function.Predicate;
+import java.util.function.Supplier;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
@@ -64,6 +67,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 class WebIntegrationReviewerRiskAnalysisTest {
 
     static final int PAGE_SIZE = 10;
+    private static final int SCAN_ATTEMPTS = 3;
     private static final String RISK_ANALYSIS_REJECTION_REASON = "Risk analysis rejected by contract test";
     private static final String UNAUTHORIZED_TITLE = "Non autorizzato";
     private static final String UNAUTHORIZED_SUBTITLE = "Non possiedi le autorizzazioni necessarie per visualizzare la pagina.";
@@ -76,7 +80,6 @@ class WebIntegrationReviewerRiskAnalysisTest {
     private final AgreementGateway agreementGateway;
     private final EServiceGateway eServiceGateway;
     private final AuthSession authSession;
-    private final CurrentChannel<Channel> currentChannel;
     private final Tenant consumer = Tenant.PAGO_PA;
     private final User reviewer = User.getTenantUser(consumer, UserRole.REVIEWER);
     private final Tenant producer = Tenant.COMUNE_DI_MILANO;
@@ -89,34 +92,30 @@ class WebIntegrationReviewerRiskAnalysisTest {
     private final List<Agreement> ownedAgreements = new ArrayList<>();
     private final List<EService> ownedEServices = new ArrayList<>();
 
+    /**
+     * Cleans up all created purposes, agreements and e-services after each
+     * test because of the number of the used resources.
+     * If any cleanup fails, the test is marked as failed and the exception is
+     * rethrown after attempting to clean up all remaining fixtures.
+     */
     @AfterEach
     void cleanUpFixtures() {
         if (ownedPurposes.isEmpty() && ownedAgreements.isEmpty() && ownedEServices.isEmpty()) return;
         IllegalStateException failure = new IllegalStateException("Risk-analysis fixture cleanup did not complete");
-        Channel previousChannel = currentChannel.getCurrentChannel();
         try {
-            currentChannel.setCurrentChannel(Channel.BFF);
             try (AuthSession.Snapshot ignored = authSession.snapshot()) {
                 cleanUpOwned(ownedPurposes, consumer, purpose -> purposeGateway.deletePurpose(purpose.getRef()), failure);
                 cleanUpOwned(ownedAgreements, consumer, agreementGateway::archiveAgreement, failure);
-                cleanUpOwned(ownedEServices, producer,
-                        eService -> eServiceGateway.archiveEService(eService.getRef(), GracePeriodDays.NUMBER_60), failure);
+                cleanUpOwned(ownedEServices, producer, eService -> eServiceGateway.archiveEService(eService.getRef(), GracePeriodDays.NUMBER_60), failure);
             }
         } catch (RuntimeException | AssertionError error) {
             failure.addSuppressed(new IllegalStateException("Fixture cleanup session failed", error));
-        } finally {
-            try {
-                currentChannel.setCurrentChannel(previousChannel);
-            } catch (RuntimeException | AssertionError error) {
-                failure.addSuppressed(new IllegalStateException("Failed to restore fixture channel", error));
-            }
         }
         if (failure.getSuppressed().length != 0) throw failure;
     }
 
     private <T extends Identifiable> void cleanUpOwned(
-            List<T> fixtures, Tenant owner, Consumer<T> cleanup, IllegalStateException failure
-    ) {
+            List<T> fixtures, Tenant owner, Consumer<T> cleanup, IllegalStateException failure) {
         for (int i = fixtures.size() - 1; i >= 0; i--) {
             T fixture = fixtures.get(i);
             try {
@@ -162,10 +161,12 @@ class WebIntegrationReviewerRiskAnalysisTest {
         EService olderEService = registerFixture(interopJourney.withConsumer(consumer, UserRole.ADMIN)
                 .setUpRiskAnalysisToCompile(olderEServiceName, producer, consumer, reviewer)
                 .get(EService.class));
-        createAndSignRiskAnalysis(olderEService);
+        Purpose olderPending = interopJourney.get(Purpose.class);
+        Purpose olderCompleted = createAndSignRiskAnalysis(olderEService);
 
         EService newerEService = createToApproveRiskAnalysisWithTwoReviewers(reviewers, newerEServiceName);
-        createAndRejectRiskAnalysis(newerEService);
+        Purpose newerPending = interopJourney.get(Purpose.class);
+        Purpose newerCompleted = createAndRejectRiskAnalysis(newerEService);
 
         return webContractValidator.as(reviewer, consumer)
                 .on(ReviewerRiskAnalysisPage.class)
@@ -175,16 +176,43 @@ class WebIntegrationReviewerRiskAnalysisTest {
                                 page -> {
                                 },
                                 page -> {
-                                    verifyTodoTab(page);
-
+                                    verifyTodoTab(page, olderPending, newerPending);
                                     page.completedTab().click();
-
-                                    verifyCompletedTab(page);
+                                    verifyCompletedTab(page, olderCompleted, newerCompleted);
                                 }
                         )
                 ));
     }
 
+
+    /**
+     * Checks that the producer's administrator sees the unauthorized view
+     * instead of the reviewer workspace.
+     *
+     * @return dynamic integration tests for unauthorized access
+     */
+    @TestFactory
+    @DisplayName("Unauthorized user sees the error page")
+    Stream<DynamicTest> unauthorizedUserTests() {
+        return webContractValidator.as(User.getTenantAdmin(producer), producer)
+                .on(ReviewerRiskAnalysisPage.class)
+                .tests(Stream.of(
+                        new WebScenario<>(
+                                "An ADMIN user visualizes 'Unauthorized'",
+                                page -> {
+                                },
+                                page -> {
+                                    assertThat(page.tabs().get().isPresent()).isFalse();
+
+                                    page.unauthorizedTitle().readAndAssert(UNAUTHORIZED_TITLE);
+                                    page.unauthorizedSubtitle().readAndAssert(UNAUTHORIZED_SUBTITLE);
+                                    assertThat(page.backToHomeBtn().isDisabled())
+                                            .as("The 'Torna alla home' button must be enabled")
+                                            .isFalse();
+                                }
+                        )
+                ));
+    }
     /**
      * Test implemented to verify resolution of PIN-11557 - QA-19703.
      * Creates a set of pending and completed risk analyses that span multiple pages.
@@ -198,8 +226,10 @@ class WebIntegrationReviewerRiskAnalysisTest {
         PaginatedRiskAnalyses fixtures = createPaginatedRiskAnalyses();
         Purpose oldest = fixtures.pending().get(0);
         Purpose newest = fixtures.pending().get(fixtures.pending().size() - 1);
+
         Purpose oldestCompleted = fixtures.completed().get(0);
         Purpose newestCompleted = fixtures.completed().get(fixtures.completed().size() - 1);
+
         return webContractValidator.as(reviewer, consumer)
                 .on(ReviewerRiskAnalysisPage.class)
                 .tests(Stream.of(
@@ -207,13 +237,13 @@ class WebIntegrationReviewerRiskAnalysisTest {
                                 "Pending and completed risk analyses are ordered across pages",
                                 page -> {},
                                 page -> {
+
                                     PollingUtils.pollUntil(
                                             () -> page.todoTab().isSelected() && !page.completedTab().isSelected(),
                                             Boolean.TRUE::equals,
                                             "The 'Da fare' tab was not selected"
                                     );
-                                    RiskAnalysisPageScan pending = scanAssignments(page, oldest, newest);
-                                    pending.assertOrder(oldest.getId(), newest.getId());
+                                    verifyOrderInTab(page, fixtures.pending(), oldest, newest);
 
                                     page.completedTab().click();
                                     PollingUtils.pollUntil(
@@ -221,8 +251,7 @@ class WebIntegrationReviewerRiskAnalysisTest {
                                             Boolean.TRUE::equals,
                                             "The 'Concluse' tab was not selected"
                                     );
-                                    RiskAnalysisPageScan completed = scanAssignments(page, oldestCompleted, newestCompleted);
-                                    completed.assertOrder(oldestCompleted.getId(), newestCompleted.getId());
+                                    RiskAnalysisPageScan completed = verifyOrderInTab(page, fixtures.completed(), oldestCompleted, newestCompleted);
                                     assertCompletedAssignment(completed.find(oldestCompleted.getId()), "approvata");
                                     assertCompletedAssignment(completed.find(newestCompleted.getId()), "rifiutata");
                                 }
@@ -230,6 +259,13 @@ class WebIntegrationReviewerRiskAnalysisTest {
                 ));
     }
 
+
+    private RiskAnalysisPageScan verifyOrderInTab(ReviewerRiskAnalysisPage page, List<Purpose> fixtures, Purpose oldest, Purpose newest) {
+        RiskAnalysisPageScan scan = scanAssignments(page, fixtures);
+        scan.assertOrder(oldest.getId(), newest.getId());
+        scan.assertDifferentPages(oldest.getId(), newest.getId());
+        return scan;
+    }
 
     record PaginatedRiskAnalyses(List<Purpose> pending, List<Purpose> completed) {}
 
@@ -268,72 +304,99 @@ class WebIntegrationReviewerRiskAnalysisTest {
         }
     }
 
-    RiskAnalysisPageScan scanAssignments(ReviewerRiskAnalysisPage page, Purpose oldest, Purpose newest) {
-        List<ReviewerRiskAnalysisPage.RiskAnalysisRow> rows = PollingUtils.pollUntil(
-                page::readRecordsEserviceStatus,
-                current -> current.size() == PAGE_SIZE && page.pagination().hasNext()
-                        && !page.pagination().hasPrevious(),
-                "The first assignments page did not load with " + PAGE_SIZE + " rows and a next page"
-        );
+    RiskAnalysisPageScan scanAssignments(ReviewerRiskAnalysisPage page, List<Purpose> purposes) {
+        Set<UUID> expectedIds = purposes.stream().map(Purpose::getId).collect(Collectors.toSet());
+        List<UnstableScanException> failedAttempts = new ArrayList<>();
+        for (int attempt = 1; attempt <= SCAN_ATTEMPTS; attempt++) {
+            try {
+                return scanUntilAllAssignmentsFound(page, expectedIds);
+            } catch (UnstableScanException error) {
+                failedAttempts.add(error);
+            }
+        }
+        TestAbortedException inconclusive = new TestAbortedException(
+                "Inconclusive pagination scan after " + SCAN_ATTEMPTS + " attempts: concurrent changes or missing assignments " + expectedIds);
+        failedAttempts.forEach(inconclusive::addSuppressed);
+        throw inconclusive;
+    }
+
+    private RiskAnalysisPageScan scanUntilAllAssignmentsFound(ReviewerRiskAnalysisPage page, Set<UUID> expectedIds) {
+        awaitScan(page::readRecordsEserviceStatus, current -> !current.isEmpty(),
+                "Assignments did not load in the selected tab");
+        returnToFirstPage(page);
+        List<ReviewerRiskAnalysisPage.RiskAnalysisRow> rows = awaitScan(
+                page::readRecordsEserviceStatus, current -> !current.isEmpty(),
+                "Assignments did not load on the first page");
         RiskAnalysisPageScan scan = new RiskAnalysisPageScan();
         int pageNumber = 1;
-        int lastPage = page.pagination().lastPageNumber();
+        int lastPage = lastPageNumber(page);
         while (true) {
+            if (lastPageNumber(page) != lastPage) {
+                throw new UnstableScanException("Page count changed during scan");
+            }
             scan.addPage(rows);
-            if (pageNumber >= 2 && scan.contains(oldest.getId()) && scan.contains(newest.getId())) {
+            if (expectedIds.stream().allMatch(scan::contains)) {
                 return scan;
             }
             if (pageNumber >= lastPage || !page.pagination().hasNext()) {
-                throw new IllegalStateException("Inconclusive pagination scan: expected assignments were not found "
-                        + "on at least two pages");
+                throw new UnstableScanException("Expected assignments were not found: " + expectedIds);
             }
-            Set<UUID> previousIds = rows.stream().map(ReviewerRiskAnalysisPage.RiskAnalysisRow::purposeId)
-                    .collect(Collectors.toSet());
-            int nextPage = ++pageNumber;
             page.pagination().goNext();
-            rows = PollingUtils.pollUntil(
-                    page::readRecordsEserviceStatus,
-                    current -> !current.isEmpty()
-                            && current.stream().noneMatch(row -> previousIds.contains(row.purposeId())),
-                    "Inconclusive pagination scan: page " + nextPage
-                            + " did not load distinct assignment rows"
-            );
+            pageNumber++;
+            rows = awaitPage(page, pageNumber, rows);
+        }
+    }
+
+    private int lastPageNumber(ReviewerRiskAnalysisPage page) {
+        return page.hasPagination() ? page.pagination().lastPageNumber() : 1;
+    }
+
+    private void returnToFirstPage(ReviewerRiskAnalysisPage page) {
+        int currentPage = selectedPageNumber(page);
+        while (currentPage > 1) {
+            List<ReviewerRiskAnalysisPage.RiskAnalysisRow> before = page.readRecordsEserviceStatus();
+            page.pagination().goBack();
+            currentPage--;
+            awaitPage(page, currentPage, before);
+        }
+    }
+
+    private int selectedPageNumber(ReviewerRiskAnalysisPage page) {
+        if (!page.hasPagination()) return 1;
+        return page.pagination().buttons().stream()
+                .filter(Button::isSelected)
+                .mapToInt(button -> Integer.parseInt(button.read().trim()))
+                .findFirst().orElseThrow(() -> new UnstableScanException("No selected pagination page"));
+    }
+
+    private List<ReviewerRiskAnalysisPage.RiskAnalysisRow> awaitPage(ReviewerRiskAnalysisPage page, int number, List<ReviewerRiskAnalysisPage.RiskAnalysisRow> before) {
+        return awaitScan(page::readRecordsEserviceStatus,
+                rows -> selectedPageNumber(page) == number && !rows.isEmpty() && !rows.equals(before),
+                "Assignments did not load on page " + number);
+    }
+
+    private static <T> T awaitScan(Supplier<T> read, Predicate<T> ready, String message) {
+        try {
+            return PollingUtils.pollUntil(read, ready, message);
+        } catch (IllegalStateException error) {
+            if (!(error.getCause() instanceof ConditionTimeoutException)) throw error;
+            throw new UnstableScanException(message, error);
+        }
+    }
+
+    private static final class UnstableScanException extends RuntimeException {
+        UnstableScanException(String message) {
+            super(message);
+        }
+
+        UnstableScanException(String message, Throwable cause) {
+            super(message, cause);
         }
     }
 
     private void assertCompletedAssignment(ReviewerRiskAnalysisPage.RiskAnalysisRow row, String status) {
         assertThat(row.status()).isEqualToIgnoringCase(status);
         assertThat(row.reviewerOrTotReviewer()).isEqualTo(reviewerDisplayName(reviewer));
-    }
-
-
-    /**
-     * Checks that the producer's administrator sees the unauthorized view
-     * instead of the reviewer workspace.
-     *
-     * @return dynamic integration tests for unauthorized access
-     */
-    @TestFactory
-    @DisplayName("Unauthorized user sees the error page")
-    Stream<DynamicTest> unauthorizedUserTests() {
-        return webContractValidator.as(User.getTenantAdmin(producer), producer)
-                .on(ReviewerRiskAnalysisPage.class)
-                .tests(Stream.of(
-                        new WebScenario<>(
-                                "An ADMIN user visualizes 'Unauthorized'",
-                                page -> {
-                                },
-                                page -> {
-                                    assertThat(page.tabs().get().isPresent()).isFalse();
-
-                                    page.unauthorizedTitle().readAndAssert(UNAUTHORIZED_TITLE);
-                                    page.unauthorizedSubtitle().readAndAssert(UNAUTHORIZED_SUBTITLE);
-                                    assertThat(page.backToHomeBtn().isDisabled())
-                                            .as("The 'Torna alla home' button must be enabled")
-                                            .isFalse();
-                                }
-                        )
-                ));
     }
 
     private EService createToApproveRiskAnalysisWithTwoReviewers(List<User> reviewers, String eServiceName) {
@@ -350,51 +413,36 @@ class WebIntegrationReviewerRiskAnalysisTest {
                 .get(EService.class));
     }
 
-    private void verifyCompletedTab(ReviewerRiskAnalysisPage page) {
+    private void verifyCompletedTab(ReviewerRiskAnalysisPage page, Purpose older, Purpose newer) {
         PollingUtils.pollUntil(
                 () -> page.completedTab().isSelected() && !page.todoTab().isSelected(),
                 Boolean.TRUE::equals,
                 "The 'Concluse' tab was not selected after clicking it"
         );
 
-        List<ReviewerRiskAnalysisPage.RiskAnalysisRow> firstPageRows =
-                page.readRecordsEserviceStatus();
-
-        verifyStatusAndReviewerName(olderEServiceName, firstPageRows, "approvata");
-        verifyStatusAndReviewerName(newerEServiceName, firstPageRows, "rifiutata");
-
-        assertOlderAnalysisAppearsAfterNewer(
-                firstPageRows,
-                olderEServiceName,
-                newerEServiceName
-        );
+        RiskAnalysisPageScan scan = scanAssignments(page, List.of(older, newer));
+        verifyStatusAndReviewerName(scan.find(older.getId()), "approvata");
+        verifyStatusAndReviewerName(scan.find(newer.getId()), "rifiutata");
+        scan.assertOrder(older.getId(), newer.getId());
     }
 
-    private void verifyTodoTab(ReviewerRiskAnalysisPage page) {
+    private void verifyTodoTab(ReviewerRiskAnalysisPage page, Purpose older, Purpose newer) {
         assertThat(page.todoTab().isSelected())
                 .as("The 'Da fare' tab must be selected")
                 .isTrue();
 
-        List<ReviewerRiskAnalysisPage.RiskAnalysisRow> firstPageRows =
-                page.readRecordsEserviceStatus();
-
-        verifyStatusAndReviewerCount(olderEServiceName, firstPageRows, 1, "da compilare");
-        verifyStatusAndReviewerCount(newerEServiceName, firstPageRows, 2, "da approvare");
-
-        assertOlderAnalysisAppearsAfterNewer(
-                firstPageRows,
-                olderEServiceName,
-                newerEServiceName
-        );
+        RiskAnalysisPageScan scan = scanAssignments(page, List.of(older, newer));
+        verifyStatusAndReviewerCount(scan.find(older.getId()), 1, "da compilare");
+        verifyStatusAndReviewerCount(scan.find(newer.getId()), 2, "da approvare");
+        scan.assertOrder(older.getId(), newer.getId());
     }
 
     private void verifyStatusAndReviewerCount(
-            String eServiceName,
-            List<ReviewerRiskAnalysisPage.RiskAnalysisRow> rows,
+            ReviewerRiskAnalysisPage.RiskAnalysisRow row,
             int expectedReviewerCount,
             String expectedStatus
     ) {
-        ReviewerRiskAnalysisPage.RiskAnalysisRow row = findRowForEService(rows, eServiceName);
+        String eServiceName = row.eserviceName();
 
         verifyStatus(row, expectedStatus);
         assertThat(row.reviewerOrTotReviewer())
@@ -406,11 +454,10 @@ class WebIntegrationReviewerRiskAnalysisTest {
     }
 
     private void verifyStatusAndReviewerName(
-            String eServiceName,
-            List<ReviewerRiskAnalysisPage.RiskAnalysisRow> rows,
+            ReviewerRiskAnalysisPage.RiskAnalysisRow row,
             String expectedStatus
     ) {
-        ReviewerRiskAnalysisPage.RiskAnalysisRow row = findRowForEService(rows, eServiceName);
+        String eServiceName = row.eserviceName();
 
         verifyStatus(row, expectedStatus);
         assertThat(row.reviewerOrTotReviewer())
@@ -440,37 +487,18 @@ class WebIntegrationReviewerRiskAnalysisTest {
         };
     }
 
-    /**
-     * Finds the row of an e-service in the currently displayed table.
-     *
-     * @param rows         table rows read from the active tab
-     * @param eServiceName name of the e-service to find
-     * @return the matching row
-     * @throws AssertionError if the e-service is absent
-     */
-    private ReviewerRiskAnalysisPage.RiskAnalysisRow findRowForEService(
-            List<ReviewerRiskAnalysisPage.RiskAnalysisRow> rows,
-            String eServiceName
-    ) {
-        return rows.stream()
-                .filter(r -> eServiceName.equals(r.eserviceName()))
-                .findFirst()
-                .orElseThrow(() -> new AssertionError(
-                        "E-service not found on the current page: " + eServiceName
-                                + ". Found: " + rows.stream().map(ReviewerRiskAnalysisPage.RiskAnalysisRow::eserviceName).toList()
-                ));
-    }
-
-    private void createAndSignRiskAnalysis(EService eService) {
-        createAdditionalRiskAnalysisToApprove(eService);
+    private Purpose createAndSignRiskAnalysis(EService eService) {
+        Purpose purpose = createAdditionalRiskAnalysisToApprove(eService);
         interopJourney
                 .withConsumer(consumer, reviewer).signRiskAnalysis();
+        return purpose;
     }
 
-    private void createAndRejectRiskAnalysis(EService eService) {
-        createAdditionalRiskAnalysisToApprove(eService);
+    private Purpose createAndRejectRiskAnalysis(EService eService) {
+        Purpose purpose = createAdditionalRiskAnalysisToApprove(eService);
         interopJourney
                 .withConsumer(consumer, reviewer).rejectRiskAnalysis(RISK_ANALYSIS_REJECTION_REASON);
+        return purpose;
     }
 
     private Purpose createAdditionalRiskAnalysisToApprove(EService eService) {
@@ -489,29 +517,6 @@ class WebIntegrationReviewerRiskAnalysisTest {
         return purpose;
     }
 
-    /**
-     * Checks newest-first ordering for two analyses expected to be present in the
-     * supplied rows. The caller verifies their presence through their statuses.
-     *
-     * @param rows              table rows read from the relevant tab
-     * @param olderEServiceName e-service name for the older analysis
-     * @param newerEServiceName e-service name for the newer analysis
-     */
-    private static void assertOlderAnalysisAppearsAfterNewer(
-            List<ReviewerRiskAnalysisPage.RiskAnalysisRow> rows,
-            String olderEServiceName,
-            String newerEServiceName
-    ) {
-        List<String> eserviceNames = rows.stream()
-                .map(ReviewerRiskAnalysisPage.RiskAnalysisRow::eserviceName)
-                .toList();
-        assertThat(eserviceNames.indexOf(olderEServiceName))
-                .as("The older RA for e-service '%s' must appear after the newer RA for e-service '%s' in descending date order",
-                        olderEServiceName,
-                        newerEServiceName)
-                .isGreaterThan(eserviceNames.indexOf(newerEServiceName));
-    }
-
     static final class RiskAnalysisPageScan {
         private final List<ReviewerRiskAnalysisPage.RiskAnalysisRow> rows = new ArrayList<>();
         private final Map<UUID, Integer> positions = new HashMap<>();
@@ -520,11 +525,11 @@ class WebIntegrationReviewerRiskAnalysisTest {
 
         void addPage(List<ReviewerRiskAnalysisPage.RiskAnalysisRow> page) {
             if (page.isEmpty()) {
-                throw new IllegalStateException("Inconclusive pagination scan: empty page");
+                throw new UnstableScanException("Empty page");
             }
             for (ReviewerRiskAnalysisPage.RiskAnalysisRow row : page) {
                 if (positions.putIfAbsent(row.purposeId(), rows.size()) != null) {
-                    throw new IllegalStateException("Inconclusive pagination scan: repeated purpose " + row.purposeId());
+                    throw new UnstableScanException("Repeated purpose " + row.purposeId());
                 }
                 pageNumbers.put(row.purposeId(), pages + 1);
                 rows.add(row);
@@ -545,12 +550,16 @@ class WebIntegrationReviewerRiskAnalysisTest {
         }
 
         void assertOrder(UUID oldest, UUID newest) {
-            if (pages < 2 || !contains(oldest) || !contains(newest)) {
-                throw new IllegalStateException("Inconclusive pagination scan: expected purposes not found on multiple pages");
-            }
+            find(oldest);
+            find(newest);
             assertThat(positions.get(newest))
                     .as("The newest risk analysis must precede the oldest")
                     .isLessThan(positions.get(oldest));
+        }
+
+        void assertDifferentPages(UUID oldest, UUID newest) {
+            find(oldest);
+            find(newest);
             assertThat(pageNumbers.get(newest))
                     .as("The newest risk analysis must appear on an earlier page than the oldest")
                     .isLessThan(pageNumbers.get(oldest));

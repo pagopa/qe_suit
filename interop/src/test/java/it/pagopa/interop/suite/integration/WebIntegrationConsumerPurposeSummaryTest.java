@@ -11,6 +11,9 @@ import it.pagopa.interop.common.kernel.domain.User;
 import it.pagopa.interop.common.kernel.domain.UserRole;
 import it.pagopa.interop.common.purpose.application.PurposeUseCase;
 import it.pagopa.interop.common.purpose.domain.Purpose;
+import it.pagopa.interop.common.risk_analysis.application.RiskAnalysisDataFactory;
+import it.pagopa.interop.common.risk_analysis.application.RiskAnalysisGateway;
+import it.pagopa.interop.common.risk_analysis.domain.RiskAnalysisForm;
 import it.pagopa.interop.common.risk_analysis.domain.RiskAnalysisReviewMode;
 import it.pagopa.interop.web.eservice.infrastructure.page.ConsumerPurposeSummaryPage;
 import it.pagopa.interop.web.infrastructure.config.WebJUnitSuitConfig;
@@ -49,6 +52,8 @@ public class WebIntegrationConsumerPurposeSummaryTest {
     private final WebBrowserContractValidator webContractValidator;
     private final InteropJourney interopJourney;
     private final PurposeUseCase purposeUseCase;
+    private final RiskAnalysisDataFactory riskAnalysisDataFactory;
+    private final RiskAnalysisGateway riskAnalysisGateway;
     private final Tenant consumer = Tenant.PAGO_PA;
     private final Tenant producer = Tenant.COMUNE_DI_MILANO;
 
@@ -133,7 +138,11 @@ public class WebIntegrationConsumerPurposeSummaryTest {
         purposeUseCase.assignRiskAnalysisReviewers(
                 purpose, mode, reviewers.stream().map(User::getUserId).toList());
         if (submit) {
-            purposeUseCase.submitRiskAnalysis(purpose);
+            RiskAnalysisForm form = RiskAnalysisForm.builder()
+                    .version(riskAnalysisGateway.getLatestRiskAnalysisConfig(consumer).getVersion())
+                    .answers(riskAnalysisDataFactory.getTemplateForTenant(consumer, true))
+                    .build();
+            purposeUseCase.submitRiskAnalysis(purpose, form);
         }
     }
 

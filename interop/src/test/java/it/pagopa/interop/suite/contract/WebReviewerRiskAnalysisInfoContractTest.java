@@ -43,7 +43,7 @@ import static org.springframework.test.context.TestConstructor.AutowireMode.ALL;
 )
 @TestConstructor(autowireMode = ALL)
 @RequiredArgsConstructor
-@DisplayName("Contract Test per pagina Informazioni finalità in Analisi del Rischio")
+@DisplayName("Contract Test: Reviewer Risk Analysis Information Page")
 class WebReviewerRiskAnalysisInfoContractTest {
 
     private static final Iterable<String> EXPECTED_BREADCRUMB_LABELS = List.of("Analisi del rischio", "Informazioni finalità");

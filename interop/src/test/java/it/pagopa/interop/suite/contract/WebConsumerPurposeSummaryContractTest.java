@@ -22,6 +22,7 @@ import it.pagopa.interop.web.riskanalysis.infrastructure.component.RiskAnalysisG
 import it.pagopa.utils.RandomUtils;
 import it.pagopa.utils.async.PollingUtils;
 import lombok.RequiredArgsConstructor;
+import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.DynamicTest;
 import org.junit.jupiter.api.TestFactory;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -42,6 +43,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 )
 @TestConstructor(autowireMode = TestConstructor.AutowireMode.ALL)
 @RequiredArgsConstructor
+@DisplayName("Consumer Purpose Summary Page Contract Tests")
 public class WebConsumerPurposeSummaryContractTest {
 
     private static final String EXPECTED_BACK_LINK = "Torna alle finalità";

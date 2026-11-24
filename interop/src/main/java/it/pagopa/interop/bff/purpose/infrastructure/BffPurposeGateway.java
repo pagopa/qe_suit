@@ -243,9 +243,14 @@ public class BffPurposeGateway implements PurposeGateway {
 
     @Override
     public void submitRiskAnalysis(PurposeRef purposeRef) {
-        RiskAnalysisForm savedForm = getRiskAnalysisForm(purposeRef);
+        submitRiskAnalysis(purposeRef, getRiskAnalysisForm(purposeRef));
+    }
+
+    @Override
+    public void submitRiskAnalysis(PurposeRef purposeRef, RiskAnalysisForm form) {
+        Objects.requireNonNull(form, "Risk-analysis form must not be null");
         RiskAnalysisSubmissionSeed submission = new RiskAnalysisSubmissionSeed()
-                .riskAnalysisForm(toRiskAnalysisFormSeed(savedForm));
+                .riskAnalysisForm(toRiskAnalysisFormSeed(form));
         restClient.submitRiskAnalysis(purposeRef.id(), submission)
                 .withPolling(PollingStrategy.UNTIL_SUCCESS)
                 .get();
@@ -341,9 +346,17 @@ public class BffPurposeGateway implements PurposeGateway {
         RiskAnalysisSignSeed signRequest = new RiskAnalysisSignSeed()
                 .metadataVersionToSign(metadataVersionToSign);
 
-        restClient.signRiskAnalysis(purposeRef.id(), signRequest)
-                .withPolling(PollingStrategy.UNTIL_SUCCESS)
-                .get();
+        var signingResponse = restClient.signRiskAnalysis(purposeRef.id(), signRequest)
+                .withoutPolling().getRaw();
+        if (!(signingResponse instanceof ApiResponse apiResponse)) {
+            throw new IllegalStateException("Cannot read signing response for purpose " + purposeRef.id()
+                    + ", metadataVersionToSign " + metadataVersionToSign);
+        }
+        if (!apiResponse.isSuccess()) {
+            throw new IllegalStateException("Risk-analysis signing rejected for purpose " + purposeRef.id()
+                    + ", metadataVersionToSign " + metadataVersionToSign
+                    + " (HTTP status " + apiResponse.getStatusCode() + ")");
+        }
 
         PollingUtils.pollUntil(
                 () -> {

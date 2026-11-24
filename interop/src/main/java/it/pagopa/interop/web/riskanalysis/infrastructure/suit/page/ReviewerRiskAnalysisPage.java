@@ -2,6 +2,7 @@ package it.pagopa.interop.web.riskanalysis.infrastructure.suit.page;
 
 import it.frontend.e2e.framework.annotation.location.web.Url;
 import it.frontend.e2e.framework.annotation.selector.XPath;
+import it.frontend.e2e.framework.core.capability.core.Gettable;
 import it.frontend.e2e.framework.web.domain.Page;
 import it.pagopa.infrastructure.suit.component.Button;
 import it.pagopa.infrastructure.suit.component.Label;
@@ -55,6 +56,10 @@ public interface ReviewerRiskAnalysisPage extends Page {
     /** Returns the pagination controls for the currently selected tab. */
     @XPath(".//*[@role='tabpanel' and @aria-labelledby = //button[@role='tab' and @aria-selected='true']/@id]//nav[contains(@class,'MuiPagination-root')]")
     Pagination pagination();
+
+    default boolean hasPagination() {
+        return pagination().get(Gettable.FindPolicy.PRESENT).isPresent();
+    }
 
     @XPath(".//*[@role='tabpanel' and @aria-labelledby = //button[@role='tab' and @aria-selected='true']/@id]//table/tbody/tr")
     List<AssignmentRow> assignmentRows();

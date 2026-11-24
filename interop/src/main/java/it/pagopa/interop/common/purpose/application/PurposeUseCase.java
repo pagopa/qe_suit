@@ -105,6 +105,10 @@ public class PurposeUseCase {
         purposeGateway.submitRiskAnalysis(purpose.getRef());
     }
 
+    public void submitRiskAnalysis(Purpose purpose, RiskAnalysisForm form) {
+        purposeGateway.submitRiskAnalysis(purpose.getRef(), form);
+    }
+
     public void signRiskAnalysis(Purpose purpose, int metadataVersionToSign) {
         purposeGateway.signRiskAnalysis(purpose.getRef(), metadataVersionToSign);
     }

@@ -49,6 +49,10 @@ public interface PurposeGateway extends Plugin<Channel> {
 
     void submitRiskAnalysis(PurposeRef purposeRef);
 
+    default void submitRiskAnalysis(PurposeRef purposeRef, RiskAnalysisForm form) {
+        throw new UnsupportedOperationException("Submission with an explicit risk-analysis form is not supported by this gateway");
+    }
+
     RiskAnalysisForm getRiskAnalysisForm(PurposeRef purposeRef);
 
     void saveRiskAnalysisForm(PurposeRef purposeRef, RiskAnalysisForm form);
