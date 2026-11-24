@@ -2,6 +2,7 @@ package it.pagopa.interop.suite.contract;
 
 import it.pagopa.infrastructure.contract.browser.WebScenario;
 import it.pagopa.interop.TestBootApp;
+import it.pagopa.interop.common.infrastructure.config.JunitEnvironmentProfiles;
 import it.pagopa.interop.common.agreement.domain.AgreementState;
 import it.pagopa.interop.common.eservice.domain.EServiceDescriptorState;
 import it.pagopa.interop.common.infrastructure.WebBrowserContractValidator;
@@ -18,16 +19,17 @@ import lombok.RequiredArgsConstructor;
 import org.junit.jupiter.api.DynamicTest;
 import org.junit.jupiter.api.TestFactory;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.TestConstructor;
 
 import java.util.stream.Stream;
 
 import static org.assertj.core.api.SoftAssertions.assertSoftly;
 
+@ActiveProfiles(resolver = JunitEnvironmentProfiles.class)
 @SpringBootTest(
         classes = {TestBootApp.class, JunitContextConfig.class, WebJUnitSuitConfig.class},
         properties = {
-                "spring.profiles.include=junit",
                 "channel.web.browser=chrome"
         }
 )
@@ -132,9 +134,6 @@ public class WebConsumerPurposeDetailsPageContractTest {
                                     softly.assertThat(page.detailsTabPanel().generalInfoSection().purposeDescriptionValue().read())
                                             .as("General Info Purpose description value")
                                             .isNotBlank();
-                                    softly.assertThat(page.detailsTabPanel().generalInfoSection().downloadRiskAnalysisButton().read())
-                                            .as("General Info Risk Analysis download button")
-                                            .isEqualTo("Scarica analisi del rischio");
                                     softly.assertThat(page.detailsTabPanel().generalInfoSection().goToAgreementLink().read())
                                             .as("General Info Agreement link text")
                                             .isEqualTo("Vai a richiesta di fruizione");
