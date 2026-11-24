@@ -40,8 +40,11 @@ public enum NotificationStatus {
         return valueOf(value);
     }
 
-    /** Lo stato con la descrizione indicata; vuoto se nessuno stato la prevede. */
+    /** Lo stato con la descrizione indicata; vuoto se nessuno stato la prevede o se la descrizione manca. */
     public static Optional<NotificationStatus> fromLabel(String label) {
+        if (label == null) {
+            return Optional.empty();
+        }
         return Arrays.stream(values())
                 .filter(status -> status.labels.contains(label))
                 .findFirst();
