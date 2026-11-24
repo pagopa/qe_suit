@@ -26,6 +26,7 @@ public class Purpose implements Identifiable {
     String title;
     String description;
     Boolean isFreeOfCharge;
+    String freeOfChargeReason;
     UUID delegationId;
     RiskAnalysisReviewMode riskAnalysisReviewMode;
     RiskAnalysisSigningState riskAnalysisSigningState;

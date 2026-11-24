@@ -2,6 +2,7 @@ package it.pagopa.interop.m2m.producer_keychain.infrastructure;
 
 import it.pagopa.interop.common.kernel.context.AuthSession;
 import it.pagopa.interop.common.kernel.domain.Channel;
+import it.pagopa.interop.common.kernel.domain.User;
 import it.pagopa.interop.common.producer_keychain.application.ProducerKeychainFactory;
 import it.pagopa.interop.common.producer_keychain.application.command.ProducerKeyCreationCommand;
 import it.pagopa.interop.common.producer_keychain.application.command.ProducerKeychainCreationCommand;
@@ -21,7 +22,7 @@ public class M2MProducerKeychainCommandFactory implements ProducerKeychainFactor
 
     @Override
     public ProducerKeychainCreationCommand creationCommand() {
-        return creationCommand(List.of(authSession.getActor().getId()));
+        return creationCommand(List.of(User.getTenantAdmin(authSession.getTenant()).getUserId()));
     }
 
     @Override

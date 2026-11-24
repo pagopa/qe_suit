@@ -69,6 +69,38 @@ class PurposeUseCaseTest {
     }
 
     @Test
+    void waitsForAllRequestedMetadataFields() {
+        PurposeVersion draft = active.toBuilder()
+                .purposeVersionState(PurposeVersionState.DRAFT)
+                .dailyCalls(500)
+                .build();
+        Purpose updated = purpose.toBuilder()
+                .clearVersions()
+                .title("new title")
+                .description("new description")
+                .isFreeOfCharge(true)
+                .freeOfChargeReason("new reason")
+                .version(draft)
+                .build();
+        Purpose staleFreeOfCharge = updated.toBuilder().isFreeOfCharge(false).build();
+        Purpose staleFreeOfChargeReason = updated.toBuilder().freeOfChargeReason("old reason").build();
+        Purpose staleDailyCalls = updated.toBuilder()
+                .clearVersions()
+                .version(draft.toBuilder().dailyCalls(10).build())
+                .build();
+        when(gateway.getPurpose(purpose.getRef()))
+                .thenReturn(staleFreeOfCharge, staleFreeOfChargeReason, staleDailyCalls, updated);
+
+        assertThat(useCase.updatePurposeMetadata(
+                purpose, "new title", "new description", true, "new reason", 500))
+                .isSameAs(updated);
+
+        verify(gateway).updatePurposeMetadata(purpose.getRef(), "new title", "new description", true, "new reason", 500);
+        verify(gateway, times(4)).getPurpose(purpose.getRef());
+        verifyNoMoreInteractions(gateway);
+    }
+
+    @Test
     void updatesReversePurposeMetadata() {
         Purpose updated = purpose.toBuilder().title("new title").description("new description").build();
         when(gateway.getPurpose(purpose.getRef())).thenReturn(updated);
