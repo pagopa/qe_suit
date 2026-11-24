@@ -1,0 +1,140 @@
+rae:
+  release: ''
+  scope: NIGHTLY
+  issue_jira: ''
+  data_ora: '2026-11-24T11:02:59Z'
+  durata: 00:13:39
+  numero_ko: 4
+  run: https://github.com/pagopa/qe_suit/actions/runs/45380352311/attempts/1
+  suite: MetadataUpdateSuiteTest
+  environment: qa
+  executor: manu71
+  source_branch: feature/QA-18865-name-and-description-update
+ko_know: []
+ko:
+- id_test: '[CLIENT_UPDATE_METADATA_2B] - L''amministratore aggiorna i metadati del client interop ma la modifica
+    risulta vietata [Given=BFF,When=M2M,Then=M2M]'
+  error_log: |
+    org.opentest4j.AssertionFailedError: [Modifica dei metadati del client vietata] 
+    expected: 403
+     but was: 404
+    	at it.pagopa.interop.m2m.client.infrastructure.M2MClientGateway.shouldFailToUpdateMetadataAsForbidden(M2MClientGateway.java:103)
+    	at java.base/jdk.internal.reflect.NativeMethodAccessorImpl.invoke0(Native Method)
+    	at java.base/jdk.internal.reflect.NativeMethodAccessorImpl.invoke(NativeMethodAccessorImpl.java:77)
+    	at java.base/jdk.internal.reflect.DelegatingMethodAccessorImpl.invoke(DelegatingMethodAccessorImpl.java:43)
+    	at java.base/java.lang.reflect.Method.invoke(Method.java:569)
+    	at it.pagopa.infrastructure.channel.ChannelRouter.invoke(ChannelRouter.java:43)
+    	at it.pagopa.interop.common.infrastructure.ChannelRoutingInterceptor.invoke(ChannelRoutingInterceptor.java:40)
+    	at org.springframework.aop.framework.ReflectiveMethodInvocation.proceed(ReflectiveMethodInvocation.java:179)
+    	at org.springframework.aop.framework.JdkDynamicAopProxy.invoke(JdkDynamicAopProxy.java:222)
+    	at jdk.proxy2/jdk.proxy2.$Proxy153.shouldFailToUpdateMetadataAsForbidden(Unknown Source)
+    	at it.pagopa.interop.common.client.application.ClientUseCase.shouldFailToUpdateMetadataAsForbidden(ClientUseCase.java:75)
+    	at it.pagopa.interop.common.client.infrastructure.cucumber.ClientSteps.shouldFailToUpdateMetadataAsForbidden(ClientSteps.java:168)
+    	at ✽.la richiesta di modifica fallisce come operazione vietata(classpath:feature-expanded/client/client-update-metadata.feature:115)
+  procedure: ''
+  result: ''
+  link_prod_bug: ''
+  link_suite_bug: ''
+- id_test: '[PURPOSE_TEMPLATE_METADATA_VALIDATION_1] - Aggiornamento metadati di un template finalità non ammesso
+    ai ruoli esclusi o ad altri enti [Given=BFF,When=BFF,Then=BFF]'
+  error_log: |
+    org.opentest4j.AssertionFailedError: [Modifica dei metadati del template finalità vietata] 
+    expected: 403
+     but was: 404
+    	at it.pagopa.interop.bff.purpose_template.infrastructure.BffPurposeTemplateGateway.shouldFailToUpdateMetadataAsForbidden(BffPurposeTemplateGateway.java:58)
+    	at java.base/jdk.internal.reflect.NativeMethodAccessorImpl.invoke0(Native Method)
+    	at java.base/jdk.internal.reflect.NativeMethodAccessorImpl.invoke(NativeMethodAccessorImpl.java:77)
+    	at java.base/jdk.internal.reflect.DelegatingMethodAccessorImpl.invoke(DelegatingMethodAccessorImpl.java:43)
+    	at java.base/java.lang.reflect.Method.invoke(Method.java:569)
+    	at it.pagopa.infrastructure.channel.ChannelRouter.invoke(ChannelRouter.java:43)
+    	at it.pagopa.interop.common.infrastructure.ChannelRoutingInterceptor.invoke(ChannelRoutingInterceptor.java:40)
+    	at org.springframework.aop.framework.ReflectiveMethodInvocation.proceed(ReflectiveMethodInvocation.java:179)
+    	at org.springframework.aop.framework.JdkDynamicAopProxy.invoke(JdkDynamicAopProxy.java:222)
+    	at jdk.proxy2/jdk.proxy2.$Proxy171.shouldFailToUpdateMetadataAsForbidden(Unknown Source)
+    	at it.pagopa.interop.common.purpose_template.application.PurposeTemplateUseCase.shouldFailToUpdateMetadataAsForbidden(PurposeTemplateUseCase.java:84)
+    	at it.pagopa.interop.common.purpose_template.infrastructure.cucumber.PurposeTemplateSteps.shouldFailToUpdatePurposeTemplateMetadataAsForbidden(PurposeTemplateSteps.java:161)
+    	at ✽.la richiesta di modifica dei metadati del template finalità fallisce come operazione vietata(classpath:feature-expanded/purpose-template/purpose-template-update-metadata.feature:460)
+  procedure: ''
+  result: ''
+  link_prod_bug: ''
+  link_suite_bug: ''
+- id_test: '[PURPOSE_METADATA_UNIQUENESS_1B] - Aggiornamento nome finalità inversa con stesso nome di un''altra
+    finalità per stesso e-service rifiutato [Given=BFF,When=BFF,Then=BFF] [Examples: (senza nome) | Example #2 |
+    line: 598]'
+  error_log: |
+    java.lang.IllegalStateException: Polling in timeout dopo 20 secondi.
+
+    	at it.pagopa.utils.async.PollingUtils.pollUntil(PollingUtils.java:68)
+    	at it.pagopa.utils.async.PollingUtils.pollUntil(PollingUtils.java:93)
+    	at it.pagopa.interop.bff.purpose.infrastructure.BffPurposeGateway.activatePurpose(BffPurposeGateway.java:206)
+    	at jdk.internal.reflect.GeneratedMethodAccessor1038.invoke(Unknown Source)
+    	at java.base/jdk.internal.reflect.DelegatingMethodAccessorImpl.invoke(DelegatingMethodAccessorImpl.java:43)
+    	at java.base/java.lang.reflect.Method.invoke(Method.java:569)
+    	at it.pagopa.infrastructure.channel.ChannelRouter.invoke(ChannelRouter.java:43)
+    	at it.pagopa.interop.common.infrastructure.ChannelRoutingInterceptor.invoke(ChannelRoutingInterceptor.java:40)
+    	at org.springframework.aop.framework.ReflectiveMethodInvocation.proceed(ReflectiveMethodInvocation.java:179)
+    	at org.springframework.aop.framework.JdkDynamicAopProxy.invoke(JdkDynamicAopProxy.java:222)
+    	at jdk.proxy2/jdk.proxy2.$Proxy170.activatePurpose(Unknown Source)
+    	at it.pagopa.interop.common.purpose.application.PurposeUseCase.activatePurpose(PurposeUseCase.java:124)
+    	at it.pagopa.interop.common.journey.infrastructure.PurposeJourneyImpl.activatePipeline(PurposeJourneyImpl.java:110)
+    	at it.pagopa.interop.common.journey.infrastructure.PurposeJourneyImpl.processLifecycle(PurposeJourneyImpl.java:90)
+    	at it.pagopa.interop.common.journey.infrastructure.PurposeJourneyImpl.createReversePurposeAndLinkToEService(PurposeJourneyImpl.java:61)
+    	at jdk.internal.reflect.GeneratedMethodAccessor1135.invoke(Unknown Source)
+    	at java.base/jdk.internal.reflect.DelegatingMethodAccessorImpl.invoke(DelegatingMethodAccessorImpl.java:43)
+    	at java.base/java.lang.reflect.Method.invoke(Method.java:569)
+    	at it.pagopa.interop.common.journey.infrastructure.config.JourneyInvocationHandler.invoke(JourneyInvocationHandler.java:25)
+    	at jdk.proxy2/jdk.proxy2.$Proxy172.createReversePurposeAndLinkToEService(Unknown Source)
+    	at it.pagopa.interop.common.purpose.infrastructure.cucumber.PurposeSteps.createReversePurposeForEService(PurposeSteps.java:261)
+    	at ✽.l'e-service con una finalità inversa in stato ACTIVE associata dal Comune di Pozzallo(classpath:feature-expanded/purpose/purpose-update-metadata.feature:587)
+    Caused by: org.awaitility.core.ConditionTimeoutException: Lambda expression in it.pagopa.utils.async.PollingUtils expected the predicate to return <true> but it returned <false> for input of <Purpose(id=c7a60d17-f51d-4a27-b05d-cc8bb0f14e0a, eserviceId=ea8818c9-1982-4ac0-922f-e5a8e047a39d, consumerId=80bc8c2a-0f36-47b5-9b7f-7b74c73d2b20, suspendedByConsumer=null, suspendedByProducer=null, title=purpose-NS4ynZxPovOPXoa, description=description-hNIqZIZa6MoSym9, isFreeOfCharge=true, delegationId=null, versions=[PurposeVersion(id=7d2088f8-3417-4f48-9791-3edf6aaaa69a, purposeVersionState=WAITING_FOR_APPROVAL, dailyCalls=1, createdAt=2026-11-24T11:15:45.731Z, updatedAt=2026-11-24T11:15:47.887Z, suspendedAt=null)])> within 20 seconds.
+    	at org.awaitility.core.ConditionAwaiter.await(ConditionAwaiter.java:167)
+    	at org.awaitility.core.AbstractHamcrestCondition.await(AbstractHamcrestCondition.java:86)
+    	at org.awaitility.core.ConditionFactory.until(ConditionFactory.java:1160)
+    	at org.awaitility.core.ConditionFactory.until(ConditionFactory.java:712)
+    	at org.awaitility.core.ConditionFactory.until(ConditionFactory.java:729)
+    	at it.pagopa.utils.async.PollingUtils.pollUntil(PollingUtils.java:48)
+    	... 21 more
+  procedure: ''
+  result: ''
+  link_prod_bug: ''
+  link_suite_bug: ''
+- id_test: '[PURPOSE_METADATA_UNIQUENESS_1B] - Aggiornamento nome finalità inversa con stesso nome di un''altra
+    finalità per stesso e-service rifiutato [Given=BFF,When=M2M,Then=M2M] [Examples: (senza nome) | Example #2 |
+    line: 626]'
+  error_log: |
+    java.lang.IllegalStateException: Polling in timeout dopo 20 secondi.
+
+    	at it.pagopa.utils.async.PollingUtils.pollUntil(PollingUtils.java:68)
+    	at it.pagopa.utils.async.PollingUtils.pollUntil(PollingUtils.java:93)
+    	at it.pagopa.interop.bff.purpose.infrastructure.BffPurposeGateway.activatePurpose(BffPurposeGateway.java:206)
+    	at jdk.internal.reflect.GeneratedMethodAccessor1038.invoke(Unknown Source)
+    	at java.base/jdk.internal.reflect.DelegatingMethodAccessorImpl.invoke(DelegatingMethodAccessorImpl.java:43)
+    	at java.base/java.lang.reflect.Method.invoke(Method.java:569)
+    	at it.pagopa.infrastructure.channel.ChannelRouter.invoke(ChannelRouter.java:43)
+    	at it.pagopa.interop.common.infrastructure.ChannelRoutingInterceptor.invoke(ChannelRoutingInterceptor.java:40)
+    	at org.springframework.aop.framework.ReflectiveMethodInvocation.proceed(ReflectiveMethodInvocation.java:179)
+    	at org.springframework.aop.framework.JdkDynamicAopProxy.invoke(JdkDynamicAopProxy.java:222)
+    	at jdk.proxy2/jdk.proxy2.$Proxy170.activatePurpose(Unknown Source)
+    	at it.pagopa.interop.common.purpose.application.PurposeUseCase.activatePurpose(PurposeUseCase.java:124)
+    	at it.pagopa.interop.common.journey.infrastructure.PurposeJourneyImpl.activatePipeline(PurposeJourneyImpl.java:110)
+    	at it.pagopa.interop.common.journey.infrastructure.PurposeJourneyImpl.processLifecycle(PurposeJourneyImpl.java:90)
+    	at it.pagopa.interop.common.journey.infrastructure.PurposeJourneyImpl.createReversePurposeAndLinkToEService(PurposeJourneyImpl.java:61)
+    	at jdk.internal.reflect.GeneratedMethodAccessor1135.invoke(Unknown Source)
+    	at java.base/jdk.internal.reflect.DelegatingMethodAccessorImpl.invoke(DelegatingMethodAccessorImpl.java:43)
+    	at java.base/java.lang.reflect.Method.invoke(Method.java:569)
+    	at it.pagopa.interop.common.journey.infrastructure.config.JourneyInvocationHandler.invoke(JourneyInvocationHandler.java:25)
+    	at jdk.proxy2/jdk.proxy2.$Proxy172.createReversePurposeAndLinkToEService(Unknown Source)
+    	at it.pagopa.interop.common.purpose.infrastructure.cucumber.PurposeSteps.createReversePurposeForEService(PurposeSteps.java:261)
+    	at ✽.l'e-service con una finalità inversa in stato ACTIVE associata dal Comune di Pozzallo(classpath:feature-expanded/purpose/purpose-update-metadata.feature:615)
+    Caused by: org.awaitility.core.ConditionTimeoutException: Lambda expression in it.pagopa.utils.async.PollingUtils expected the predicate to return <true> but it returned <false> for input of <Purpose(id=397812d9-985e-4d0e-9659-41750a85d6f2, eserviceId=868f27f3-cb66-4a63-9d3c-4db8a9aa7963, consumerId=80bc8c2a-0f36-47b5-9b7f-7b74c73d2b20, suspendedByConsumer=null, suspendedByProducer=null, title=purpose-vGci39dm8bX4SqY, description=description-xD86VQhxelUAL0q, isFreeOfCharge=true, delegationId=null, versions=[PurposeVersion(id=8a4b4ea4-03ec-4e4a-a4e3-489e90a51ffe, purposeVersionState=WAITING_FOR_APPROVAL, dailyCalls=1, createdAt=2026-11-24T11:14:44.299Z, updatedAt=2026-11-24T11:14:46.450Z, suspendedAt=null)])> within 20 seconds.
+    	at org.awaitility.core.ConditionAwaiter.await(ConditionAwaiter.java:167)
+    	at org.awaitility.core.AbstractHamcrestCondition.await(AbstractHamcrestCondition.java:86)
+    	at org.awaitility.core.ConditionFactory.until(ConditionFactory.java:1160)
+    	at org.awaitility.core.ConditionFactory.until(ConditionFactory.java:712)
+    	at org.awaitility.core.ConditionFactory.until(ConditionFactory.java:729)
+    	at it.pagopa.utils.async.PollingUtils.pollUntil(PollingUtils.java:48)
+    	... 21 more
+  procedure: ''
+  result: ''
+  link_prod_bug: ''
+  link_suite_bug: ''
