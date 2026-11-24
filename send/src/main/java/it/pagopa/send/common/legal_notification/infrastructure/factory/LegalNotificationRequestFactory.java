@@ -2,6 +2,7 @@ package it.pagopa.send.common.legal_notification.infrastructure.factory;
 
 import java.util.Optional;
 import it.pagopa.send.common.user.domain.User;
+import it.pagopa.send.common.user.domain.UserType;
 import it.pagopa.send.common.legal_notification.domain.DocumentRef;
 import it.pagopa.send.common.legal_notification.domain.FeePolicy;
 import it.pagopa.send.common.legal_notification.domain.LegalNotificationCreationRequest;
@@ -104,7 +105,9 @@ public class LegalNotificationRequestFactory {
     public ResolvedRecipient resolveRecipient(RecipientSpec spec) {
         User recipient = spec.recipient();
         String taxId = spec.taxIdOverride() != null ? spec.taxIdOverride() : recipient.getTaxId();
-        String denomination = spec.denominationOverride() != null ? spec.denominationOverride() : recipient.getName();
+        // per una persona giuridica la denominazione è la ragione sociale, come nel portale
+        String denomination = spec.denominationOverride() != null ? spec.denominationOverride()
+                : recipient.getType() == UserType.PG ? recipient.getOrganization() : recipient.getName();
 
         List<ResolvedPayment> resolvedPayments = spec.payments().stream()
                 .map(payment -> buildPaymentItem(payment, denomination, taxId))
