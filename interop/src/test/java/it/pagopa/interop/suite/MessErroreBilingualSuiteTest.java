@@ -20,7 +20,6 @@ import static io.cucumber.junit.platform.engine.Constants.PLUGIN_PROPERTY_NAME;
 @IncludeEngines({"cucumber", "junit-jupiter"})
 @SelectClasspathResource("feature-expanded")
 @SelectPackages("it.pagopa.interop.suite.contract")
-@IncludeTags({"error-copy"})
 @ExcludeTags({"wait_for_qa", "ignore"})
 @ConfigurationParameters({
         @ConfigurationParameter(key = PLUGIN_PROPERTY_NAME, value = "pretty"),
@@ -53,19 +52,9 @@ import static io.cucumber.junit.platform.engine.Constants.PLUGIN_PROPERTY_NAME;
         @ConfigurationParameter(
                 key = FILTER_TAGS_PROPERTY_NAME,
                 value = """
-                        (@debug-client-assertion-page-ui-flow
-                         or @agreement
-                         or @eservice-archiving
-                         or @private-catalog
-                         or eservice-template-interface
-                         or @eservice-attribute-threshold
-                         or @debug-client-assertion-page-ui-behavior
-                         or @dev-tools-page-ui-behavior)
-                        and not @wait_for_fix
-                        and not @awaiting_for_qa
-                        and not @ignore
+                        (@error-copy)
                         """
         )
 })
-public class MessErroreBilingualTest {
+public class MessErroreBilingualSuiteTest {
 }
