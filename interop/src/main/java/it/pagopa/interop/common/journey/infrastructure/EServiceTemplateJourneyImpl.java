@@ -181,9 +181,7 @@ public class EServiceTemplateJourneyImpl implements EServiceTemplateJourney<ESer
             case PUBLISHED -> publishPipeline(template, version, configuration);
             case SUSPENDED -> {
                 publishPipeline(template, version, configuration);
-                eServiceTemplateVersionUseCase.suspendEServiceTemplateVersion(template);
-                // waitUntilEServiceTemplate(templ -> templ.getState().equals(EServiceTemplateState.SUSPENDED));
-                // var tmp = entityStore.getLastOrThrow(EServiceTemplate.class);
+                eServiceTemplateVersionUseCase.suspendEServiceTemplateVersion(template,  version);
                 yield this;
             }
             default -> throw new UnsupportedOperationException(String.format("La transizione allo stato %s non è ancora supportata nel Journey.", targetState));
