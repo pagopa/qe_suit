@@ -1,0 +1,14 @@
+rae:
+  release: ''
+  scope: NIGHTLY
+  issue_jira: ''
+  data_ora: '2026-11-24T14:56:50Z'
+  durata: 00:01:05
+  numero_ko: 0
+  run: https://github.com/pagopa/qe_suit/actions/runs/45419507736/attempts/1
+  suite: MessErroreBilingualTest
+  environment: qa
+  executor: speratimatteo
+  source_branch: feature/QA-18434-error-messages
+ko_know: []
+ko: []
