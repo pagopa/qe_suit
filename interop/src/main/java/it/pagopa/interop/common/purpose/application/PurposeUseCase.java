@@ -30,7 +30,7 @@ public class PurposeUseCase {
         purposeGateway.updatePurposeMetadata(
                 purpose.getRef(), name, description, isFreeOfCharge, freeOfChargeReason, dailyCalls);
 
-        return pollForUpdatedMetadata(purpose, name, description);
+        return pollForUpdatedMetadata(purpose, name, description, isFreeOfCharge, freeOfChargeReason, dailyCalls);
     }
 
     public Purpose updateReversePurposeMetadata(
@@ -39,7 +39,7 @@ public class PurposeUseCase {
         purposeGateway.updateReversePurposeMetadata(
                 purpose.getRef(), name, description, isFreeOfCharge, freeOfChargeReason, dailyCalls);
 
-        return pollForUpdatedMetadata(purpose, name, description);
+        return pollForUpdatedMetadata(purpose, name, description, isFreeOfCharge, freeOfChargeReason, dailyCalls);
     }
 
     public void tryToUpdatePurposeMetadata(
@@ -68,12 +68,21 @@ public class PurposeUseCase {
         purposeGateway.shouldFailToUpdatePurposeMetadataAsConflict();
     }
 
-    private Purpose pollForUpdatedMetadata(Purpose purpose, String name, String description) {
+    private Purpose pollForUpdatedMetadata(
+            Purpose purpose, String name, String description,
+            Boolean isFreeOfCharge, String freeOfChargeReason, Integer dailyCalls) {
         return PollingUtils.pollUntil(
                 () -> getPurpose(purpose),
                 refreshed -> Objects.equals(name, refreshed.getTitle())
-                        && Objects.equals(description, refreshed.getDescription()),
-                "Purpose " + purpose.getId() + " metadata did not reach the requested name and description"
+                        && Objects.equals(description, refreshed.getDescription())
+                        && (isFreeOfCharge == null
+                        || Objects.equals(isFreeOfCharge, refreshed.getIsFreeOfCharge()))
+                        && (freeOfChargeReason == null
+                        || Objects.equals(freeOfChargeReason, refreshed.getFreeOfChargeReason()))
+                        && (dailyCalls == null
+                        || refreshed.getLastDraftVersion() != null
+                        && Objects.equals(dailyCalls, refreshed.getLastDraftVersion().getDailyCalls())),
+                "Purpose " + purpose.getId() + " metadata did not reach the requested values"
         );
     }
 
