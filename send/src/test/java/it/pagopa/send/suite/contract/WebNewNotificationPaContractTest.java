@@ -192,7 +192,6 @@ public class WebNewNotificationPaContractTest {
     private final WebBrowserContractValidator webContractValidator;
     private final UserProvider userProvider;
     private final LegalNotificationRequestFactory requestFactory;
-    private final LegalNotificationCreationRequest request;
     private final RecipientSpecFactory recipientSpecFactory;
 
     /**
@@ -501,8 +500,9 @@ public class WebNewNotificationPaContractTest {
 
     // dati di prova: i default di dominio della creazione di una notifica, che non chiamano API
     private LegalNotificationCreationRequest preliminaryData() {
-        requestFactory.applyPreliminaryData(request, new LegalNotificationCreationCommand());
-        return request;
+        LegalNotificationCreationRequest data = new LegalNotificationCreationRequest();
+        requestFactory.applyPreliminaryData(data, new LegalNotificationCreationCommand());
+        return data;
     }
 
     private RecipientSpec recipient() {

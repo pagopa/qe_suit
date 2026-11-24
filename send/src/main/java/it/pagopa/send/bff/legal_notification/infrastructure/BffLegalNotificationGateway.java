@@ -27,6 +27,7 @@ import org.springframework.stereotype.Service;
 import java.time.Duration;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 
 /**
  * Implementazione BFF di {@link LegalNotificationGateway}. Solo questa classe (e il co-locato
@@ -67,7 +68,6 @@ public class BffLegalNotificationGateway implements LegalNotificationGateway {
         requestFactory.applyPaymentAttachments(request);
 
         NewNotificationRequestV26 bffRequest = mapper.toBffRequest(request);
-        BffNotificationStatus bffTargetStatus = mapper.toBffStatus(targetStatus);
 
         NewNotificationResponse response = restClient.create(bffRequest)
                 .withPolling(PollingStrategy.UNTIL_SUCCESS)
@@ -91,7 +91,7 @@ public class BffLegalNotificationGateway implements LegalNotificationGateway {
             return;
         }
 
-
+        BffNotificationStatus bffTargetStatus = mapper.toBffStatus(targetStatus);
         PollingUtils.pollUntil(
                 () -> readNotification(iun).getStatus(),
                 status -> mapper.toBffStatus(status).equals(bffTargetStatus),
@@ -150,10 +150,15 @@ public class BffLegalNotificationGateway implements LegalNotificationGateway {
         return channel == Channel.BFF;
     }
 
-    /** Esito della validazione di una richiesta non più in attesa (ACCEPTED o REFUSED), con i codici degli errori. */
+    /**
+     * Esito della validazione di una richiesta non più in attesa (ACCEPTED o REFUSED), con i codici degli errori:
+     * l'elenco degli errori è facoltativo, una richiesta accettata può non averlo.
+     */
     private static LegalNotificationRequestOutcome toRequestOutcome(NewNotificationRequestStatusResponseV26 response) {
+        List<String> errorCodes = Optional.ofNullable(response.getErrors()).orElse(List.of()).stream()
+                .map(NotificationRequestRefusedProblemError::getCode)
+                .toList();
         return new LegalNotificationRequestOutcome(response.getNotificationRequestId(),
-                NotificationStatus.valueOf(response.getNotificationRequestStatus()),
-                response.getErrors().stream().map(NotificationRequestRefusedProblemError::getCode).toList());
+                NotificationStatus.valueOf(response.getNotificationRequestStatus()), errorCodes);
     }
 }
