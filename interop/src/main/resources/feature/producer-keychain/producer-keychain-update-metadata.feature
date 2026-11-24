@@ -102,7 +102,7 @@ Feature: Modifica dei metadati dei portachiavi erogatore
   @work-item:QA-19036
   @channel:Given=BFF,When=BFF,Then=BFF
   @channel:Given=BFF,When=M2M,Then=M2M
-  Scenario: [PURPOSE_TEMPLATE_METADATA_PROTECTION_2] - Ripetizione parziale e completa dei metadati correnti della richiesta di modifica di un portachiavi erogatore senza effetti operativi
+  Scenario: [PRODUCER_KEYCHAIN_METADATA_PROTECTION_2] - Ripetizione parziale e completa dei metadati correnti della richiesta di modifica di un portachiavi erogatore senza effetti operativi
   Dato un portachiavi erogatore modificabile da un ruolo autorizzato,
   quando la modifica viene inviata con metadati già presenti,
   allora la richiesta ha successo senza modificare dati o relazioni.
@@ -129,52 +129,88 @@ Feature: Modifica dei metadati dei portachiavi erogatore
 
   @work-item:QA-19036
   @channel:Given=BFF,When=BFF,Then=BFF
-  Scenario: [PRODUCER_KEYCHAIN_METADATA_UNIQUENESS_1] - I portachiavi possono avere lo stesso nome
-  Dato due portachiavi del medesimo ente,
-  quando l’amministratore assegna a un portachiavi il nome dell’altro,
-  allora la rinomina riesce senza introdurre un vincolo di unicità.
+  @channel:Given=BFF,When=M2M,Then=M2M
+  Scenario: [PRODUCER_KEYCHAIN_UNIQUENESS_1] - Aggiornamento nome portachiavi erogatore con stesso nome di un altro portachiavi ammesso
+  Dato un portachiavi con metadati già valorizzati,
+  quando l'utente aggiorna i metadati inserendo un nome già esistente per il portachiavi,
+  allora la modifica viene applicata e vengono preservati i dati operativi.
 
-    Given due portachiavi erogatore "K-1" e "K-2" del Comune di Milano
-    When un admin del Comune di Milano richiede di assegnare al portachiavi "K-1" il nome di "K-2"
-    Then la rinomina del portachiavi "K-1" viene accettata
-    And il portachiavi "K-2" conserva tutti i dati iniziali
-
-  @work-item:QA-19036
-  @channel:Given=BFF,When=BFF,Then=BFF
-  Scenario Outline: [PRODUCER_KEYCHAIN_METADATA_VALIDATION_1] - Rispetto dei limiti di lunghezza dei metadati
-  Dato una risorsa modificabile con un campo soggetto a limiti di lunghezza,
-  quando l’attore propone un testo alla lunghezza di confine,
-  allora il sistema accetta i valori ammessi e rifiuta gli altri senza modifiche parziali.
-
-    Given un portachiavi erogatore "K-1" del Comune di Milano
-    When un admin del Comune di Milano richiede un valore di <lunghezza> caratteri per il campo <campo> della risorsa "K-1"
-    Then la modifica della risorsa "K-1" ha esito <esito>
-    And in caso di rifiuto la risorsa "K-1" conserva tutti i dati iniziali
-
-    Examples:
-      | campo       | lunghezza | esito     |
-      | nome        | 60        | accettata |
-      | descrizione | 251       | rifiutata |
+    Given un portachiavi "K-1" creato dal Comune di Milano in cui è presente un utente admin e una coppia di chiavi crittografiche
+    And un admin del Comune di Milano modifica i metadati del portachiavi "K-1":
+      | campo       | valore            |
+      | nome        | primo nome        |
+    And un portachiavi "K-2" creato dal Comune di Milano in cui è presente un utente admin e una coppia di chiavi crittografiche
+    And un EService creato dal Comune di Milano con una richiesta di fruizione associata dal Comune di Pozzallo
+    And un admin del Comune di Milano ha associato l'e-service al portachiavi "K-2"
+    And i dati e le associazioni del portachiavi "K-2" allo stato attuale appuntati come riferimento
+    When un admin del Comune di Milano modifica i metadati del portachiavi "K-2":
+      | campo       | valore            |
+      | nome        | primo nome        |
+    Then il portachiavi "K-2" conserva le associazioni e i dati di riferimento eccetto il nome
 
   @work-item:QA-19036
   @channel:Given=BFF,When=BFF,Then=BFF
-  Scenario: [PRODUCER_KEYCHAIN_METADATA_VALIDATION_2] - Rifiuto di valori non ammessi nei metadati di un portachiavi
-  Dato una risorsa modificabile da un attore autorizzato,
-  quando l’attore richiede una modifica con un valore vietato,
-  allora il sistema rifiuta la richiesta e conserva i dati originari.
+  Scenario: [PRODUCER_KEYCHAIN_METADATA_VALIDATION_1] - Aggiornamento metadati di un portachiavi erogatore non ammesso ai ruoli esclusi o ad altri enti
+  Dato un portachiavi erogatore, se un ruolo non autorizzato (api, api,security, security, support, reviewer, viewer)
+  tenta di aggiornare i metadati, o un admin di un altro ente,
+  allora la richiesta di modifica risulta vietata.
 
-    Given una portachiavi erogatore "K-1" del Comune di Milano modificabile nei metadati
-    When un admin del Comune di Milano richiede la modifica del campo descrizione della risorsa "K-1" con valore vuoto
-    Then la modifica della risorsa "K-1" viene rifiutata
-    And la risorsa "K-1" conserva tutti i dati iniziali
+    Given un portachiavi "K-1" creato dal Comune di Comun Nuovo in cui è presente un utente admin e una coppia di chiavi crittografiche
+    And un EService creato dal Comune di Comun Nuovo con una richiesta di fruizione associata dal Comune di Pozzallo
+    And un admin del Comune di Comun Nuovo ha associato l'e-service al portachiavi "K-1"
+    And i dati e le associazioni del portachiavi "K-1" allo stato attuale appuntati come riferimento
+    When un api del Comune di Comun Nuovo tenta di modificare i metadati del portachiavi "K-1":
+      | campo       | valore            |
+      | nome        | primo nome        |
+      | descrizione | prima descrizione |
+    Then la richiesta di modifica dei metadati del portachiavi erogatore fallisce come operazione vietata
+    And un admin del Comune di Comun Nuovo
+    And il portachiavi "K-1" conserva le associazioni e i dati di riferimento
 
-  @work-item:QA-19036
-  @channel:Given=BFF,When=BFF,Then=BFF
-  Scenario: [PRODUCER_KEYCHAIN_METADATA_VALIDATION_3] - I campi omessi di un portachiavi non vengono sovrascritti
-  Dato una risorsa con nome e descrizione valorizzati,
-  quando l’attore invia la modifica del solo nome,
-  allora la descrizione rimane identica a quella iniziale.
+    When un api,security del Comune di Comun Nuovo tenta di modificare i metadati del portachiavi "K-1":
+      | campo       | valore            |
+      | nome        | primo nome        |
+      | descrizione | prima descrizione |
+    Then la richiesta di modifica dei metadati del portachiavi erogatore fallisce come operazione vietata
+    And un admin del Comune di Comun Nuovo
+    And il portachiavi "K-1" conserva le associazioni e i dati di riferimento
 
-    Given una portachiavi erogatore "K-1" del Comune di Milano modificabile nei metadati
-    When un admin del Comune di Milano richiede la modifica del solo nome della risorsa "K-1"
-    Then la risorsa "K-1" presenta il nome aggiornato e conserva la descrizione iniziale
+    When un security del Comune di Comun Nuovo tenta di modificare i metadati del portachiavi "K-1":
+      | campo       | valore            |
+      | nome        | primo nome        |
+      | descrizione | prima descrizione |
+    Then la richiesta di modifica dei metadati del portachiavi erogatore fallisce come operazione vietata
+    And un admin del Comune di Comun Nuovo
+    And il portachiavi "K-1" conserva le associazioni e i dati di riferimento
+
+    When un support del Comune di Comun Nuovo tenta di modificare i metadati del portachiavi "K-1":
+      | campo       | valore            |
+      | nome        | primo nome        |
+      | descrizione | prima descrizione |
+    Then la richiesta di modifica dei metadati del portachiavi erogatore fallisce come operazione vietata
+    And un admin del Comune di Comun Nuovo
+    And il portachiavi "K-1" conserva le associazioni e i dati di riferimento
+
+    When un reviewer del Comune di Comun Nuovo tenta di modificare i metadati del portachiavi "K-1":
+      | campo       | valore            |
+      | nome        | primo nome        |
+      | descrizione | prima descrizione |
+    Then la richiesta di modifica dei metadati del portachiavi erogatore fallisce come operazione vietata
+    And un admin del Comune di Comun Nuovo
+    And il portachiavi "K-1" conserva le associazioni e i dati di riferimento
+
+    When un viewer del Comune di Comun Nuovo tenta di modificare i metadati del portachiavi "K-1":
+      | campo       | valore            |
+      | nome        | primo nome        |
+      | descrizione | prima descrizione |
+    Then la richiesta di modifica dei metadati del portachiavi erogatore fallisce come operazione vietata
+    And un admin del Comune di Comun Nuovo
+    And il portachiavi "K-1" conserva le associazioni e i dati di riferimento
+
+    When un admin del Comune di Pozzallo tenta di modificare i metadati del portachiavi "K-1":
+      | campo       | valore            |
+      | nome        | primo nome        |
+      | descrizione | prima descrizione |
+    Then la richiesta di modifica dei metadati del portachiavi erogatore fallisce come operazione vietata
+    And un admin del Comune di Comun Nuovo
+    And il portachiavi "K-1" conserva le associazioni e i dati di riferimento
