@@ -1,0 +1,37 @@
+rae:
+  release: ''
+  scope: NIGHTLY
+  issue_jira: ''
+  data_ora: '2026-11-24T15:19:34Z'
+  durata: 00:13:58
+  numero_ko: 1
+  run: https://github.com/pagopa/qe_suit/actions/runs/45423581737/attempts/1
+  suite: MetadataUpdateSuiteTest
+  environment: qa
+  executor: manu71
+  source_branch: feature/QA-18865-name-and-description-update
+ko_know: []
+ko:
+- id_test: '[CLIENT_UPDATE_METADATA_2B] - L''amministratore aggiorna i metadati del client interop ma la modifica
+    risulta vietata [Given=BFF,When=M2M,Then=M2M]'
+  error_log: |
+    org.opentest4j.AssertionFailedError: [Modifica dei metadati del client vietata] 
+    expected: 403
+     but was: 404
+    	at it.pagopa.interop.m2m.client.infrastructure.M2MClientGateway.shouldFailToUpdateMetadataAsForbidden(M2MClientGateway.java:103)
+    	at java.base/jdk.internal.reflect.NativeMethodAccessorImpl.invoke0(Native Method)
+    	at java.base/jdk.internal.reflect.NativeMethodAccessorImpl.invoke(NativeMethodAccessorImpl.java:77)
+    	at java.base/jdk.internal.reflect.DelegatingMethodAccessorImpl.invoke(DelegatingMethodAccessorImpl.java:43)
+    	at java.base/java.lang.reflect.Method.invoke(Method.java:569)
+    	at it.pagopa.infrastructure.channel.ChannelRouter.invoke(ChannelRouter.java:43)
+    	at it.pagopa.interop.common.infrastructure.ChannelRoutingInterceptor.invoke(ChannelRoutingInterceptor.java:40)
+    	at org.springframework.aop.framework.ReflectiveMethodInvocation.proceed(ReflectiveMethodInvocation.java:179)
+    	at org.springframework.aop.framework.JdkDynamicAopProxy.invoke(JdkDynamicAopProxy.java:222)
+    	at jdk.proxy2/jdk.proxy2.$Proxy153.shouldFailToUpdateMetadataAsForbidden(Unknown Source)
+    	at it.pagopa.interop.common.client.application.ClientUseCase.shouldFailToUpdateMetadataAsForbidden(ClientUseCase.java:75)
+    	at it.pagopa.interop.common.client.infrastructure.cucumber.ClientSteps.shouldFailToUpdateMetadataAsForbidden(ClientSteps.java:168)
+    	at ✽.la richiesta di modifica fallisce come operazione vietata(classpath:feature-expanded/client/client-update-metadata.feature:115)
+  procedure: ''
+  result: ''
+  link_prod_bug: ''
+  link_suite_bug: ''
