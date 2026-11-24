@@ -1,0 +1,48 @@
+package it.pagopa.send.web.legal_notification.infrastructure;
+
+import it.frontend.e2e.framework.web.WebPresentationGateway;
+import it.pagopa.application.context.EntityStore;
+import it.pagopa.send.common.kernel.domain.Channel;
+import it.pagopa.send.common.legal_notification.application.ReadNotificationGateway;
+import it.pagopa.send.common.legal_notification.domain.LegalNotificationDomain;
+import it.pagopa.send.web.notification_details.infrastructure.page.MittenteNotificationDetailsPage;
+import it.pagopa.send.web.notification_details.infrastructure.page.section.MittenteNotificationSummarySection;
+import lombok.RequiredArgsConstructor;
+import org.springframework.stereotype.Service;
+
+/**
+ * Legge il dettaglio della notifica nel portale della PA (IUN, numero di protocollo, mittente, stato) e lo registra
+ * come ultima notifica, come il canale BFF.
+ */
+@Service
+@RequiredArgsConstructor
+public class WebReadNotificationGateway implements ReadNotificationGateway {
+
+    private final WebPresentationGateway browser;
+    private final EntityStore entityStore;
+
+    @Override
+    public LegalNotificationDomain readNotification(String iun) {
+        LegalNotificationDomain notification = readFromPortal(iun);
+        entityStore.upsert(null, notification);
+        return notification;
+    }
+
+    // solo lettura, senza registrare la notifica: per riconoscere quella appena inviata tra più candidate
+    LegalNotificationDomain readFromPortal(String iun) {
+        MittenteNotificationDetailsPage details = browser.bind(MittenteNotificationDetailsPage.class);
+        details.navigateTo(iun);
+        MittenteNotificationSummarySection summary = details.notificationSummarySection();
+        return LegalNotificationDomain.builder()
+                .iun(iun)
+                .paProtocolNumber(summary.protocolNumberValue().read())
+                .senderDenomination(summary.senderValue().read())
+                .status(NotificationStatusLabel.toStatus(details.notificationStatusSection().statusChip().text().read()))
+                .build();
+    }
+
+    @Override
+    public boolean supports(Channel channel) {
+        return channel == Channel.WEB_BROWSER;
+    }
+}

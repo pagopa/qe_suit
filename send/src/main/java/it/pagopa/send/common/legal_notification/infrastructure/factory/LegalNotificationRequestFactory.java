@@ -33,10 +33,10 @@ import java.util.UUID;
  * Popola progressivamente una {@link LegalNotificationCreationRequest} (dominio interno, agnostico
  * dal DTO OpenAPI del canale), un pezzo per volta secondo lo step Cucumber corrente:
  * {@link #applyPreliminaryData} (dati base), {@link #resolveRecipient} (un destinatario alla
- * volta) e {@link #applySender} (mittente, noto solo all'invio). Chi orchestra le tre chiamate
- * sullo stesso oggetto è il gateway del canale scelto (es. {@code BffLegalNotificationGateway}),
- * su cui vive la {@code LegalNotificationCreationRequest} in preparazione per lo scenario
- * corrente.
+ * volta) e {@link #applySender} (mittente, noto solo all'invio). Le chiamate le fanno i gateway
+ * di preparazione, aggiunta destinatario e invio del canale scelto (es. {@code
+ * BffPrepareNotificationGateway}), sulla stessa {@code LegalNotificationCreationRequest} in
+ * preparazione per lo scenario corrente.
  * <p>
  * Ogni chiamata API reale (posizione debitoria, preload documenti) resta qui, non nel gateway:
  * questa classe non fa mai riferimento a un DTO OpenAPI.

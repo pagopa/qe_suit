@@ -76,9 +76,8 @@ public class JunitContextConfig {
 
     /**
      * Equivalente non scoped del bean {@code @ScenarioScope} di {@code
-     * LegalNotificationRoutingConfig}, usato dalle implementazioni di {@code
-     * LegalNotificationGateway} (es. {@code BffLegalNotificationGateway}) fuori da uno scenario
-     * Cucumber.
+     * LegalNotificationRoutingConfig}, usato dai gateway della notifica legale (es. {@code
+     * BffPrepareNotificationGateway}) fuori da uno scenario Cucumber.
      */
     @Bean
     LegalNotificationCreationRequest legalNotificationCreationRequest() {

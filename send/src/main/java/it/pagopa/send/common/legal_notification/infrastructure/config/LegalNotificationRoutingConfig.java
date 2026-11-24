@@ -90,8 +90,8 @@ public class LegalNotificationRoutingConfig {
 
     /**
      * Notifica in preparazione per lo scenario corrente: bean {@code @ScenarioScope} (ricreato
-     * vuoto ad ogni scenario) iniettato nelle implementazioni del gateway, che lo popolano
-     * progressivamente (vedi {@code BffLegalNotificationGateway}). Solo per Cucumber: lo scope
+     * vuoto ad ogni scenario) iniettato nei gateway di preparazione, aggiunta destinatario e invio,
+     * che lo popolano progressivamente. Solo per Cucumber: lo scope
      * {@code cucumber-glue} non esiste fuori da uno scenario, per i test JUnit puri c'è
      * l'equivalente non scoped in {@code JunitContextConfig}.
      */
