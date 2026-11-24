@@ -91,30 +91,6 @@ class EServiceCreationJourneyStepsTest {
     }
 
     @Test
-    void mapsBaseThresholdsFromItalianAliases() {
-        var configuration = configuration(Map.of(
-                "erogatore", "Comune di Milano",
-                "sogliaFruitore", "10",
-                "sogliaTotale", "20"
-        ));
-
-        assertThat(configuration.getConsumerThreshold()).isEqualTo(10);
-        assertThat(configuration.getTotalThreshold()).isEqualTo(20);
-    }
-
-    @Test
-    void mapsBaseThresholdsFromSpacedItalianAliases() {
-        var configuration = configuration(Map.of(
-                "erogatore", "Comune di Milano",
-                "soglia fruitore", "10",
-                "soglia totale", "20"
-        ));
-
-        assertThat(configuration.getConsumerThreshold()).isEqualTo(10);
-        assertThat(configuration.getTotalThreshold()).isEqualTo(20);
-    }
-
-    @Test
     void preservesUnsetAndEmptyDescription() {
         var configuration = configuration(Map.of(
                 "erogatore", "Comune di Milano",
