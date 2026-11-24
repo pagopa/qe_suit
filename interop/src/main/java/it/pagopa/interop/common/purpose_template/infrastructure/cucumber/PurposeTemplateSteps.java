@@ -15,12 +15,16 @@ import it.pagopa.interop.common.kernel.domain.TenantKind;
 import it.pagopa.interop.common.kernel.domain.UserRole;
 import it.pagopa.interop.common.purpose_template.application.PurposeTemplateUseCase;
 import it.pagopa.interop.common.purpose_template.domain.PurposeTemplate;
+import it.pagopa.interop.common.kernel.domain.UserRole;
 import it.pagopa.interop.common.purpose_template.application.PurposeTemplateUseCase;
 import it.pagopa.interop.common.purpose_template.domain.PurposeTemplate;
 import it.pagopa.interop.common.purpose_template.domain.PurposeTemplateState;
 import it.pagopa.utils.RandomUtils;
+import it.pagopa.interop.common.purpose_template.infrastructure.cucumber.dto.PurposeTemplateAliasConfiguration;
 import it.pagopa.interop.common.purpose_template.infrastructure.cucumber.dto.PurposeTemplateDocumentConfiguration;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 import lombok.RequiredArgsConstructor;
 
 import java.util.HashSet;
@@ -269,6 +273,23 @@ public class PurposeTemplateSteps {
         }
     }
 
+    @Given("i seguenti template finalità in bozza creati da/dal {tenant} con nomi distinti:")
+    public void draftPurposeTemplatesCreatedWithDistinctNames(
+            Tenant creator,
+            List<PurposeTemplateAliasConfiguration> configurations
+    ) {
+        // Usato negli scenari con id ERROR_146, ERROR_147
+        validateAliases(configurations);
+        for (PurposeTemplateAliasConfiguration configuration : configurations) {
+            journey.withProducer(creator, UserRole.ADMIN)
+                    .createPurposeTemplate(
+                            Tenant.fromTenantType(TenantKind.PA),
+                            PurposeTemplateState.DRAFT,
+                            configuration.getAlias()
+                    );
+        }
+    }
+
     @Given("un template finalità in bozza con una risposta annotata")
     public void draftPurposeTemplateWithAnnotatedAnswer() {
         journey.createPurposeTemplate(Tenant.fromTenantType(TenantKind.PA), PurposeTemplateState.DRAFT)
@@ -369,5 +390,25 @@ public class PurposeTemplateSteps {
         // Usato negli scenari con id ERROR_145
         PurposeTemplate purposeTemplate = entityStore.getLastOrThrow(PurposeTemplate.class);
         purposeTemplateUseCase.attemptSignedRiskAnalysisDocumentDownload(purposeTemplate);
+    }
+
+    private void validateAliases(List<PurposeTemplateAliasConfiguration> configurations) {
+        if (configurations == null || configurations.isEmpty()) {
+            throw new IllegalArgumentException("At least one purpose template alias is required");
+        }
+        Set<String> seen = new HashSet<>();
+        for (PurposeTemplateAliasConfiguration configuration : configurations) {
+            if (configuration == null
+                    || configuration.getAlias() == null
+                    || configuration.getAlias().isBlank()
+                    || !seen.add(configuration.getAlias())) {
+                throw new IllegalArgumentException("Purpose template aliases must be present and unique");
+            }
+            if (entityStore.getByAlias(configuration.getAlias(), PurposeTemplate.class).isPresent()) {
+                throw new IllegalArgumentException(
+                        "Purpose template alias is already registered: " + configuration.getAlias()
+                );
+            }
+        }
     }
 }

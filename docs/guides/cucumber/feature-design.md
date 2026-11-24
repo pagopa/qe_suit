@@ -310,6 +310,12 @@ Example:
 @channel:Given=BFF,When=WEB,Then=WEB
 ```
 
+Each phase (`Given`, `When`, `Then`) also supports an optional BCP-47 language tag using `<CHANNEL>:<language>` (default is `it`):
+
+```gherkin
+@channel:Given=BFF,When=BFF:en,Then=BFF:en
+```
+
 Channel configuration can be applied:
 
 - at Feature level;
@@ -320,6 +326,21 @@ Multiple channel configurations can be associated with the same scenario, direct
 Each configuration can produce an additional execution of the same scenario in the same test run using a different runtime channel combination.
 
 Changing the execution channel must not change the business meaning of the scenario. Only configure channels that can exercise and verify the stated behavior.
+
+### Expanding feature files
+
+During the build, source feature files under `src/main/resources/feature` are expanded into `target/generated-test-resources/feature-expanded` before Cucumber discovery.
+
+To regenerate the expanded feature files quickly (for example in `interop`):
+
+- If the module is already compiled:
+  ```shell
+  mvn -f interop/pom.xml exec:java@expand-channel-features
+  ```
+- If compilation is also needed (skipping OpenAPI code generation):
+  ```shell
+  mvn -f interop/pom.xml -Dcodegen.skip=true generate-test-resources
+  ```
 
 ## Step design iterations
 
