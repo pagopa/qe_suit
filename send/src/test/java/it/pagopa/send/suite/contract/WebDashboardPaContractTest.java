@@ -1,5 +1,7 @@
 package it.pagopa.send.suite.contract;
 
+import it.pagopa.send.common.legal_notification.domain.FeePolicy;
+import it.pagopa.send.common.legal_notification.domain.PhysicalCommunicationType;
 import it.frontend.e2e.framework.core.capability.core.Gettable.FindPolicy;
 import it.frontend.e2e.framework.web.model.WebPresentationElement;
 import it.pagopa.infrastructure.contract.browser.WebScenario;
@@ -8,6 +10,7 @@ import it.pagopa.send.TestBootApp;
 import it.pagopa.send.common.infrastructure.WebBrowserContractValidator;
 import it.pagopa.send.common.infrastructure.config.JunitContextConfig;
 import it.pagopa.send.common.journey.application.SendJourney;
+import it.pagopa.send.common.legal_notification.domain.LegalNotificationCreationCommand;
 import it.pagopa.send.common.legal_notification.domain.LegalNotificationDomain;
 import it.pagopa.send.common.legal_notification.domain.NotificationStatus;
 import it.pagopa.send.common.legal_notification.domain.RecipientSpec;
@@ -121,13 +124,12 @@ public class WebDashboardPaContractTest {
         ));
 
         LegalNotificationDomain notification = sendJourney
-                .withSender(sender)
-                .prepareNotification(Map.of(
-                        "subject", NOTIFICATION_SUBJECT,
-                        "physicalCommunication", "REGISTERED_LETTER_890",
-                        "feePolicy", "FLAT_RATE"
-                ))
-                .withRecipient(recipient)
+                .prepareNotification(new LegalNotificationCreationCommand()
+                        .sender(sender)
+                        .subject(NOTIFICATION_SUBJECT)
+                        .physicalCommunication(PhysicalCommunicationType.REGISTERED_LETTER_890)
+                        .feePolicy(FeePolicy.FLAT_RATE)
+                        .recipient(recipient))
                 .sendNotification(sender, NotificationStatus.ACCEPTED)
                 // appena accettata la notifica non compare ancora nella pagina: compare entro l'avvio dell'invio
                 .waitForNotificationStatus(NotificationStatus.DELIVERING)
