@@ -14,42 +14,47 @@ import java.util.Map;
 /**
  * Casi d'uso per la creazione/gestione di una notifica legale: prepararla con i dati base,
  * aggiungerle destinatari (entrambi ripetibili/richiamabili da step Cucumber separati), inviarla e
- * attendere lo stato, eliminarla, leggerla, cercarla. Puro pass-through verso
- * {@link LegalNotificationGateway}: non ha logica né stato propri, sono le implementazioni del
- * gateway (una per canale) a sapere come procedere.
+ * attendere lo stato, eliminarla, leggerla, cercarla. Puro pass-through verso un gateway per
+ * ciascuna operazione: non ha logica né stato propri, sono le implementazioni dei gateway (una per
+ * canale) a sapere come procedere.
  */
 @Service
 @RequiredArgsConstructor
 public class LegalNotificationUseCase {
 
-    private final LegalNotificationGateway legalNotificationGateway;
+    private final PrepareNotificationGateway prepareNotificationGateway;
+    private final AddRecipientGateway addRecipientGateway;
+    private final SendNotificationGateway sendNotificationGateway;
+    private final WaitForNotificationStatusGateway waitForNotificationStatusGateway;
+    private final DeleteNotificationGateway deleteNotificationGateway;
+    private final ReadNotificationGateway readNotificationGateway;
+    private final SearchNotificationGateway searchNotificationGateway;
 
     public void prepareNotification(LegalNotificationCreationCommand command) {
-        legalNotificationGateway.prepareNotification(command);
+        prepareNotificationGateway.prepareNotification(command);
     }
 
     public void addRecipient(RecipientSpec recipient) {
-        legalNotificationGateway.addRecipient(recipient);
+        addRecipientGateway.addRecipient(recipient);
     }
 
     public void sendNotification(User sender, NotificationStatus targetStatus) {
-        legalNotificationGateway.sendNotification(sender, targetStatus);
+        sendNotificationGateway.sendNotification(sender, targetStatus);
     }
 
     public void waitForNotificationStatus(NotificationStatus targetStatus) {
-        legalNotificationGateway.waitForNotificationStatus(targetStatus);
+        waitForNotificationStatusGateway.waitForNotificationStatus(targetStatus);
     }
 
     public void deleteNotification(String iun) {
-        legalNotificationGateway.deleteNotification(iun);
+        deleteNotificationGateway.deleteNotification(iun);
     }
 
     public LegalNotificationDomain readNotification(String iun) {
-        return legalNotificationGateway.readNotification(iun);
+        return readNotificationGateway.readNotification(iun);
     }
 
-    public List<LegalNotificationDomain> searchNotification(Map<String, String> overrides) {
-        return legalNotificationGateway.searchNotification(overrides);
+    public List<LegalNotificationDomain> searchNotification(Map<String, String> filters) {
+        return searchNotificationGateway.searchNotification(filters);
     }
-
 }
