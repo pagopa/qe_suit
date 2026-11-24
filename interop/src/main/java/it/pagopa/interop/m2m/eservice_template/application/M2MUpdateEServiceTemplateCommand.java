@@ -62,8 +62,7 @@ public class M2MUpdateEServiceTemplateCommand implements UpdateEServiceTemplateC
 
     @Override
     public M2MUpdateEServiceTemplateCommand isAsync(Boolean asyncExchange) {
-        // Per M2M non è previsto!
-        return this;
+        throw new UnsupportedOperationException("Updating asyncExchange is not supported on M2M v3");
     }
 
     @Override
