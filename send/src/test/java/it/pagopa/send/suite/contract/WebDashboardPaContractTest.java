@@ -60,9 +60,11 @@ public class WebDashboardPaContractTest {
     private static final String[] FILTER_LABELS = {"Codice Fiscale", "Codice IUN", "Dal", "Al", "Stato"};
     private static final String ALL_STATUSES = "Tutti gli stati";
     private static final String FILTER = "Filtra";
-    // l'ultima colonna, quella del pulsante per aprire la notifica, non ha intestazione. La colonna "Gruppi", presente nel
-    // sorgente di riferimento, non è mostrata dal portale in ambiente test
-    private static final String[] TABLE_HEADERS = {"Data", "Codice fiscale", "Oggetto", "Codice IUN", "Stato", ""};
+    // l'ultima colonna, quella del pulsante per aprire la notifica, non ha intestazione. "Gruppi" compare solo se la PA
+    // mittente ha un gruppo attivo, che dipende dall'ambiente: si accettano entrambe le tabelle
+    private static final List<String> TABLE_HEADERS = List.of("Data", "Codice fiscale", "Oggetto", "Codice IUN", "Stato", "");
+    private static final List<String> TABLE_HEADERS_WITH_GROUPS =
+            List.of("Data", "Codice fiscale", "Oggetto", "Codice IUN", "Gruppi", "Stato", "");
 
     // le notifiche del giorno mostrano "Oggi" al posto della data
     private static final String TODAY = "Oggi";
@@ -162,7 +164,7 @@ public class WebDashboardPaContractTest {
                         new WebScenario<>(
                                 "intestazioni della tabella",
                                 page -> {},
-                                page -> Assertions.assertThat(page.notificationsTable().getColumnHeaders()).containsExactly(TABLE_HEADERS)
+                                page -> Assertions.assertThat(page.notificationsTable().getColumnHeaders()).isIn(TABLE_HEADERS, TABLE_HEADERS_WITH_GROUPS)
                         ),
 
                         new WebScenario<>(
@@ -175,7 +177,8 @@ public class WebDashboardPaContractTest {
                                     // nella pagina della PA la seconda colonna è il codice fiscale del destinatario
                                     Assertions.assertThat(cells.get(1).read()).as("codice fiscale").isEqualTo(recipientUser.getTaxId());
                                     Assertions.assertThat(cells.get(2).read()).as("oggetto").isEqualTo(NOTIFICATION_SUBJECT);
-                                    Assertions.assertThat(cells.get(5).read()).as("pulsante").isEqualTo(OPEN);
+                                    // il pulsante è sempre nell'ultima colonna, anche quando "Gruppi" sposta le precedenti
+                                    Assertions.assertThat(cells.get(cells.size() - 1).read()).as("pulsante").isEqualTo(OPEN);
                                 }
                         )
                 ));
