@@ -108,6 +108,7 @@ public class BffEServiceGateway implements EServiceGateway {
             case INVALID_DATA, NOT_ALLOWED -> 400;
             case CONFLICT, OUT_OF_DRAFT_OPERATION_FIELD -> 409;
             case UNAUTHORIZED -> 403;
+            default -> throw new UnsupportedOperationException("Unsupported EServiceUpdateFailureReason: " + reason);
         };
         var actual = lastApiResponseStore.getLastResponse().getStatusCode();
         assertThat(actual).isEqualTo(expected);

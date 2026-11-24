@@ -8,6 +8,7 @@ import it.pagopa.interop.common.kernel.domain.Channel;
 import it.pagopa.interop.common.kernel.domain.EServiceRef;
 import it.pagopa.interop.common.kernel.domain.EServiceTemplateRef;
 import it.pagopa.interop.common.kernel.domain.Tenant;
+import it.pagopa.interop.common.kernel.domain.TenantKind;
 import it.pagopa.interop.common.purpose_template.application.PurposeTemplateGateway;
 import it.pagopa.interop.common.purpose_template.domain.PurposeTemplate;
 import it.pagopa.interop.common.risk_analysis.domain.RiskAnalysisForm;
@@ -169,6 +170,73 @@ public class M2MPurposeTemplateGateway implements PurposeTemplateGateway {
 
     @Override
     public PurposeTemplate linkEServiceTemplate(PurposeTemplate purposeTemplate, EServiceTemplateRef templateRef) {
+        throw unsupportedOperation();
+    }
+
+    @Override
+    public void attemptPurposeTemplateReactivation(PurposeTemplate purposeTemplate) {
+        throw unsupportedOperation();
+    }
+
+    @Override
+    public void attemptPurposeTemplatePublication(PurposeTemplate purposeTemplate) {
+        throw unsupportedOperation();
+    }
+
+    @Override
+    public PurposeTemplate addRiskAnalysisAnswerAnnotation(PurposeTemplate purposeTemplate,
+        UUID answerId) {
+        throw unsupportedOperation();
+    }
+
+    @Override
+    public PurposeTemplate addRiskAnalysisAnswerAnnotationDocument(PurposeTemplate purposeTemplate,
+        UUID answerId, String prettyName, String fixturePath) {
+        throw unsupportedOperation();
+    }
+
+    @Override
+    public void awaitSignedRiskAnalysisDocumentAvailable(PurposeTemplate purposeTemplate) {
+        throw unsupportedOperation();
+    }
+
+    @Override
+    public void attemptRiskAnalysisAnswerAnnotationDocumentUpload(PurposeTemplate purposeTemplate,
+        UUID answerId, String prettyName, String fixturePath) {
+        throw unsupportedOperation();
+    }
+
+    @Override
+    public void attemptLinkEService(PurposeTemplate purposeTemplate, EServiceRef eServiceRef) {
+        throw unsupportedOperation();
+    }
+
+    @Override
+    public void attemptUpdatePurposeTemplate(PurposeTemplate purposeTemplate,
+        TenantKind targetTenantKind, RiskAnalysisForm riskAnalysisForm) {
+        throw unsupportedOperation();
+    }
+
+    @Override
+    public void attemptAddRiskAnalysisAnswerWithAnnotation(PurposeTemplate purposeTemplate,
+        String annotationText) {
+        throw unsupportedOperation();
+    }
+
+    @Override
+    public void attemptUpdateRiskAnalysisAnswerAnnotation(PurposeTemplate purposeTemplate,
+        UUID answerId, String annotationText) {
+        throw unsupportedOperation();
+    }
+
+    @Override
+    public void attemptRenameRiskAnalysisAnswerAnnotationDocument(PurposeTemplate purposeTemplate,
+        UUID answerId, UUID documentId, String newPrettyName) {
+        throw unsupportedOperation();
+    }
+
+    @Override
+    public void attemptSignedRiskAnalysisDocumentDownload(PurposeTemplate purposeTemplate) {
         throw unsupportedOperation();
     }
 

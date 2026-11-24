@@ -10,10 +10,12 @@ import it.pagopa.interop.common.client.application.command.ClientKeyCreationComm
 import it.pagopa.interop.common.client.domain.Client;
 import it.pagopa.interop.common.kernel.domain.Channel;
 import it.pagopa.interop.common.kernel.domain.ClientRef;
+import it.pagopa.interop.common.kernel.domain.KeyRegistrationMaterial;
 import it.pagopa.interop.common.kernel.domain.User;
 import it.pagopa.interop.common.kernel.domain.UserRef;
 import it.pagopa.interop.common.purpose.domain.Purpose;
 import it.pagopa.interop.generated.openapi.clients.m2m.v3.model.ClientUpdateSeed;
+import it.pagopa.kernel.security.Key;
 import it.pagopa.utils.async.PollingUtils;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -115,6 +117,26 @@ public class M2MClientGateway implements ClientGateway {
 
     @Override
     public Client setAdmin(Client client, UserRef admin) {
+        throw unsupportedOperation();
+    }
+
+    @Override
+    public void attemptClientKeyDeletion(Client client, Key key) {
+        throw unsupportedOperation();
+    }
+
+    @Override
+    public void attemptClientCreation(ClientCreationCommand command) {
+        throw unsupportedOperation();
+    }
+
+    @Override
+    public void attemptKeyRegistration(Client client, KeyRegistrationMaterial material, String name) {
+        throw unsupportedOperation();
+    }
+
+    @Override
+    public void attemptPurposeAssociation(Client client, Purpose purpose) {
         throw unsupportedOperation();
     }
 

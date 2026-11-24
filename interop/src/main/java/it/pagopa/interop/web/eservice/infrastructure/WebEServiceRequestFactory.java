@@ -23,6 +23,11 @@ public class WebEServiceRequestFactory implements EServiceRequestFactory {
     }
 
     @Override
+    public EServiceUpdateCommand defaultUpdateEServiceCommand() {
+        throw new UnsupportedOperationException("E-service update command creation is not supported on the WEB channel");
+    }
+
+    @Override
     public UpdateEServiceDescriptorCommand defaultUpdateDescriptorCommand() {
         throw new UnsupportedOperationException("Descriptor command creation is not supported on the WEB channel");
     }

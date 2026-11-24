@@ -8,6 +8,7 @@ import it.pagopa.interop.common.eservice_template.application.command.*;
 import it.pagopa.interop.common.eservice_template.domain.EServiceTemplate;
 import it.pagopa.interop.common.eservice_template.domain.EServiceTemplateUpdateFailureReason;
 import it.pagopa.interop.common.kernel.domain.Channel;
+import it.pagopa.interop.common.kernel.domain.EServiceRiskAnalysis;
 import it.pagopa.interop.common.kernel.domain.EServiceTemplateRef;
 import it.pagopa.interop.m2m.eservice_template.application.M2MUpdateEServiceTemplateCommand;
 import it.pagopa.interop.generated.openapi.clients.m2m.v3.model.EServiceTemplateDraftUpdateSeed;
@@ -127,6 +128,41 @@ public class M2MEServiceTemplateGateway implements EServiceTemplateGateway {
             EServiceTemplateRef templateRef,
             UpdateEServiceTemplateDescriptionCommand command
     ) {
+        throw unsupportedOperation();
+    }
+
+    @Override
+    public EServiceRiskAnalysis addRiskAnalysis(EServiceTemplateRef templateRef,
+        CreateEServiceTemplateRiskAnalysisCommand command) {
+        throw unsupportedOperation();
+    }
+
+    @Override
+    public void attemptTemplateNameUpdate(EServiceTemplateRef templateRef,
+        UpdateEServiceTemplateNameCommand command) {
+        throw unsupportedOperation();
+    }
+
+    @Override
+    public void attemptTemplateDescriptionUpdate(EServiceTemplateRef templateRef,
+        UpdateEServiceTemplateDescriptionCommand command) {
+        throw unsupportedOperation();
+    }
+
+    @Override
+    public void attemptTemplateIntendedTargetUpdate(EServiceTemplateRef templateRef,
+        UpdateEServiceTemplateIntendedTargetCommand command) {
+        throw unsupportedOperation();
+    }
+
+    @Override
+    public void attemptTemplateCreation(EServiceTemplateCreationCommand command) {
+        throw unsupportedOperation();
+    }
+
+    @Override
+    public void attemptAddRiskAnalysis(EServiceTemplateRef templateRef,
+        CreateEServiceTemplateRiskAnalysisCommand command) {
         throw unsupportedOperation();
     }
 

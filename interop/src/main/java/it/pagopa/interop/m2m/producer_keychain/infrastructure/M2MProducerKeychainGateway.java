@@ -6,6 +6,7 @@ import it.pagopa.infrastructure.response.ApiResponse;
 import it.pagopa.infrastructure.template.action.strategy.PollingStrategy;
 import it.pagopa.interop.common.kernel.domain.Channel;
 import it.pagopa.interop.common.kernel.domain.EServiceRef;
+import it.pagopa.interop.common.kernel.domain.KeyRegistrationMaterial;
 import it.pagopa.interop.common.producer_keychain.application.ProducerKeychainGateway;
 import it.pagopa.interop.common.producer_keychain.application.command.ProducerKeyCreationCommand;
 import it.pagopa.interop.common.producer_keychain.application.command.ProducerKeychainCreationCommand;
@@ -146,6 +147,22 @@ public class M2MProducerKeychainGateway implements ProducerKeychainGateway {
         assertUpdateMetadataStatus(409);
     }
 
+    @Override
+    public void attemptEServiceAssociation(ProducerKeychainRef ref, EServiceRef eServiceRef) {
+        throw unsupportedOperation();
+    }
+
+    @Override
+    public void attemptKeyRegistration(ProducerKeychain keychain, KeyRegistrationMaterial material,
+        String name) {
+        throw unsupportedOperation();
+    }
+
+    @Override
+    public void attemptProducerKeychainCreation(ProducerKeychainCreationCommand command) {
+        throw unsupportedOperation();
+    }
+
     private void assertUpdateMetadataStatus(int expectedStatus) {
         assertThat(lastApiResponseStore.getLastResponse())
                 .as("Risposta al tentativo di modifica dei metadati del portachiavi erogatore")
@@ -158,5 +175,9 @@ public class M2MProducerKeychainGateway implements ProducerKeychainGateway {
     @Override
     public boolean supports(Channel channel) {
         return channel == Channel.M2M_V3;
+    }
+
+    private static UnsupportedOperationException unsupportedOperation() {
+        return new UnsupportedOperationException("This producer keychain operation is not supported on M2M v3");
     }
 }
