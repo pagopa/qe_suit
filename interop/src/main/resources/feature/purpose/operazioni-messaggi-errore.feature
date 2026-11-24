@@ -1,6 +1,6 @@
 @error-copy
 @channel:Given=BFF,When=BFF,Then=BFF
-@lingua:it,en
+@channel:Given=BFF:en,When=BFF:en,Then=BFF:en
 Feature: Messaggi di errore durante la gestione delle finalità e la valutazione delle analisi del rischio
 
   Come fruitore o valutatore

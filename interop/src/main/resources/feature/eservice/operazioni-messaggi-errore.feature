@@ -1,5 +1,6 @@
 @error-copy
 @channel:Given=BFF,When=BFF,Then=BFF
+@channel:Given=BFF:en,When=BFF:en,Then=BFF:en
 Feature: Messaggi di errore durante la gestione degli e-service
 
   Come erogatore o delegato
@@ -147,8 +148,8 @@ Feature: Messaggi di errore durante la gestione degli e-service
       | alias | erogatore        |
       | ES-1  | Comune di Milano |
     And i seguenti documenti allegati alla versione dell'e-service:
-      | nome       | fixture                                          |
-      | Allegato A | assets/origin-interface.yaml                     |
+      | nome       | fixture                                            |
+      | Allegato A | assets/origin-interface.yaml                       |
       | Allegato B | assets/eservice-template/openapi3-riferimenti.json |
     When l'erogatore tenta di rinominare il documento "Allegato B" della versione 1 dell'e-service "ES-1" in "Allegato A"
     Then il messaggio di errore corrisponde al caso "CATALOG_DOCUMENT_PRETTY_NAME_DUPLICATE__POST_ESERVICES_E_SERVICE_ID_DESCRIPTORS_DESCRIPTOR_ID_DOCUMENTS_DOCUMENT_ID_UPDATE"

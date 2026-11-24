@@ -1,5 +1,6 @@
 @error-copy
 @channel:Given=BFF,When=BFF,Then=BFF
+@channel:Given=BFF:en,When=BFF:en,Then=BFF:en
 Feature: Messaggi di errore durante il download del documento firmato e il caricamento degli allegati di fruizione
 
   Come erogatore o fruitore

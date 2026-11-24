@@ -1,5 +1,6 @@
 @error-copy
 @channel:Given=BFF,When=BFF,Then=BFF
+@channel:Given=BFF:en,When=BFF:en,Then=BFF:en
 Feature: Messaggi di errore durante la gestione delle deleghe in erogazione e in fruizione
 
   Come amministratore di un ente delegante o delegato

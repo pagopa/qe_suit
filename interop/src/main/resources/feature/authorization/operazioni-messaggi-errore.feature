@@ -1,5 +1,6 @@
 @error-copy
 @channel:Given=BFF,When=BFF,Then=BFF
+@channel:Given=BFF:en,When=BFF:en,Then=BFF:en
 Feature: Messaggi di errore durante la gestione dei client, dei portachiavi e delle chiavi pubbliche
 
   Come amministratore o operatore di sicurezza

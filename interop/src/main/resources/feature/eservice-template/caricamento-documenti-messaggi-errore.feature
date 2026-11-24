@@ -1,5 +1,6 @@
 @error-copy
 @channel:Given=BFF,When=BFF,Then=BFF
+@channel:Given=BFF:en,When=BFF:en,Then=BFF:en
 Feature: Messaggi di errore durante il caricamento di file nei template e-service
 
   Come erogatore
@@ -17,8 +18,8 @@ Feature: Messaggi di errore durante il caricamento di file nei template e-servic
   Allora il sistema rifiuta il caricamento e segnala che la bozza non è più disponibile.
 
     Given un template e-service preparato con la seguente configurazione:
-      | tecnologia | stato     | interfaccia               |
-      | REST       | DRAFT     | openapi3-riferimenti.json |
+      | tecnologia | stato | interfaccia               |
+      | REST       | DRAFT | openapi3-riferimenti.json |
     And la bozza di e-service template creata viene eliminata
     When l'erogatore allega un file di documentazione all'e-service template in bozza
     Then il messaggio di errore corrisponde al caso "BFF_ESERVICE_TEMPLATE_VERSION_NOT_FOUND"

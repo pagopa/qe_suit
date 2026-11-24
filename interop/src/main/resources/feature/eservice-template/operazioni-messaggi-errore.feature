@@ -1,5 +1,6 @@
 @error-copy
 @channel:Given=BFF,When=BFF,Then=BFF
+@channel:Given=BFF:en,When=BFF:en,Then=BFF:en
 Feature: Messaggi di errore durante la creazione e la modifica dei template e-service
 
   Come creatore di template e-service
@@ -42,8 +43,8 @@ Feature: Messaggi di errore durante la creazione e la modifica dei template e-se
   Allora il sistema rifiuta la modifica e segnala che il nome è già in uso.
 
     Given i seguenti template e-service pubblicati:
-      | alias | erogatore        | nome                  | tecnologia |
-      | T-1   | Comune di Milano | Catalogo esistente    | REST       |
+      | alias | erogatore        | nome                   | tecnologia |
+      | T-1   | Comune di Milano | Catalogo esistente     | REST       |
       | T-2   | Comune di Milano | Catalogo da rinominare | REST       |
     When l'erogatore tenta di rinominare il template "T-2" con il nome del template "T-1"
     Then il messaggio di errore corrisponde al caso "ESERVICE_TEMPLATE_ESERVICE_TEMPLATE_DUPLICATE__POST_ESERVICES_TEMPLATES_E_SERVICE_TEMPLATE_ID_NAME_UPDATE"
