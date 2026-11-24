@@ -92,21 +92,22 @@ def _parse_cucumber(path: Path) -> list[Failure]:
                 if (result.get('status') or '').lower() in {'failed', 'ambiguous', 'undefined'}:
                     msg = result.get('error_message') or result.get('message') or f"Step {step.get('name', '<unknown>')}: {result.get('status')}"
                     failed_steps.append(str(msg))
-            if failed_steps:
-                name = scenario.get('name') or scenario.get('id') or scenario.get('line')
-                if not name:
+            name = scenario.get('name') or scenario.get('id') or scenario.get('line')
+            if not name:
+                if failed_steps:
                     raise ReportError(f'Scenario KO senza identificativo: {path}')
-                test_id = str(name)
-                # On expanded outlines, distinguish repeated scenario names by
-                # their Examples source row. Some reporters explicitly label the
-                # item as scenario_outline; support that even for one example.
-                is_outline = (
-                        name_counts.get(str(scenario.get('name')), 0) > 1
-                        or str(scenario.get('type', '')).lower() == 'scenario_outline'
-                        or str(scenario.get('keyword', '')).strip().lower()
-                        in {'scenario outline', 'scenario template'}
-                )
-                test_id += _example_suffix(scenario, is_outline)
+                continue
+            test_id = str(name)
+            # Compute identity for every scenario, including PASSED, so that
+            # a failure keeps its suffix when another report turns green.
+            is_outline = (
+                    name_counts.get(str(scenario.get('name')), 0) > 1
+                    or str(scenario.get('type', '')).lower() == 'scenario_outline'
+                    or str(scenario.get('keyword', '')).strip().lower()
+                    in {'scenario outline', 'scenario template'}
+            )
+            test_id += _example_suffix(scenario, is_outline)
+            if failed_steps:
                 failures.append(Failure(test_id, '\n\n'.join(failed_steps), 'cucumber'))
     return failures
 
@@ -240,7 +241,8 @@ def _idkey(s: str) -> str:
     return re.sub(r'\W+', '', s.casefold())
 
 
-def collect_reports(root: Path, *, cucumber_only: bool = False) -> list[Failure]:
+def collect_reports(root: Path, *, cucumber_only: bool = False,
+                    append_report_name: bool = False) -> list[Failure]:
     """Read every available supported report; require at least one valid source.
 
     Either Cucumber JSON or the Java ContractReport JSON may be absent. Missing
@@ -263,15 +265,21 @@ def collect_reports(root: Path, *, cucumber_only: bool = False) -> list[Failure]
             f'Cucumber JSON ({cucumber_dir}/*.json) oppure un Contract JSON ({contract})'
         )
 
-    result: list[Failure] = []
+    # Keep report provenance for stable IDs when configured.
+    collected: list[tuple[Failure, str]] = []
     for cucumber in cucumber_files:
-        result.extend(_parse_cucumber(cucumber))
+        collected.extend((failure, cucumber.name) for failure in _parse_cucumber(cucumber))
     if contract.is_file():
-        result.extend(collect_contract_failures(contract))
+        collected.extend((failure, contract.name) for failure in collect_contract_failures(contract))
 
-    ids: set[str] = set()
-    for failure in result:
-        if failure.id_test in ids:
-            raise ReportError(f'ID KO duplicato tra report: {failure.id_test}')
-        ids.add(failure.id_test)
+    result: list[Failure] = []
+    final_ids: set[str] = set()
+    for failure, report_name in collected:
+        test_id = failure.id_test
+        if append_report_name:
+            test_id = f'{test_id} [{report_name}]'
+        if test_id in final_ids:
+            raise ReportError(f'ID KO duplicato: {test_id}')
+        final_ids.add(test_id)
+        result.append(Failure(test_id, failure.error_log, failure.source))
     return result

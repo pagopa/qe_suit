@@ -47,7 +47,9 @@ def save_report(root: Path, namespace: str, name: str, rows: list[dict]):
 def failures(monkeypatch, *, id_test=ID, error=ERROR):
     import rae_generator.generator as generator
     monkeypatch.setattr(generator, 'collect_reports',
-                        lambda _root: [SimpleNamespace(id_test=id_test, error_log=error)])
+                        lambda _root, *, append_report_name=False: [
+                            SimpleNamespace(id_test=id_test, error_log=error)
+                        ])
 
 
 def generate(monkeypatch, root: Path, namespace: str, *, id_test=ID, error=ERROR):
@@ -250,15 +252,32 @@ def test_17_same_test_different_exception_must_not_auto_match(monkeypatch, tmp_p
     assert not next_rae['ko_know']
 
 
-def test_18_workflow_routes_to_namespace_and_validates_pr(tmp_path):
-    # Check the exact production workflows, not a simulated YAML snippet.
+def test_18_workflow_routes_to_namespace_and_validates_pr():
+    # Verify the production RAE contract, independently of workflow filenames.
     repo = Path(__file__).resolve().parents[4]
-    interop = (repo/'.github/workflows/interop-pipeline.yaml').read_text(encoding='utf-8')
-    validation = (repo/'.github/workflows/rae-validation.yaml').read_text(encoding='utf-8')
-    for required in ('RAE_NAMESPACE: interop', 'rae/${RAE_NAMESPACE}/rae_',
-                     '--namespace "$RAE_NAMESPACE"'):
-        assert required in interop, f'Interop pipeline missing {required}'
-    assert 'rae/${NAMESPACE}/${NAME}.yaml' in validation
-    assert 'git log --diff-filter=A' in validation
-    assert '--qa-reviewed --original-yaml' in validation
-    assert 'rae/rae_*' in validation, 'Legacy open PR compatibility changed'
+    workflows_dir = repo / '.github' / 'workflows'
+    workflow_paths = sorted((*workflows_dir.glob('*.yaml'),
+                             *workflows_dir.glob('*.yml')))
+    workflows = [(path, path.read_text(encoding='utf-8'))
+                 for path in workflow_paths]
+
+    generators = [(path, content) for path, content in workflows
+                  if 'RAE_NAMESPACE: interop' in content
+                  and 'rae_generator generate' in content]
+    assert generators, 'No production Interop RAE generation workflow found'
+    for path, content in generators:
+        assert '--namespace "$RAE_NAMESPACE"' in content, (
+            f'{path.name}: RAE generation must pass the Interop namespace')
+        assert any(f'rae/{variable}/rae_' in content
+                   for variable in ('${RAE_NAMESPACE}', '$RAE_NAMESPACE')), (
+            f'{path.name}: RAE output must be placed in its namespace')
+
+    validators = [(path, content) for path, content in workflows
+                  if 'rae_generator finalize' in content
+                  and 'rae_generator check' in content]
+    assert validators, 'No production RAE PR validation workflow found'
+    for path, content in validators:
+        for required in ('rae/${NAMESPACE}/${NAME}.yaml',
+                         'git log --diff-filter=A',
+                         '--qa-reviewed', '--original-yaml', 'rae/rae_*'):
+            assert required in content, f'{path.name}: missing {required}'
