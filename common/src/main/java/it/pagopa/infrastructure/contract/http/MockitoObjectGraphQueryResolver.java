@@ -12,6 +12,7 @@ import java.util.IdentityHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
+import java.util.function.Function;
 
 final class MockitoObjectGraphQueryResolver implements ObjectGraphQueryResolver {
 
@@ -33,10 +34,9 @@ final class MockitoObjectGraphQueryResolver implements ObjectGraphQueryResolver 
     }
 
     private static final class RecordingContext {
-        private final List<Method> propertyMethods = new java.util.ArrayList<>();
-        private final List<Integer> indices = new java.util.ArrayList<>();
-        private final List<Boolean> isPropertyStep = new java.util.ArrayList<>();
+        private final List<Function<ObjectGraphQuery, ObjectGraphQuery>> steps = new java.util.ArrayList<>();
         private final Map<Object, Class<?>> listElementTypes = new IdentityHashMap<>();
+        private final Map<Object, Type> mapValueTypes = new IdentityHashMap<>();
         private Object expectedReceiver;
         private boolean terminalReached;
 
@@ -71,11 +71,11 @@ final class MockitoObjectGraphQueryResolver implements ObjectGraphQueryResolver 
             if (terminalReached || receiver != expectedReceiver) {
                 throw new ContractHttpException("Target expression must contain exactly one navigation path");
             }
-            if (isMapGet(method)) {
-                throw new ContractHttpException("Map key navigation is not supported by ObjectGraphQuery");
-            }
             if (isListGet(method)) {
                 return handleListGet(receiver, invocation);
+            }
+            if (isMapGet(method)) {
+                return handleMapGet(receiver, invocation);
             }
             if (!isPropertyGetter(method)) {
                 throw new ContractHttpException("Unsupported target navigation method: " + method);
@@ -84,8 +84,7 @@ final class MockitoObjectGraphQueryResolver implements ObjectGraphQueryResolver 
         }
 
         private Object handleProperty(Method method) {
-            propertyMethods.add(method);
-            isPropertyStep.add(Boolean.TRUE);
+            steps.add(query -> query.property(method));
             Class<?> returnType = method.getReturnType();
             if (returnType == Void.TYPE || isTerminal(returnType)) {
                 terminalReached = true;
@@ -93,10 +92,16 @@ final class MockitoObjectGraphQueryResolver implements ObjectGraphQueryResolver 
                 return Defaults.defaultValue(returnType);
             }
             if (List.class.isAssignableFrom(returnType)) {
-                Class<?> elementType = resolveListElementType(method.getGenericReturnType());
+                Class<?> elementType = resolveTypeArgument(method.getGenericReturnType(), 0, Object.class);
                 Object listMock = createMock(returnType, elementType);
                 expectedReceiver = listMock;
                 return listMock;
+            }
+            if (Map.class.isAssignableFrom(returnType)) {
+                Object mapMock = createMock(returnType, null);
+                mapValueTypes.put(mapMock, resolveTypeArgument(method.getGenericReturnType(), 1, Object.class));
+                expectedReceiver = mapMock;
+                return mapMock;
             }
             Object nested = createMock(returnType, null);
             expectedReceiver = nested;
@@ -108,8 +113,7 @@ final class MockitoObjectGraphQueryResolver implements ObjectGraphQueryResolver 
             if (args.length != 1 || !(args[0] instanceof Integer index) || index < 0) {
                 throw new ContractHttpException("List index navigation requires a non-negative integer");
             }
-            indices.add(index);
-            isPropertyStep.add(Boolean.FALSE);
+            steps.add(query -> query.index(index));
             Class<?> elementType = listElementTypes.get(receiver);
             if (elementType == null || elementType == Object.class) {
                 terminalReached = true;
@@ -126,16 +130,45 @@ final class MockitoObjectGraphQueryResolver implements ObjectGraphQueryResolver 
             return nested;
         }
 
+        private Object handleMapGet(Object receiver, InvocationOnMock invocation) {
+            Object[] args = invocation.getArguments();
+            if (args.length != 1 || !(args[0] instanceof String key)) {
+                throw new ContractHttpException("Map key navigation requires a string key");
+            }
+            steps.add(query -> query.key(key));
+            Type valueType = mapValueTypes.get(receiver);
+            Class<?> valueClass = rawClass(valueType);
+            if (valueClass == null || valueClass == Object.class) {
+                terminalReached = true;
+                expectedReceiver = null;
+                return null;
+            }
+            if (isTerminal(valueClass)) {
+                terminalReached = true;
+                expectedReceiver = null;
+                return Defaults.defaultValue(valueClass);
+            }
+            if (List.class.isAssignableFrom(valueClass)) {
+                Class<?> elementType = resolveTypeArgument(valueType, 0);
+                Object listMock = createMock(valueClass, elementType);
+                expectedReceiver = listMock;
+                return listMock;
+            }
+            if (Map.class.isAssignableFrom(valueClass)) {
+                Object mapMock = createMock(valueClass, null);
+                mapValueTypes.put(mapMock, resolveTypeArgument(valueType, 1, Object.class));
+                expectedReceiver = mapMock;
+                return mapMock;
+            }
+            Object nested = createMock(valueClass, null);
+            expectedReceiver = nested;
+            return nested;
+        }
+
         ObjectGraphQuery toQuery() {
             ObjectGraphQuery query = ObjectGraphQuery.root();
-            int propertyIndex = 0;
-            int listIndex = 0;
-            for (Boolean propertyStep : isPropertyStep) {
-                if (propertyStep) {
-                    query = query.property(propertyMethods.get(propertyIndex++));
-                } else {
-                    query = query.index(indices.get(listIndex++));
-                }
+            for (Function<ObjectGraphQuery, ObjectGraphQuery> step : steps) {
+                query = step.apply(query);
             }
             return query;
         }
@@ -173,14 +206,25 @@ final class MockitoObjectGraphQueryResolver implements ObjectGraphQueryResolver 
                     && Map.class.isAssignableFrom(method.getDeclaringClass());
         }
 
-        private Class<?> resolveListElementType(Type type) {
+        private Class<?> resolveTypeArgument(Type type, int index) {
+            return resolveTypeArgument(type, index, null);
+        }
+
+        private Class<?> resolveTypeArgument(Type type, int index, Class<?> fallback) {
             if (type instanceof ParameterizedType parameterizedType) {
-                Type arg = parameterizedType.getActualTypeArguments()[0];
-                if (arg instanceof Class<?> klass) {
-                    return klass;
-                }
+                Type[] arguments = parameterizedType.getActualTypeArguments();
+                if (index < arguments.length) return rawClass(arguments[index]);
             }
-            return Object.class;
+            return fallback;
+        }
+
+        private Class<?> rawClass(Type type) {
+            if (type instanceof Class<?> klass) return klass;
+            if (type instanceof ParameterizedType parameterizedType
+                    && parameterizedType.getRawType() instanceof Class<?> klass) {
+                return klass;
+            }
+            return null;
         }
     }
 

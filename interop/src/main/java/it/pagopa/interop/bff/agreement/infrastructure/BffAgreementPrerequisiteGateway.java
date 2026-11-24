@@ -6,7 +6,7 @@ import it.pagopa.interop.common.agreement.domain.Agreement;
 import it.pagopa.interop.common.agreement.domain.AgreementState;
 import it.pagopa.interop.common.eservice.domain.EService;
 import it.pagopa.interop.common.eservice.domain.EServiceDescriptor;
-import it.pagopa.interop.common.kernel.context.CurrentUserSession;
+import it.pagopa.interop.common.kernel.context.AuthSession;
 import it.pagopa.interop.common.kernel.domain.AgreementRef;
 import it.pagopa.interop.common.kernel.domain.Tenant;
 import it.pagopa.interop.common.kernel.domain.User;
@@ -20,10 +20,10 @@ import java.util.Set;
 public class BffAgreementPrerequisiteGateway {
     private static final int PAGE_SIZE = 50;
     private final BffAgreementRestClient restClient;
-    private final CurrentUserSession session;
+    private final AuthSession session;
 
     public void ensureActiveAgreement(EService service, EServiceDescriptor descriptor, AgreementGateway agreements) {
-        var originalUser = session.getUser();
+        var originalUser = session.getActor();
         var originalTenant = session.getTenant();
         Throwable primaryFailure = null;
 

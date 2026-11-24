@@ -66,7 +66,7 @@ public class AuthenticatedLocatableCapabilityImpl extends LocatableCapabilityImp
     }
 
     private String sessionTokenFor(User user) {
-        return tokenProvider.requireToken(user.getSessionTokenKey());
+        return tokenProvider.requireToken(user.getUsername());
     }
 
     private String buildSessionPayload(User user, String sessionToken) {

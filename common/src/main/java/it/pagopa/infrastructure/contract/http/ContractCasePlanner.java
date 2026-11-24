@@ -8,22 +8,19 @@ import it.pagopa.infrastructure.objectgraph.Node;
 import it.pagopa.infrastructure.objectgraph.NodePath;
 import it.pagopa.infrastructure.objectgraph.ObjectGraphQuery;
 
-import java.util.ArrayList;
-import java.util.LinkedHashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Objects;
-import java.util.Optional;
+import java.util.*;
 import java.util.function.Consumer;
 
 final class ContractCasePlanner {
     private final ObjectMapper objectMapper;
     private final ObjectGraphQueryResolver queryResolver;
     private final ExpectationResolver<Consumer<Response>> expectationResolver;
+    private final HttpContractPolicy policy;
 
     ContractCasePlanner(ObjectMapper objectMapper, ObjectGraphQueryResolver queryResolver, HttpContractPolicy policy) {
         this.objectMapper = objectMapper;
         this.queryResolver = queryResolver;
+        this.policy = policy;
         this.expectationResolver = new ExpectationResolver<>(policy::success, policy::expectationFor);
     }
 
@@ -50,11 +47,18 @@ final class ContractCasePlanner {
     }
 
     private List<GeneratedContractCase> planScope(RequestScope scope, ScopePlanState<?> state) {
+        List<FuzzCase> includedCases = state.fuzzCases().stream()
+                .filter(fuzzCase -> !policy.isSkipped(fuzzCase.mutation().scenario()))
+                .toList();
+        if (includedCases.isEmpty()) {
+            return List.of();
+        }
+
         MutationValidityResolver validityResolver = validityResolver(scope, state);
         Map<Key, Consumer<Response>> targetOverrides = resolveTargetOverrides(state);
         List<GeneratedContractCase> out = new ArrayList<>();
 
-        for (FuzzCase fuzzCase : state.fuzzCases()) {
+        for (FuzzCase fuzzCase : includedCases) {
             Node node = state.graph().find(fuzzCase.target())
                     .orElseThrow(() -> new ContractHttpException("Cannot resolve node for target path " + fuzzCase.target()));
             ExpectationResolver.Resolution<Consumer<Response>> selection =

@@ -13,7 +13,7 @@ import it.pagopa.interop.common.eservice.domain.EServiceDescriptorState;
 import it.pagopa.interop.common.eservice.domain.GracePeriodDays;
 import it.pagopa.interop.common.eservice.domain.SoapInterfaceUploadFailureReason;
 import it.pagopa.interop.common.journey.application.EServiceJourney;
-import it.pagopa.interop.common.kernel.context.CurrentUserSession;
+import it.pagopa.interop.common.kernel.context.AuthSession;
 import it.pagopa.interop.common.kernel.domain.EServiceRiskAnalysis;
 import it.pagopa.utils.async.PollingUtils;
 import lombok.RequiredArgsConstructor;
@@ -31,7 +31,7 @@ public class EServiceJourneyImpl implements EServiceJourney<EServiceJourneyImpl>
     private final EServiceDescriptorLifecycleUseCase lifecycle;
     private final EntityStore entityStore;
     private final EServiceRiskAnalysisUseCase eServiceRiskAnalysisUseCase;
-    private final CurrentUserSession currentUserSession;
+    private final AuthSession authSession;
     private final EServiceRequestFactory requestFactory;
 
     @Override
@@ -53,7 +53,7 @@ public class EServiceJourneyImpl implements EServiceJourney<EServiceJourneyImpl>
     public EServiceJourneyImpl addRiskAnalysis() {
         EService eService = entityStore.getLastOrThrow(EService.class);
         EServiceRiskAnalysis riskAnalysis =
-                eServiceRiskAnalysisUseCase.addLatestRiskAnalysis(currentUserSession.getTenant(), eService, true);
+                eServiceRiskAnalysisUseCase.addLatestRiskAnalysis(authSession.getTenant(), eService, true);
         entityStore.upsert(riskAnalysis);
         return this;
     }

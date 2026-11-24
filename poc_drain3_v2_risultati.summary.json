@@ -1,0 +1,21 @@
+{
+  "training_ko": 188,
+  "evaluation_ko": 187,
+  "same_id_test_in_both": 184,
+  "learned_clusters": 45,
+  "evaluation_counts": {
+    "CANDIDATE_SAME_TEST": 167,
+    "NO_TEMPLATE_MATCH": 11,
+    "TEMPLATE_OTHER_TEST_ONLY": 6,
+    "NO_HISTORY_SAME_TEST": 3
+  },
+  "same_test_candidate_rate_pct": 90.76,
+  "candidates_with_multiple_historical_tickets_in_cluster": 118,
+  "candidate_ticket_agreement_when_both_populated": {
+    "agree": 167,
+    "both_present": 167,
+    "warning": "Ticket uguali non provano stessa causa; possono essere copiati o accorpare piu' problemi."
+  },
+  "note": "Non misura falsi positivi: manca un ground truth indipendente della causa.",
+  "csv": "poc_drain3_v2_risultati.csv"
+}

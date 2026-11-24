@@ -71,12 +71,23 @@ url:
       campaigns: ${url.notifiche.mittente.base}/campaigns
     partner-tecnologico:
       base: https://partner.uat.notifichedigitali.it
+    # link "Accessibilità" del footer dei portali, diverso per ambiente
+    accessibilita: https://form.agid.gov.it/view/94c974e0-9858-11f0-932b-b1f629ca861e
     supporto:
       base: https://uat.selfcare.pagopa.it
 
 # BackOffice dei Partner Tecnologici: abilita i test del portale PT in questo ambiente
 partner-tecnologico:
-  enabled: false # BackOffice PT non ancora rilasciato
+  enabled: true
+
+# API di test di Selfcare per creare le deleghe PA -> PT: le deleghe di tutti gli ambienti SEND stanno sul
+# Selfcare di uat, ognuno con il suo prodotto (prod-pn)
+selfcare:
+  delegations-test:
+    base-url: https://api.uat.selfcare.pagopa.it/external/test/v1
+    product-id: prod-pn
+    # subscription key APIM delle API di test di Selfcare (header Ocp-Apim-Subscription-Key), nei secrets
+    subscription-key: ${pn.external.selfcare-subscription-key:REPLACE_ME}
 
 # Selettori XPath da properties
 selettore:
@@ -101,9 +112,11 @@ token:
     garibaldi: ${pn.external.session-token.garibaldi:REPLACE_ME}
     dantealighieri: ${pn.external.session-token.dantealighieri:REPLACE_ME}
     francescopetrarca: ${pn.external.session-token.francescopetrarca:REPLACE_ME}
+    lucioanneoseneca: ${pn.external.session-token.lucioanneoseneca:REPLACE_ME}
     grossini: ${pn.external.session-token.grossini:REPLACE_ME}
     albino63: ${pn.external.session-token.albino63:REPLACE_ME}
-    grossini-pt: ${pn.external.session-token.grossini-pt:REPLACE_ME}
+    m.curie: ${pn.external.session-token.m.curie:REPLACE_ME}
+    msisti: ${pn.external.session-token.msisti:REPLACE_ME}
 
 # ============================================================================
 # WebAPI Configuration (host condiviso da BFF e client mandate)

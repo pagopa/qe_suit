@@ -1,10 +1,10 @@
 package it.pagopa.interop.common.journey.infrastructure;
 
 import it.pagopa.interop.common.journey.application.UserJourney;
-import it.pagopa.interop.common.kernel.context.CurrentUserSession;
+import it.pagopa.interop.common.kernel.context.AuthSession;
+import it.pagopa.interop.common.kernel.domain.InteropActor;
+import it.pagopa.interop.common.kernel.domain.InteropRole;
 import it.pagopa.interop.common.kernel.domain.Tenant;
-import it.pagopa.interop.common.kernel.domain.User;
-import it.pagopa.interop.common.kernel.domain.UserRole;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
 
@@ -12,29 +12,41 @@ import org.springframework.stereotype.Component;
 @RequiredArgsConstructor
 public class UserJourneyImpl implements UserJourney<UserJourneyImpl> {
 
-    private final CurrentUserSession currentUserSession;
+    private final AuthSession authSession;
 
     @Override
-    public UserJourneyImpl withProducer(Tenant tenant, User user) {
-        currentUserSession.set(user, tenant);
+    public UserJourneyImpl withProducer(Tenant tenant) {
+        authSession.set(tenant);
         return this;
     }
 
     @Override
-    public UserJourneyImpl withConsumer(Tenant tenant, User user) {
-        currentUserSession.set(user, tenant);
+    public UserJourneyImpl withConsumer(Tenant tenant) {
+        authSession.set(tenant);
         return this;
     }
 
     @Override
-    public UserJourneyImpl withProducer(Tenant tenant, UserRole role) {
-        currentUserSession.set(User.getTenantUser(tenant, role), tenant);
+    public UserJourneyImpl withProducer(Tenant tenant, InteropActor actor) {
+        authSession.set(actor, tenant);
         return this;
     }
 
     @Override
-    public UserJourneyImpl withConsumer(Tenant tenant, UserRole role) {
-        currentUserSession.set(User.getTenantUser(tenant, role), tenant);
+    public UserJourneyImpl withConsumer(Tenant tenant, InteropActor actor) {
+        authSession.set(actor, tenant);
+        return this;
+    }
+
+    @Override
+    public UserJourneyImpl withProducer(Tenant tenant, InteropRole role) {
+        authSession.set(role, tenant);
+        return this;
+    }
+
+    @Override
+    public UserJourneyImpl withConsumer(Tenant tenant, InteropRole role) {
+        authSession.set(role, tenant);
         return this;
     }
 }
