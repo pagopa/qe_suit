@@ -115,7 +115,7 @@ def test_duplicate_ids_across_sources_get_report_suffix(tmp_path):
     data = json.loads(path.read_text(encoding='utf-8'))
     data['groups'][0]['scenarios'][0]['id_test'] = 'Scenario Cucumber'
     path.write_text(json.dumps(data), encoding='utf-8')
-    failures = collect_reports(tmp_path)
+    failures = collect_reports(tmp_path, append_report_name=True)
 
     assert [(f.id_test, f.source) for f in failures] == [
         ('Scenario Cucumber [results.json]', 'cucumber'),

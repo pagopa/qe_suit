@@ -1,7 +1,6 @@
 """Cucumber JSON, JUnit/Surefire XML and JUnit Platform Open Test Reporting parsers."""
 from __future__ import annotations
 
-from collections import Counter
 import json
 import re
 import xml.etree.ElementTree as ET
@@ -62,7 +61,7 @@ def _example_suffix(scenario: dict, is_outline: bool) -> str:
     return ''
 
 
-def _parse_cucumber(path: Path, *, all_ids: list[str] | None = None) -> list[Failure]:
+def _parse_cucumber(path: Path) -> list[Failure]:
     try:
         content = json.loads(path.read_text(encoding='utf-8'))
     except (json.JSONDecodeError, UnicodeError) as exc:
@@ -108,8 +107,6 @@ def _parse_cucumber(path: Path, *, all_ids: list[str] | None = None) -> list[Fai
                     in {'scenario outline', 'scenario template'}
             )
             test_id += _example_suffix(scenario, is_outline)
-            if all_ids is not None:
-                all_ids.append(test_id)
             if failed_steps:
                 failures.append(Failure(test_id, '\n\n'.join(failed_steps), 'cucumber'))
     return failures
@@ -244,7 +241,8 @@ def _idkey(s: str) -> str:
     return re.sub(r'\W+', '', s.casefold())
 
 
-def collect_reports(root: Path, *, cucumber_only: bool = False) -> list[Failure]:
+def collect_reports(root: Path, *, cucumber_only: bool = False,
+                    append_report_name: bool = False) -> list[Failure]:
     """Read every available supported report; require at least one valid source.
 
     Either Cucumber JSON or the Java ContractReport JSON may be absent. Missing
@@ -267,24 +265,21 @@ def collect_reports(root: Path, *, cucumber_only: bool = False) -> list[Failure]
             f'Cucumber JSON ({cucumber_dir}/*.json) oppure un Contract JSON ({contract})'
         )
 
-    # Keep report provenance until duplicate IDs have been resolved.
+    # Keep report provenance for stable IDs when configured.
     collected: list[tuple[Failure, str]] = []
-    all_ids: list[str] = []
     for cucumber in cucumber_files:
-        collected.extend((failure, cucumber.name) for failure in _parse_cucumber(cucumber, all_ids=all_ids))
+        collected.extend((failure, cucumber.name) for failure in _parse_cucumber(cucumber))
     if contract.is_file():
-        collected.extend((failure, contract.name) for failure in collect_contract_failures(contract, all_ids=all_ids))
+        collected.extend((failure, contract.name) for failure in collect_contract_failures(contract))
 
-    # Disambiguate using all scenario identities, not only failed scenarios.
-    counts = Counter(all_ids)
     result: list[Failure] = []
     final_ids: set[str] = set()
     for failure, report_name in collected:
         test_id = failure.id_test
-        if counts[test_id] > 1:
+        if append_report_name:
             test_id = f'{test_id} [{report_name}]'
         if test_id in final_ids:
-            raise ReportError(f'ID KO duplicato anche dopo il suffisso del report: {test_id}')
+            raise ReportError(f'ID KO duplicato: {test_id}')
         final_ids.add(test_id)
         result.append(Failure(test_id, failure.error_log, failure.source))
     return result
