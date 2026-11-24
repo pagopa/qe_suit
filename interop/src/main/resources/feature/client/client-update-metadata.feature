@@ -127,7 +127,6 @@ Feature: Modifica dei metadati dei client
     And il client "CL-1" conserva le associazioni e i dati di riferimento
     And l'admin di PagoPA richiede la generazione del voucher per il client e la finalità attiva
 
-
   @work-item:QA-19036
   @channel:Given=BFF,When=BFF,Then=BFF
   @channel:Given=BFF,When=M2M,Then=BFF
@@ -228,6 +227,7 @@ Feature: Modifica dei metadati dei client
       | campo       | valore            |
       | nome        | primo nome        |
     Then il client "CL-2" conserva le associazioni e i dati di riferimento eccetto il nome
+    And l'admin di PagoPA richiede la generazione del voucher per il client e la finalità attiva
 
   @work-item:QA-19036
   @channel:Given=BFF,When=BFF,Then=BFF
@@ -246,6 +246,7 @@ Feature: Modifica dei metadati dei client
       | campo       | valore            |
       | nome        | primo nome        |
     Then il client "CL-2" conserva le associazioni e i dati di riferimento eccetto il nome
+    And l'admin del Comune di Pozzallo richiede la generazione del voucher per il client interop
 
   @work-item:QA-19036
   @channel:Given=BFF,When=BFF,Then=BFF
@@ -253,7 +254,70 @@ Feature: Modifica dei metadati dei client
   Dato un client e-service, se un ruolo non autorizzato (api, api,security, security, support, reviewer, viewer)
   tenta di aggiornare i metadati, o un admin di un altro ente,
   allora la richiesta di modifica risulta vietata.
-    # TODO
+
+    Given un EService creato dal Comune di Milano con una richiesta di fruizione e una finalità associate dal Comune di Comun Nuovo
+    And un client "CL-1" CONSUMER creato dal Comune di Comun Nuovo, associato alla finalità creata, in cui è presente un utente admin e una coppia di chiavi crittografiche
+    And un admin del Comune di Comun Nuovo modifica i metadati del client "CL-1":
+      | campo       | valore            |
+      | nome        | primo nome        |
+      | descrizione | prima descrizione |
+    And i dati e le associazioni del client "CL-1" allo stato attuale appuntati come riferimento
+    When un api del Comune di Comun Nuovo tenta di modificare i metadati del client "CL-1":
+      | campo       | valore            |
+      | nome        | primo nome        |
+      | descrizione | prima descrizione |
+    Then la richiesta di modifica fallisce come operazione vietata
+    And un admin del Comune di Comun Nuovo
+    And il client "CL-1" conserva le associazioni e i dati di riferimento
+
+    When un api,security del Comune di Comun Nuovo tenta di modificare i metadati del client "CL-1":
+      | campo       | valore            |
+      | nome        | primo nome        |
+      | descrizione | prima descrizione |
+    Then la richiesta di modifica fallisce come operazione vietata
+    And un admin del Comune di Comun Nuovo
+    And il client "CL-1" conserva le associazioni e i dati di riferimento
+
+    When un security del Comune di Comun Nuovo tenta di modificare i metadati del client "CL-1":
+      | campo       | valore            |
+      | nome        | primo nome        |
+      | descrizione | prima descrizione |
+    Then la richiesta di modifica fallisce come operazione vietata
+    And un admin del Comune di Comun Nuovo
+    And il client "CL-1" conserva le associazioni e i dati di riferimento
+
+    When un support del Comune di Comun Nuovo tenta di modificare i metadati del client "CL-1":
+      | campo       | valore            |
+      | nome        | primo nome        |
+      | descrizione | prima descrizione |
+    Then la richiesta di modifica fallisce come operazione vietata
+    And un admin del Comune di Comun Nuovo
+    And il client "CL-1" conserva le associazioni e i dati di riferimento
+
+    When un reviewer del Comune di Comun Nuovo tenta di modificare i metadati del client "CL-1":
+      | campo       | valore            |
+      | nome        | primo nome        |
+      | descrizione | prima descrizione |
+    Then la richiesta di modifica fallisce come operazione vietata
+    And un admin del Comune di Comun Nuovo
+    And il client "CL-1" conserva le associazioni e i dati di riferimento
+
+    When un viewer del Comune di Comun Nuovo tenta di modificare i metadati del client "CL-1":
+      | campo       | valore            |
+      | nome        | primo nome        |
+      | descrizione | prima descrizione |
+    Then la richiesta di modifica fallisce come operazione vietata
+    And un admin del Comune di Comun Nuovo
+    And il client "CL-1" conserva le associazioni e i dati di riferimento
+
+    When un admin del Comune di Pozzallo tenta di modificare i metadati del client "CL-1":
+      | campo       | valore            |
+      | nome        | primo nome        |
+      | descrizione | prima descrizione |
+    Then la richiesta di modifica fallisce come operazione vietata
+    And un admin del Comune di Comun Nuovo
+    And il client "CL-1" conserva le associazioni e i dati di riferimento
+    And l'admin del Comune di Comun Nuovo richiede la generazione del voucher per il client e la finalità attiva
 
   @work-item:QA-19036
   @channel:Given=BFF,When=BFF,Then=BFF
@@ -261,4 +325,66 @@ Feature: Modifica dei metadati dei client
   Dato un client interop, se un ruolo non autorizzato (api, api,security, security, support, reviewer, viewer)
   tenta di aggiornare i metadati, o un admin di un altro ente,
   allora la richiesta di modifica risulta vietata.
-    # TODO
+
+    Given un client "CL-1" API creato dal Comune di Comun Nuovo in cui è presente un utente admin e una coppia di chiavi crittografiche
+    And un admin del Comune di Comun Nuovo modifica i metadati del client "CL-1":
+      | campo       | valore            |
+      | nome        | primo nome        |
+      | descrizione | prima descrizione |
+    And i dati e le associazioni del client "CL-1" allo stato attuale appuntati come riferimento
+    When un api del Comune di Comun Nuovo tenta di modificare i metadati del client "CL-1":
+      | campo       | valore            |
+      | nome        | primo nome        |
+      | descrizione | prima descrizione |
+    Then la richiesta di modifica fallisce come operazione vietata
+    And un admin del Comune di Comun Nuovo
+    And il client "CL-1" conserva le associazioni e i dati di riferimento
+
+    When un api,security del Comune di Comun Nuovo tenta di modificare i metadati del client "CL-1":
+      | campo       | valore            |
+      | nome        | primo nome        |
+      | descrizione | prima descrizione |
+    Then la richiesta di modifica fallisce come operazione vietata
+    And un admin del Comune di Comun Nuovo
+    And il client "CL-1" conserva le associazioni e i dati di riferimento
+
+    When un security del Comune di Comun Nuovo tenta di modificare i metadati del client "CL-1":
+      | campo       | valore            |
+      | nome        | primo nome        |
+      | descrizione | prima descrizione |
+    Then la richiesta di modifica fallisce come operazione vietata
+    And un admin del Comune di Comun Nuovo
+    And il client "CL-1" conserva le associazioni e i dati di riferimento
+
+    When un support del Comune di Comun Nuovo tenta di modificare i metadati del client "CL-1":
+      | campo       | valore            |
+      | nome        | primo nome        |
+      | descrizione | prima descrizione |
+    Then la richiesta di modifica fallisce come operazione vietata
+    And un admin del Comune di Comun Nuovo
+    And il client "CL-1" conserva le associazioni e i dati di riferimento
+
+    When un reviewer del Comune di Comun Nuovo tenta di modificare i metadati del client "CL-1":
+      | campo       | valore            |
+      | nome        | primo nome        |
+      | descrizione | prima descrizione |
+    Then la richiesta di modifica fallisce come operazione vietata
+    And un admin del Comune di Comun Nuovo
+    And il client "CL-1" conserva le associazioni e i dati di riferimento
+
+    When un viewer del Comune di Comun Nuovo tenta di modificare i metadati del client "CL-1":
+      | campo       | valore            |
+      | nome        | primo nome        |
+      | descrizione | prima descrizione |
+    Then la richiesta di modifica fallisce come operazione vietata
+    And un admin del Comune di Comun Nuovo
+    And il client "CL-1" conserva le associazioni e i dati di riferimento
+
+    When un admin del Comune di Pozzallo tenta di modificare i metadati del client "CL-1":
+      | campo       | valore            |
+      | nome        | primo nome        |
+      | descrizione | prima descrizione |
+    Then la richiesta di modifica fallisce come operazione vietata
+    And un admin del Comune di Comun Nuovo
+    And il client "CL-1" conserva le associazioni e i dati di riferimento
+    And l'admin del Comune di Comun Nuovo richiede la generazione del voucher per il client interop
