@@ -20,21 +20,41 @@ import static io.cucumber.junit.platform.engine.Constants.PLUGIN_PROPERTY_NAME;
 @IncludeEngines({"cucumber", "junit-jupiter"})
 @SelectClasspathResource("feature-expanded")
 @SelectPackages("it.pagopa.interop.suite.contract")
-@IncludeTags({"error-copy"})
 @ExcludeTags({"wait_for_qa", "ignore"})
 @ConfigurationParameters({
         @ConfigurationParameter(key = PLUGIN_PROPERTY_NAME, value = "pretty"),
-        @ConfigurationParameter(key = PLUGIN_PROPERTY_NAME, value = "json:target/cucumber-reports/report-errorMsg-exec.json," + "html:target/cucumber-reports/report-errorMsg-exec.html"),
+        @ConfigurationParameter(key = PLUGIN_PROPERTY_NAME, value = "json:target/cucumber-reports/report.json," + "html:target/cucumber-reports/report.html"),
         @ConfigurationParameter(key = GLUE_PROPERTY_NAME, value = "it.pagopa.interop"),
 
-        // abilita parallelismo JUnit
-        @ConfigurationParameter(key = "junit.jupiter.execution.parallel.enabled", value = "false"),
-        @ConfigurationParameter(key = "cucumber.execution.parallel.enabled", value = "false"),
-        @ConfigurationParameter(key = "junit.jupiter.execution.parallel.mode.default", value = "same_thread"),
-        @ConfigurationParameter(key = "junit.jupiter.execution.parallel.config.fixed.parallelism", value = "1"),
+        // Jupiter: abilita parallelismo solo quando lancio questa suite
+        @ConfigurationParameter(
+                key = "junit.jupiter.execution.parallel.enabled",
+                value = "true"
+        ),
 
-        // abilita parallelismo Cucumber
-        @ConfigurationParameter(key = EXECUTION_MODE_FEATURE_PROPERTY_NAME, value = "same_thread")
+        @ConfigurationParameter(
+                key = "junit.jupiter.execution.parallel.mode.default",
+                value = "concurrent"
+        ),
+
+        @ConfigurationParameter(
+                key = "junit.jupiter.execution.parallel.config.strategy",
+                value = "dynamic"
+        ),
+
+        // Cucumber
+        @ConfigurationParameter(
+                key = EXECUTION_MODE_FEATURE_PROPERTY_NAME,
+                value = "concurrent"
+        ),
+
+        // tag cucumber
+        @ConfigurationParameter(
+                key = FILTER_TAGS_PROPERTY_NAME,
+                value = """
+                        (@error-copy)
+                        """
+        )
 })
-public class MessErroreBilingualTest {
+public class MessErroreBilingualSuiteTest {
 }
