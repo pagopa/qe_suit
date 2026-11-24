@@ -9,7 +9,7 @@ from .parsers import Failure, ReportError
 STATUSES = {'PASSED', 'FAILED', 'SKIPPED', 'ABORTED'}
 
 
-def collect_contract_failures(path: Path) -> list[Failure]:
+def collect_contract_failures(path: Path, *, all_ids: list[str] | None = None) -> list[Failure]:
     try:
         document = json.loads(path.read_text(encoding='utf-8'))
     except (OSError, UnicodeError, json.JSONDecodeError) as exc:
@@ -42,6 +42,8 @@ def collect_contract_failures(path: Path) -> list[Failure]:
             if identity in seen:
                 raise ReportError(f'Contract JSON: id_test duplicato: {identity}')
             seen.add(identity)
+            if all_ids is not None:
+                all_ids.append(identity)
             counts[status] += 1
             if scenario.get('preconditionFailure') is True:
                 preconditions += 1

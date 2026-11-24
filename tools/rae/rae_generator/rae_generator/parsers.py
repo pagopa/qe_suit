@@ -62,7 +62,7 @@ def _example_suffix(scenario: dict, is_outline: bool) -> str:
     return ''
 
 
-def _parse_cucumber(path: Path) -> list[Failure]:
+def _parse_cucumber(path: Path, *, all_ids: list[str] | None = None) -> list[Failure]:
     try:
         content = json.loads(path.read_text(encoding='utf-8'))
     except (json.JSONDecodeError, UnicodeError) as exc:
@@ -93,21 +93,24 @@ def _parse_cucumber(path: Path) -> list[Failure]:
                 if (result.get('status') or '').lower() in {'failed', 'ambiguous', 'undefined'}:
                     msg = result.get('error_message') or result.get('message') or f"Step {step.get('name', '<unknown>')}: {result.get('status')}"
                     failed_steps.append(str(msg))
-            if failed_steps:
-                name = scenario.get('name') or scenario.get('id') or scenario.get('line')
-                if not name:
+            name = scenario.get('name') or scenario.get('id') or scenario.get('line')
+            if not name:
+                if failed_steps:
                     raise ReportError(f'Scenario KO senza identificativo: {path}')
-                test_id = str(name)
-                # On expanded outlines, distinguish repeated scenario names by
-                # their Examples source row. Some reporters explicitly label the
-                # item as scenario_outline; support that even for one example.
-                is_outline = (
-                        name_counts.get(str(scenario.get('name')), 0) > 1
-                        or str(scenario.get('type', '')).lower() == 'scenario_outline'
-                        or str(scenario.get('keyword', '')).strip().lower()
-                        in {'scenario outline', 'scenario template'}
-                )
-                test_id += _example_suffix(scenario, is_outline)
+                continue
+            test_id = str(name)
+            # Compute identity for every scenario, including PASSED, so that
+            # a failure keeps its suffix when another report turns green.
+            is_outline = (
+                    name_counts.get(str(scenario.get('name')), 0) > 1
+                    or str(scenario.get('type', '')).lower() == 'scenario_outline'
+                    or str(scenario.get('keyword', '')).strip().lower()
+                    in {'scenario outline', 'scenario template'}
+            )
+            test_id += _example_suffix(scenario, is_outline)
+            if all_ids is not None:
+                all_ids.append(test_id)
+            if failed_steps:
                 failures.append(Failure(test_id, '\n\n'.join(failed_steps), 'cucumber'))
     return failures
 
@@ -266,12 +269,14 @@ def collect_reports(root: Path, *, cucumber_only: bool = False) -> list[Failure]
 
     # Keep report provenance until duplicate IDs have been resolved.
     collected: list[tuple[Failure, str]] = []
+    all_ids: list[str] = []
     for cucumber in cucumber_files:
-        collected.extend((failure, cucumber.name) for failure in _parse_cucumber(cucumber))
+        collected.extend((failure, cucumber.name) for failure in _parse_cucumber(cucumber, all_ids=all_ids))
     if contract.is_file():
-        collected.extend((failure, contract.name) for failure in collect_contract_failures(contract))
+        collected.extend((failure, contract.name) for failure in collect_contract_failures(contract, all_ids=all_ids))
 
-    counts = Counter(failure.id_test for failure, _ in collected)
+    # Disambiguate using all scenario identities, not only failed scenarios.
+    counts = Counter(all_ids)
     result: list[Failure] = []
     final_ids: set[str] = set()
     for failure, report_name in collected:
