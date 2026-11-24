@@ -7,7 +7,9 @@ import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import it.pagopa.interop.common.eservice.domain.EServiceMode;
 import it.pagopa.interop.common.eservice.infrastructure.cucumber.dto.mapper.EServiceAsyncExchangeDeserializer;
 import it.pagopa.interop.common.eservice.infrastructure.cucumber.dto.mapper.EServiceSignalHubDeserializer;
-import it.pagopa.interop.common.infrastructure.cucumber.dto.ConfiguredBoolean;
+import it.pagopa.interop.common.kernel.dto.ConfiguredBoolean;
+import it.pagopa.interop.common.kernel.dto.ConfigurableText;
+import jakarta.validation.Valid;
 import it.pagopa.interop.common.kernel.domain.Tenant;
 import lombok.Getter;
 import lombok.Setter;
@@ -28,11 +30,17 @@ public class EServicePreparationConfiguration {
 
     @JsonAlias("nome")
     @JsonSetter(nulls = Nulls.FAIL)
-    @Pattern(regexp = "(?s).*\\S.*", message = "Il nome non può essere vuoto")
-    private String name;
+    @Valid
+    private ConfigurableText name;
 
     @JsonAlias("descrizione")
     private String description;
+
+    @JsonAlias({"soglia fruitore", "sogliaFruitore"})
+    private Integer consumerThreshold;
+
+    @JsonAlias({"soglia totale", "sogliaTotale"})
+    private Integer totalThreshold;
 
     @JsonAlias("modalità")
     @JsonSetter(nulls = Nulls.FAIL)

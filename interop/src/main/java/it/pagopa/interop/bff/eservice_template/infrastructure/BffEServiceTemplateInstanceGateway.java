@@ -13,7 +13,7 @@ import it.pagopa.interop.common.eservice.domain.EServiceDescriptorState;
 import it.pagopa.interop.common.eservice_template.application.EServiceTemplateInstanceGateway;
 import it.pagopa.interop.common.eservice_template.application.command.EServiceTemplateInstanceCreationCommand;
 import it.pagopa.interop.common.eservice_template.domain.EServiceTemplate;
-import it.pagopa.interop.common.eservice_template.domain.EServiceTemplateInstanceCreationFailureReason;
+import it.pagopa.interop.common.eservice_template.domain.EServiceTemplateInstance;
 import it.pagopa.interop.common.kernel.domain.Channel;
 import it.pagopa.interop.common.kernel.domain.EServiceDescriptorRef;
 import it.pagopa.interop.common.kernel.domain.EServiceRef;

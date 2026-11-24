@@ -7,6 +7,9 @@ import it.pagopa.interop.common.client.domain.Client;
 import it.pagopa.interop.common.client.domain.ClientAssertion;
 import it.pagopa.interop.common.eservice.domain.EService;
 import it.pagopa.interop.common.eservice.domain.EServiceDescriptor;
+import it.pagopa.interop.common.eservice.domain.EServiceUpdateFailureReason;
+import it.pagopa.interop.common.eservice_template.domain.EServiceTemplate;
+import it.pagopa.interop.common.eservice_template.domain.EServiceTemplateUpdateFailureReason;
 import it.pagopa.interop.common.purpose.domain.Purpose;
 import it.pagopa.interop.common.purpose_template.domain.PurposeTemplate;
 import it.pagopa.interop.common.producer_keychain.domain.ProducerKeychain;
@@ -45,6 +48,11 @@ public class ScenarioParameterTypes {
         return entityStore.getLastOrThrow(EService.class);
     }
 
+    @ParameterType("e-service template|template e-service")
+    public EServiceTemplate currentEServiceTemplate(String token) {
+        return entityStore.getLastOrThrow(EServiceTemplate.class);
+    }
+
     @ParameterType("versione deprecata")
     public EServiceDescriptor currentDeprecatedEServiceDescriptor(String token) {
         EService eService = entityStore.getLastOrThrow(EService.class);
@@ -60,6 +68,16 @@ public class ScenarioParameterTypes {
     @ParameterType("richiesta di fruizione|agreement|richiesta di fruizione creata")
     public Agreement currentAgreement(String token) {
         return entityStore.getLastOrThrow(Agreement.class);
+    }
+
+    @ParameterType("CONFLICT|OUT_OF_DRAFT_OPERATION_FIELD|INVALID_DATA|NOT_ALLOWED|UNAUTHORIZED")
+    public EServiceUpdateFailureReason eServiceUpdateFailureReason(String reason) {
+        return EServiceUpdateFailureReason.valueOf(reason);
+    }
+
+    @ParameterType("CONFLICT|OUT_OF_DRAFT_OPERATION_FIELD|INVALID_DATA|UNAUTHORIZED")
+    public EServiceTemplateUpdateFailureReason eServiceTemplateUpdateFailureReason(String reason) {
+        return EServiceTemplateUpdateFailureReason.valueOf(reason);
     }
 
     @ParameterType("purpose template")

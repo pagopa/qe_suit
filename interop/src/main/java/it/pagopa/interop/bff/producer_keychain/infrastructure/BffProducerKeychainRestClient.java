@@ -10,6 +10,7 @@ import it.pagopa.interop.generated.openapi.clients.bff.model.EServiceAdditionDet
 import it.pagopa.interop.generated.openapi.clients.bff.model.KeySeed;
 import it.pagopa.interop.generated.openapi.clients.bff.model.ProducerKeychain;
 import it.pagopa.interop.generated.openapi.clients.bff.model.ProducerKeychainSeed;
+import it.pagopa.interop.generated.openapi.clients.bff.model.ProducerKeychainUpdateSeed;
 import it.pagopa.interop.generated.openapi.clients.bff.model.PublicKey;
 import it.pagopa.interop.generated.openapi.clients.bff.model.PublicKeys;
 import org.springframework.stereotype.Component;
@@ -32,6 +33,16 @@ public class BffProducerKeychainRestClient extends RestClient {
 
     public TestChain<Void> createProducerKey(UUID keychainId, KeySeed seed) {
         return execute(() -> api.createProducerKey().producerKeychainIdPath(keychainId)
+                .body(seed).execute(Function.identity()), Void.class);
+    }
+
+    public TestChain<Void> addProducerKeychainEService(UUID keychainId, EServiceAdditionDetailsSeed seed) {
+        return execute(() -> api.addProducerKeychainEService().producerKeychainIdPath(keychainId)
+                .body(seed).execute(Function.identity()), Void.class);
+    }
+
+    public TestChain<Void> updateProducerKeychain(UUID keychainId, ProducerKeychainUpdateSeed seed) {
+        return execute(() -> api.updateProducerKeychain().producerKeychainIdPath(keychainId)
                 .body(seed).execute(Function.identity()), Void.class);
     }
 

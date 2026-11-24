@@ -15,6 +15,28 @@ import org.springframework.plugin.core.Plugin;
 public interface PurposeGateway extends Plugin<Channel> {
     Purpose getPurpose(PurposeRef purposeRef);
 
+    Purpose updatePurposeMetadata(
+            PurposeRef purposeRef, String name, String description,
+            @Nullable Boolean isFreeOfCharge, @Nullable String freeOfChargeReason, @Nullable Integer dailyCalls);
+
+    Purpose updateReversePurposeMetadata(
+            PurposeRef purposeRef, String name, String description,
+            @Nullable Boolean isFreeOfCharge, @Nullable String freeOfChargeReason, @Nullable Integer dailyCalls);
+
+    void tryToUpdatePurposeMetadata(
+            PurposeRef purposeRef, String name, String description,
+            @Nullable Boolean isFreeOfCharge, @Nullable String freeOfChargeReason, @Nullable Integer dailyCalls);
+
+    void tryToUpdateReversePurposeMetadata(
+            PurposeRef purposeRef, String name, String description,
+            @Nullable Boolean isFreeOfCharge, @Nullable String freeOfChargeReason, @Nullable Integer dailyCalls);
+
+    void shouldFailToUpdatePurposeMetadataAsMalformed();
+
+    void shouldFailToUpdatePurposeMetadataAsForbidden();
+
+    void shouldFailToUpdatePurposeMetadataAsConflict();
+
     Purpose updatePurposeDailyCalls(PurposeRef purposeRef, int dailyCalls);
 
     Purpose createPurpose(PurposeCreateCommand createCommand);
@@ -45,6 +67,8 @@ public interface PurposeGateway extends Plugin<Channel> {
 
     Purpose suspendPurpose(PurposeRef purposeRef, PurposeVersionRef purposeVersionRef, @Nullable DelegationRef delegationRef);
 
+    Purpose archivePurpose(PurposeRef purposeRef, PurposeVersionRef purposeVersionRef);
+
     void attemptNameUpdate(PurposeRef purposeRef, String name);
 
     void attemptPurposeCloning(PurposeRef purposeRef, PurposeCloneCommand cloneCommand);
@@ -56,20 +80,20 @@ public interface PurposeGateway extends Plugin<Channel> {
     void attemptCreatePurpose(PurposeCreateCommand createCommand);
 
     void attemptCreateReversePurpose(
-            EServiceRef eServiceRef,
-            EServiceRiskAnalysisRef riskAnalysisRef,
-            String title
+        EServiceRef eServiceRef,
+        EServiceRiskAnalysisRef riskAnalysisRef,
+        String title
     );
 
     void attemptCreatePurposeFromTemplate(
-            PurposeTemplateRef purposeTemplateRef,
-            PurposeCreateCommand createCommand
+        PurposeTemplateRef purposeTemplateRef,
+        PurposeCreateCommand createCommand
     );
 
     void attemptNameUpdateFromTemplate(
-            PurposeTemplateRef purposeTemplateRef,
-            PurposeRef purposeRef,
-            String name
+        PurposeTemplateRef purposeTemplateRef,
+        PurposeRef purposeRef,
+        String name
     );
 
     void attemptRiskAnalysisFormUpdate(PurposeRef purposeRef);

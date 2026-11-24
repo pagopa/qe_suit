@@ -29,6 +29,27 @@ public class BffPurposeRestClient extends RestClient {
         );
     }
 
+    public TestChain<CreatedResource> patchUpdatePurpose(@Nonnull UUID purposeId, @Nonnull PatchPurposeUpdateContent payload) {
+        return execute(
+                () -> purposesApi.patchUpdatePurpose()
+                        .purposeIdPath(purposeId)
+                        .body(payload)
+                        .execute(Function.identity()),
+                CreatedResource.class
+        );
+    }
+
+    public TestChain<CreatedResource> patchUpdateReversePurpose(
+            @Nonnull UUID purposeId, @Nonnull PatchReversePurposeUpdateContent payload) {
+        return execute(
+                () -> purposesApi.patchUpdateReversePurpose()
+                        .purposeIdPath(purposeId)
+                        .body(payload)
+                        .execute(Function.identity()),
+                CreatedResource.class
+        );
+    }
+
     public TestChain<CreatedResource> createPurpose(@Nonnull PurposeSeed payload) {
         return execute(
                 () -> purposesApi.createPurpose().body(payload).execute(Function.identity()),
@@ -91,6 +112,17 @@ public class BffPurposeRestClient extends RestClient {
                         .purposeIdPath(purposeId)
                         .versionIdPath(versionId)
                         .body(delegationRef)
+                        .execute(Function.identity()),
+                PurposeVersionResource.class
+        );
+    }
+
+    public TestChain<PurposeVersionResource> archivePurposeVersion(@Nonnull UUID purposeId, @Nonnull UUID versionId) {
+        return execute(
+                () -> purposesApi.archivePurposeVersion()
+                        .purposeIdPath(purposeId)
+                        .versionIdPath(versionId)
+                        .reqSpec(reqSpec -> reqSpec.setContentType("application/json; charset=UTF-8"))
                         .execute(Function.identity()),
                 PurposeVersionResource.class
         );

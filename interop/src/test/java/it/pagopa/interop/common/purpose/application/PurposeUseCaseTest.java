@@ -4,6 +4,7 @@ import it.pagopa.interop.common.eservice.domain.EService;
 import it.pagopa.interop.common.eservice.domain.EServiceDescriptor;
 import it.pagopa.interop.common.eservice.domain.EServiceDescriptorState;
 import it.pagopa.interop.common.kernel.domain.EServiceRef;
+import it.pagopa.interop.common.kernel.domain.EServiceRef;
 import it.pagopa.interop.common.purpose.domain.Purpose;
 import it.pagopa.interop.common.purpose.domain.PurposeVersion;
 import it.pagopa.interop.common.purpose.domain.PurposeVersionState;
@@ -47,6 +48,41 @@ class PurposeUseCaseTest {
     }
 
     @Test
+    void verifiesConflictingMetadataUpdateThroughTheGateway() {
+        useCase.shouldFailToUpdatePurposeMetadataAsConflict();
+
+        verify(gateway).shouldFailToUpdatePurposeMetadataAsConflict();
+        verifyNoMoreInteractions(gateway);
+    }
+
+    @Test
+    void updatesOrdinaryPurposeMetadata() {
+        Purpose updated = purpose.toBuilder().title("new title").description("new description").build();
+        when(gateway.getPurpose(purpose.getRef())).thenReturn(updated);
+
+        assertThat(useCase.updatePurposeMetadata(purpose, "new title", "new description", null, null, null))
+                .isSameAs(updated);
+
+        verify(gateway).updatePurposeMetadata(purpose.getRef(), "new title", "new description", null, null, null);
+        verify(gateway).getPurpose(purpose.getRef());
+        verifyNoMoreInteractions(gateway);
+    }
+
+    @Test
+    void updatesReversePurposeMetadata() {
+        Purpose updated = purpose.toBuilder().title("new title").description("new description").build();
+        when(gateway.getPurpose(purpose.getRef())).thenReturn(updated);
+
+        assertThat(useCase.updateReversePurposeMetadata(purpose, "new title", "new description", null, null, null))
+                .isSameAs(updated);
+
+        verify(gateway).updateReversePurposeMetadata(
+                purpose.getRef(), "new title", "new description", null, null, null);
+        verify(gateway).getPurpose(purpose.getRef());
+        verifyNoMoreInteractions(gateway);
+    }
+
+    @Test
     void requiresAnActiveVersion() {
         assertThatThrownBy(() -> useCase.updatePurposeDailyCallsEstimateBeyondThreshold(
                 purpose.toBuilder().clearVersions().build(), eService))
@@ -68,6 +104,19 @@ class PurposeUseCaseTest {
                 purpose, eService.toBuilder().id(UUID.randomUUID()).build()))
                 .isInstanceOf(IllegalArgumentException.class).hasMessageContaining("does not belong");
         verifyNoInteractions(gateway);
+    }
+
+    @Test
+    void archivesTheRequestedPurposeVersion() {
+        Purpose archived = purpose.toBuilder()
+                .version(active.toBuilder().purposeVersionState(PurposeVersionState.ARCHIVED).build())
+                .build();
+        when(gateway.archivePurpose(purpose.getRef(), active.getRef())).thenReturn(archived);
+
+        assertThat(useCase.archivePurpose(purpose, active)).isSameAs(archived);
+
+        verify(gateway).archivePurpose(purpose.getRef(), active.getRef());
+        verifyNoMoreInteractions(gateway);
     }
 
     @Test
@@ -120,7 +169,7 @@ class PurposeUseCaseTest {
         when(gateway.getPurpose(purpose.getRef())).thenReturn(purpose);
 
         assertThatThrownBy(() -> new PurposeUseCase(gateway, commands).attemptRiskAnalysisSigning(purpose))
-                .isInstanceOf(IllegalStateException.class).hasMessageContaining("Missing metadataVersion");
+            .isInstanceOf(IllegalStateException.class).hasMessageContaining("Missing metadataVersion");
 
         verify(gateway).getPurpose(purpose.getRef());
         verifyNoMoreInteractions(gateway);

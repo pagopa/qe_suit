@@ -1,10 +1,12 @@
 package it.pagopa.interop.common.eservice.application;
 
 import it.pagopa.interop.common.eservice.application.command.EServiceCreationCommand;
+import it.pagopa.interop.common.eservice.application.command.EServiceUpdateCommand;
 import it.pagopa.interop.common.eservice.domain.EService;
 import it.pagopa.interop.common.eservice.domain.EServiceUpdateFailureReason;
 import it.pagopa.interop.common.eservice.domain.EServiceCreationFailureReason;
 import it.pagopa.interop.common.eservice.domain.EServiceArchivingFailureReason;
+import it.pagopa.interop.common.eservice.domain.EServiceUpdateFailureReason;
 import it.pagopa.interop.common.eservice.domain.GracePeriodDays;
 import it.pagopa.interop.common.eservice.domain.SoapInterfaceUploadFailureReason;
 import lombok.RequiredArgsConstructor;
@@ -29,6 +31,18 @@ public class EServiceUseCase {
         return eServiceGateway.createEService(creationCommand);
     }
 
+    public void tryUpdateEServiceMetadata(EService eService, EServiceUpdateCommand command) {
+        eServiceGateway.tryUpdateEServiceMetadata(eService.getRef(), command);
+    }
+
+    public void updateEServiceMetadata(EService eService, EServiceUpdateCommand command) {
+        eServiceGateway.updateEServiceMetadata(eService.getRef(), command);
+    }
+
+    public void shouldFailToUpdateEServiceMetadata(EServiceUpdateFailureReason reason) {
+        eServiceGateway.shouldFailToUpdateEServiceMetadata(reason);
+    }
+
     public void deleteEService(EService eService) {
         eServiceGateway.deleteEService(eService);
     }
@@ -43,6 +57,10 @@ public class EServiceUseCase {
 
     public void archiveEService(EService eService, GracePeriodDays gracePeriodDays) {
         eServiceGateway.archiveEService(eService.getRef(), gracePeriodDays);
+    }
+
+    public void cloneEService(EService eService) {
+        eServiceGateway.cloneEService(eService.getRef(), eService.getLatestDescriptor().getRef());
     }
 
     public void shouldFailToArchiveEService(EService eService, GracePeriodDays gracePeriodDays, EServiceArchivingFailureReason reason) {

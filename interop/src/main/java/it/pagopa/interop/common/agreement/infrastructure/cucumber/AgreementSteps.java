@@ -97,6 +97,14 @@ public class AgreementSteps {
                 .linkAgreement(eService, targetState);
     }
 
+    @Given("l'e-service del/di {tenant} sottoscritto da/dal {tenant} con (una )richiesta di fruizione (in ){agreementState}")
+    public void createAgreement(Tenant producer, Tenant consumer, AgreementState targetState) {
+        EService eService = entityStore.getLastOrThrow(EService.class);
+        interopJourney
+                .withConsumer(consumer)
+                .linkAgreement(eService, targetState);
+    }
+
     @When("il sistema impedisce a/al {tenant} di inoltrare una richiesta di fruizione per la {currentArchivedEServiceDescriptor} dell'{currentEService}")
     @When("il sistema impedisce a/al {tenant} di inoltrare una richiesta di fruizione per la {currentDeprecatedEServiceDescriptor} dell'{currentEService}")
     public void createAgreement(Tenant consumer, EServiceDescriptor eServiceDescriptor, EService eService) {

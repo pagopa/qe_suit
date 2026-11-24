@@ -22,15 +22,47 @@ import static org.mockito.Mockito.*;
 
 class PurposeTemplateUseCaseTest {
     @Test
-    void delegatesTheReactivationAttemptToTheExistingGateway() {
+    void retrievesTheLatestPurposeTemplateFromTheGateway() {
         var gateway = mock(PurposeTemplateGateway.class);
         var useCase = new PurposeTemplateUseCase(
                 gateway, mock(RiskAnalysisGateway.class), mock(RiskAnalysisDataFactory.class));
-        var template = PurposeTemplate.builder().id(UUID.randomUUID()).build();
+        var purposeTemplate = PurposeTemplate.builder().id(UUID.randomUUID()).build();
+        when(gateway.getPurposeTemplate(purposeTemplate.getId())).thenReturn(purposeTemplate);
 
-        useCase.attemptPurposeTemplateReactivation(template);
+        assertThat(useCase.getPurposeTemplate(purposeTemplate)).isSameAs(purposeTemplate);
 
-        verify(gateway).attemptPurposeTemplateReactivation(template);
+        verify(gateway).getPurposeTemplate(purposeTemplate.getId());
+        verifyNoMoreInteractions(gateway);
+    }
+
+    @Test
+    void updatesTemplateMetadataAndWaitsForTheRequestedValues() {
+        var gateway = mock(PurposeTemplateGateway.class);
+        var purposeTemplate = PurposeTemplate.builder()
+                .id(UUID.randomUUID())
+                .title("old title")
+                .description("old description")
+                .targetDescription("old target")
+                .build();
+        var updatedTemplate = purposeTemplate.toBuilder()
+                .title("new title")
+                .description("new description")
+                .targetDescription("new target")
+                .purposeIsFreeOfCharge(false)
+                .purposeDailyCalls(500)
+                .handlesPersonalData(true)
+                .build();
+        when(gateway.getPurposeTemplate(purposeTemplate.getId())).thenReturn(updatedTemplate);
+        var useCase = new PurposeTemplateUseCase(
+                gateway, mock(RiskAnalysisGateway.class), mock(RiskAnalysisDataFactory.class));
+
+        assertThat(useCase.updateMetadata(
+                purposeTemplate, "new title", "new description", "new target", false, 500, true))
+                .isEqualTo(updatedTemplate);
+
+        verify(gateway).updateMetadata(purposeTemplate, "new title", "new description", "new target",
+                false, 500, true);
+        verify(gateway).getPurposeTemplate(purposeTemplate.getId());
         verifyNoMoreInteractions(gateway);
     }
 

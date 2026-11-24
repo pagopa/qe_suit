@@ -38,13 +38,17 @@ public class BffEServiceRiskAnalysisGateway implements EServiceRiskAnalysisGatew
      */
     @Override
     public EServiceRiskAnalysis getRiskAnalysis(EServiceRef eServiceRef) {
-        return restClient.readEService(eServiceRef.id())
+        EServiceRiskAnalysis riskAnalysis = restClient.readEService(eServiceRef.id())
                 .withPolling(PollingStrategy.UNTIL_SUCCESS)
                 .map(details -> details.getRiskAnalysis().stream()
                         .findFirst()
                         .map(mapper::toDomain)
                         .orElse(null))
                 .get();
+        if (riskAnalysis != null) {
+            entityStore.upsert(riskAnalysis);
+        }
+        return riskAnalysis;
     }
 
     @Override

@@ -3,8 +3,8 @@ package it.pagopa.interop.bff.eservice_template.infrastructure;
 import io.restassured.builder.ResponseBuilder;
 import io.restassured.http.ContentType;
 import io.restassured.response.Response;
-import it.pagopa.application.context.EntityStore;
 import it.pagopa.application.context.LastApiResponseStore;
+import it.pagopa.infrastructure.context.InMemoryEntityStore;
 import it.pagopa.infrastructure.template.action.TestChainFactory;
 import it.pagopa.interop.bff.eservice.infrastructure.BffEServiceDescriptorGateway;
 import it.pagopa.interop.bff.eservice.infrastructure.BffEServiceGateway;
@@ -12,6 +12,7 @@ import it.pagopa.interop.bff.eservice.infrastructure.BffEServiceRestClient;
 import it.pagopa.interop.bff.eservice_template.application.BffEServiceTemplateInstanceCreationCommand;
 import it.pagopa.interop.common.eservice.domain.EService;
 import it.pagopa.interop.common.eservice_template.domain.EServiceTemplate;
+import it.pagopa.interop.common.eservice_template.domain.EServiceTemplateInstance;
 import it.pagopa.interop.common.kernel.domain.EServiceDescriptorRef;
 import it.pagopa.interop.common.kernel.domain.EServiceRef;
 import it.pagopa.interop.generated.openapi.clients.bff.ApiClient;
@@ -144,5 +145,27 @@ class BffEServiceTemplateInstanceGatewayTest {
         verifyNoMoreInteractions(descriptorGateway);
         verify(api).createEServiceInstanceFromTemplate();
         verifyNoMoreInteractions(api);
+    }
+
+    @Test
+    void registrationSurvivesFailedDescriptorRefreshAndRepeatedIdDoesNotDuplicate() {
+        var serviceRef = EServiceRef.of(UUID.randomUUID());
+        var gateway = gatewayForCreation(serviceRef.id());
+        var template = EServiceTemplate.builder().id(UUID.randomUUID()).name("template").build();
+        var command = new BffEServiceTemplateInstanceCreationCommand();
+        command.instanceLabel("first");
+        var refreshFailure = new IllegalStateException("descriptor refresh failed");
+        when(descriptorGateway.getEServiceDescriptor(serviceRef, EServiceDescriptorRef.of(descriptorId)))
+                .thenThrow(refreshFailure);
+
+        assertThatThrownBy(() -> gateway.createEServiceInstance(template, command)).isSameAs(refreshFailure);
+        assertThat(entityStore.getById(template.getId(), EServiceTemplate.class).orElseThrow().getInstances())
+                .containsExactly(new EServiceTemplateInstance("first", serviceRef));
+        verifyNoInteractions(serviceGateway);
+
+        command.instanceLabel("second");
+        assertThatThrownBy(() -> gateway.createEServiceInstance(template, command)).isSameAs(refreshFailure);
+        assertThat(entityStore.getById(template.getId(), EServiceTemplate.class).orElseThrow().getInstances())
+                .containsExactly(new EServiceTemplateInstance("second", serviceRef));
     }
 }

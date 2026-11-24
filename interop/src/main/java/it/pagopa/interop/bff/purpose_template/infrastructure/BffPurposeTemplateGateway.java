@@ -1,6 +1,8 @@
 package it.pagopa.interop.bff.purpose_template.infrastructure;
 
 import it.pagopa.application.context.EntityStore;
+import it.pagopa.application.context.LastApiResponseStore;
+import it.pagopa.infrastructure.response.ApiResponse;
 import it.pagopa.infrastructure.template.action.strategy.PollingStrategy;
 import it.pagopa.interop.common.kernel.domain.Channel;
 import it.pagopa.interop.common.kernel.domain.EServiceRef;
@@ -25,6 +27,8 @@ import java.util.*;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 
+import static org.assertj.core.api.Assertions.assertThat;
+
 @Service
 @RequiredArgsConstructor
 public class BffPurposeTemplateGateway implements PurposeTemplateGateway {
@@ -36,6 +40,47 @@ public class BffPurposeTemplateGateway implements PurposeTemplateGateway {
     private final BffPurposeTemplateMapper mapper;
     private final BffPurposeTemplateRequestFactory requestFactory;
     private final EntityStore entityStore;
+    private final LastApiResponseStore lastApiResponseStore;
+
+    @Override
+    public void shouldFailToUpdateMetadataAsMalformed() {
+        assertThat(lastApiResponseStore.getLastResponse())
+                .as("Risposta al tentativo di modifica dei metadati del template finalità")
+                .isNotNull()
+                .extracting(ApiResponse::getStatusCode)
+                .as("Modifica dei metadati del template finalità malformata")
+                .isEqualTo(400);
+    }
+
+    @Override
+    public void shouldFailToUpdateMetadataAsForbidden() {
+        assertThat(lastApiResponseStore.getLastResponse())
+                .as("Risposta al tentativo di modifica dei metadati del template finalità")
+                .isNotNull()
+                .extracting(ApiResponse::getStatusCode)
+                .as("Modifica dei metadati del template finalità vietata")
+                .isEqualTo(403);
+    }
+
+    @Override
+    public void shouldFailToUpdateMetadataAsNotFound() {
+        assertThat(lastApiResponseStore.getLastResponse())
+                .as("Risposta al tentativo di modifica dei metadati del template finalità")
+                .isNotNull()
+                .extracting(ApiResponse::getStatusCode)
+                .as("Modifica dei metadati del template finalità per risorsa non trovata")
+                .isEqualTo(404);
+    }
+
+    @Override
+    public void shouldFailToUpdateMetadataAsConflict() {
+        assertThat(lastApiResponseStore.getLastResponse())
+                .as("Risposta al tentativo di modifica dei metadati del template finalità")
+                .isNotNull()
+                .extracting(ApiResponse::getStatusCode)
+                .as("Modifica dei metadati del template finalità in conflitto")
+                .isEqualTo(409);
+    }
 
     @Override
     public PurposeTemplate getPurposeTemplate(UUID purposeTemplateId) {
@@ -47,6 +92,63 @@ public class BffPurposeTemplateGateway implements PurposeTemplateGateway {
                 })
                 .updateContext()
                 .get();
+    }
+
+    @Override
+    public PurposeTemplate updateMetadata(
+            PurposeTemplate purposeTemplate,
+            String name,
+            String description,
+            String targetDescription,
+            Boolean purposeIsFreeOfCharge,
+            Integer purposeDailyCalls,
+            Boolean handlesPersonalData) {
+        PatchUpdatePurposeTemplateSeed payload = new PatchUpdatePurposeTemplateSeed()
+                .purposeTitle(name)
+                .purposeDescription(description)
+                .targetDescription(targetDescription);
+        if (purposeIsFreeOfCharge != null) {
+            payload.purposeIsFreeOfCharge(purposeIsFreeOfCharge);
+        }
+        if (purposeDailyCalls != null) {
+            payload.purposeDailyCalls(purposeDailyCalls);
+        }
+        if (handlesPersonalData != null) {
+            payload.handlesPersonalData(handlesPersonalData);
+        }
+
+        return restClient.updatePurposeTemplate(purposeTemplate.getId(), payload)
+                .withPolling(PollingStrategy.UNTIL_SUCCESS)
+                .map(ignored -> getPurposeTemplate(purposeTemplate.getId()))
+                .updateContext()
+                .get();
+    }
+
+    @Override
+    public void tryToUpdateMetadata(
+            PurposeTemplate purposeTemplate,
+            String name,
+            String description,
+            String targetDescription,
+            Boolean purposeIsFreeOfCharge,
+            Integer purposeDailyCalls,
+            Boolean handlesPersonalData) {
+        PatchUpdatePurposeTemplateSeed payload = new PatchUpdatePurposeTemplateSeed()
+                .purposeTitle(name)
+                .purposeDescription(description)
+                .targetDescription(targetDescription);
+        if (purposeIsFreeOfCharge != null) {
+            payload.purposeIsFreeOfCharge(purposeIsFreeOfCharge);
+        }
+        if (purposeDailyCalls != null) {
+            payload.purposeDailyCalls(purposeDailyCalls);
+        }
+        if (handlesPersonalData != null) {
+            payload.handlesPersonalData(handlesPersonalData);
+        }
+
+        restClient.updatePurposeTemplate(purposeTemplate.getId(), payload)
+                .withoutPolling();
     }
 
     @Override
@@ -128,6 +230,18 @@ public class BffPurposeTemplateGateway implements PurposeTemplateGateway {
         return PollingUtils.pollUntil(
                 () -> getPurposeTemplate(purposeTemplate.getId()),
                 pt -> pt.getState() == PurposeTemplateState.SUSPENDED
+        );
+    }
+
+    @Override
+    public PurposeTemplate archivePurposeTemplate(PurposeTemplate purposeTemplate) {
+        restClient.archivePurposeTemplate(purposeTemplate.getId())
+                .withPolling(PollingStrategy.UNTIL_SUCCESS)
+                .get();
+
+        return PollingUtils.pollUntil(
+                () -> getPurposeTemplate(purposeTemplate.getId()),
+                pt -> pt.getState() == PurposeTemplateState.ARCHIVED
         );
     }
 

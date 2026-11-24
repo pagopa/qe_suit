@@ -11,7 +11,7 @@ public interface EServiceTemplateRequestFactory extends Plugin<Channel> {
 
     EServiceTemplateInstanceCreationCommand defaultCreationEServiceTemplateInstanceCommand();
 
-    UpdateEServiceTemplateCommand defaultUpdateEServiceTemplateCommand();
+    UpdateEServiceTemplateCommand defaultUpdateEServiceTemplateCommand(Boolean empty);
 
     UpdateEServiceTemplateNameCommand defaultUpdateTemplateNameCommand();
 

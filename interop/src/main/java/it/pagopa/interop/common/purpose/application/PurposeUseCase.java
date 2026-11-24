@@ -10,20 +10,77 @@ import it.pagopa.interop.common.purpose.domain.PurposeCreationFailureReason;
 import it.pagopa.interop.common.purpose.domain.PurposeVersion;
 import it.pagopa.interop.common.purpose.domain.RiskAnalysisReviewMode;
 import it.pagopa.interop.common.purpose_template.domain.PurposeTemplate;
+import it.pagopa.utils.async.PollingUtils;
 import jakarta.annotation.Nullable;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
+import java.util.Objects;
 import java.util.List;
 import java.util.function.Consumer;
-
-import static org.assertj.core.api.Assertions.assertThat;
 
 @Service
 @RequiredArgsConstructor
 public class PurposeUseCase {
     private final PurposeGateway purposeGateway;
     private final PurposeCommandFactory purposeCommandFactory;
+
+    public Purpose getPurpose(Purpose purpose) {
+        return purposeGateway.getPurpose(purpose.getRef());
+    }
+
+    public Purpose updatePurposeMetadata(
+            Purpose purpose, String name, String description,
+            Boolean isFreeOfCharge, String freeOfChargeReason, Integer dailyCalls) {
+        purposeGateway.updatePurposeMetadata(
+                purpose.getRef(), name, description, isFreeOfCharge, freeOfChargeReason, dailyCalls);
+
+        return pollForUpdatedMetadata(purpose, name, description);
+    }
+
+    public Purpose updateReversePurposeMetadata(
+            Purpose purpose, String name, String description,
+            Boolean isFreeOfCharge, String freeOfChargeReason, Integer dailyCalls) {
+        purposeGateway.updateReversePurposeMetadata(
+                purpose.getRef(), name, description, isFreeOfCharge, freeOfChargeReason, dailyCalls);
+
+        return pollForUpdatedMetadata(purpose, name, description);
+    }
+
+    public void tryToUpdatePurposeMetadata(
+            Purpose purpose, String name, String description,
+            Boolean isFreeOfCharge, String freeOfChargeReason, Integer dailyCalls) {
+        purposeGateway.tryToUpdatePurposeMetadata(
+                purpose.getRef(), name, description, isFreeOfCharge, freeOfChargeReason, dailyCalls);
+    }
+
+    public void tryToUpdateReversePurposeMetadata(
+            Purpose purpose, String name, String description,
+            Boolean isFreeOfCharge, String freeOfChargeReason, Integer dailyCalls) {
+        purposeGateway.tryToUpdateReversePurposeMetadata(
+                purpose.getRef(), name, description, isFreeOfCharge, freeOfChargeReason, dailyCalls);
+    }
+
+    public void shouldFailToUpdatePurposeMetadataAsMalformed() {
+        purposeGateway.shouldFailToUpdatePurposeMetadataAsMalformed();
+    }
+
+    public void shouldFailToUpdatePurposeMetadataAsForbidden() {
+        purposeGateway.shouldFailToUpdatePurposeMetadataAsForbidden();
+    }
+
+    public void shouldFailToUpdatePurposeMetadataAsConflict() {
+        purposeGateway.shouldFailToUpdatePurposeMetadataAsConflict();
+    }
+
+    private Purpose pollForUpdatedMetadata(Purpose purpose, String name, String description) {
+        return PollingUtils.pollUntil(
+                () -> getPurpose(purpose),
+                refreshed -> Objects.equals(name, refreshed.getTitle())
+                        && Objects.equals(description, refreshed.getDescription()),
+                "Purpose " + purpose.getId() + " metadata did not reach the requested name and description"
+        );
+    }
 
     public Purpose updatePurposeDailyCallsEstimateBeyondThreshold(Purpose purpose, EService eService) {
         PurposeVersion activeVersion = purpose.getLastActiveVersion();
@@ -123,6 +180,10 @@ public class PurposeUseCase {
         return purposeGateway.suspendPurpose(purpose.getRef(), purposeVersion.getRef(), delegationRef);
     }
 
+    public Purpose archivePurpose(Purpose purpose, PurposeVersion purposeVersion) {
+        return purposeGateway.archivePurpose(purpose.getRef(), purposeVersion.getRef());
+    }
+
     public void attemptNameUpdate(Purpose purpose, String name) {
         purposeGateway.attemptNameUpdate(purpose.getRef(), name);
     }
@@ -149,17 +210,17 @@ public class PurposeUseCase {
     }
 
     public void attemptCreateReversePurposeWithTitle(
-            EService eService,
-            EServiceRiskAnalysis riskAnalysis,
-            String title
+        EService eService,
+        EServiceRiskAnalysis riskAnalysis,
+        String title
     ) {
         purposeGateway.attemptCreateReversePurpose(eService.getRef(), riskAnalysis.getRef(), title);
     }
 
     public void attemptCreatePurposeFromTemplateWithTitle(
-            PurposeTemplate purposeTemplate,
-            EService eService,
-            String title
+        PurposeTemplate purposeTemplate,
+        EService eService,
+        String title
     ) {
         PurposeCreateCommand command = purposeCommandFactory.validFullPopulatedCreateCommand(eService.getRef());
         command.title(title);
@@ -167,9 +228,9 @@ public class PurposeUseCase {
     }
 
     public void attemptNameUpdateFromTemplate(
-            PurposeTemplate purposeTemplate,
-            Purpose purpose,
-            String name
+        PurposeTemplate purposeTemplate,
+        Purpose purpose,
+        String name
     ) {
         purposeGateway.attemptNameUpdateFromTemplate(purposeTemplate.getRef(), purpose.getRef(), name);
     }
@@ -186,7 +247,7 @@ public class PurposeUseCase {
         }
         if (metadataVersion == null) {
             throw new IllegalStateException(
-                    "Missing metadataVersion (x-metadata-version header) for purpose " + purpose.getId()
+                "Missing metadataVersion (x-metadata-version header) for purpose " + purpose.getId()
             );
         }
         return metadataVersion;

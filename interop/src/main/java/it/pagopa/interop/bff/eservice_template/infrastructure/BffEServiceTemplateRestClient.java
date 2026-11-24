@@ -57,6 +57,20 @@ public class BffEServiceTemplateRestClient extends RestClient {
         );
     }
 
+    public TestChain<Void> patchEServiceTemplate(
+            @Nonnull UUID templateId,
+            @Nonnull PatchUpdateEServiceTemplateSeed payload
+    ) {
+        return execute(
+                () -> eServiceTemplatesApi
+                        .patchUpdateEServiceTemplate()
+                        .eServiceTemplateIdPath(templateId)
+                        .body(payload)
+                        .execute(Function.identity()),
+                Void.class
+        );
+    }
+
     public TestChain<Void> updateTemplateName(
             @Nonnull UUID templateId,
             @Nonnull EServiceTemplateNameUpdateSeed payload
@@ -104,6 +118,7 @@ public class BffEServiceTemplateRestClient extends RestClient {
                 () -> eServiceTemplatesApi
                         .createEServiceTemplateVersion()
                         .eServiceTemplateIdPath(templateId)
+                        .reqSpec(reqSpec -> reqSpec.setContentType("application/json"))
                         .execute(Function.identity()),
                 CreatedResource.class
         );
@@ -127,6 +142,18 @@ public class BffEServiceTemplateRestClient extends RestClient {
         return execute(
                 () -> eServiceTemplatesApi
                         .publishEServiceTemplateVersion()
+                        .eServiceTemplateIdPath(templateId)
+                        .eServiceTemplateVersionIdPath(versionId)
+                        .reqSpec(reqSpec -> reqSpec.setContentType("application/json"))
+                        .execute(Function.identity()),
+                Void.class
+        );
+    }
+
+    public TestChain<Void> suspendEServiceTemplateVersion(@Nonnull UUID templateId, @Nonnull UUID versionId) {
+        return execute(
+                () -> eServiceTemplatesApi
+                        .suspendEServiceTemplateVersion()
                         .eServiceTemplateIdPath(templateId)
                         .eServiceTemplateVersionIdPath(versionId)
                         .reqSpec(reqSpec -> reqSpec.setContentType("application/json"))

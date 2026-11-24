@@ -1,16 +1,14 @@
 package it.pagopa.interop.common.purpose_template.infrastructure.cucumber;
 
+import io.cucumber.datatable.DataTable;
 import it.pagopa.application.context.EntityStore;
 import it.pagopa.interop.common.journey.application.InteropJourney;
 import it.pagopa.interop.common.kernel.domain.Tenant;
 import it.pagopa.interop.common.kernel.domain.TenantKind;
+import it.pagopa.interop.common.kernel.domain.UserRole;
 import it.pagopa.interop.common.purpose_template.application.PurposeTemplateUseCase;
 import it.pagopa.interop.common.purpose_template.domain.PurposeTemplate;
 import it.pagopa.interop.common.purpose_template.domain.PurposeTemplateState;
-import it.pagopa.interop.common.purpose_template.domain.PurposeTemplate;
-import it.pagopa.interop.common.purpose_template.application.PurposeTemplateUseCase;
-import org.junit.jupiter.api.Test;
-import it.pagopa.interop.common.purpose_template.infrastructure.cucumber.dto.PurposeTemplateDocumentConfiguration;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.EnumSource;
@@ -18,177 +16,163 @@ import org.junit.jupiter.params.provider.EnumSource;
 import java.util.List;
 import java.util.UUID;
 
+import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.mockito.Mockito.*;
 
 class PurposeTemplateStepsTest {
 
-    private final InteropJourney journey = mock(InteropJourney.class, RETURNS_SELF);
-    private final PurposeTemplateUseCase useCase = mock(PurposeTemplateUseCase.class);
-    private final EntityStore entityStore = mock(EntityStore.class);
-    private final PurposeTemplateSteps steps = new PurposeTemplateSteps(journey, useCase, entityStore);
-
     @ParameterizedTest
     @EnumSource(value = Tenant.class, names = {"COMUNE_DI_MILANO", "PAGO_PA"})
-    void createsAPublishedTemplateForPublicAdministrationsAsTheRequestedCreator(Tenant creator) {
-        steps.createPurposeTemplate(creator);
+    void createsTemplateInRequestedStateForPublicAdministrationsAsTheRequestedCreator(Tenant creator) {
+        var journey = mock(InteropJourney.class, RETURNS_SELF);
+        var entityStore = mock(EntityStore.class);
+        var useCase = mock(PurposeTemplateUseCase.class);
+        var steps = new PurposeTemplateSteps(entityStore, journey, useCase);
+
+        steps.createPurposeTemplate(creator, PurposeTemplateState.SUSPENDED);
 
         var order = inOrder(journey);
-        order.verify(journey).withProducer(creator);
+        order.verify(journey).withProducer(creator, UserRole.ADMIN);
+        order.verify(journey).createPurposeTemplate(
+                Tenant.fromTenantType(TenantKind.PA), PurposeTemplateState.SUSPENDED);
+        verifyNoMoreInteractions(journey);
+    }
+
+    @Test
+    void publishedStepDelegatesToGenericCreationStep() {
+        var journey = mock(InteropJourney.class, RETURNS_SELF);
+        var steps = new PurposeTemplateSteps(
+                mock(EntityStore.class), journey, mock(PurposeTemplateUseCase.class));
+
+        steps.createPurposeTemplate(Tenant.COMUNE_DI_MILANO);
+
+        var order = inOrder(journey);
+        order.verify(journey).withProducer(Tenant.COMUNE_DI_MILANO, UserRole.ADMIN);
         order.verify(journey).createPurposeTemplate(
                 Tenant.fromTenantType(TenantKind.PA), PurposeTemplateState.PUBLISHED);
         verifyNoMoreInteractions(journey);
     }
 
     @Test
-    void delegatesReactivationWithoutChangingTheActorOrChannel() {
-        var journey = mock(InteropJourney.class);
+    void savesARefreshedCopyOfTheCurrentPurposeTemplateAsReference() {
+        var entityStore = mock(EntityStore.class);
         var useCase = mock(PurposeTemplateUseCase.class);
-        var template = PurposeTemplate.builder().build();
+        var steps = new PurposeTemplateSteps(entityStore, mock(InteropJourney.class), useCase);
+        var storedTemplate = PurposeTemplate.builder().id(UUID.randomUUID()).title("old").build();
+        var refreshedTemplate = storedTemplate.toBuilder().title("current").build();
+        when(entityStore.getLastOrThrow(PurposeTemplate.class)).thenReturn(storedTemplate);
+        when(useCase.getPurposeTemplate(storedTemplate)).thenReturn(refreshedTemplate);
 
-        new PurposeTemplateSteps(journey, useCase, entityStore).attemptPurposeTemplateReactivation(template);
+        steps.savePurposeTemplateReference();
 
-        verify(useCase).attemptPurposeTemplateReactivation(template);
-        verifyNoMoreInteractions(useCase);
-        verifyNoInteractions(journey);
+        verify(entityStore).getLastOrThrow(PurposeTemplate.class);
+        verify(useCase).getPurposeTemplate(storedTemplate);
+        verifyNoMoreInteractions(entityStore, useCase);
     }
 
     @Test
-    void delegatesPublicationWithoutChangingTheActorOrChannel() {
-        var journey = mock(InteropJourney.class);
+    void rejectsUnsupportedMetadataFieldsBeforeChangingTheTemplate() {
+        var entityStore = mock(EntityStore.class);
+        var journey = mock(InteropJourney.class, RETURNS_SELF);
         var useCase = mock(PurposeTemplateUseCase.class);
-        var template = PurposeTemplate.builder().build();
-
-        new PurposeTemplateSteps(journey, useCase, entityStore).attemptPurposeTemplatePublication(template);
-
-        verify(useCase).attemptPurposeTemplatePublication(template);
-        verifyNoMoreInteractions(useCase);
-        verifyNoInteractions(journey);
-    }
-
-    @Test
-    void createsDraftTemplateWithAnnotatedAnswer() {
-        steps.draftPurposeTemplateWithAnnotatedAnswer();
-
-        var order = inOrder(journey);
-        order.verify(journey).createPurposeTemplate(
-                Tenant.fromTenantType(TenantKind.PA), PurposeTemplateState.DRAFT);
-        order.verify(journey).addAnnotationToPurposeTemplateRiskAnalysisAnswer();
-        verifyNoMoreInteractions(journey);
-    }
-
-    @Test
-    void attachesPdfDocumentsToPurposeTemplateAnnotation() {
-        var template = PurposeTemplate.builder().id(UUID.randomUUID()).build();
-        var updated = PurposeTemplate.builder().id(template.getId()).build();
+        var template = PurposeTemplate.builder()
+                .id(UUID.randomUUID())
+                .title("Titolo iniziale")
+                .description("Descrizione iniziale")
+                .targetDescription("Destinatari iniziali")
+                .build();
         when(entityStore.getLastOrThrow(PurposeTemplate.class)).thenReturn(template);
-        when(useCase.addRiskAnalysisAnswerAnnotationDocument(template, "Allegato A", "allegato-a.pdf"))
-                .thenReturn(updated);
+        var steps = new PurposeTemplateSteps(entityStore, journey, useCase);
+        DataTable dataTable = DataTable.create(List.of(
+                List.of("campo", "valore unico"),
+                List.of("non supportato", "valore unico")
+        ));
 
-        var docA = new PurposeTemplateDocumentConfiguration();
-        docA.setName("Allegato A");
-        docA.setFixture("allegato-a.pdf");
-        var docB = new PurposeTemplateDocumentConfiguration();
-        docB.setName("Allegato B");
-        docB.setFixture("allegato-b.pdf");
+        assertThatThrownBy(() ->
+                steps.updatePurposeTemplateMetadata(UserRole.ADMIN, Tenant.COMUNE_DI_POZZALLO, dataTable))
+                .isInstanceOf(IllegalArgumentException.class)
+                .hasMessageContaining("non supportato: non supportato");
 
-        steps.pdfDocumentsAttachedToPurposeTemplateAnnotation(List.of(docA, docB));
-
-        verify(useCase).addRiskAnalysisAnswerAnnotationDocument(template, "Allegato A", "allegato-a.pdf");
-        verify(useCase).addRiskAnalysisAnswerAnnotationDocument(updated, "Allegato B", "allegato-b.pdf");
+        verifyNoInteractions(journey, useCase);
     }
 
     @Test
-    void createsDraftTemplateWithQuestionPreparedForAnnotations() {
-        steps.draftPurposeTemplateWithQuestionPreparedForAnnotations();
-
-        verify(journey).createPurposeTemplate(
-                Tenant.fromTenantType(TenantKind.PA), PurposeTemplateState.DRAFT);
-        verifyNoMoreInteractions(journey);
-    }
-
-    @Test
-    void waitsForSignedRiskAnalysisDocumentAvailability() {
-        var doc = it.pagopa.interop.common.kernel.domain.Document.builder().id(UUID.randomUUID()).build();
-        var template = PurposeTemplate.builder().id(UUID.randomUUID()).annotationDocument(doc).build();
+    void mapsPurposeTemplateMetadataFieldsFromTheDataTable() {
+        var entityStore = mock(EntityStore.class);
+        var journey = mock(InteropJourney.class, RETURNS_SELF);
+        var useCase = mock(PurposeTemplateUseCase.class);
+        var template = PurposeTemplate.builder()
+                .id(UUID.randomUUID())
+                .title("Titolo iniziale")
+                .description("Descrizione iniziale")
+                .targetDescription("Destinatari iniziali")
+                .build();
         when(entityStore.getLastOrThrow(PurposeTemplate.class)).thenReturn(template);
+        var steps = new PurposeTemplateSteps(entityStore, journey, useCase);
+        DataTable dataTable = DataTable.create(List.of(
+                List.of("campo", "valore"),
+                List.of("purposeTitle", "Titolo aggiornato"),
+                List.of("purposeDescription", "Descrizione aggiornata"),
+                List.of("targetDescription", "Destinatari aggiornati"),
+                List.of("purposeIsFreeOfCharge", "false"),
+                List.of("purposeDailyCalls", "500"),
+                List.of("handlesPersonalData", "true")
+        ));
 
-        steps.signedRiskAnalysisDocumentForPurposeTemplateAvailable();
+        steps.updatePurposeTemplateMetadata(UserRole.ADMIN, Tenant.COMUNE_DI_POZZALLO, dataTable);
 
-        verify(useCase).awaitSignedRiskAnalysisDocumentAvailable(template);
+        verify(journey).withConsumer(Tenant.COMUNE_DI_POZZALLO);
+        verify(useCase).updateMetadata(
+                template,
+                "Titolo aggiornato",
+                "Descrizione aggiornata",
+                "Destinatari aggiornati",
+                false,
+                500,
+                true);
     }
 
     @Test
-    void attemptsToAttachFileToPurposeTemplateAnnotation() {
-        var template = PurposeTemplate.builder().id(UUID.randomUUID()).build();
+    void leavesOptionalOperationalMetadataUnsetWhenNotProvided() {
+        var entityStore = mock(EntityStore.class);
+        var journey = mock(InteropJourney.class, RETURNS_SELF);
+        var useCase = mock(PurposeTemplateUseCase.class);
+        var template = PurposeTemplate.builder()
+                .id(UUID.randomUUID())
+                .title("Titolo iniziale")
+                .description("Descrizione iniziale")
+                .targetDescription("Destinatari iniziali")
+                .build();
         when(entityStore.getLastOrThrow(PurposeTemplate.class)).thenReturn(template);
+        var steps = new PurposeTemplateSteps(entityStore, journey, useCase);
+        DataTable dataTable = DataTable.create(List.of(
+                List.of("campo", "valore"),
+                List.of("purposeDescription", "Descrizione aggiornata")
+        ));
 
-        steps.attachFileToPurposeTemplateAnnotation("allegato-b.pdf", "Allegato A");
+        steps.updatePurposeTemplateMetadata(UserRole.ADMIN, Tenant.COMUNE_DI_POZZALLO, dataTable);
 
-        verify(useCase).attemptRiskAnalysisAnswerAnnotationDocumentUpload(template, "Allegato A", "allegato-b.pdf");
+        verify(useCase).updateMetadata(template, "Titolo iniziale", "Descrizione aggiornata",
+                "Destinatari iniziali", null, null, null);
     }
 
     @Test
-    void attemptsToAddSuggestedEServiceToPurposeTemplate() {
-        var template = PurposeTemplate.builder().id(UUID.randomUUID()).build();
-        var eService = it.pagopa.interop.common.eservice.domain.EService.builder().id(UUID.randomUUID()).build();
-        when(entityStore.getLastOrThrow(PurposeTemplate.class)).thenReturn(template);
-        when(entityStore.getByAliasOrThrow("ES-2", it.pagopa.interop.common.eservice.domain.EService.class))
-                .thenReturn(eService);
-
-        steps.attemptAddSuggestedEServiceToPurposeTemplate("ES-2");
-
-        verify(useCase).attemptLinkEService(template, eService);
-    }
-
-    @Test
-    void attemptsToUpdatePurposeTemplateWithLinkInRiskAnalysisFreeTextAnswer() {
-        var template = PurposeTemplate.builder().id(UUID.randomUUID()).targetTenantKind(TenantKind.PRIVATE).build();
-        when(entityStore.getLastOrThrow(PurposeTemplate.class)).thenReturn(template);
-
-        steps.attemptUpdatePurposeTemplateWithLinkInRiskAnalysisFreeTextAnswer("Motivazione https://example.org");
-
-        verify(useCase).attemptUpdatePurposeTemplateWithFreeTextAnswer(
-                template, TenantKind.PRIVATE, "Motivazione https://example.org"
-        );
-    }
-
-    @Test
-    void attemptsToAddAnnotatedAnswerToPurposeTemplate() {
+    void rejectsInvalidOptionalOperationalMetadataValues() {
+        var entityStore = mock(EntityStore.class);
+        var useCase = mock(PurposeTemplateUseCase.class);
         var template = PurposeTemplate.builder().id(UUID.randomUUID()).build();
         when(entityStore.getLastOrThrow(PurposeTemplate.class)).thenReturn(template);
+        var steps = new PurposeTemplateSteps(entityStore, mock(InteropJourney.class), useCase);
+        DataTable dataTable = DataTable.create(List.of(
+                List.of("campo", "valore"),
+                List.of("purposeIsFreeOfCharge", "yes")
+        ));
 
-        steps.attemptAddAnnotatedAnswerToPurposeTemplate("Motivazione https://example.org");
+        assertThatThrownBy(() ->
+                steps.updatePurposeTemplateMetadata(UserRole.ADMIN, Tenant.COMUNE_DI_POZZALLO, dataTable))
+                .isInstanceOf(IllegalArgumentException.class)
+                .hasMessageContaining("Valore booleano non valido");
 
-        verify(useCase).attemptAddRiskAnalysisAnswerWithAnnotation(template, "Motivazione https://example.org");
-    }
-
-    @Test
-    void attemptsToUpdatePurposeTemplateAnnotationText() {
-        var template = PurposeTemplate.builder().id(UUID.randomUUID()).build();
-        when(entityStore.getLastOrThrow(PurposeTemplate.class)).thenReturn(template);
-
-        steps.attemptUpdatePurposeTemplateAnnotationText("Motivazione https://example.org");
-
-        verify(useCase).attemptUpdateRiskAnalysisAnswerAnnotation(template, "Motivazione https://example.org");
-    }
-
-    @Test
-    void attemptsToRenamePurposeTemplateAnnotationDocument() {
-        var template = PurposeTemplate.builder().id(UUID.randomUUID()).build();
-        when(entityStore.getLastOrThrow(PurposeTemplate.class)).thenReturn(template);
-
-        steps.attemptRenamePurposeTemplateAnnotationDocument("Allegato B", "Allegato A");
-
-        verify(useCase).attemptRenameRiskAnalysisAnswerAnnotationDocument(template, "Allegato B", "Allegato A");
-    }
-
-    @Test
-    void attemptsToDownloadSignedRiskAnalysisDocument() {
-        var template = PurposeTemplate.builder().id(UUID.randomUUID()).build();
-        when(entityStore.getLastOrThrow(PurposeTemplate.class)).thenReturn(template);
-
-        steps.attemptDownloadSignedRiskAnalysisDocument();
-
-        verify(useCase).attemptSignedRiskAnalysisDocumentDownload(template);
+        verifyNoInteractions(useCase);
     }
 }

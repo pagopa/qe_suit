@@ -151,6 +151,25 @@ public class EServiceCreationJourneySteps {
                 );
     }
 
+    @Given("un e-service in stato {eServiceDescriptorState}, creato dal {tenant}, con soglie base:")
+    public void createEServiceWithBaseThresholds(
+            EServiceDescriptorState state,
+            Tenant producer,
+            DataTable baseThresholds
+    ) {
+        Map<String, Integer> thresholdsMap = baseThresholds.asMap(String.class, Integer.class);
+
+        interopJourney
+                .withProducer(producer)
+                .createEService(EServiceDescriptorState.DRAFT)
+                .updateDescriptor(
+                        command -> command
+                                .dailyCallsPerConsumer(thresholdsMap.get("consumerThreshold"))
+                                .dailyCallsTotal(thresholdsMap.get("totalThreshold")),
+                        state
+                );
+    }
+
     @Given("una nuova versione dell'e-service in {eServiceDescriptorState}, creata dal {tenant}, con un attributo certificato e una soglia personalizzata per fruitore pari a {int}")
     public void createNewInstanceDraftEService(EServiceDescriptorState state, Tenant producer, int customThreshold, DataTable defaultThresholds) {
         Map<String, Integer> thresholdsMap = defaultThresholds.asMap(String.class, Integer.class);

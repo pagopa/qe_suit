@@ -1,6 +1,8 @@
 package it.pagopa.interop.bff.purpose_template.infrastructure;
 
 import it.pagopa.application.context.EntityStore;
+import it.pagopa.application.context.LastApiResponseStore;
+import it.pagopa.infrastructure.response.ApiResponse;
 import it.pagopa.infrastructure.template.action.TestChain;
 import it.pagopa.interop.common.kernel.domain.Tenant;
 import it.pagopa.interop.common.kernel.domain.EServiceRef;
@@ -13,7 +15,9 @@ import it.pagopa.interop.common.risk_analysis.domain.RiskAnalysisForm;
 import it.pagopa.interop.common.risk_analysis.domain.RiskAnalysisFormConfig;
 import it.pagopa.interop.generated.openapi.clients.bff.model.CreatedResource;
 import it.pagopa.interop.generated.openapi.clients.bff.model.PurposeTemplateSeed;
+import it.pagopa.interop.generated.openapi.clients.bff.model.PatchUpdatePurposeTemplateSeed;
 import it.pagopa.interop.generated.openapi.clients.bff.model.TargetTenantKind;
+import it.pagopa.infrastructure.template.action.TestChain;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.EnumSource;
@@ -49,9 +53,10 @@ class BffPurposeTemplateGatewayTest {
     }
 
     private final BffPurposeTemplateRestClient rest = mock(BffPurposeTemplateRestClient.class);
+    private final LastApiResponseStore lastApiResponseStore = mock(LastApiResponseStore.class);
     private final BffPurposeTemplateGateway gateway = new BffPurposeTemplateGateway(
             rest, mock(BffPurposeTemplateMapper.class), mock(BffPurposeTemplateRequestFactory.class),
-            mock(EntityStore.class));
+            mock(EntityStore.class), lastApiResponseStore);
     private final RiskAnalysisFormConfig config = RiskAnalysisFormConfig.builder().version("2.1")
             .questions(List.of(question("institutionalPurpose", "FREETEXT"),
                     question("purpose", "SINGLE"), question("legalBasis", "MULTI"),
@@ -61,12 +66,54 @@ class BffPurposeTemplateGatewayTest {
                     "purpose", List.of("INSTITUTIONAL"),
                     "legalBasis", List.of("CONSENT", "CONTRACT"))).build();
 
+    @Test
+    void assertsNotFoundWhenUpdatingMetadataForAnUnknownResource() {
+        var response = mock(ApiResponse.class);
+        when(lastApiResponseStore.getLastResponse()).thenReturn(response);
+        when(response.getStatusCode()).thenReturn(404);
+
+        gateway.shouldFailToUpdateMetadataAsNotFound();
+
+        verify(lastApiResponseStore).getLastResponse();
+    }
+
+    @Test
+    void includesProvidedOperationalMetadataInThePatchRequest() {
+        var template = PurposeTemplate.builder().id(UUID.randomUUID()).build();
+        when(rest.updatePurposeTemplate(eq(template.getId()), any()))
+                .thenReturn(mock(TestChain.class));
+
+        gateway.tryToUpdateMetadata(template, "title", "description", "target", false, 500, true);
+
+        var payload = ArgumentCaptor.forClass(PatchUpdatePurposeTemplateSeed.class);
+        verify(rest).updatePurposeTemplate(eq(template.getId()), payload.capture());
+        assertThat(payload.getValue().getPurposeIsFreeOfCharge()).isFalse();
+        assertThat(payload.getValue().getPurposeDailyCalls()).isEqualTo(500);
+        assertThat(payload.getValue().getHandlesPersonalData()).isTrue();
+    }
+
+    @Test
+    void omitsUnspecifiedOperationalMetadataFromThePatchRequest() {
+        var template = PurposeTemplate.builder().id(UUID.randomUUID()).build();
+        when(rest.updatePurposeTemplate(eq(template.getId()), any()))
+                .thenReturn(mock(TestChain.class));
+
+        gateway.tryToUpdateMetadata(template, "title", "description", "target", null, null, null);
+
+        var payload = ArgumentCaptor.forClass(PatchUpdatePurposeTemplateSeed.class);
+        verify(rest).updatePurposeTemplate(eq(template.getId()), payload.capture());
+        assertThat(payload.getValue().getPurposeIsFreeOfCharge()).isNull();
+        assertThat(payload.getValue().getPurposeDailyCalls()).isNull();
+        assertThat(payload.getValue().getHandlesPersonalData()).isNull();
+    }
+
     @ParameterizedTest
     @ValueSource(booleans = {false, true})
     void linksAndAwaitsTheSelectedResourceKind(boolean template) {
         var mapper = mock(BffPurposeTemplateMapper.class);
         var store = mock(EntityStore.class);
-        var adapter = new BffPurposeTemplateGateway(rest, mapper, mock(BffPurposeTemplateRequestFactory.class), store);
+        var adapter = new BffPurposeTemplateGateway(
+                rest, mapper, mock(BffPurposeTemplateRequestFactory.class), store, mock(LastApiResponseStore.class));
         var purpose = PurposeTemplate.builder().id(UUID.randomUUID()).build();
         var resourceId = UUID.randomUUID();
         var updated = purpose.toBuilder().resourceId(resourceId).build();
