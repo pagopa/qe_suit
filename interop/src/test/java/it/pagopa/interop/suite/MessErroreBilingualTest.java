@@ -24,17 +24,48 @@ import static io.cucumber.junit.platform.engine.Constants.PLUGIN_PROPERTY_NAME;
 @ExcludeTags({"wait_for_qa", "ignore"})
 @ConfigurationParameters({
         @ConfigurationParameter(key = PLUGIN_PROPERTY_NAME, value = "pretty"),
-        @ConfigurationParameter(key = PLUGIN_PROPERTY_NAME, value = "json:target/cucumber-reports/report-errorMsg-exec.json," + "html:target/cucumber-reports/report-errorMsg-exec.html"),
+        @ConfigurationParameter(key = PLUGIN_PROPERTY_NAME, value = "json:target/cucumber-reports/report.json," + "html:target/cucumber-reports/report.html"),
         @ConfigurationParameter(key = GLUE_PROPERTY_NAME, value = "it.pagopa.interop"),
 
-        // abilita parallelismo JUnit
-        @ConfigurationParameter(key = "junit.jupiter.execution.parallel.enabled", value = "false"),
-        @ConfigurationParameter(key = "cucumber.execution.parallel.enabled", value = "false"),
-        @ConfigurationParameter(key = "junit.jupiter.execution.parallel.mode.default", value = "same_thread"),
-        @ConfigurationParameter(key = "junit.jupiter.execution.parallel.config.fixed.parallelism", value = "1"),
+        // Jupiter: abilita parallelismo solo quando lancio questa suite
+        @ConfigurationParameter(
+                key = "junit.jupiter.execution.parallel.enabled",
+                value = "true"
+        ),
 
-        // abilita parallelismo Cucumber
-        @ConfigurationParameter(key = EXECUTION_MODE_FEATURE_PROPERTY_NAME, value = "same_thread")
+        @ConfigurationParameter(
+                key = "junit.jupiter.execution.parallel.mode.default",
+                value = "concurrent"
+        ),
+
+        @ConfigurationParameter(
+                key = "junit.jupiter.execution.parallel.config.strategy",
+                value = "dynamic"
+        ),
+
+        // Cucumber
+        @ConfigurationParameter(
+                key = EXECUTION_MODE_FEATURE_PROPERTY_NAME,
+                value = "concurrent"
+        ),
+
+        // tag cucumber
+        @ConfigurationParameter(
+                key = FILTER_TAGS_PROPERTY_NAME,
+                value = """
+                        (@debug-client-assertion-page-ui-flow
+                         or @agreement
+                         or @eservice-archiving
+                         or @private-catalog
+                         or eservice-template-interface
+                         or @eservice-attribute-threshold
+                         or @debug-client-assertion-page-ui-behavior
+                         or @dev-tools-page-ui-behavior)
+                        and not @wait_for_fix
+                        and not @awaiting_for_qa
+                        and not @ignore
+                        """
+        )
 })
 public class MessErroreBilingualTest {
 }
