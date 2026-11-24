@@ -31,6 +31,11 @@ public class DefaultRecipientSelector {
             throw new IllegalArgumentException("Nessun destinatario di test per il tipo " + type);
         }
         int count = cardinality == RecipientCardinality.SINGLE ? 1 : aliases.size();
-        return aliases.stream().limit(count).map(userProvider::resolve).toList();
+        List<User> recipients = aliases.stream().limit(count).map(userProvider::resolve).toList();
+        if (recipients.stream().map(User::getTaxId).distinct().count() != recipients.size()) {
+            throw new IllegalStateException("Il pool " + type + " non contiene destinatari distinti per la cardinalità "
+                    + cardinality);
+        }
+        return recipients;
     }
 }

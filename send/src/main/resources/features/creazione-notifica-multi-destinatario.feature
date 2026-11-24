@@ -10,17 +10,18 @@ Feature: Creazione notifica multi-destinatario via BFF
       | subject               | Comunicazione di test multi-destinatario |
       | physicalCommunication | REGISTERED_LETTER_890                    |
       | feePolicy             | FLAT_RATE                                |
-    And viene aggiunto User_1 come destinatario con i seguenti dati:
+    And è stato aggiunto User_1 come destinatario:
       | physicalAddress_address      | Via@ok_890 |
       | physicalAddress_municipality | COLLELUNGO |
       | physicalAddress_province     | TR         |
       | physicalAddress_zip          | 05010      |
       | pagoPA_number                | 0          |
       | F24_number                   | 0          |
-    And viene aggiunto Impresa_1 come destinatario con i seguenti dati:
+    And è stato aggiunto Impresa_1 come destinatario:
 #      | taxId           | LELPTR04A01C352X |
       | digitalDomicile | test@pec.it      |
       | pagoPA_number   | 1                |
       | F24_number      | 0                |
-    When la notifica viene sottomessa e si attende che lo stato diventi "EFFECTIVE_DATE"
+    When la notifica viene sottomessa
+    And la notifica raggiunge lo stato "Perfezionata per decorrenza termini"
 
