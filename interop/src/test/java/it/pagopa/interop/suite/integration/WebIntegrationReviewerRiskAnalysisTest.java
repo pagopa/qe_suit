@@ -1,7 +1,7 @@
 package it.pagopa.interop.suite.integration;
 
-import it.pagopa.infrastructure.contract.browser.WebScenario;
 import it.pagopa.domain.Identifiable;
+import it.pagopa.infrastructure.contract.browser.WebScenario;
 import it.pagopa.infrastructure.suit.component.Button;
 import it.pagopa.interop.TestBootApp;
 import it.pagopa.interop.common.agreement.application.AgreementGateway;
@@ -16,8 +16,8 @@ import it.pagopa.interop.common.kernel.context.AuthSession;
 import it.pagopa.interop.common.kernel.domain.Tenant;
 import it.pagopa.interop.common.kernel.domain.User;
 import it.pagopa.interop.common.kernel.domain.UserRole;
-import it.pagopa.interop.common.purpose.application.PurposeUseCase;
 import it.pagopa.interop.common.purpose.application.PurposeGateway;
+import it.pagopa.interop.common.purpose.application.PurposeUseCase;
 import it.pagopa.interop.common.purpose.domain.Purpose;
 import it.pagopa.interop.common.purpose.domain.PurposeVersionState;
 import it.pagopa.interop.common.risk_analysis.domain.RiskAnalysisReviewMode;
@@ -27,19 +27,11 @@ import it.pagopa.utils.RandomUtils;
 import it.pagopa.utils.async.PollingUtils;
 import lombok.RequiredArgsConstructor;
 import org.awaitility.core.ConditionTimeoutException;
-import org.junit.jupiter.api.AfterEach;
-import org.junit.jupiter.api.DisplayName;
-import org.junit.jupiter.api.DynamicTest;
-import org.junit.jupiter.api.TestFactory;
+import org.junit.jupiter.api.*;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.TestConstructor;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
-import java.util.UUID;
+import java.util.*;
 import java.util.function.Consumer;
 import java.util.function.Predicate;
 import java.util.function.Supplier;
@@ -151,6 +143,7 @@ class WebIntegrationReviewerRiskAnalysisTest {
      */
     @TestFactory
     @DisplayName("Reviewer views assigned RA")
+    @Tag("risk-analysis-sorting")
     Stream<DynamicTest> authorizedUserTests() {
         List<User> reviewers = User.getTenantUsers(consumer, UserRole.REVIEWER);
         assertThat(reviewers)
@@ -221,6 +214,7 @@ class WebIntegrationReviewerRiskAnalysisTest {
      */
     @TestFactory
     @DisplayName("Reviewer sees risk analyses ordered across pages")
+    @Tag("risk-analysis-sorting")
     Stream<DynamicTest> moreThenOnePageRiskAnalysisTests() {
         PaginatedRiskAnalyses fixtures = createPaginatedRiskAnalyses();
         Purpose oldest = fixtures.pending().get(0);
