@@ -66,7 +66,7 @@ public class WebProducerEServiceSummaryContractTest {
     private static final int DAILY_CALLS_TOTAL = 2;
     private static final String AUDIENCE = "QA";
     private static final AgreementApprovalPolicy APPROVAL_POLICY = AgreementApprovalPolicy.AUTOMATIC;
-    private static final String INTERFACE_NAME = "Specifica API_" + ESERVICE_DESCRIPTION + "_Comune di Milano_v" + 1;
+    private String INTERFACE_NAME;
 
     private final WebBrowserContractValidator webContractValidator;
     private final InteropJourney interopJourney;
@@ -96,7 +96,7 @@ public class WebProducerEServiceSummaryContractTest {
     }
 
     private EService prepareDraft() {
-        return interopJourney
+        EService eService = interopJourney
                 .switchChannel(Channel.BFF)
                 .withProducer(Tenant.COMUNE_DI_MILANO, UserRole.ADMIN)
                 .createEService(
@@ -108,16 +108,20 @@ public class WebProducerEServiceSummaryContractTest {
                                 .isClientAccessDelegable(CLIENT_ACCESS_DELEGABLE)
                                 .isSignalHubEnabled(SIGNAL_HUB_ENABLED),
                         EServiceDescriptorState.DRAFT
-                )
-                .updateDescriptor(config -> config
-                                .description(VERSION_DESCRIPTION)
-                                .audience(List.of(AUDIENCE))
-                                .voucherLifespan(60)
-                                .agreementApprovalPolicy(APPROVAL_POLICY)
-                                .dailyCallsPerConsumer(DAILY_CALLS_PER_CONSUMER)
-                                .dailyCallsTotal(DAILY_CALLS_TOTAL)
-                                .apiInterface(ApiInterface.builder()
-                                        .name(INTERFACE_NAME).path("assets/origin-interface.yaml").build()),
+                ).get(EService.class);
+
+        INTERFACE_NAME = "Specifica API_" + eService.getName() + "_Comune di Milano_v" + 1;
+
+                return interopJourney
+                        .updateDescriptor(config -> config
+                        .description(VERSION_DESCRIPTION)
+                        .audience(List.of(AUDIENCE))
+                        .voucherLifespan(60)
+                        .agreementApprovalPolicy(APPROVAL_POLICY)
+                        .dailyCallsPerConsumer(DAILY_CALLS_PER_CONSUMER)
+                        .dailyCallsTotal(DAILY_CALLS_TOTAL)
+                        .apiInterface(ApiInterface.builder()
+                        .name(INTERFACE_NAME).path("assets/origin-interface.yaml").build()),
                         EServiceDescriptorState.DRAFT
                 )
                 .get(EService.class);
