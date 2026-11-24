@@ -265,8 +265,9 @@ Feature: Modifica dei metadati dei template finalità
       | campo              | valore unico      |
       | purposeTitle       | primo nome        |
       | purposeDescription | prima descrizione |
-    Then un admin del Comune di Comun Nuovo
-    And la richiesta di modifica dei metadati del template finalità fallisce come operazione vietata
+    Then la richiesta di modifica dei metadati del template finalità fallisce per risorsa non trovata
+    And un admin del Comune di Comun Nuovo
+    And il template finalità conserva lo stato e i dati di riferimento
 
   @work-item:QA-19036
   @channel:Given=BFF,When=BFF,Then=BFF
