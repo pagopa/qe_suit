@@ -6,6 +6,7 @@ import it.pagopa.infrastructure.suit.component.TableRow;
 import it.pagopa.send.common.kernel.domain.Channel;
 import it.pagopa.send.common.legal_notification.application.SearchNotificationGateway;
 import it.pagopa.send.common.legal_notification.domain.LegalNotificationDomain;
+import it.pagopa.send.common.legal_notification.domain.NotificationStatus;
 import it.pagopa.send.web.mittente.infrastructure.page.DashboardPage;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -45,7 +46,7 @@ public class WebSearchNotificationGateway implements SearchNotificationGateway {
                 .map(cells -> LegalNotificationDomain.builder()
                         .iun(cells.get(iun).read())
                         .subject(cells.get(subject).read())
-                        .status(NotificationStatusLabel.find(cells.get(status).read()).orElse(null))
+                        .status(NotificationStatus.fromLabel(cells.get(status).read()).orElse(null))
                         .build())
                 .toList();
     }

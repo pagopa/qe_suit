@@ -5,6 +5,7 @@ import it.pagopa.application.context.EntityStore;
 import it.pagopa.send.common.kernel.domain.Channel;
 import it.pagopa.send.common.legal_notification.application.ReadNotificationGateway;
 import it.pagopa.send.common.legal_notification.domain.LegalNotificationDomain;
+import it.pagopa.send.common.legal_notification.domain.NotificationStatus;
 import it.pagopa.send.web.notification_details.infrastructure.page.MittenteNotificationDetailsPage;
 import it.pagopa.send.web.notification_details.infrastructure.page.section.MittenteNotificationSummarySection;
 import lombok.RequiredArgsConstructor;
@@ -33,11 +34,13 @@ public class WebReadNotificationGateway implements ReadNotificationGateway {
         MittenteNotificationDetailsPage details = browser.bind(MittenteNotificationDetailsPage.class);
         details.navigateTo(iun);
         MittenteNotificationSummarySection summary = details.notificationSummarySection();
+        String statusLabel = details.notificationStatusSection().statusChip().text().read();
         return LegalNotificationDomain.builder()
                 .iun(iun)
                 .paProtocolNumber(summary.protocolNumberValue().read())
                 .senderDenomination(summary.senderValue().read())
-                .status(NotificationStatusLabel.toStatus(details.notificationStatusSection().statusChip().text().read()))
+                .status(NotificationStatus.fromLabel(statusLabel).orElseThrow(() ->
+                        new IllegalStateException("Stato della notifica non riconosciuto nel portale: " + statusLabel)))
                 .build();
     }
 
