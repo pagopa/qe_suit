@@ -15,6 +15,7 @@ import it.pagopa.utils.async.PollingUtils;
 import it.pagopa.interop.generated.openapi.clients.bff.model.AgreementPayload;
 import it.pagopa.utils.FileUtils;
 import jakarta.annotation.Nullable;
+import java.util.UUID;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
@@ -289,7 +290,8 @@ public class BffAgreementGateway implements AgreementGateway {
     }
 
     @Override
-    public void attemptAgreementDocumentDeletion(Agreement agreement) {
-        restClient.deleteAgreementConsumerDocument(agreement.getId(), agreement.getConsumerDocuments().get(0).getId()).withoutPolling();
+    public void attemptAgreementDocumentDeletion(Agreement agreement, @Nullable UUID documentId) {
+        UUID targetDocumentId = documentId != null ? documentId : agreement.getConsumerDocuments().get(0).getId();
+        restClient.deleteAgreementConsumerDocument(agreement.getId(), targetDocumentId).withoutPolling();
     }
 }

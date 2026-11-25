@@ -17,6 +17,7 @@ import it.pagopa.interop.web.eservice.infrastructure.page.ConsumerAgreementDetai
 import it.pagopa.interop.web.eservice.infrastructure.suit.page.EServiceDetailPage;
 import it.pagopa.interop.web.infrastructure.suit.component.NotFoundComponent;
 import it.pagopa.utils.async.DelayUtils;
+import java.util.UUID;
 import lombok.RequiredArgsConstructor;
 import org.jspecify.annotations.Nullable;
 import org.springframework.stereotype.Service;
@@ -234,7 +235,7 @@ public class WebAgreementGateway implements AgreementGateway, WebAgreementSecuri
     }
 
     @Override
-    public void attemptAgreementDocumentDeletion(Agreement agreement) {
+    public void attemptAgreementDocumentDeletion(Agreement agreement, UUID documentId) {
         throw new UnsupportedOperationException("WebAgreementGateway does not support attemptAgreementDocumentDeletion operation");
     }
 }

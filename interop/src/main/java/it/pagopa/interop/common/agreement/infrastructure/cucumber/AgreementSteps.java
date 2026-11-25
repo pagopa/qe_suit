@@ -20,6 +20,7 @@ import it.pagopa.interop.common.eservice.domain.EServiceDescriptor;
 import it.pagopa.interop.common.eservice.infrastructure.cucumber.dto.SelectedEServiceDescriptor;
 import it.pagopa.interop.common.journey.application.InteropJourney;
 import it.pagopa.interop.common.kernel.context.AuthSession;
+import it.pagopa.interop.common.kernel.domain.Document;
 import it.pagopa.interop.common.kernel.domain.Tenant;
 import it.pagopa.interop.common.kernel.domain.TenantRef;
 import it.pagopa.interop.common.tenant.application.TenantUseCase;
@@ -37,6 +38,14 @@ public class AgreementSteps {
     private final TenantUseCase tenantUseCase;
     private final EServiceDescriptorUseCase eServiceDescriptorUseCase;
     private final EServiceRequestFactory eServiceRequestFactory;
+
+    /* DEV. NOTE 25/11/2026: memoria di contesto necessaria per rendere possibile l'attuazione
+    * dello step "il fruitore tenta di eliminare il documento già eliminato dalla {currentAgreement}".
+    * In controtendenza rispetto alle pratiche usate finora che evitavano di memorizzare
+    * informazioni come questa nelle classi di step o in contesti dedicati, ma non è stata
+    * trovata una strategia migliore con gli strumenti attualmente disponibili.
+    * Da definire come gestire casi come questo. */
+    private Document deletedDocument;
 
     @When("l'erogatore accede ai dettagli della richiesta di fruizione ricevuta")
     public void viewProducerAgreementDetails() {
@@ -165,7 +174,10 @@ public class AgreementSteps {
 
     @Given("il documento allegato alla {currentAgreement} viene eliminato")
     public void removeAttachedDocumentFromAgreement(Agreement agreement) {
+        int lastDocument = agreement.getConsumerDocuments().size() - 1;
+        Document documentToDelete = agreement.getConsumerDocuments().get(lastDocument).toBuilder().build();
         agreementUseCase.removeLastConsumerDocument(agreement);
+        this.deletedDocument = documentToDelete;
     }
 
     @Given("la {currentAgreement} inviata")
@@ -252,6 +264,12 @@ public class AgreementSteps {
     @When("il fruitore tenta di eliminare il documento dalla {currentAgreement}")
     public void attemptAgreementDocumentDeletion(Agreement agreement) {
         agreementUseCase.attemptAgreementDocumentDeletion(agreement);
+    }
+
+    @When("il fruitore tenta di eliminare il documento già eliminato dalla {currentAgreement}")
+    public void attemptAgreementDocumentIdDeletion(Agreement agreement) {
+        UUID deletedDocumentId = this.deletedDocument.getId();
+        agreementUseCase.attemptAgreementDocumentDeletion(agreement, deletedDocumentId);
     }
 
 }

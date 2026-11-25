@@ -9,6 +9,7 @@ import it.pagopa.interop.common.kernel.domain.Delegation;
 import it.pagopa.interop.common.kernel.domain.Document;
 import it.pagopa.utils.async.PollingUtils;
 import jakarta.annotation.Nullable;
+import java.util.UUID;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
@@ -182,6 +183,10 @@ public class AgreementUseCase {
     }
 
     public void attemptAgreementDocumentDeletion(Agreement agreement) {
-        agreementGateway.attemptAgreementDocumentDeletion(agreement);
+        agreementGateway.attemptAgreementDocumentDeletion(agreement, null);
+    }
+
+    public void attemptAgreementDocumentDeletion(Agreement agreement, UUID deletedDocumentId) {
+        agreementGateway.attemptAgreementDocumentDeletion(agreement, deletedDocumentId);
     }
 }
