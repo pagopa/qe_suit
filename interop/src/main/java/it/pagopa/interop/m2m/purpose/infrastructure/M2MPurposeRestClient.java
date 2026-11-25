@@ -9,7 +9,10 @@ import it.pagopa.interop.generated.openapi.clients.m2m.v3.model.DelegationRef;
 import it.pagopa.interop.generated.openapi.clients.m2m.v3.model.Purpose;
 import it.pagopa.interop.generated.openapi.clients.m2m.v3.model.PurposeSeed;
 import it.pagopa.interop.generated.openapi.clients.m2m.v3.model.PurposeVersion;
+import it.pagopa.interop.generated.openapi.clients.m2m.v3.model.PurposeFromTemplateSeed;
 import it.pagopa.interop.generated.openapi.clients.m2m.v3.model.PurposeVersionSeed;
+import it.pagopa.interop.generated.openapi.clients.m2m.v3.model.ReversePurposeDraftUpdateSeed;
+import it.pagopa.interop.generated.openapi.clients.m2m.v3.model.UpdateDraftPurposeRequest;
 import jakarta.annotation.Nonnull;
 import org.springframework.stereotype.Component;
 
@@ -44,11 +47,63 @@ public class M2MPurposeRestClient extends RestClient {
         );
     }
 
+    public TestChain<Purpose> createPurposeFromTemplate(
+            @Nonnull UUID purposeTemplateId,
+            @Nonnull PurposeFromTemplateSeed payload
+    ) {
+        return execute(
+                () -> purposesApi.createPurposeFromTemplate()
+                        .purposeTemplateIdPath(purposeTemplateId)
+                        .body(payload)
+                        .execute(Function.identity()),
+                Purpose.class
+        );
+    }
+
+    public TestChain<Purpose> updatePurposeMetadata(
+            @Nonnull UUID purposeId, @Nonnull String title, @Nonnull String description,
+            Boolean isFreeOfCharge, String freeOfChargeReason, Integer dailyCalls) {
+        return execute(
+                () -> purposesApi.updateDraftPurpose()
+                        .purposeIdPath(purposeId)
+                        .reqSpec(reqSpec -> reqSpec.setContentType("application/merge-patch+json; charset=UTF-8"))
+                        .body(new UpdateDraftPurposeRequest().title(title).description(description)
+                                .isFreeOfCharge(isFreeOfCharge).freeOfChargeReason(freeOfChargeReason)
+                                .dailyCalls(dailyCalls))
+                        .execute(Function.identity()),
+                Purpose.class
+        );
+    }
+
+    public TestChain<Purpose> updateReversePurposeMetadata(
+            @Nonnull UUID purposeId, @Nonnull String title, @Nonnull String description,
+            Boolean isFreeOfCharge, String freeOfChargeReason, Integer dailyCalls) {
+        return execute(
+                () -> purposesApi.updateDraftReversePurpose()
+                        .purposeIdPath(purposeId)
+                        .reqSpec(reqSpec -> reqSpec.setContentType("application/merge-patch+json; charset=UTF-8"))
+                        .body(new ReversePurposeDraftUpdateSeed().title(title).description(description)
+                                .isFreeOfCharge(isFreeOfCharge).freeOfChargeReason(freeOfChargeReason)
+                                .dailyCalls(dailyCalls))
+                        .execute(Function.identity()),
+                Purpose.class
+        );
+    }
+
     public TestChain<Purpose> approvePurpose(@Nonnull UUID purposeId, DelegationRef delegationRef) {
         return execute(
                 () -> purposesApi.approvePurpose()
                         .purposeIdPath(purposeId)
                         .body(delegationRef)
+                        .execute(Function.identity()),
+                Purpose.class
+        );
+    }
+
+    public TestChain<Purpose> archivePurpose(@Nonnull UUID purposeId) {
+        return execute(
+                () -> purposesApi.archivePurpose()
+                        .purposeIdPath(purposeId)
                         .execute(Function.identity()),
                 Purpose.class
         );
