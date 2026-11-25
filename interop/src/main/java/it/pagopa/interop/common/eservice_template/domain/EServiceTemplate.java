@@ -27,6 +27,8 @@ public class EServiceTemplate implements Identifiable {
     EServiceMode mode;
     EServiceTemplateState state;
     Boolean personalData;
+    Boolean isSignalHubEnabled;
+    Boolean asyncExchange;
     Instant createdAt;
     Instant updatedAt;
 
@@ -36,6 +38,22 @@ public class EServiceTemplate implements Identifiable {
 
     @Singular("riskAnalysis")
     List<EServiceRiskAnalysis> riskAnalyses;
+
+    @Singular
+    List<EServiceTemplateInstance> instances;
+
+    public Optional<EServiceTemplateInstance> findInstance(UUID eserviceId) {
+        return instances.stream()
+                .filter(instance -> instance.eserviceRef().id().equals(eserviceId))
+                .findFirst();
+    }
+
+    public EServiceTemplate withUpsertedInstance(EServiceTemplateInstance instance) {
+        List<EServiceTemplateInstance> updatedInstances = new ArrayList<>(instances);
+        updatedInstances.removeIf(existing -> existing.eserviceRef().id().equals(instance.eserviceRef().id()));
+        updatedInstances.add(instance);
+        return toBuilder().clearInstances().instances(updatedInstances).build();
+    }
 
     public EServiceTemplateVersion getLatestVersion() {
         return versions.stream()

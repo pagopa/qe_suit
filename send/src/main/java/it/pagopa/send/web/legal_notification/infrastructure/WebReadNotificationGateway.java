@@ -1,6 +1,5 @@
 package it.pagopa.send.web.legal_notification.infrastructure;
 
-import it.frontend.e2e.framework.web.WebPresentationGateway;
 import it.pagopa.application.context.EntityStore;
 import it.pagopa.send.common.kernel.domain.Channel;
 import it.pagopa.send.common.legal_notification.application.ReadNotificationGateway;
@@ -19,7 +18,7 @@ import org.springframework.stereotype.Service;
 @RequiredArgsConstructor
 public class WebReadNotificationGateway implements ReadNotificationGateway {
 
-    private final WebPresentationGateway browser;
+    private final MittenteNotificationDetailsPage notificationDetailsPage;
     private final EntityStore entityStore;
 
     @Override
@@ -31,10 +30,9 @@ public class WebReadNotificationGateway implements ReadNotificationGateway {
 
     // solo lettura, senza registrare la notifica: per riconoscere quella appena inviata tra più candidate
     LegalNotificationDomain readFromPortal(String iun) {
-        MittenteNotificationDetailsPage details = browser.bind(MittenteNotificationDetailsPage.class);
-        details.navigateTo(iun);
-        MittenteNotificationSummarySection summary = details.notificationSummarySection();
-        String statusLabel = details.notificationStatusSection().statusChip().text().read();
+        notificationDetailsPage.navigateTo(iun);
+        MittenteNotificationSummarySection summary = notificationDetailsPage.notificationSummarySection();
+        String statusLabel = notificationDetailsPage.notificationStatusSection().statusChip().text().read();
         return LegalNotificationDomain.builder()
                 .iun(iun)
                 .paProtocolNumber(summary.protocolNumberValue().read())

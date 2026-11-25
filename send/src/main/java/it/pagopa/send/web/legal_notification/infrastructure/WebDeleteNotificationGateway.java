@@ -1,6 +1,5 @@
 package it.pagopa.send.web.legal_notification.infrastructure;
 
-import it.frontend.e2e.framework.web.WebPresentationGateway;
 import it.pagopa.send.common.kernel.domain.Channel;
 import it.pagopa.send.common.legal_notification.application.DeleteNotificationGateway;
 import it.pagopa.send.common.legal_notification.domain.NotificationStatus;
@@ -19,16 +18,15 @@ public class WebDeleteNotificationGateway implements DeleteNotificationGateway {
     private static final Duration STATUS_TIMEOUT = Duration.ofMinutes(10);
     private static final Duration STATUS_INTERVAL = Duration.ofSeconds(15);
 
-    private final WebPresentationGateway browser;
+    private final MittenteNotificationDetailsPage notificationDetailsPage;
     private final WebReadNotificationGateway readNotificationGateway;
 
     @Override
     public void deleteNotification(String iun) {
-        MittenteNotificationDetailsPage details = browser.bind(MittenteNotificationDetailsPage.class);
-        details.navigateTo(iun);
-        details.assertLoaded();
-        details.cancelNotificationButton().click();
-        details.confirmCancelNotificationButton().click();
+        notificationDetailsPage.navigateTo(iun);
+        notificationDetailsPage.assertLoaded();
+        notificationDetailsPage.cancelNotificationButton().click();
+        notificationDetailsPage.confirmCancelNotificationButton().click();
         PollingUtils.pollUntil(
                 () -> readNotificationGateway.readNotification(iun).getStatus(),
                 status -> status == NotificationStatus.CANCELLED,

@@ -1,6 +1,5 @@
 package it.pagopa.send.web.legal_notification.infrastructure;
 
-import it.frontend.e2e.framework.web.WebPresentationGateway;
 import it.pagopa.send.common.kernel.domain.Channel;
 import it.pagopa.send.common.legal_notification.application.SendNotificationGateway;
 import it.pagopa.send.common.legal_notification.domain.LegalNotificationCreationRequest;
@@ -37,7 +36,8 @@ public class WebSendNotificationGateway implements SendNotificationGateway {
     private static final String TEST_DOCUMENT = "documents/test-attachment.pdf";
     private static final String TEST_F24_METADATA = "documents/f24-metadata.json";
 
-    private final WebPresentationGateway browser;
+    private final CreateNotificationPage createNotificationPage;
+    private final NotificationSuccessPage notificationSuccessPage;
     private final LegalNotificationCreationRequest request;
     private final WebSearchNotificationGateway searchNotificationGateway;
     private final WebReadNotificationGateway readNotificationGateway;
@@ -48,12 +48,11 @@ public class WebSendNotificationGateway implements SendNotificationGateway {
         if (targetStatus == NotificationStatus.REFUSED) {
             throw new UnsupportedOperationException("Lo stato REFUSED non è osservabile dal portale della PA");
         }
-        CreateNotificationPage page = browser.bind(CreateNotificationPage.class);
-        page.continueToNextStep();
-        compilePayments(page);
-        page.documentazioneStep().fillFields(request.getSubject(), resourcePath(TEST_DOCUMENT));
-        page.continueToNextStep();
-        browser.bind(NotificationSuccessPage.class).assertLoaded();
+        createNotificationPage.continueToNextStep();
+        compilePayments();
+        createNotificationPage.documentazioneStep().fillFields(request.getSubject(), resourcePath(TEST_DOCUMENT));
+        createNotificationPage.continueToNextStep();
+        notificationSuccessPage.assertLoaded();
 
         // la notifica compare tra quelle della PA solo dopo l'accettazione, quando ha lo IUN
         String iun = PollingUtils.pollUntil(
@@ -90,7 +89,7 @@ public class WebSendNotificationGateway implements SendNotificationGateway {
      * destinatari con pagamenti, o più pagamenti dello stesso tipo, si caricherebbero gli stessi file di test più volte,
      * che il portale non accetta.
      */
-    private void compilePayments(CreateNotificationPage page) {
+    private void compilePayments() {
         List<ResolvedRecipient> recipientsWithPayments = request.getRecipients().stream()
                 .filter(recipient -> !recipient.payments().isEmpty())
                 .toList();
@@ -105,12 +104,12 @@ public class WebSendNotificationGateway implements SendNotificationGateway {
                         + " il portale non accetta lo stesso file più di una volta");
             }
         }
-        page.dettaglioPosizioneDebitoriaStep().selectPaymentModels(request.getRecipients());
-        page.continueToNextStep();
+        createNotificationPage.dettaglioPosizioneDebitoriaStep().selectPaymentModels(request.getRecipients());
+        createNotificationPage.continueToNextStep();
         if (!recipientsWithPayments.isEmpty()) {
-            page.paymentDetailStep().fillFields(request.getFeePolicy(), recipientsWithPayments,
+            createNotificationPage.paymentDetailStep().fillFields(request.getFeePolicy(), recipientsWithPayments,
                     resourcePath(TEST_DOCUMENT), resourcePath(TEST_F24_METADATA));
-            page.continueToNextStep();
+            createNotificationPage.continueToNextStep();
         }
     }
 

@@ -1,7 +1,6 @@
 package it.pagopa.send.web.legal_notification.infrastructure;
 
 import it.frontend.e2e.framework.core.capability.core.Gettable.FindPolicy;
-import it.frontend.e2e.framework.web.WebPresentationGateway;
 import it.pagopa.infrastructure.suit.component.Table;
 import it.pagopa.infrastructure.suit.component.TableRow;
 import it.pagopa.send.common.kernel.domain.Channel;
@@ -33,26 +32,25 @@ public class WebSearchNotificationGateway implements SearchNotificationGateway {
     private static final Duration RESULTS_TIMEOUT = Duration.ofSeconds(20);
     private static final Duration RESULTS_INTERVAL = Duration.ofSeconds(1);
 
-    private final WebPresentationGateway browser;
+    private final DashboardPage dashboardPage;
 
     @Override
     public List<LegalNotificationDomain> searchNotification(Map<String, String> filters) {
-        DashboardPage dashboard = browser.bind(DashboardPage.class);
-        dashboard.navigateTo();
-        dashboard.assertLoaded();
+        dashboardPage.navigateTo();
+        dashboardPage.assertLoaded();
         // ente senza notifiche: niente filtri né tabella
-        if (!hasNotifications(dashboard)) {
+        if (!hasNotifications(dashboardPage)) {
             return List.of();
         }
         // "Filtra" senza filtri è disabilitato
         if (!filters.isEmpty()) {
-            dashboard.searchNotification(filters);
+            dashboardPage.searchNotification(filters);
             // ricerca senza risultati
-            if (!hasNotifications(dashboard)) {
+            if (!hasNotifications(dashboardPage)) {
                 return List.of();
             }
         }
-        Table table = dashboard.notificationsTable();
+        Table table = dashboardPage.notificationsTable();
         List<String> headers = table.getColumnHeaders();
         int subject = column(headers, SUBJECT_HEADER);
         int iun = column(headers, IUN_HEADER);

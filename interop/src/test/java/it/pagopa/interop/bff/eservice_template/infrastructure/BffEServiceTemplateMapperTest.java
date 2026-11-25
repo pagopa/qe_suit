@@ -4,7 +4,9 @@ import it.pagopa.interop.bff.eservice.infrastructure.BffEServiceDescriptorMapper
 import it.pagopa.interop.common.eservice.domain.EServiceMode;
 import it.pagopa.interop.common.eservice.domain.EServiceTechnology;
 import it.pagopa.interop.common.eservice_template.domain.*;
+import it.pagopa.interop.common.eservice_template.domain.EServiceTemplateInstance;
 import it.pagopa.interop.common.eservice_template.domain.EServiceTemplateVersionState;
+import it.pagopa.interop.common.kernel.domain.EServiceRef;
 import it.pagopa.interop.common.kernel.domain.EServiceTemplateRef;
 import it.pagopa.interop.common.kernel.domain.EServiceTemplateVersionRef;
 import it.pagopa.interop.generated.openapi.clients.bff.model.*;
@@ -37,6 +39,7 @@ class BffEServiceTemplateMapperTest {
 
     @Test
     void preservingVersions_keeps_version_list_mutable() {
+        var instance = new EServiceTemplateInstance("label", EServiceRef.of(UUID.randomUUID()));
         EServiceTemplateVersion existingVersion = EServiceTemplateVersion.builder()
                 .id(UUID.randomUUID())
                 .version("1")
@@ -49,6 +52,7 @@ class BffEServiceTemplateMapperTest {
                 .description("existing-description")
                 .intendedTarget("existing-target")
                 .versions(List.of(existingVersion))
+                .instance(instance)
                 .riskAnalyses(List.of())
                 .build();
 
@@ -93,6 +97,7 @@ class BffEServiceTemplateMapperTest {
         ));
 
         assertThat(mapped.getVersions()).hasSize(2);
+        assertThat(mapped.getInstances()).containsExactly(instance);
         assertThat(existingTemplate.getVersions()).hasSize(1);
     }
 
@@ -182,6 +187,7 @@ class BffEServiceTemplateMapperTest {
 
     @Test
     void merging_partial_version_reads_preserves_other_versions_and_only_matching_checksum_bytes() {
+        var instance = new EServiceTemplateInstance("label", EServiceRef.of(UUID.randomUUID()));
         UUID templateId = UUID.randomUUID();
         UUID versionOne = UUID.randomUUID();
         UUID versionTwo = UUID.randomUUID();
@@ -200,6 +206,7 @@ class BffEServiceTemplateMapperTest {
 
         EServiceTemplate existing = EServiceTemplate.builder()
                 .id(templateId)
+                .instance(instance)
                 .version(
                         EServiceTemplateVersion.builder()
                                 .id(versionOne)
@@ -244,6 +251,7 @@ class BffEServiceTemplateMapperTest {
 
         assertThat(changedChecksum.getVersion(2).getInterfaceDocument().getContent())
                 .isNull();
+        assertThat(changedChecksum.getInstances()).containsExactly(instance);
     }
 
     @Test
