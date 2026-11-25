@@ -2,9 +2,11 @@ package it.pagopa.interop.bff.producer_keychain.infrastructure;
 
 import it.pagopa.interop.common.infrastructure.SharedMapper;
 import it.pagopa.interop.common.infrastructure.config.TestMapperConfig;
+import it.pagopa.interop.common.kernel.domain.EServiceRef;
 import it.pagopa.interop.common.producer_keychain.domain.ProducerKeychain;
 import it.pagopa.interop.common.producer_keychain.domain.ProducerKeychainPublicKey;
 import it.pagopa.interop.common.producer_keychain.domain.ProducerKeysPage;
+import it.pagopa.interop.generated.openapi.clients.bff.model.CompactEService;
 import it.pagopa.interop.generated.openapi.clients.bff.model.CompactUser;
 import it.pagopa.interop.generated.openapi.clients.bff.model.PublicKey;
 import it.pagopa.interop.generated.openapi.clients.bff.model.PublicKeys;
@@ -65,5 +67,9 @@ public interface BffProducerKeychainMapper {
 
     default UUID map(CompactUser user) {
         return user == null ? null : user.getUserId();
+    }
+
+    default EServiceRef map(CompactEService eservice) {
+        return eservice == null ? null : EServiceRef.of(eservice.getId());
     }
 }

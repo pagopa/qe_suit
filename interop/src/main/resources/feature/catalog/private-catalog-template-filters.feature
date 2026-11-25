@@ -19,8 +19,8 @@ Feature: Filtri sui template nel catalogo privato
       | alias | nome                  | tecnologia |
       | TPL-1 | Template Modello Alfa | SOAP       |
     And le seguenti istanze di template pubblicate:
-      | alias | template |
-      | ES-2  | TPL-1    |
+      | alias | template | suffisso |
+      | ES-2  | TPL-1    | eservice |
     And i seguenti e-service pubblicati:
       | alias | erogatore        | nome                   |
       | ES-1  | Comune di Milano | E-service Modello Beta |
@@ -35,8 +35,8 @@ Feature: Filtri sui template nel catalogo privato
       | alias | nome                | tecnologia |
       | TPL-1 | Template Forma Alfa | SOAP       |
     And le seguenti istanze di template pubblicate:
-      | alias | template |
-      | ES-2  | TPL-1    |
+      | alias | template | suffisso |
+      | ES-2  | TPL-1    | eservice |
     And i seguenti e-service pubblicati:
       | alias | erogatore        | nome                 |
       | ES-1  | Comune di Milano | E-service Forma Beta |
@@ -52,10 +52,10 @@ Feature: Filtri sui template nel catalogo privato
       | TPL-1 | Template Stampo Alfa | SOAP       |
       | TPL-2 | Template Stampo Beta | SOAP       |
     And le seguenti istanze di template pubblicate:
-      | alias | template |
-      | ES-1  | TPL-1    |
-      | ES-2  | TPL-1    |
-      | ES-3  | TPL-2    |
+      | alias | template | suffisso |
+      | ES-1  | TPL-1    | eservice |
+      | ES-2  | TPL-1    | eservice |
+      | ES-3  | TPL-2    | eservice |
     When PagoPA cerca nel catalogo "Stampo" con i seguenti filtri:
       | filtro               | valore |
       | istanza del template | TPL-1  |
@@ -71,8 +71,8 @@ Feature: Filtri sui template nel catalogo privato
       | TPL-1 | Template Vuoto Alfa | SOAP       |
       | TPL-2 | Template Vuoto Beta | SOAP       |
     And le seguenti istanze di template pubblicate:
-      | alias | template |
-      | ES-1  | TPL-2    |
+      | alias | template | suffisso |
+      | ES-1  | TPL-2    | eservice |
     When PagoPA cerca nel catalogo "Vuoto" con i seguenti filtri:
       | filtro               | valore |
       | istanza del template | TPL-1  |

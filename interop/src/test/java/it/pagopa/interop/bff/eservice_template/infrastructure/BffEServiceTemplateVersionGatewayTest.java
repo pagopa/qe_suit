@@ -5,9 +5,11 @@ import it.pagopa.infrastructure.context.InMemoryEntityStore;
 import it.pagopa.infrastructure.response.RawResponse;
 import it.pagopa.infrastructure.template.action.TestChainFactory;
 import it.pagopa.interop.common.eservice_template.domain.EServiceTemplate;
+import it.pagopa.interop.common.eservice_template.domain.EServiceTemplateInstance;
 import it.pagopa.interop.common.eservice_template.domain.EServiceTemplateVersion;
 import it.pagopa.interop.common.eservice_template.domain.EServiceTemplateVersionState;
 import it.pagopa.interop.common.kernel.domain.EServiceTemplateRef;
+import it.pagopa.interop.common.kernel.domain.EServiceRef;
 import it.pagopa.interop.common.kernel.domain.EServiceTemplateVersionRef;
 import it.pagopa.interop.generated.openapi.clients.bff.model.CompactOrganization;
 import it.pagopa.interop.generated.openapi.clients.bff.model.EServiceDoc;
@@ -39,7 +41,9 @@ class BffEServiceTemplateVersionGatewayTest {
                 .state(EServiceTemplateVersionState.DRAFT).build();
         var other = EServiceTemplateVersion.builder().id(UUID.randomUUID()).version("2")
                 .state(EServiceTemplateVersionState.DEPRECATED).build();
-        store.upsert("TPL-1", EServiceTemplate.builder().id(templateId).version(draft).version(other).build());
+        var instance = new EServiceTemplateInstance("label", EServiceRef.of(UUID.randomUUID()));
+        store.upsert("TPL-1", EServiceTemplate.builder().id(templateId)
+                .version(draft).version(other).instance(instance).build());
         var details = new EServiceTemplateVersionDetails().id(versionId).version(1)
                 .state(it.pagopa.interop.generated.openapi.clients.bff.model.EServiceTemplateVersionState.DRAFT)
                 .eserviceTemplate(new EServiceTemplateDetails().id(templateId)
@@ -67,6 +71,7 @@ class BffEServiceTemplateVersionGatewayTest {
             var stored = store.getByAliasOrThrow("TPL-1", EServiceTemplate.class);
             assertThat(stored.getVersions()).extracting(EServiceTemplateVersion::getId)
                     .containsExactly(versionId, other.getId());
+            assertThat(stored.getInstances()).containsExactly(instance);
             assertThat(stored.getLastPublishedVersion().getInterfaceDocument()).isEqualTo(downloaded);
             assertThat(stored.getLastPublishedVersion().getInterfaceDocument().getContent()).containsExactly(content);
             assertThat(stored.findVersion(other.getId())).isEqualTo(other);
