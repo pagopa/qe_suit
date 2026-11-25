@@ -1,7 +1,7 @@
 rae:
   release: ''
   scope: NIGHTLY
-  issue_jira: ''
+  issue_jira: https://pagopa.atlassian.net/browse/QA-19740
   data_ora: '2026-11-23T21:09:28Z'
   durata: 00:32:06
   numero_ko: 113
@@ -150,9 +150,30 @@ ko:
     	at it.pagopa.interop.common.eservice.application.EServiceCatalogPaginationUseCase.shouldContainInRelativeOrder(EServiceCatalogPaginationUseCase.java:82)
     	at it.pagopa.interop.common.eservice.infrastructure.cucumber.EServiceCatalogAssertionSteps.shouldContainEServicesInRelativeOrder(EServiceCatalogAssertionSteps.java:63)
     	at ✽.tra i risultati della ricerca, considerando tutte le pagine, i seguenti e-service compaiono in quest'ordine relativo:(classpath:feature-expanded/catalog/private-catalog-ordering-pagination.feature:43)
-  procedure: ''
-  result: ''
-  link_prod_bug: ''
+  procedure: |
+    Rieseguire in locale PRIVATE_CATALOG_ORDERING_PAGINATION_2 per
+    l'esempio in KO, con un breakpoint all'inizio dell'hook After, prima che
+    il teardown archivi o elimini gli e-service. Con l'esecuzione in pausa,
+    consultare i log della riesecuzione e risalire ai nomi dei tre e-service
+    a partire dagli ID riportati nell'asserzione. Confrontare il loro ordine
+    relativo con quello atteso per il criterio selezionato. Mantenere
+    l'esecuzione in pausa e ripetere da frontend la ricerca del Gherkin nel
+    catalogo autenticato come PagoPA. Cercare «Sorte», filtrare per
+    erogatore «Comune di Milano» e selezionare lo stesso ordinamento
+    dell'esempio in KO. Scorrere tutte le pagine e verificare l'ordine
+    relativo dei tre e-service identificati nei log. Ripetere la ricerca con
+    gli stessi dati, filtri e ordinamento per verificare se la sequenza
+    resta stabile.
+  result: |
+    Nel KO analizzato sono presenti tutti e tre gli e-service attesi, ma il
+    loro ordine relativo è diverso da quello previsto. La ri-esecuzione ha
+    restituito una sequenza diversa da quella del KO iniziale. In QA il
+    disallineamento è stato osservato per tutti e quattro i criteri
+    espliciti di ordinamento per nome e data di creazione, sia crescente sia
+    decrescente. L'ordine relativo deve rispettare il criterio selezionato
+    sull'insieme dei risultati paginati e restare stabile a parità di dati,
+    filtri e criterio. La causa tecnica resta da accertare.
+  link_prod_bug: https://pagopa.atlassian.net/browse/PIN-11313
   link_suite_bug: ''
 - id_test: '[PRIVATE_CATALOG_ORDERING_PAGINATION_2] Ordinamenti richiesti esplicitamente [Given=BFF,When=BFF,Then=BFF]
     [Examples: (senza nome) | Example #4 | line: 54]'
@@ -174,9 +195,30 @@ ko:
     	at it.pagopa.interop.common.eservice.application.EServiceCatalogPaginationUseCase.shouldContainInRelativeOrder(EServiceCatalogPaginationUseCase.java:82)
     	at it.pagopa.interop.common.eservice.infrastructure.cucumber.EServiceCatalogAssertionSteps.shouldContainEServicesInRelativeOrder(EServiceCatalogAssertionSteps.java:63)
     	at ✽.tra i risultati della ricerca, considerando tutte le pagine, i seguenti e-service compaiono in quest'ordine relativo:(classpath:feature-expanded/catalog/private-catalog-ordering-pagination.feature:43)
-  procedure: ''
-  result: ''
-  link_prod_bug: ''
+  procedure: |
+    Rieseguire in locale PRIVATE_CATALOG_ORDERING_PAGINATION_2 per
+    l'esempio in KO, con un breakpoint all'inizio dell'hook After, prima che
+    il teardown archivi o elimini gli e-service. Con l'esecuzione in pausa,
+    consultare i log della riesecuzione e risalire ai nomi dei tre e-service
+    a partire dagli ID riportati nell'asserzione. Confrontare il loro ordine
+    relativo con quello atteso per il criterio selezionato. Mantenere
+    l'esecuzione in pausa e ripetere da frontend la ricerca del Gherkin nel
+    catalogo autenticato come PagoPA. Cercare «Sorte», filtrare per
+    erogatore «Comune di Milano» e selezionare lo stesso ordinamento
+    dell'esempio in KO. Scorrere tutte le pagine e verificare l'ordine
+    relativo dei tre e-service identificati nei log. Ripetere la ricerca con
+    gli stessi dati, filtri e ordinamento per verificare se la sequenza
+    resta stabile.
+  result: |
+    Nel KO analizzato sono presenti tutti e tre gli e-service attesi, ma il
+    loro ordine relativo è diverso da quello previsto. La ri-esecuzione ha
+    restituito una sequenza diversa da quella del KO iniziale. In QA il
+    disallineamento è stato osservato per tutti e quattro i criteri
+    espliciti di ordinamento per nome e data di creazione, sia crescente sia
+    decrescente. L'ordine relativo deve rispettare il criterio selezionato
+    sull'insieme dei risultati paginati e restare stabile a parità di dati,
+    filtri e criterio. La causa tecnica resta da accertare.
+  link_prod_bug: https://pagopa.atlassian.net/browse/PIN-11313
   link_suite_bug: ''
 - id_test: '[ESERVICE_ARCHIVING_GRACE_PERIOD_1.1] - Impossibilità di archiviare un e-service prima di una sua versione
     [Given=BFF,When=WEB,Then=WEB]'
