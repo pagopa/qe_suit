@@ -1,6 +1,5 @@
 package it.pagopa.send.web.legal_notification.infrastructure;
 
-import it.frontend.e2e.framework.web.WebPresentationGateway;
 import it.pagopa.application.context.EntityStore;
 import it.pagopa.send.common.kernel.domain.Channel;
 import it.pagopa.send.common.legal_notification.application.LegalNotificationGateway;
@@ -40,7 +39,9 @@ public class WebLegalNotificationGateway implements LegalNotificationGateway {
     // stesso PDF di test che il canale BFF carica con il preload
     private static final String TEST_DOCUMENT = "documents/test-attachment.pdf";
 
-    private final WebPresentationGateway browser;
+    private final CreateNotificationPage createNotificationPage;
+    private final NotificationSuccessPage notificationSuccessPage;
+    private final MittenteNotificationDetailsPage notificationDetailsPage;
     private final LegalNotificationRequestFactory requestFactory;
     private final LegalNotificationCreationRequest request;
     private final WebLegalNotificationReadGateway readGateway;
@@ -50,11 +51,10 @@ public class WebLegalNotificationGateway implements LegalNotificationGateway {
     @Override
     public void prepareNotification(LegalNotificationCreationCommand command) {
         requestFactory.applyPreliminaryData(request, command);
-        CreateNotificationPage page = browser.bind(CreateNotificationPage.class);
-        page.navigateTo();
-        page.assertLoaded();
-        page.compileInformazioniPreliminari(request);
-        page.continueToNextStep();
+        createNotificationPage.navigateTo();
+        createNotificationPage.assertLoaded();
+        createNotificationPage.compileInformazioniPreliminari(request);
+        createNotificationPage.continueToNextStep();
         command.getRecipients().forEach(this::addRecipient);
     }
 
@@ -64,7 +64,7 @@ public class WebLegalNotificationGateway implements LegalNotificationGateway {
         if (!recipient.payments().isEmpty()) {
             throw new UnsupportedOperationException("I pagamenti dei destinatari non sono ancora supportati sul canale Web");
         }
-        browser.bind(CreateNotificationPage.class).compileDestinatario(recipient);
+        createNotificationPage.compileDestinatario(recipient);
     }
 
     /**
@@ -77,14 +77,13 @@ public class WebLegalNotificationGateway implements LegalNotificationGateway {
         if (targetStatus == NotificationStatus.REFUSED) {
             throw new UnsupportedOperationException("Lo stato REFUSED non è osservabile dal portale della PA");
         }
-        CreateNotificationPage page = browser.bind(CreateNotificationPage.class);
-        String recipientTaxId = page.destinatariStep().recipientBoxes().get(0).taxId().read();
-        page.continueToNextStep();
-        page.dettaglioPosizioneDebitoriaStep().selectNoPaymentForAllRecipients();
-        page.continueToNextStep();
-        page.documentazioneStep().fillFields(request.getSubject(), testDocumentPath());
-        page.continueToNextStep();
-        browser.bind(NotificationSuccessPage.class).assertLoaded();
+        String recipientTaxId = createNotificationPage.destinatariStep().recipientBoxes().get(0).taxId().read();
+        createNotificationPage.continueToNextStep();
+        createNotificationPage.dettaglioPosizioneDebitoriaStep().selectNoPaymentForAllRecipients();
+        createNotificationPage.continueToNextStep();
+        createNotificationPage.documentazioneStep().fillFields(request.getSubject(), testDocumentPath());
+        createNotificationPage.continueToNextStep();
+        notificationSuccessPage.assertLoaded();
 
         // la notifica compare tra quelle della PA solo dopo l'accettazione, quando ha lo IUN
         String iun = PollingUtils.pollUntil(
@@ -117,11 +116,10 @@ public class WebLegalNotificationGateway implements LegalNotificationGateway {
     /** Annulla la notifica dal suo dettaglio nel portale della PA e attende che risulti annullata, come il canale BFF. */
     @Override
     public void deleteNotification(String iun) {
-        MittenteNotificationDetailsPage details = browser.bind(MittenteNotificationDetailsPage.class);
-        details.navigateTo(iun);
-        details.assertLoaded();
-        details.cancelNotificationButton().click();
-        details.confirmCancelNotificationButton().click();
+        notificationDetailsPage.navigateTo(iun);
+        notificationDetailsPage.assertLoaded();
+        notificationDetailsPage.cancelNotificationButton().click();
+        notificationDetailsPage.confirmCancelNotificationButton().click();
         PollingUtils.pollUntil(
                 () -> readNotification(iun).getStatus(),
                 status -> status == NotificationStatus.CANCELLED,

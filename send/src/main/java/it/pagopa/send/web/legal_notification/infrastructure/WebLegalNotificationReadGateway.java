@@ -1,6 +1,5 @@
 package it.pagopa.send.web.legal_notification.infrastructure;
 
-import it.frontend.e2e.framework.web.WebPresentationGateway;
 import it.pagopa.infrastructure.suit.component.Table;
 import it.pagopa.infrastructure.suit.component.TableRow;
 import it.pagopa.send.common.legal_notification.domain.LegalNotificationDomain;
@@ -27,27 +26,26 @@ public class WebLegalNotificationReadGateway {
     private static final String IUN_HEADER = "Codice IUN";
     private static final String STATUS_HEADER = "Stato";
 
-    private final WebPresentationGateway browser;
+    private final MittenteNotificationDetailsPage notificationDetailsPage;
+    private final DashboardPage dashboardPage;
 
     public LegalNotificationDomain read(String iun) {
-        MittenteNotificationDetailsPage details = browser.bind(MittenteNotificationDetailsPage.class);
-        details.navigateTo(iun);
-        MittenteNotificationSummarySection summary = details.notificationSummarySection();
+        notificationDetailsPage.navigateTo(iun);
+        MittenteNotificationSummarySection summary = notificationDetailsPage.notificationSummarySection();
         return LegalNotificationDomain.builder()
                 .iun(iun)
                 .paProtocolNumber(summary.protocolNumberValue().read())
                 .senderDenomination(summary.senderValue().read())
-                .status(NotificationStatusLabel.toStatus(details.notificationStatusSection().statusChip().text().read()))
+                .status(NotificationStatusLabel.toStatus(notificationDetailsPage.notificationStatusSection().statusChip().text().read()))
                 .build();
     }
 
     /** Lo stato di una riga resta vuoto se il portale lo mostra con un'etichetta non ancora riconosciuta. */
     public List<LegalNotificationDomain> search(Map<String, String> filters) {
-        DashboardPage dashboard = browser.bind(DashboardPage.class);
-        dashboard.navigateTo();
-        dashboard.assertLoaded();
-        dashboard.searchNotification(filters);
-        Table table = dashboard.notificationsTable();
+        dashboardPage.navigateTo();
+        dashboardPage.assertLoaded();
+        dashboardPage.searchNotification(filters);
+        Table table = dashboardPage.notificationsTable();
         List<String> headers = table.getColumnHeaders();
         int subject = column(headers, SUBJECT_HEADER);
         int iun = column(headers, IUN_HEADER);
