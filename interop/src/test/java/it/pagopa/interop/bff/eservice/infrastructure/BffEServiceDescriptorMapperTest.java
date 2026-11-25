@@ -55,6 +55,18 @@ class BffEServiceDescriptorMapperTest {
     };
 
     @Test
+    void descriptorRefreshReplacesMatchingDescriptorAndPreservesOtherVersions() {
+        var first = EServiceDescriptor.builder().id(UUID.randomUUID()).version("1").build();
+        var second = EServiceDescriptor.builder().id(UUID.randomUUID()).version("2").build();
+        var existing = EService.builder().id(UUID.randomUUID())
+                .descriptors(List.of(first, second)).build();
+        var source = new ProducerEServiceDescriptor().id(second.getId()).version("2");
+
+        assertThat(mapper.toEServiceWithUpsert(source, existing).getDescriptors())
+                .containsExactly(first, second.toBuilder().state(EServiceDescriptorState.DRAFT).build());
+    }
+
+    @Test
     void toEServiceWithUpsert_returns_mutable_descriptor_list() {
         ProducerEServiceDescriptor source = new ProducerEServiceDescriptor()
                 .id(UUID.randomUUID())

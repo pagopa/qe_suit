@@ -58,9 +58,11 @@ class EServiceTemplateInstanceUseCaseTest {
             EServiceTechnology technology
     ) throws IOException {
         var source = template.toBuilder().technology(technology).build();
-        var command = factory.defaultCreationEServiceTemplateInstanceCommand();
+        var command = factory.defaultCreationEServiceTemplateInstanceCommand().instanceLabel("published");
         var store = new InMemoryEntityStore();
+        var association = new EServiceTemplateInstance("published", service.getRef());
         when(gateway.createEServiceInstance(source, command)).thenAnswer(invocation -> {
+            store.upsert(source.withUpsertedInstance(association));
             store.upsert(service);
             return service;
         });
@@ -78,7 +80,8 @@ class EServiceTemplateInstanceUseCaseTest {
         when(descriptorGateway.updateDescriptor(eq(service.getRef()), eq(draft.getRef()), any())).thenReturn(configured);
         var ready = configured.toBuilder().state(PUBLISHED).build();
         when(descriptorGateway.publishDescriptor(service.getRef(), draft.getRef())).thenAnswer(invocation -> {
-            store.upsert(service.toBuilder().descriptors(List.of(ready)).build());
+            store.upsert(store.getById(service.getId(), EService.class).orElseThrow()
+                    .toBuilder().descriptors(List.of(ready)).build());
             return ready;
         });
 
@@ -86,6 +89,8 @@ class EServiceTemplateInstanceUseCaseTest {
                 .createPublishedEServiceTemplateInstance(source, command, "ES-1");
 
         assertThat(store.getByAliasOrThrow("ES-1", EService.class).getDescriptorOrThrow(1)).isEqualTo(ready);
+        assertThat(store.getById(source.getId(), EServiceTemplate.class).orElseThrow().getInstances())
+                .containsExactly(association);
         assertThat(service.getLastDraftDescriptor()).isSameAs(draft);
         var metadata = ArgumentCaptor.forClass(it.pagopa.interop.common.eservice.application.command.UpdateEServiceDescriptorCommand.class);
         var order = inOrder(descriptorGateway);
@@ -107,7 +112,8 @@ class EServiceTemplateInstanceUseCaseTest {
         var command = factory.defaultCreationEServiceTemplateInstanceCommand();
         var useCase = mock(EServiceTemplateInstanceUseCase.class);
         when(useCase.createEServiceInstance(template, command)).thenReturn(service);
-        doThrow(new IllegalStateException("failed")).when(useCase).publishEServiceInstance(template, service);
+        doThrow(new IllegalStateException("failed")).when(useCase)
+                .publishEServiceInstance(eq(template), any(EService.class));
         var store = new InMemoryEntityStore();
         store.upsert(service);
 
