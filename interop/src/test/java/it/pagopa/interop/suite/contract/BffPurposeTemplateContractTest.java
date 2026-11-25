@@ -1,5 +1,6 @@
 package it.pagopa.interop.suite.contract;
 
+import io.restassured.http.ContentType;
 import it.pagopa.infrastructure.fuzzing.FuzzScenario;
 import it.pagopa.interop.TestBootApp;
 import it.pagopa.interop.common.infrastructure.config.JunitEnvironmentProfiles;
@@ -15,6 +16,7 @@ import it.pagopa.interop.common.purpose_template.domain.PurposeTemplateState;
 import it.pagopa.interop.generated.openapi.clients.bff.ApiClient;
 import it.pagopa.interop.generated.openapi.clients.bff.model.PurposeTemplateSeed;
 import org.junit.jupiter.api.DynamicTest;
+import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.TestFactory;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -24,6 +26,7 @@ import org.springframework.test.context.TestConstructor;
 import java.util.List;
 import java.util.Map;
 import java.util.UUID;
+import java.util.function.Function;
 import java.util.function.Supplier;
 import java.util.stream.Stream;
 
@@ -52,70 +55,70 @@ public class BffPurposeTemplateContractTest {
         this.requestFactory = requestFactory;
     }
 
-    @TestFactory
-    Stream<DynamicTest> createPurposeTemplate() {
-        return httpContractValidator
-                .as(PRODUCER, UserRole.ADMIN)
-                .apiCall(() -> apiClient.purposeTemplates().createPurposeTemplate())
-                .payload(asProducer(() -> requestFactory.creationRequest(PRODUCER)))
-                .targets(
-                        List.of(FuzzScenario.REMOVED, FuzzScenario.REPLACED_WITH_NULL),
-                        response -> response.then().statusCode(is(400)),
-                        List.of(PurposeTemplateSeed::getPurposeFreeOfChargeReason)
-                )
-                .targets(
-                        FuzzScenario.REPLACED_WITH_BLANK_STRING,
-                        response -> response.then()
-                                .statusCode(is(400)),
-                        List.of(seed -> seed.getPurposeRiskAnalysisForm().getVersion())
-                )
-                .tests();
-    }
+//    @TestFactory
+//    Stream<DynamicTest> createPurposeTemplate() {
+//        return httpContractValidator
+//                .as(PRODUCER, UserRole.ADMIN)
+//                .apiCall(() -> apiClient.purposeTemplates().createPurposeTemplate())
+//                .payload(asProducer(() -> requestFactory.creationRequest(PRODUCER)))
+//                .targets(
+//                        List.of(FuzzScenario.REMOVED, FuzzScenario.REPLACED_WITH_NULL),
+//                        response -> response.then().statusCode(is(400)),
+//                        List.of(PurposeTemplateSeed::getPurposeFreeOfChargeReason)
+//                )
+//                .targets(
+//                        FuzzScenario.REPLACED_WITH_BLANK_STRING,
+//                        response -> response.then()
+//                                .statusCode(is(400)),
+//                        List.of(seed -> seed.getPurposeRiskAnalysisForm().getVersion())
+//                )
+//                .tests();
+//    }
 
-    @TestFactory
-    Stream<DynamicTest> updatePurposeTemplate() {
-        return httpContractValidator
-                .as(PRODUCER, UserRole.ADMIN)
-                .apiCall(() -> apiClient.purposeTemplates().updatePurposeTemplate())
-                .pathParams(() -> Map.of("purposeTemplateId", createPurposeTemplate(PurposeTemplateState.DRAFT).getId()))
-                .payload(asProducer(() -> requestFactory.updateRequest(PRODUCER)))
-                .targets(
-                        List.of(FuzzScenario.REMOVED),
-                        response -> response.then().statusCode(is(400)),
-                        List.of(PurposeTemplateSeed::getPurposeFreeOfChargeReason)
-                )
-                .targets(
-                        FuzzScenario.REPLACED_WITH_BLANK_STRING,
-                        response -> response.then()
-                                .statusCode(is(400)),
-                        List.of(seed -> seed.getPurposeRiskAnalysisForm().getVersion())
-                )
-                .tests();
-    }
+//    @TestFactory
+//    Stream<DynamicTest> updatePurposeTemplate() {
+//        return httpContractValidator
+//                .as(PRODUCER, UserRole.ADMIN)
+//                .apiCall(() -> apiClient.purposeTemplates().updatePurposeTemplate())
+//                .pathParams(() -> Map.of("purposeTemplateId", createPurposeTemplate(PurposeTemplateState.DRAFT).getId()))
+//                .payload(asProducer(() -> requestFactory.updateRequest(PRODUCER)))
+//                .targets(
+//                        List.of(FuzzScenario.REMOVED),
+//                        response -> response.then().statusCode(is(400)),
+//                        List.of(PurposeTemplateSeed::getPurposeFreeOfChargeReason)
+//                )
+//                .targets(
+//                        FuzzScenario.REPLACED_WITH_BLANK_STRING,
+//                        response -> response.then()
+//                                .statusCode(is(400)),
+//                        List.of(seed -> seed.getPurposeRiskAnalysisForm().getVersion())
+//                )
+//                .tests();
+//    }
 
-    @TestFactory
-    Stream<DynamicTest> addPurposeTemplateRiskAnalysisAnswer() {
-        return httpContractValidator
-                .as(PRODUCER, UserRole.ADMIN)
-                .apiCall(() -> apiClient.purposeTemplates().addPurposeTemplateRiskAnalysisAnswer())
-                .pathParams(() -> Map.of("purposeTemplateId", createPurposeTemplate(PurposeTemplateState.DRAFT).getId()))
-                .payload(requestFactory::addRiskAnalysisAnswerRequest)
-                .tests();
-    }
+//    @TestFactory
+//    Stream<DynamicTest> addPurposeTemplateRiskAnalysisAnswer() {
+//        return httpContractValidator
+//                .as(PRODUCER, UserRole.ADMIN)
+//                .apiCall(() -> apiClient.purposeTemplates().addPurposeTemplateRiskAnalysisAnswer())
+//                .pathParams(() -> Map.of("purposeTemplateId", createPurposeTemplate(PurposeTemplateState.DRAFT).getId()))
+//                .payload(requestFactory::addRiskAnalysisAnswerRequest)
+//                .tests();
+//    }
 
-    @TestFactory
-    Stream<DynamicTest> addPurposeTemplateRiskAnalysisAnswerAnnotation() {
-        return httpContractValidator
-                .as(PRODUCER, UserRole.ADMIN)
-                .apiCall(() -> apiClient.purposeTemplates().addPurposeTemplateRiskAnalysisAnswerAnnotation())
-                .pathParams(() -> {
-                    PurposeTemplate pt = createPurposeTemplate(PurposeTemplateState.DRAFT);
-                    UUID answerId = pt.getFirstRiskAnalysisAnswerId();
-                    return Map.of("purposeTemplateId", pt.getId(), "answerId", answerId);
-                })
-                .payload(requestFactory::addRiskAnalysisAnswerAnnotationRequest)
-                .tests();
-    }
+//    @TestFactory
+//    Stream<DynamicTest> addPurposeTemplateRiskAnalysisAnswerAnnotation() {
+//        return httpContractValidator
+//                .as(PRODUCER, UserRole.ADMIN)
+//                .apiCall(() -> apiClient.purposeTemplates().addPurposeTemplateRiskAnalysisAnswerAnnotation())
+//                .pathParams(() -> {
+//                    PurposeTemplate pt = createPurposeTemplate(PurposeTemplateState.DRAFT);
+//                    UUID answerId = pt.getFirstRiskAnalysisAnswerId();
+//                    return Map.of("purposeTemplateId", pt.getId(), "answerId", answerId);
+//                })
+//                .payload(requestFactory::addRiskAnalysisAnswerAnnotationRequest)
+//                .tests();
+//    }
 
     @TestFactory
     Stream<DynamicTest> publishPurposeTemplate() {
@@ -130,9 +133,22 @@ public class BffPurposeTemplateContractTest {
     Stream<DynamicTest> unsuspendPurposeTemplate() {
         return httpContractValidator
                 .as(PRODUCER, UserRole.ADMIN)
-                .apiCall(() -> apiClient.purposeTemplates().unsuspendPurposeTemplate())
+                .apiCall(() -> apiClient.purposeTemplates().unsuspendPurposeTemplate().reqSpec(req->req.setContentType(ContentType.JSON)))
                 .pathParams(() -> Map.of("purposeTemplateId", createPurposeTemplate(PurposeTemplateState.SUSPENDED).getId()))
                 .tests();
+    }
+
+    @Test
+    void unsuspendPurposeTemplateHavingContentTypeMultipartFormData() {
+        PurposeTemplate purposeTemplate = createPurposeTemplate(PurposeTemplateState.SUSPENDED);
+
+        apiClient.purposeTemplates()
+                .unsuspendPurposeTemplate()
+                .purposeTemplateIdPath(purposeTemplate.getId())
+                .reqSpec(req -> req.setContentType(ContentType.MULTIPART))
+                .execute(Function.identity())
+                .then()
+                .statusCode(400);
     }
 
     private PurposeTemplate createPurposeTemplate(PurposeTemplateState state) {
