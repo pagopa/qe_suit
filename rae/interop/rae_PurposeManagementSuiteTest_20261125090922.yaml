@@ -1,0 +1,14 @@
+rae:
+  release: ''
+  scope: NIGHTLY
+  issue_jira: ''
+  data_ora: '2026-11-25T09:06:09Z'
+  durata: 00:02:33
+  numero_ko: 0
+  run: https://github.com/pagopa/qe_suit/actions/runs/45582035009/attempts/1
+  suite: PurposeManagementSuiteTest
+  environment: qa
+  executor: silvanogz
+  source_branch: feature/purpose-management-runner
+ko_know: []
+ko: []
