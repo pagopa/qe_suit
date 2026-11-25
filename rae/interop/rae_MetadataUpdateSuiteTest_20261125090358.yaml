@@ -1,7 +1,7 @@
 rae:
-  release: ''
-  scope: NIGHTLY
-  issue_jira: ''
+  release: '[INTEROP]-2.25.0-RC1'
+  scope: PROMO
+  issue_jira: 'https://pagopa.atlassian.net/browse/QA-19770'
   data_ora: '2026-11-25T08:52:41Z'
   durata: 00:10:40
   numero_ko: 1
@@ -31,7 +31,11 @@ ko:
     	at it.pagopa.interop.common.client.application.ClientUseCase.shouldFailToUpdateMetadataAsForbidden(ClientUseCase.java:75)
     	at it.pagopa.interop.common.client.infrastructure.cucumber.ClientSteps.shouldFailToUpdateMetadataAsForbidden(ClientSteps.java:168)
     	at ✽.la richiesta di modifica fallisce come operazione vietata(classpath:feature-expanded/client/client-update-metadata.feature:115)
-  procedure: ''
-  result: ''
-  link_prod_bug: ''
+  procedure: |
+    Eseguire nello scenario CLIENT_UPDATE_METADATA_2B la PATCH /v3/clients/{clientId}.
+    Confrontare lo status atteso con la risposta e leggere codice e
+    dettaglio dell'eventuale errore.
+  result: |
+    La richiesta viene rifiutata con HTTP 404, ma il codice di errore atteso per questo scenario è 403.
+  link_prod_bug: 'https://pagopa.atlassian.net/browse/PIN-11643'
   link_suite_bug: ''
