@@ -50,7 +50,7 @@ public class WebSendNotificationGateway implements SendNotificationGateway {
         }
         createNotificationPage.continueToNextStep();
         compilePayments();
-        createNotificationPage.documentazioneStep().fillFields(request.getSubject(), resourcePath(TEST_DOCUMENT));
+        createNotificationPage.attachmentsStep().fillFields(request.getSubject(), resourcePath(TEST_DOCUMENT));
         createNotificationPage.continueToNextStep();
         notificationSuccessPage.assertLoaded();
 
@@ -104,7 +104,7 @@ public class WebSendNotificationGateway implements SendNotificationGateway {
                         + " il portale non accetta lo stesso file più di una volta");
             }
         }
-        createNotificationPage.dettaglioPosizioneDebitoriaStep().selectPaymentModels(request.getRecipients());
+        createNotificationPage.debtPositionStep().selectPaymentModels(request.getRecipients());
         createNotificationPage.continueToNextStep();
         if (!recipientsWithPayments.isEmpty()) {
             createNotificationPage.paymentDetailStep().fillFields(request.getFeePolicy(), recipientsWithPayments,

@@ -7,15 +7,15 @@ import it.frontend.e2e.framework.web.capability.core.Readable;
 import it.frontend.e2e.framework.web.domain.Page;
 import it.pagopa.infrastructure.suit.component.Button;
 import it.pagopa.send.common.legal_notification.domain.LegalNotificationCreationRequest;
-import it.pagopa.send.common.legal_notification.domain.RecipientSpec;
 import it.pagopa.send.web.infrastructure.page.component.ErrorSnackbar;
 import it.pagopa.send.web.login.infrastructure.page.component.OneTrustBanner;
 import it.pagopa.send.web.mittente.infrastructure.page.DashboardPage;
-import it.pagopa.send.web.notification_creation.infrastructure.page.component.DestinatariStep;
-import it.pagopa.send.web.notification_creation.infrastructure.page.component.DettaglioPosizioneDebitoriaStep;
-import it.pagopa.send.web.notification_creation.infrastructure.page.component.DocumentazioneStep;
+import it.pagopa.send.web.notification_creation.infrastructure.page.component.RecipientsStep;
+import it.pagopa.send.web.notification_creation.infrastructure.page.component.DebtPositionStep;
+import it.pagopa.send.web.notification_creation.infrastructure.page.component.AttachmentsStep;
 import it.pagopa.send.web.notification_creation.infrastructure.page.component.ExitDialog;
-import it.pagopa.send.web.notification_creation.infrastructure.page.component.InformazioniPreliminariStep;
+import it.pagopa.send.web.notification_creation.infrastructure.page.component.PreliminaryInformationStep;
+import it.pagopa.send.web.notification_creation.infrastructure.page.component.RecipientForm;
 import it.pagopa.send.web.notification_creation.infrastructure.page.component.PaymentDetailStep;
 import it.pagopa.utils.async.PollingUtils;
 import org.assertj.core.api.Assertions;
@@ -47,19 +47,19 @@ public interface CreateNotificationPage extends Page, CreateNotificationForm {
     Optional<OneTrustBanner> oneTrustBanner();
 
     @XPath("//*[@id=\"root\"]/div[1]/div/main/div/div/div/form")
-    InformazioniPreliminariStep informazioniPreliminariStep();
+    PreliminaryInformationStep preliminaryInformationStep();
 
     @XPath("//*[@id=\"root\"]/div[1]/div/main/div/div/div/form")
-    DestinatariStep destinatariStep();
+    RecipientsStep recipientsStep();
 
     @XPath("//*[@id=\"root\"]/div[1]/div/main/div/div/div/form")
-    DettaglioPosizioneDebitoriaStep dettaglioPosizioneDebitoriaStep();
+    DebtPositionStep debtPositionStep();
 
     @XPath("//*[@id=\"root\"]/div[1]/div/main/div/div/div/form")
     PaymentDetailStep paymentDetailStep();
 
     @XPath("//*[@id=\"root\"]/div[1]/div/main/div/div/div/form")
-    DocumentazioneStep documentazioneStep();
+    AttachmentsStep attachmentsStep();
 
     // intestazione e passi del wizard
 
@@ -103,23 +103,23 @@ public interface CreateNotificationPage extends Page, CreateNotificationForm {
     // i passi dopo il primo si raggiungono compilando i precedenti con dati validi: la notifica parte solo con "Invia"
 
     default void goToRecipientsStep(LegalNotificationCreationRequest request) {
-        compileInformazioniPreliminari(request);
+        fillPreliminaryInformation(request);
         continueToNextStep();
     }
 
-    default void goToDebtPositionStep(LegalNotificationCreationRequest request, RecipientSpec recipient) {
+    default void goToDebtPositionStep(LegalNotificationCreationRequest request, RecipientForm recipient) {
         goToRecipientsStep(request);
-        compileDestinatario(recipient);
+        fillRecipient(recipient);
         continueToNextStep();
     }
 
-    default void goToDebtPositionDetailStep(LegalNotificationCreationRequest request, RecipientSpec recipient) {
+    default void goToDebtPositionDetailStep(LegalNotificationCreationRequest request, RecipientForm recipient) {
         goToDebtPositionStep(request, recipient);
         pagoPaRadio().select();
         continueToNextStep();
     }
 
-    default void goToDocumentsStep(LegalNotificationCreationRequest request, RecipientSpec recipient) {
+    default void goToDocumentsStep(LegalNotificationCreationRequest request, RecipientForm recipient) {
         goToDebtPositionStep(request, recipient);
         noPaymentRadio().select();
         continueToNextStep();
@@ -150,13 +150,13 @@ public interface CreateNotificationPage extends Page, CreateNotificationForm {
         });
     }
 
-    default void compileInformazioniPreliminari(LegalNotificationCreationRequest request) {
+    default void fillPreliminaryInformation(LegalNotificationCreationRequest request) {
         // il banner dei cookie può comparire dopo il caricamento della pagina e coprire i campi
         oneTrustBanner().ifPresent(OneTrustBanner::acceptIfShown);
-        informazioniPreliminariStep().fillFields(request);
+        preliminaryInformationStep().fillFields(request);
     }
 
-    default void compileDestinatario(RecipientSpec recipient) {
-        destinatariStep().nextEmptyRecipientBox().fillFields(recipient);
+    default void fillRecipient(RecipientForm recipient) {
+        recipientsStep().nextEmptyRecipientBox().fillFields(recipient);
     }
 }

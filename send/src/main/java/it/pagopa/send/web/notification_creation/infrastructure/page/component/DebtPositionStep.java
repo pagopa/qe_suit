@@ -14,7 +14,7 @@ import java.util.List;
  * Passo "Posizione debitoria" di "Invia una nuova notifica" ({@code CreateNotificationPage}): il tipo di pagamento di
  * ciascun destinatario.
  */
-public interface DettaglioPosizioneDebitoriaStep extends Component {
+public interface DebtPositionStep extends Component {
 
     // un gruppo di scelte per ogni destinatario, nell'ordine dei destinatari
     @XPath(".//label[@data-testid='paymentModel'][.//input[@value='PAGO_PA']]")

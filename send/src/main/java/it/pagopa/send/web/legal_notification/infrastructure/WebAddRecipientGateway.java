@@ -18,12 +18,13 @@ import org.springframework.stereotype.Service;
 public class WebAddRecipientGateway implements AddRecipientGateway {
 
     private final CreateNotificationPage createNotificationPage;
+    private final WebRecipientFormMapper recipientFormMapper;
     private final LegalNotificationRequestFactory requestFactory;
     private final LegalNotificationCreationRequest request;
 
     @Override
     public void addRecipient(RecipientSpec recipient) {
-        createNotificationPage.compileDestinatario(recipient);
+        createNotificationPage.fillRecipient(recipientFormMapper.toForm(recipient));
         request.addRecipient(requestFactory.resolveRecipient(recipient));
     }
 

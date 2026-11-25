@@ -28,7 +28,7 @@ public class WebPrepareNotificationGateway implements PrepareNotificationGateway
         requestFactory.applyPreliminaryData(request, command);
         createNotificationPage.navigateTo();
         createNotificationPage.assertLoaded();
-        createNotificationPage.compileInformazioniPreliminari(request);
+        createNotificationPage.fillPreliminaryInformation(request);
         createNotificationPage.continueToNextStep();
         command.getRecipients().forEach(addRecipientGateway::addRecipient);
     }

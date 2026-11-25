@@ -8,7 +8,7 @@ import it.frontend.e2e.framework.web.domain.Component;
 /**
  * Passo "Documenti allegati" di "Invia una nuova notifica" ({@code CreateNotificationPage}): titolo e file del documento.
  */
-public interface DocumentazioneStep extends Component {
+public interface AttachmentsStep extends Component {
 
     @XPath(".//input[@id='documents.0.name']")
     Writable<String> documentTitle();

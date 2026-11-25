@@ -16,9 +16,11 @@ import it.pagopa.send.common.user.domain.User;
 import it.pagopa.send.common.user.domain.UserAlias;
 import it.pagopa.send.common.user.domain.UserProvider;
 import it.pagopa.send.web.infrastructure.config.WebJUnitSuitConfig;
+import it.pagopa.send.web.legal_notification.infrastructure.WebRecipientFormMapper;
 import it.pagopa.send.web.mittente.infrastructure.page.DashboardPage;
 import it.pagopa.send.web.notification_creation.infrastructure.page.CreateNotificationPage;
 import it.pagopa.send.web.notification_creation.infrastructure.page.component.ExitDialog;
+import it.pagopa.send.web.notification_creation.infrastructure.page.component.RecipientForm;
 import lombok.RequiredArgsConstructor;
 import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.DynamicTest;
@@ -193,6 +195,7 @@ public class WebNewNotificationPaContractTest {
     private final UserProvider userProvider;
     private final LegalNotificationRequestFactory requestFactory;
     private final RecipientSpecFactory recipientSpecFactory;
+    private final WebRecipientFormMapper recipientFormMapper;
 
     /**
      * Intestazione della pagina: breadcrumb "Notifiche" > "Nuova notifica", titolo, sottotitolo con il link "scopri come
@@ -327,7 +330,7 @@ public class WebNewNotificationPaContractTest {
     @TestFactory
     Stream<DynamicTest> shouldShowDebtPositionStep() {
         LegalNotificationCreationRequest data = preliminaryData();
-        RecipientSpec recipient = recipient();
+        RecipientForm recipient = recipient();
         return webContractValidator.as(sender())
                 .on(CreateNotificationPage.class)
                 .tests(Stream.of(
@@ -365,7 +368,7 @@ public class WebNewNotificationPaContractTest {
     @TestFactory
     Stream<DynamicTest> shouldShowDebtPositionDetailStep() {
         LegalNotificationCreationRequest data = preliminaryData();
-        RecipientSpec recipient = recipient();
+        RecipientForm recipient = recipient();
         return webContractValidator.as(sender())
                 .on(CreateNotificationPage.class)
                 .tests(Stream.of(
@@ -406,7 +409,7 @@ public class WebNewNotificationPaContractTest {
     @TestFactory
     Stream<DynamicTest> shouldShowDocumentsStep() {
         LegalNotificationCreationRequest data = preliminaryData();
-        RecipientSpec recipient = recipient();
+        RecipientForm recipient = recipient();
         return webContractValidator.as(sender())
                 .on(CreateNotificationPage.class)
                 .tests(Stream.of(
@@ -505,9 +508,9 @@ public class WebNewNotificationPaContractTest {
         return data;
     }
 
-    private RecipientSpec recipient() {
-        return recipientSpecFactory.build(userProvider.resolve(UserAlias.USER_1),
-                Map.of("pagoPA_number", "0", "F24_number", "0"));
+    private RecipientForm recipient() {
+        return recipientFormMapper.toForm(recipientSpecFactory.build(userProvider.resolve(UserAlias.USER_1),
+                Map.of("pagoPA_number", "0", "F24_number", "0")));
     }
 
     private User sender() {
