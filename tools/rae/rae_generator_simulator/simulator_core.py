@@ -52,7 +52,9 @@ def make_manual_history(events: list[dict], suite: str, test_id: str) -> list[di
 
 def run_match(history: list[dict], suite: str, test_id: str, error: str) -> dict:
     Matcher = require_production_matcher()
-    matcher = Matcher(history)
+    from rae_generator.ignore_rules import IgnoreRules
+    config = Path(__file__).resolve().parents[1] / 'rae_generator' / 'config' / 'ignore_rules.yaml'
+    matcher = Matcher(history, ignore_rules=IgnoreRules.load(config))
     decision, prior = matcher.classify(test_id, error, suite=suite)
     reasons = tuple(getattr(matcher, 'last_review_reasons', ()) or ())
     return {

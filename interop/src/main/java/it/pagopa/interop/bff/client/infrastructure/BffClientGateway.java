@@ -1,6 +1,8 @@
 package it.pagopa.interop.bff.client.infrastructure;
 
 import it.pagopa.application.context.EntityStore;
+import it.pagopa.application.context.LastApiResponseStore;
+import it.pagopa.infrastructure.response.ApiResponse;
 import it.pagopa.infrastructure.template.action.TestChain;
 import it.pagopa.infrastructure.template.action.strategy.PollingStrategy;
 import it.pagopa.interop.bff.client.application.BffClientCreationCommand;
@@ -15,15 +17,20 @@ import it.pagopa.interop.common.kernel.domain.User;
 import it.pagopa.interop.common.kernel.domain.UserRef;
 import it.pagopa.interop.common.purpose.domain.Purpose;
 import it.pagopa.interop.generated.openapi.clients.bff.model.AddUsersToClientRequest;
+import it.pagopa.interop.generated.openapi.clients.bff.model.ClientUpdateSeed;
 import it.pagopa.interop.generated.openapi.clients.bff.model.CreatedResource;
 import it.pagopa.interop.generated.openapi.clients.bff.model.KeySeed;
 import it.pagopa.interop.generated.openapi.clients.bff.model.PurposeAdditionDetailsSeed;
+import it.pagopa.utils.async.PollingUtils;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
 import java.util.Arrays;
 import java.util.List;
+import java.util.Objects;
 import java.util.Optional;
+
+import static org.assertj.core.api.Assertions.assertThat;
 
 @Service
 @RequiredArgsConstructor
@@ -32,6 +39,7 @@ public class BffClientGateway implements ClientGateway {
     private final BffClientRestClient restClient;
     private final EntityStore entityStore;
     private final BffClientMapper mapper;
+    private final LastApiResponseStore lastApiResponseStore;
 
     @Override
     public Client getClient(ClientRef ref) {
@@ -72,7 +80,7 @@ public class BffClientGateway implements ClientGateway {
 
                     return client;
                 })
-                .updateContext()
+                .updateContext(bffCommand.getAlias())
                 .get();
 
         if(bffCommand.getAdmin() != null)
@@ -121,11 +129,63 @@ public class BffClientGateway implements ClientGateway {
         PurposeAdditionDetailsSeed purposeSeed = new PurposeAdditionDetailsSeed()
                 .purposeId(purpose.getId());
 
-        return restClient.linkPurpose(client.getId(), purposeSeed)
-                .withPolling(PollingStrategy.UNTIL_SUCCESS)
-                .map((Void) -> getClient(ClientRef.of(client.getId())))
-                .updateContext()
-                .get();
+        restClient.linkPurpose(client.getId(), purposeSeed)
+                .withPolling(PollingStrategy.UNTIL_SUCCESS);
+
+        return PollingUtils.pollUntil(
+                () -> getClient(ClientRef.of(client.getId())),
+                updatedClient -> updatedClient.getPurposes().stream()
+                        .anyMatch(linkedPurpose -> purpose.getId().equals(linkedPurpose.getId())),
+                "Finalita %s non associata al client %s".formatted(purpose.getId(), client.getId())
+        );
+    }
+
+    @Override
+    public Client updateMetadata(Client client, String name, String description) {
+        ClientUpdateSeed updateSeed = new ClientUpdateSeed()
+                .name(name)
+                .description(description);
+
+        restClient.updateClient(client.getId(), updateSeed)
+                .withPolling(PollingStrategy.UNTIL_SUCCESS);
+
+        return PollingUtils.pollUntil(
+                () -> getClient(ClientRef.of(client.getId())),
+                updatedClient -> (name == null || Objects.equals(name, updatedClient.getName()))
+                        && (description == null || Objects.equals(description, updatedClient.getDescription())),
+                "Metadati attesi non ancora visibili per il client %s (nome: %s, descrizione: %s)"
+                        .formatted(client.getId(), name, description)
+        );
+    }
+
+    @Override
+    public void tryToUpdateMetadata(Client client, String name, String description) {
+        ClientUpdateSeed updateSeed = new ClientUpdateSeed()
+                .name(name)
+                .description(description);
+
+        restClient.updateClient(client.getId(), updateSeed)
+                .withoutPolling();
+    }
+
+    @Override
+    public void shouldFailToUpdateMetadataAsForbidden() {
+        assertThat(lastApiResponseStore.getLastResponse())
+                .as("Risposta al tentativo di modifica dei metadati del client")
+                .isNotNull()
+                .extracting(ApiResponse::getStatusCode)
+                .as("Modifica dei metadati del client vietata")
+                .isEqualTo(403);
+    }
+
+    @Override
+    public void shouldFailToUpdateMetadataAsMalformed() {
+        assertThat(lastApiResponseStore.getLastResponse())
+                .as("Risposta al tentativo di modifica dei metadati del client")
+                .isNotNull()
+                .extracting(ApiResponse::getStatusCode)
+                .as("Modifica dei metadati del client malformata")
+                .isEqualTo(400);
     }
 
     @Override
