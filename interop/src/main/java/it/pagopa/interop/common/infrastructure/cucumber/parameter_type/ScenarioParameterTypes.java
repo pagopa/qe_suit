@@ -90,7 +90,7 @@ public class ScenarioParameterTypes {
         return entityStore.getLastOrThrow(ProducerKeychain.class);
     }
 
-    @ParameterType("purpose \"([^\"]+)\"")
+    @ParameterType("(?:purpose|finalità) \"([^\"]+)\"")
     public Purpose purposeByAlias(String alias) {
         return entityStore.getByAliasOrThrow(alias, Purpose.class);
     }

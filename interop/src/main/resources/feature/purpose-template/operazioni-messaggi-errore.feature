@@ -182,34 +182,30 @@ Feature: Messaggi di errore durante la gestione dei template finalità e delle a
 
   # NON REPLICABILE A FRONTEND
   # Endpoint: PATCH /purposeTemplates/:purposeTemplateId
-  # PRENDI STEP WHEN DA MODIFICA NOME
+  @err_msg_glue_exec
   Scenario: [ERROR_146] - Rifiuto della modifica di un template con il nome di un altro template finalità
   Dati due template finalità in bozza dello stesso creatore con nomi diversi
   Quando il creatore tenta di assegnare al secondo il nome del primo
   Allora il sistema rifiuta la modifica e segnala che il nome è già in uso.
 
-    # Binding di setup comune mancante; riusare createPurposeTemplate e registrare gli alias senza cambiare i nomi.
     Given i seguenti template finalità in bozza creati da PagoPA con nomi distinti:
       | alias |
       | TF-1  |
       | TF-2  |
-    # Operazione BFF e binding negativo mancanti; il client attuale espone PUT, non PATCH.
-    # Verificare il contratto di rilascio e non rimappare questo ID su un'altra operazione.
     When l'operatore tenta di modificare i dati del template finalità "TF-2" con il nome del template "TF-1"
     Then il messaggio di errore corrisponde al caso "PURPOSE_TEMPLATE_PURPOSE_TEMPLATE_TITLE_CONFLICT__PATCH_PURPOSE_TEMPLATES_PURPOSE_TEMPLATE_ID"
 
   # Endpoint: PATCH /purposeTemplates/:purposeTemplateId
-  # PRENDI STEP WHEN DA MODIFICA NOME
+  @err_msg_glue_exec
   Scenario: [ERROR_147] - Rifiuto della modifica di un template finalità con un link nel nome
   Dato un template finalità in bozza
   Quando il creatore tenta di inserire un collegamento nel nome lasciando validi gli altri dati
   Allora il sistema rifiuta la modifica e invita il creatore a rimuovere il collegamento.
 
-    # Binding di setup comune mancante; riusare createPurposeTemplate e registrare l'alias.
     Given i seguenti template finalità in bozza creati da PagoPA con nomi distinti:
       | alias |
       | TF-1  |
-    # Operazione BFF e binding negativo mancanti; il client attuale espone PUT, non PATCH.
-    # Verificare il contratto di rilascio e non rimappare questo ID su un'altra operazione.
-    When l'operatore tenta di modificare i dati del template finalità "TF-1" con il nome "Valore https://example.org"
+    When un admin di PagoPA tenta di modificare i metadati del template finalità:
+      | campo        | valore                     |
+      | purposeTitle | Valore https://example.org |
     Then il messaggio di errore corrisponde al caso "PURPOSE_TEMPLATE_HYPERLINK_DETECTION_ERROR__PATCH_PURPOSE_TEMPLATES_PURPOSE_TEMPLATE_ID"

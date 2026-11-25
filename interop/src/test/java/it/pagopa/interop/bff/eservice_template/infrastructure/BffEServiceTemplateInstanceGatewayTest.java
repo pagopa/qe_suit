@@ -77,7 +77,7 @@ class BffEServiceTemplateInstanceGatewayTest {
 
         if (status == 400) {
             steps.attemptToCreateTemplateInstanceWithLinkInLabel(template);
-            new BffErrorMessageSteps(responses, currentChannel).assertErrorMessage(messageId);
+            new BffErrorMessageSteps(responses, currentChannel, entities).assertErrorMessage(messageId);
         } else {
             assertThatThrownBy(() -> steps.attemptToCreateTemplateInstanceWithLinkInLabel(template))
                     .isInstanceOf(AssertionError.class);

@@ -392,6 +392,25 @@ public class PurposeTemplateSteps {
         purposeTemplateUseCase.attemptSignedRiskAnalysisDocumentDownload(purposeTemplate);
     }
 
+    @When("l'operatore tenta di modificare i dati del template finalità {string} con il nome del template {string}")
+    public void attemptUpdatePurposeTemplateWithAnotherTemplateName(
+            String targetTemplateAlias,
+            String sourceTemplateAlias
+    ) {
+        // Usato negli scenari con id ERROR_146
+        PurposeTemplate targetTemplate = entityStore.getByAliasOrThrow(targetTemplateAlias, PurposeTemplate.class);
+        PurposeTemplate sourceTemplate = entityStore.getByAliasOrThrow(sourceTemplateAlias, PurposeTemplate.class);
+        purposeTemplateUseCase.tryToUpdateMetadata(
+                targetTemplate,
+                sourceTemplate.getTitle(),
+                targetTemplate.getDescription(),
+                targetTemplate.getTargetDescription(),
+                null,
+                null,
+                null
+        );
+    }
+
     private void validateAliases(List<PurposeTemplateAliasConfiguration> configurations) {
         if (configurations == null || configurations.isEmpty()) {
             throw new IllegalArgumentException("At least one purpose template alias is required");

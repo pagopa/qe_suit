@@ -476,6 +476,35 @@ public class PurposeSteps {
         purposeUseCase.attemptNameUpdate(purpose, existing.getTitle());
     }
 
+    @When("il fruitore tenta di aggiornare parzialmente la {purposeByAlias} con il nome della {purposeByAlias}")
+    public void attemptPartialNameUpdateWithAnotherPurposeName(Purpose targetPurpose, Purpose existingPurpose) {
+        EService eService = entityStore.getById(targetPurpose.getEserviceId(), EService.class)
+                .orElseThrow(() -> new IllegalStateException(
+                        "E-service not found for purpose " + targetPurpose.getId()
+                ));
+        if (eService.getMode() == EServiceMode.RECEIVE) {
+            purposeUseCase.tryToUpdateReversePurposeMetadata(
+                    targetPurpose,
+                    existingPurpose.getTitle(),
+                    targetPurpose.getDescription(),
+                    null,
+                    null,
+                    null
+            );
+        } else if (eService.getMode() == EServiceMode.DELIVER) {
+            purposeUseCase.tryToUpdatePurposeMetadata(
+                    targetPurpose,
+                    existingPurpose.getTitle(),
+                    targetPurpose.getDescription(),
+                    null,
+                    null,
+                    null
+            );
+        } else {
+            throw new IllegalStateException("E-service mode is missing for purpose " + targetPurpose.getId());
+        }
+    }
+
     @When("il fruitore tenta di modificare la {currentPurpose} con il nome {string}")
     public void attemptNameUpdate(Purpose purpose, String name) {
         purposeUseCase.attemptNameUpdate(purpose, name);

@@ -65,10 +65,10 @@ public class BffClientRestClient extends RestClient {
         );
     }
 
-    public TestChain<CreatedResource> addUsers(UUID clientId, AddUsersToClientRequest addUsersToClientRequest) {
+    public TestChain<Void> addUsers(UUID clientId, AddUsersToClientRequest addUsersToClientRequest) {
         return execute(
                 () -> clientsApi.addUsersToClient().clientIdPath(clientId).body(addUsersToClientRequest).execute(Function.identity()),
-                CreatedResource.class
+                Void.class
         );
     }
 

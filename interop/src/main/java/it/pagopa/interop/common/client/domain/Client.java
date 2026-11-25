@@ -24,8 +24,12 @@ public class Client implements Identifiable, InteropActor {
     String name;
     String description;
 
+    // TODO: in futuro eliminare il campo keys a favore di registeredKeys; mantenuto ora per evitare regressioni nel breve termine.
     @Builder.Default
     LinkedHashSet<Key> keys = new LinkedHashSet<>();
+
+    @Builder.Default
+    List<ClientKey> registeredKeys = new LinkedList<>();
 
     ClientKind kind;
     User admin;
@@ -44,5 +48,9 @@ public class Client implements Identifiable, InteropActor {
         return keys.stream()
                 .reduce((first, second) -> second)
                 .orElse(null);
+    }
+
+    public ClientKey getFirstRegisteredKey() {
+        return registeredKeys.isEmpty() ? null : registeredKeys.get(0);
     }
 }

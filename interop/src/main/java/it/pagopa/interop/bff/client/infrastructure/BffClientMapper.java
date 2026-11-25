@@ -35,6 +35,9 @@ public interface BffClientMapper {
                 .keys(existingClient.getKeys() != null
                         ? new LinkedHashSet<>(existingClient.getKeys())
                         : new LinkedHashSet<>())
+                .registeredKeys(existingClient.getRegisteredKeys() != null
+                        ? new ArrayList<>(existingClient.getRegisteredKeys())
+                        : new ArrayList<>())
                 .users(existingClient.getUsers() != null
                         ? new ArrayList<>(existingClient.getUsers())
                         : new ArrayList<>())
@@ -43,6 +46,7 @@ public interface BffClientMapper {
 
     @Mapping(target = "consumerId", source = "consumer.id")
     @Mapping(target = "keys", ignore = true)
+    @Mapping(target = "registeredKeys", ignore = true)
     @Mapping(target = "users", ignore = true)
     Client toClient(
             it.pagopa.interop.generated.openapi.clients.bff.model.Client source

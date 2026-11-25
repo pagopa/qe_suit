@@ -108,7 +108,7 @@ Feature: Messaggi di errore durante la creazione e la modifica dei template e-se
 
   # NON REPLICABILE A FRONTEND
   # Endpoint: PATCH /eservices/templates/:eServiceTemplateId
-  # PRENDI STEP WHEN DA MODIFICA NOME
+  @err_msg_glue_exec
   Scenario: [ERROR_135] - Rifiuto della modifica dei dati generali con il nome di un altro template
   Dati due template e-service distinti dello stesso ente creatore con nomi diversi
   Quando l'erogatore tenta di assegnare alla bozza il nome del template esistente modificandone i dati generali
@@ -120,38 +120,28 @@ Feature: Messaggi di errore durante la creazione e la modifica dei template e-se
     And un template e-service preparato con la seguente configurazione:
       | alias | tecnologia | stato | interfaccia               |
       | T-2   | REST       | DRAFT | openapi3-riferimenti.json |
-    # Binding negativo mancante; verificare il contratto PATCH di rilascio: updateEServiceTemplate usa POST.
-    # Non rimappare questo caso su updateTemplateName o sull'aggiornamento POST.
     When l'erogatore tenta di modificare i dati generali del template "T-2" con il nome del template "T-1"
     Then il messaggio di errore corrisponde al caso "ESERVICE_TEMPLATE_ESERVICE_TEMPLATE_DUPLICATE__PATCH_ESERVICES_TEMPLATES_E_SERVICE_TEMPLATE_ID"
 
   # Endpoint: PATCH /eservices/templates/:eServiceTemplateId
-  # PRENDI STEP WHEN DA MODIFICA NOME
+  @err_msg_glue_exec
   Scenario: [ERROR_136] - Rifiuto della modifica del nome che provocherebbe un conflitto con un e-service
   Dato un template pubblicato con un'istanza e un e-service distinto dello stesso erogatore dell'istanza
   Quando il creatore tenta di rinominare il template facendo coincidere il nome derivato dell'istanza con quello dell'e-service
   Allora il sistema rifiuta la modifica e segnala il conflitto sul nome dell'istanza.
 
-    # Non riproducibile sul branch PIN-10967_AIskill_and_markdown (a8095d9) con questo mapping:
-    # PATCH aggiorna solo template interamente in bozza, dai quali non si possono creare istanze.
-    # instanceNameConflict viene controllato dalla rinomina di un template pubblicato (name/update).
-    # ID e mapping JSON mantenuti su indicazione dell'utente; non sostituire l'operazione sotto test.
     Given i seguenti template e-service pubblicati:
       | alias | erogatore        | nome                | tecnologia |
       | T-1   | Comune di Milano | Template di origine | REST       |
     And le seguenti istanze di template e-service pubblicate:
       | alias | template | suffisso |
       | ES-1  | T-1      | Istanza  |
-    # Binding di setup mancante; predisporre un nome univoco del template e il conflitto sul nome derivato.
-    # Riusare createEService con il nome effettivo derivato, senza randomizzarlo ulteriormente.
     And un nuovo nome per il template "T-1" non usato da altri template e un e-service distinto con il nome derivato dell'istanza "ES-1" dopo la rinomina
-    # Binding negativo mancante; verificare il contratto PATCH di rilascio: updateEServiceTemplate usa POST.
-    # Non rimappare questo caso su updateTemplateName o sull'aggiornamento POST.
     When l'erogatore tenta di modificare i dati generali del template "T-1" con il nuovo nome predisposto
     Then il messaggio di errore corrisponde al caso "ESERVICE_TEMPLATE_INSTANCE_NAME_CONFLICT__PATCH_ESERVICES_TEMPLATES_E_SERVICE_TEMPLATE_ID"
 
   # Endpoint: PATCH /eservices/templates/:eServiceTemplateId
-  # PRENDI STEP WHEN DA MODIFICA NOME
+  @err_msg_glue_exec
   Scenario: [ERROR_137] - Rifiuto della modifica dei dati generali di un template con un link nel nome
   Dato un template e-service con una versione in bozza
   Quando l'erogatore tenta di modificarne i dati generali inserendo un collegamento nel nome e lasciando validi gli altri dati
@@ -160,7 +150,7 @@ Feature: Messaggi di errore durante la creazione e la modifica dei template e-se
     Given un template e-service preparato con la seguente configurazione:
       | alias | tecnologia | stato | interfaccia               |
       | T-1   | REST       | DRAFT | openapi3-riferimenti.json |
-    # Binding negativo mancante; verificare il contratto PATCH di rilascio: updateEServiceTemplate usa POST.
-    # Non rimappare questo caso su updateTemplateName o sull'aggiornamento POST; mantenere gli altri dati validi.
-    When l'erogatore tenta di modificare i dati generali del template "T-1" con il nome "Valore https://example.org"
+    When un admin del Comune di Milano tenta la modifica dei metadati del template e-service "T-1":
+      | campo            | valore                     |
+      | nome (letterale) | Valore https://example.org |
     Then il messaggio di errore corrisponde al caso "ESERVICE_TEMPLATE_HYPERLINK_DETECTION_ERROR__PATCH_ESERVICES_TEMPLATES_E_SERVICE_TEMPLATE_ID"

@@ -13,9 +13,11 @@ import it.pagopa.interop.common.client.application.ClientGateway;
 import it.pagopa.interop.common.client.application.command.ClientCreationCommand;
 import it.pagopa.interop.common.client.application.command.ClientKeyCreationCommand;
 import it.pagopa.interop.common.client.domain.Client;
+import it.pagopa.interop.common.client.domain.ClientKey;
 import it.pagopa.interop.common.kernel.domain.Channel;
 import it.pagopa.interop.common.kernel.domain.ClientRef;
 import it.pagopa.interop.common.kernel.domain.KeyRegistrationMaterial;
+import it.pagopa.interop.common.kernel.domain.Tenant;
 import it.pagopa.interop.common.kernel.domain.User;
 import it.pagopa.interop.common.kernel.domain.UserRef;
 import it.pagopa.interop.common.purpose.domain.Purpose;
@@ -79,6 +81,9 @@ public class BffClientGateway implements ClientGateway {
                     bffCommand.getKeysCommands().forEach(keyCommand -> {
                         addKeys(client, keyCommand.getKeySeed());
                         client.getKeys().add(keyCommand.getKey());
+                        client.getRegisteredKeys().add(
+                                new ClientKey(keyCommand.getKeySeed().getName(), keyCommand.getKey())
+                        );
                     });
 
                     // Associo i membri al client
@@ -103,20 +108,37 @@ public class BffClientGateway implements ClientGateway {
 
         return restClient.addKey(client.getId(), bffCommand.getKeySeed())
                 .withPolling(PollingStrategy.UNTIL_SUCCESS)
-                .map((Void) -> getClient(ClientRef.of(client.getId())))
+                .map((Void) -> {
+                    Client updatedClient = getClient(ClientRef.of(client.getId()));
+                    updatedClient.getKeys().add(bffCommand.getKey());
+                    updatedClient.getRegisteredKeys().add(
+                            new ClientKey(bffCommand.getKeySeed().getName(), bffCommand.getKey())
+                    );
+                    return updatedClient;
+                })
                 .updateContext()
                 .get();
     }
 
     @Override
     public Client addKeys(Client client, List<ClientKeyCreationCommand> keyCreationCommands) {
-        var requests = keyCreationCommands.stream()
+        var bffCommands = keyCreationCommands.stream()
                 .map(cmd -> (BffClientKeyCreationCommand) cmd)
+                .toList();
+        var requests = bffCommands.stream()
                 .map(BffClientKeyCreationCommand::getKeySeed)
                 .toArray(KeySeed[]::new);
 
         addKeys(client, requests);
-        return getClient(ClientRef.of(client.getId()));
+        Client updatedClient = getClient(ClientRef.of(client.getId()));
+        bffCommands.forEach(cmd -> {
+            updatedClient.getKeys().add(cmd.getKey());
+            updatedClient.getRegisteredKeys().add(
+                    new ClientKey(cmd.getKeySeed().getName(), cmd.getKey())
+            );
+        });
+        entityStore.upsert(updatedClient);
+        return updatedClient;
     }
 
     @Override
@@ -126,7 +148,17 @@ public class BffClientGateway implements ClientGateway {
 
         return restClient.addUsers(client.getId(), request)
                 .withPolling(PollingStrategy.UNTIL_SUCCESS)
-                .map((res) -> getClient(ClientRef.of(res.getId())))
+                .map((Void) -> {
+                    Client updatedClient = getClient(ClientRef.of(client.getId()));
+                    if (updatedClient.getConsumerId() != null) {
+                        Tenant tenant = Tenant.fromOrganizationId(updatedClient.getConsumerId());
+                        users.stream()
+                                .map(user -> UserRef.of(user, tenant))
+                                .filter(ref -> !updatedClient.getUsers().contains(ref))
+                                .forEach(updatedClient.getUsers()::add);
+                    }
+                    return updatedClient;
+                })
                 .updateContext()
                 .get();
     }

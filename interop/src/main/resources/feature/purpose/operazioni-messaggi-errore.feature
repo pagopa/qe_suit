@@ -253,7 +253,7 @@ Feature: Messaggi di errore durante la gestione delle finalità e la valutazione
 
   # NON REPLICABILE A FRONTEND
   # Endpoint: PATCH /purposes/:purposeId
-  # PRENDI STEP WHEN DA MODIFICA NOME
+  @err_msg_glue_exec
   Scenario: [ERROR_033] - Rifiuto dell'aggiornamento parziale di una finalità con il nome di un'altra
   Date due finalità in bozza del fruitore per lo stesso e-service con nomi diversi
   Quando il fruitore tenta di aggiornare parzialmente la seconda usando il nome della prima
@@ -263,31 +263,28 @@ Feature: Messaggi di errore durante la gestione delle finalità e la valutazione
       | alias | erogatore        |
       | ES-1  | Comune di Milano |
     And l'e-service "ES-1" del Comune di Milano sottoscritto da PagoPA con una richiesta di fruizione attiva
-    # Binding di setup comune mancante; riusare createPurpose e registrare gli alias con i nomi effettivi.
     And le seguenti finalità in bozza create da PagoPA per l'e-service "ES-1" con nomi distinti:
       | alias |
       | F-1   |
       | F-2   |
-    # Operazione BFF e binding negativo comuni mancanti; verificare il contratto PATCH di rilascio.
-    # Il client espone POST per questa modifica; non rimappare questo ID su un altro endpoint.
     When il fruitore tenta di aggiornare parzialmente la finalità "F-2" con il nome della finalità "F-1"
     Then il messaggio di errore corrisponde al caso "PURPOSE_DUPLICATED_PURPOSE_TITLE__PATCH_PURPOSES_PURPOSE_ID"
 
   # Endpoint: PATCH /purposes/:purposeId
-  # PRENDI STEP WHEN DA MODIFICA NOME
+  @err_msg_glue_exec
   Scenario: [ERROR_034] - Rifiuto dell'aggiornamento parziale di una finalità con un link nel nome
   Data una finalità del fruitore in bozza
   Quando il fruitore tenta di aggiornarla parzialmente inserendo un collegamento nel nome
   Allora il sistema rifiuta la modifica e invita il fruitore a rimuovere il collegamento.
 
     Given un eservice creato dal Comune di Milano con una richiesta di fruizione in stato ACTIVE e una finalità in stato DRAFT associate da PagoPA
-    # Operazione BFF e binding negativo comuni mancanti; verificare il contratto PATCH di rilascio.
-    # Il client espone POST per questa modifica; non rimappare questo ID su un altro endpoint.
-    When il fruitore tenta di aggiornare parzialmente la finalità con il nome "Finalità https://example.org"
+    When un admin di PagoPA tenta di modificare i metadati della finalità:
+      | campo | valore                       |
+      | title | Finalità https://example.org |
     Then il messaggio di errore corrisponde al caso "PURPOSE_HYPERLINK_DETECTION_ERROR__PATCH_PURPOSES_PURPOSE_ID"
 
   # Endpoint: PATCH /reverse/purposes/:purposeId
-  # PRENDI STEP WHEN DA MODIFICA NOME
+  @err_msg_glue_exec
   Scenario: [ERROR_035] - Rifiuto dell'aggiornamento parziale di una finalità in ricezione con nome duplicato
   Date due finalità in bozza del fruitore per lo stesso e-service in ricezione con nomi diversi
   Quando il fruitore tenta di aggiornare parzialmente la seconda usando il nome della prima
@@ -297,18 +294,15 @@ Feature: Messaggi di errore durante la gestione delle finalità e la valutazione
       | alias | erogatore        | modalità  |
       | ES-1  | Comune di Milano | ricezione |
     And l'e-service "ES-1" del Comune di Milano sottoscritto da PagoPA con una richiesta di fruizione attiva
-    # Binding di setup comune mancante; riusare createReversePurpose con l'analisi dell'erogatore.
     And le seguenti finalità in bozza create da PagoPA per l'e-service "ES-1" con nomi distinti:
       | alias |
       | F-1   |
       | F-2   |
-    # Operazione BFF e binding negativo comuni mancanti; verificare il contratto PATCH di rilascio.
-    # Il client espone POST per questa modifica; non rimappare questo ID su un altro endpoint.
     When il fruitore tenta di aggiornare parzialmente la finalità "F-2" con il nome della finalità "F-1"
     Then il messaggio di errore corrisponde al caso "PURPOSE_DUPLICATED_PURPOSE_TITLE__PATCH_REVERSE_PURPOSES_PURPOSE_ID"
 
   # Endpoint: PATCH /reverse/purposes/:purposeId
-  # PRENDI STEP WHEN DA MODIFICA NOME
+  @err_msg_glue_exec
   Scenario: [ERROR_036] - Rifiuto dell'aggiornamento parziale di una finalità in ricezione con un link nel nome
   Data una finalità del fruitore in bozza per un e-service in ricezione
   Quando il fruitore tenta di aggiornarla parzialmente inserendo un collegamento nel nome
@@ -318,11 +312,10 @@ Feature: Messaggi di errore durante la gestione delle finalità e la valutazione
       | alias | erogatore        | modalità  |
       | ES-1  | Comune di Milano | ricezione |
     And l'e-service "ES-1" del Comune di Milano sottoscritto da PagoPA con una richiesta di fruizione attiva
-    # Binding di setup comune mancante; riusare createReversePurpose con l'analisi dell'erogatore.
     And le seguenti finalità in bozza create da PagoPA per l'e-service "ES-1" con nomi distinti:
       | alias |
       | F-1   |
-    # Operazione BFF e binding negativo comuni mancanti; verificare il contratto PATCH di rilascio.
-    # Il client espone POST per questa modifica; non rimappare questo ID su un altro endpoint.
-    When il fruitore tenta di aggiornare parzialmente la finalità con il nome "Finalità https://example.org"
+    When un admin di PagoPA tenta di modificare i metadati della finalità:
+      | campo | valore                       |
+      | title | Finalità https://example.org |
     Then il messaggio di errore corrisponde al caso "PURPOSE_HYPERLINK_DETECTION_ERROR__PATCH_REVERSE_PURPOSES_PURPOSE_ID"

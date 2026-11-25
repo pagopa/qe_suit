@@ -227,4 +227,34 @@ class PurposeTemplateStepsTest {
 
         verifyNoInteractions(journey);
     }
+
+    @Test
+    void attemptsMetadataUpdateOfTargetPurposeTemplateUsingSourcePurposeTemplateTitle() {
+        var target = PurposeTemplate.builder()
+                .id(UUID.randomUUID())
+                .title("Titolo TF-2")
+                .description("Descrizione TF-2")
+                .targetDescription("Destinatari TF-2")
+                .build();
+        var source = PurposeTemplate.builder()
+                .id(UUID.randomUUID())
+                .title("Titolo TF-1")
+                .build();
+        when(entityStore.getByAliasOrThrow("TF-2", PurposeTemplate.class)).thenReturn(target);
+        when(entityStore.getByAliasOrThrow("TF-1", PurposeTemplate.class)).thenReturn(source);
+
+        steps.attemptUpdatePurposeTemplateWithAnotherTemplateName("TF-2", "TF-1");
+
+        verify(useCase).tryToUpdateMetadata(
+                target,
+                "Titolo TF-1",
+                "Descrizione TF-2",
+                "Destinatari TF-2",
+                null,
+                null,
+                null
+        );
+        verifyNoMoreInteractions(useCase);
+        verifyNoInteractions(journey);
+    }
 }

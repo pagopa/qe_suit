@@ -11,6 +11,7 @@ import it.pagopa.interop.common.client.application.ClientUseCase;
 import it.pagopa.interop.common.client.domain.Client;
 import it.pagopa.interop.common.journey.application.InteropJourney;
 import it.pagopa.interop.common.kernel.domain.Tenant;
+import it.pagopa.interop.common.kernel.domain.User;
 import it.pagopa.interop.common.kernel.domain.UserRole;
 import it.pagopa.interop.common.client.domain.ClientKind;
 import it.pagopa.interop.common.kernel.domain.KeyRegistrationMaterial;
@@ -33,6 +34,21 @@ public class ClientSteps {
     private final ClientUseCase clientUseCase;
     private final InteropJourney interopJourney;
     private Client clientReference;
+
+    @Given("un {userRole} appartenente al {currentClient}")
+    public void addUserToClientAndSelectSession(UserRole role, Client client) {
+        Tenant tenant = Tenant.fromOrganizationId(client.getConsumerId());
+        User user = User.getTenantUser(tenant, role);
+
+        boolean alreadyMember = client.getUsers().stream()
+                .anyMatch(ref -> user.getUserId().equals(ref.getUser().getUserId()));
+        if (!alreadyMember) {
+            interopJourney.withConsumer(tenant, UserRole.ADMIN);
+            clientUseCase.addUsersToClient(client, List.of(user));
+        }
+
+        interopJourney.withConsumer(tenant, role);
+    }
 
     @When("l'utente tenta di eliminare la chiave del {currentClient}")
     public void attemptClientKeyDeletion(Client client) {
@@ -90,6 +106,7 @@ public class ClientSteps {
         client = clientUseCase.getClient(client);
         clientReference = client.toBuilder()
                 .keys(new LinkedHashSet<>(client.getKeys()))
+                .registeredKeys(List.copyOf(client.getRegisteredKeys()))
                 .purposes(List.copyOf(client.getPurposes()))
                 .users(List.copyOf(client.getUsers()))
                 .build();

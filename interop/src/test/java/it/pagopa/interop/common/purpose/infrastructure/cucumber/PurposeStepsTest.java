@@ -511,4 +511,34 @@ class PurposeStepsTest {
 
         verify(useCase).attemptRiskAnalysisFormUpdate(purpose);
     }
+
+    @ParameterizedTest
+    @EnumSource(value = EServiceMode.class, names = {"DELIVER", "RECEIVE"})
+    void attemptsPartialNameUpdateWithAnotherPurposeNameUsingTheModeSpecificPatchOperation(EServiceMode mode) {
+        var eService = EService.builder().id(UUID.randomUUID()).mode(mode).build();
+        var targetPurpose = purpose.toBuilder()
+                .id(UUID.randomUUID())
+                .eserviceId(eService.getId())
+                .title("Titolo F-2")
+                .description("Descrizione F-2")
+                .build();
+        var existingPurpose = purpose.toBuilder()
+                .id(UUID.randomUUID())
+                .eserviceId(eService.getId())
+                .title("Titolo F-1")
+                .build();
+        when(entities.getById(eService.getId(), EService.class)).thenReturn(Optional.of(eService));
+
+        steps.attemptPartialNameUpdateWithAnotherPurposeName(targetPurpose, existingPurpose);
+
+        if (mode == EServiceMode.RECEIVE) {
+            verify(useCase).tryToUpdateReversePurposeMetadata(
+                    targetPurpose, "Titolo F-1", "Descrizione F-2", null, null, null);
+        } else {
+            verify(useCase).tryToUpdatePurposeMetadata(
+                    targetPurpose, "Titolo F-1", "Descrizione F-2", null, null, null);
+        }
+        verifyNoMoreInteractions(useCase);
+        verifyNoInteractions(interopJourney, userSession, currentChannel);
+    }
 }

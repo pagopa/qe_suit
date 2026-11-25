@@ -4,9 +4,9 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import it.pagopa.interop.common.client.application.command.ClientCreationCommand;
 import it.pagopa.interop.common.client.domain.Client;
 import it.pagopa.interop.common.client.domain.ClientKind;
-import it.pagopa.interop.common.kernel.domain.KeyRegistrationMaterial;
-import it.pagopa.interop.common.client.domain.ClientKind;
 import it.pagopa.interop.common.kernel.domain.ClientRef;
+import it.pagopa.interop.common.kernel.domain.KeyRegistrationMaterial;
+import it.pagopa.interop.common.kernel.domain.User;
 import it.pagopa.interop.common.purpose.domain.Purpose;
 import it.pagopa.kernel.security.AccessToken;
 import lombok.RequiredArgsConstructor;
@@ -14,6 +14,7 @@ import org.springframework.stereotype.Service;
 
 import javax.annotation.Nullable;
 import java.security.NoSuchAlgorithmException;
+import java.util.List;
 import java.util.function.Consumer;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -35,6 +36,10 @@ public class ClientUseCase {
 
     public Client linkPurpose(Client client, Purpose purpose) {
         return clientGateway.addPurpose(client, purpose);
+    }
+
+    public Client addUsersToClient(Client client, List<User> users) {
+        return clientGateway.addUsersToClient(client, users);
     }
 
     public void attemptClientKeyDeletion(Client client) {
