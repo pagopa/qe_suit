@@ -5,8 +5,6 @@ import io.cucumber.java.en.Then;
 import io.cucumber.java.en.When;
 import it.pagopa.application.context.EntityStore;
 import it.pagopa.interop.common.agreement.application.AgreementUseCase;
-import it.pagopa.interop.common.agreement.domain
-        .Agreement;
 import it.pagopa.interop.common.agreement.domain.Agreement;
 import it.pagopa.interop.common.agreement.domain.AgreementApprovalPolicy;
 import it.pagopa.interop.common.agreement.domain.AgreementCreationFailureReason;
@@ -40,11 +38,11 @@ public class AgreementSteps {
     private final EServiceRequestFactory eServiceRequestFactory;
 
     /* DEV. NOTE 25/11/2026: memoria di contesto necessaria per rendere possibile l'attuazione
-    * dello step "il fruitore tenta di eliminare il documento già eliminato dalla {currentAgreement}".
-    * In controtendenza rispetto alle pratiche usate finora che evitavano di memorizzare
-    * informazioni come questa nelle classi di step o in contesti dedicati, ma non è stata
-    * trovata una strategia migliore con gli strumenti attualmente disponibili.
-    * Da definire come gestire casi come questo. */
+     * dello step "il fruitore tenta di eliminare il documento già eliminato dalla {currentAgreement}".
+     * In controtendenza rispetto alle pratiche usate finora che evitavano di memorizzare
+     * informazioni come questa nelle classi di step o in contesti dedicati, ma non è stata
+     * trovata una strategia migliore con gli strumenti attualmente disponibili.
+     * Da definire come gestire casi come questo. */
     private Document deletedDocument;
 
     @When("l'erogatore accede ai dettagli della richiesta di fruizione ricevuta")
@@ -118,8 +116,9 @@ public class AgreementSteps {
     @When("il sistema impedisce a/al {tenant} di inoltrare una richiesta di fruizione per la {currentDeprecatedEServiceDescriptor} dell'{currentEService}")
     public void createAgreement(Tenant consumer, EServiceDescriptor eServiceDescriptor, EService eService) {
         authSession.set(consumer);
-        AgreementCreationFailureReason reason = switch (eServiceDescriptor.getState()){
-            case DRAFT,SUSPENDED,ARCHIVING_SUSPENDED, WAITING_FOR_APPROVAL -> AgreementCreationFailureReason.ESERVICE_INVALID_STATE;
+        AgreementCreationFailureReason reason = switch (eServiceDescriptor.getState()) {
+            case DRAFT, SUSPENDED, ARCHIVING_SUSPENDED, WAITING_FOR_APPROVAL ->
+                    AgreementCreationFailureReason.ESERVICE_INVALID_STATE;
             case DEPRECATED -> AgreementCreationFailureReason.DEPRECATED_VERSION;
             case ARCHIVED -> AgreementCreationFailureReason.ARCHIVED_STATE;
             default -> throw new IllegalArgumentException("Status not among the ones to be handled");
@@ -259,6 +258,12 @@ public class AgreementSteps {
     @When("l'utente tenta di scaricare il documento dalla {currentAgreement}")
     public void attemptAgreementDocumentDownload(Agreement agreement) {
         agreementUseCase.attemptAgreementDocumentDownload(agreement);
+    }
+
+    @When("l'utente tenta di scaricare il documento già eliminato dalla {currentAgreement}")
+    public void attemptAgreementDocumentIdDownload(Agreement agreement) {
+        UUID deletedDocumentId = this.deletedDocument.getId();
+        agreementUseCase.attemptAgreementDocumentDownload(agreement, deletedDocumentId);
     }
 
     @When("il fruitore tenta di eliminare il documento dalla {currentAgreement}")

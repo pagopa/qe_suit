@@ -10,7 +10,9 @@ import it.pagopa.interop.common.kernel.domain.Channel;
 import it.pagopa.interop.common.kernel.domain.Delegation;
 import it.pagopa.interop.common.kernel.domain.Document;
 import jakarta.annotation.Nullable;
+
 import java.util.UUID;
+
 import org.springframework.plugin.core.Plugin;
 
 import java.util.Set;
@@ -81,7 +83,7 @@ public interface AgreementGateway extends Plugin<Channel> {
 
     void attemptInvalidFormatConsumerDocumentUpload(Agreement agreement);
 
-    void attemptAgreementDocumentDownload(Agreement agreement);
+    void attemptAgreementDocumentDownload(Agreement agreement, @Nullable UUID documentId);
 
     void attemptAgreementDocumentDeletion(Agreement agreement, @Nullable UUID documentId);
 }

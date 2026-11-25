@@ -15,7 +15,9 @@ import it.pagopa.interop.generated.openapi.clients.m2m.v3.model.AgreementSeed;
 import it.pagopa.interop.generated.openapi.clients.m2m.v3.model.AgreementSubmission;
 import it.pagopa.utils.async.PollingUtils;
 import jakarta.annotation.Nullable;
+
 import java.util.UUID;
+
 import lombok.RequiredArgsConstructor;
 import org.jspecify.annotations.NonNull;
 import org.springframework.stereotype.Service;
@@ -214,7 +216,7 @@ public class M2MAgreementGateway implements AgreementGateway {
     }
 
     @Override
-    public void attemptAgreementDocumentDownload(Agreement agreement) {
+    public void attemptAgreementDocumentDownload(Agreement agreement, @Nullable UUID documentId) {
         throw unsupportedOperation("attemptAgreementDocumentDownload");
     }
 

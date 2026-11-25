@@ -136,7 +136,7 @@ Feature: Messaggi di errore durante la gestione delle richieste di fruizione
     And il file "allegato-a.pdf" allegato alla richiesta di fruizione
     And il documento allegato alla richiesta di fruizione viene eliminato
     # Operazione BFF e binding mancanti per il download dell'allegato eliminato.
-    When l'utente tenta di scaricare il documento dalla richiesta di fruizione
+    When l'utente tenta di scaricare il documento già eliminato dalla richiesta di fruizione
     Then il messaggio di errore corrisponde al caso "AGREEMENT_DOCUMENT_NOT_FOUND__GET_AGREEMENTS_AGREEMENT_ID_CONSUMER_DOCUMENTS_DOCUMENT_ID"
 
   # Endpoint: DELETE /agreements/:agreementId/consumer-documents/:documentId
