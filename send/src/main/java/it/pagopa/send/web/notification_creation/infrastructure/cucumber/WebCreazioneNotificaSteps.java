@@ -28,21 +28,21 @@ public class WebCreazioneNotificaSteps {
 
         // Fill form
         // TODO: page.fillAndSubmit(data)
-        page.compileInformazioniPreliminari(notification);
+        page.fillPreliminaryInformation(notification);
         // il gruppo è facoltativo: i gruppi esistono solo per alcuni enti e cambiano da ambiente ad ambiente
         if (notification.getGroup() != null && !notification.getGroup().isBlank()) {
-            page.informazioniPreliminariStep().openGroupDropdown().click();
-            browser.click(page.informazioniPreliminariStep().groupOptionSelector(notification.getGroup()));
+            page.preliminaryInformationStep().openGroupDropdown().click();
+            browser.click(page.preliminaryInformationStep().groupOptionSelector(notification.getGroup()));
         }
         page.continueButton().click();
 
-        page.compileDestinatari(notification);
+        page.fillRecipients(notification);
         page.continueButton().click();
 
-        page.compileDettaglioPosizioneDebitoria(notification);
+        page.fillDebtPosition(notification);
         page.continueButton().click();
 
-        page.compileDocumentazione(notification);
+        page.fillAttachments(notification);
         page.continueButton().click();
     }
 

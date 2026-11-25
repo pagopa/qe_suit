@@ -17,7 +17,7 @@ import java.util.function.Predicate;
 /**
  * Passo del wizard "Invia una nuova notifica" usato dagli step Cucumber ({@code CreateNotificationPage}).
  */
-public interface InformazioniPreliminariStep extends Component {
+public interface PreliminaryInformationStep extends Component {
     @XPath(".//*[@id=\"subject\"]")
     Writable<String> subject();
 

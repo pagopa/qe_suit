@@ -11,7 +11,7 @@ import java.util.List;
 /**
  * Passo del wizard "Invia una nuova notifica" usato dagli step Cucumber ({@code CreateNotificationPage}).
  */
-public interface DestinatariStep extends Component {
+public interface RecipientsStep extends Component {
 
     // un blocco per destinatario: il primo è già presente, gli altri si aggiungono con "Aggiungi destinatario"
     @XPath(".//*[@data-testid='RecipientFormBox']")

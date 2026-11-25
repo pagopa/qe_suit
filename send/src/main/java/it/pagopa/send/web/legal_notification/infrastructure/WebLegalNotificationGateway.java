@@ -53,7 +53,7 @@ public class WebLegalNotificationGateway implements LegalNotificationGateway {
         requestFactory.applyPreliminaryData(request, command);
         createNotificationPage.navigateTo();
         createNotificationPage.assertLoaded();
-        createNotificationPage.compileInformazioniPreliminari(request);
+        createNotificationPage.fillPreliminaryInformation(request);
         createNotificationPage.continueToNextStep();
         command.getRecipients().forEach(this::addRecipient);
     }
@@ -64,7 +64,7 @@ public class WebLegalNotificationGateway implements LegalNotificationGateway {
         if (!recipient.payments().isEmpty()) {
             throw new UnsupportedOperationException("I pagamenti dei destinatari non sono ancora supportati sul canale Web");
         }
-        createNotificationPage.compileDestinatario(recipient);
+        createNotificationPage.fillRecipient(recipient);
     }
 
     /**
@@ -77,11 +77,11 @@ public class WebLegalNotificationGateway implements LegalNotificationGateway {
         if (targetStatus == NotificationStatus.REFUSED) {
             throw new UnsupportedOperationException("Lo stato REFUSED non è osservabile dal portale della PA");
         }
-        String recipientTaxId = createNotificationPage.destinatariStep().recipientBoxes().get(0).taxId().read();
+        String recipientTaxId = createNotificationPage.recipientsStep().recipientBoxes().get(0).taxId().read();
         createNotificationPage.continueToNextStep();
-        createNotificationPage.dettaglioPosizioneDebitoriaStep().selectNoPaymentForAllRecipients();
+        createNotificationPage.debtPositionStep().selectNoPaymentForAllRecipients();
         createNotificationPage.continueToNextStep();
-        createNotificationPage.documentazioneStep().fillFields(request.getSubject(), testDocumentPath());
+        createNotificationPage.attachmentsStep().fillFields(request.getSubject(), testDocumentPath());
         createNotificationPage.continueToNextStep();
         notificationSuccessPage.assertLoaded();
 

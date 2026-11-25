@@ -11,7 +11,7 @@ import java.util.List;
 /**
  * Passo del wizard "Invia una nuova notifica" usato dagli step Cucumber ({@code CreateNotificationPage}).
  */
-public interface DettaglioPosizioneDebitoriaStep extends Component {
+public interface DebtPositionStep extends Component {
 
     @XPath(".//label[@data-testid='paymentModel'][1]")
     Clickable selectPagoPa();
