@@ -126,9 +126,26 @@ ko:
     	at it.pagopa.interop.common.eservice.application.EServiceCatalogPaginationUseCase.shouldContainInRelativeOrder(EServiceCatalogPaginationUseCase.java:82)
     	at it.pagopa.interop.common.eservice.infrastructure.cucumber.EServiceCatalogAssertionSteps.shouldContainEServicesInRelativeOrder(EServiceCatalogAssertionSteps.java:63)
     	at ✽.tra i risultati della ricerca, considerando tutte le pagine, i seguenti e-service compaiono in quest'ordine relativo:(classpath:feature-expanded/catalog/private-catalog-ordering-pagination.feature:43)
-  procedure: ''
-  result: ''
-  link_prod_bug: ''
+  procedure: |
+    Ricostruire la sequenza fino al fallimento, verificando le azioni di approvazione dell’erogatore e 
+    la successiva navigazione al dettaglio della richiesta come fruitore.
+    Esaminare quindi il selettore cercato, i tentativi effettuati e lo stack trace, 
+    per stabilire se il KO avviene sulla presenza del pulsante o sulla sua abilitazione dopo l’attesa.
+
+  result: |
+    Il test PRODUCER_AGREEMENT_DOWNLOAD_1 è fallito durante la verifica
+    iniziale del pulsante "Scarica richiesta di fruizione" nella pagina di
+    dettaglio dell'erogatore.
+
+    Dopo le azioni "Attiva" e "Conferma", il selettore non ha individuato il
+    pulsante nella sezione "Informazioni generali", neanche dopo circa
+    20 secondi di tentativi.
+
+    Il test non ha raggiunto la successiva verifica di abilitazione.
+
+    I log non confermano lo stato ACTIVE né lo stato del documento al momento
+    del KO.
+  link_prod_bug: https://pagopa.atlassian.net/browse/PIN-11528
   link_suite_bug: ''
 - id_test: '[PRIVATE_CATALOG_ORDERING_PAGINATION_2] Ordinamenti richiesti esplicitamente [Given=BFF,When=BFF,Then=BFF]
     [Examples: (senza nome) | Example #3 | line: 53]'
