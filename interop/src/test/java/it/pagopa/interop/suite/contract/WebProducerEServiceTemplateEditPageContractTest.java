@@ -6,11 +6,17 @@ import it.frontend.e2e.framework.core.capability.core.Gettable;
 import it.frontend.e2e.framework.core.capability.core.Readable;
 import it.pagopa.infrastructure.contract.browser.WebScenario;
 import it.pagopa.interop.TestBootApp;
+import it.pagopa.interop.common.eservice_template.domain.EServiceTemplate;
+import it.pagopa.interop.common.eservice_template.domain.EServiceTemplateVersion;
+import it.pagopa.interop.common.eservice_template.domain.EServiceTemplateVersionState;
 import it.pagopa.interop.common.infrastructure.WebBrowserContractValidator;
 import it.pagopa.interop.common.infrastructure.config.JunitContextConfig;
+import it.pagopa.interop.common.journey.application.InteropJourney;
 import it.pagopa.interop.common.kernel.domain.Tenant;
 import it.pagopa.interop.common.kernel.domain.User;
+import it.pagopa.interop.common.kernel.domain.UserRole;
 import it.pagopa.interop.web.eservice.infrastructure.page.ProducerEServiceTemplateEditPage;
+import it.pagopa.interop.web.eservice.infrastructure.page.component.template_eservice_stepper.GeneralInfoStep;
 import it.pagopa.interop.web.infrastructure.config.WebJUnitSuitConfig;
 
 import java.util.List;
@@ -24,42 +30,43 @@ import org.junit.jupiter.api.TestFactory;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.TestConstructor;
 
-@SpringBootTest(classes = {TestBootApp.class, JunitContextConfig.class, WebJUnitSuitConfig.class})
+
+@SpringBootTest(classes = {TestBootApp.class, JunitContextConfig.class, WebJUnitSuitConfig.class},
+        properties = "spring.profiles.include=junit")
 @TestConstructor(autowireMode = TestConstructor.AutowireMode.ALL)
 @RequiredArgsConstructor
 class WebProducerEServiceTemplateEditPageContractTest {
 
+    private final WebBrowserContractValidator webContractValidator;
+    private final InteropJourney interopJourney;
 
     private static final List<String> EXPECTED_BREADCRUMB_LABELS =
-            List.of("Erogazione", "I miei template e-service");
+            List.of("Erogazione", "I miei template e-service", "Modifica Template E-Service");
     private static final List<String> EXPECTED_STEP_LABELS = List.of(
             "Informazioni generali", "Soglie e attributi", "Specifiche tecniche", "Informazioni aggiuntive");
-    private static final String STEP_1_GENERAL_DATA = "Informazioni generali";
-    private static final String STEP_2_THRESHOLDS_AND_ATTRIBUTES = "Soglie e attributi";
-    private static final String STEP_3_TECHNICAL_SPECS = "Specifiche tecniche";
-    private static final String STEP_4_ADDITIONAL_INFO = "Informazioni aggiuntive";
 
     private static final String CARD_SIGNAL_HUB_TITLE = "Signal Hub";
-    private static final String SIGNAL_HUB_SWITCH_PRIMARY_LABEL =
-            "Suggerisci a chi userà questo template di segnalare le variazioni dei dati con Signal Hub";
-    private static final String SIGNAL_HUB_SWITCH_DESCRIPTION =
-            "Signal Hub invia notifiche push in caso di variazioni dei dati dell'e-service.";
-    private static final String SIGNAL_HUB_PUSH_NOTIFICATIONS_LINK_TEXT = "notifiche push";
-    private static final String SIGNAL_HUB_MANUAL_HREF =
-            "https://developer.pagopa.it/pdnd-interoperabilita/guides/manuale-operativo-signal-hub";
-
-    private static final String BTN_SAVE_DRAFT = "Salva bozza";
-    private static final String BTN_NEXT = "Avanti";
-
-    private final WebBrowserContractValidator webContractValidator;
+    private static final String BTN_SAVE_DRAFT = "Salva bozza e prosegui";
 
 
     @TestFactory
     @DisplayName("Contract test for ProducerEServiceTemplateEditPage")
     Stream<DynamicTest> producerEServiceTemplateEditPageContractTest() {
+
+        EServiceTemplate template = interopJourney
+                .withProducer(Tenant.COMUNE_DI_MILANO, UserRole.ADMIN)
+                .createEServiceTemplate(EServiceTemplateVersionState.PUBLISHED)
+                .waitUntilEServiceTemplate(t ->
+                        t.getLatestVersion().getState() == EServiceTemplateVersionState.PUBLISHED)
+                .addVersion(EServiceTemplateVersionState.DRAFT)
+                .waitUntilEServiceTemplate(t -> t.getVersions().stream()
+                        .anyMatch(v -> v.getState() == EServiceTemplateVersionState.DRAFT))
+                .get(EServiceTemplate.class);
+        EServiceTemplateVersion version = template.getLastDraftVersion();
+
         return webContractValidator
                 .as(User.getTenantAdmin(Tenant.COMUNE_DI_MILANO), Tenant.COMUNE_DI_MILANO)
-                .on(ProducerEServiceTemplateEditPage.class)
+                .on(ProducerEServiceTemplateEditPage.class, template.getId().toString(), version.getId().toString())
                 .tests(
                         Stream.of(
                                 new WebScenario<>(
@@ -68,10 +75,108 @@ class WebProducerEServiceTemplateEditPageContractTest {
                                         page -> {
                                             assertBreadcrumbs(page);
                                             assertStepper(page);
-//                                            assertSignalHubCard(page.generalDataSection().signalHubCard());
-//                                            assertUnmountedFutureSteps(page);
-//                                            assertFooterButtons(page);
+                                            assertInfoStep(page.generalInfoStep());
                                         })));
+    }
+
+    private void assertInfoStep(GeneralInfoStep generalInfoStep) {
+        assertEServiceTemplateCaratherizationCard(generalInfoStep.eServiceTemplateCharacterizationCard());
+        assertEServiceDetailsCard(generalInfoStep.eServiceDetailsCard());
+        assertSignalHubCard(generalInfoStep.signalHubCard());
+
+        assertThat(generalInfoStep.saveDraftButton().get(Gettable.FindPolicy.VISIBLE).isPresent())
+                .as("Save Draft button must be present and VISIBLE in DOM")
+                .isTrue();
+        generalInfoStep.saveDraftButton().readAndAssert(BTN_SAVE_DRAFT);
+    }
+
+    private void assertEServiceDetailsCard(GeneralInfoStep.EServiceDetailsCard eServiceDetailsCard) {
+        assertThat(eServiceDetailsCard.get(Gettable.FindPolicy.VISIBLE).isPresent())
+                .as("EService Details card container must be present and VISIBLE in DOM")
+                .isTrue();
+
+        assertThat(eServiceDetailsCard.eserviceDetailsCardTitle().get(Gettable.FindPolicy.VISIBLE).isPresent())
+                .as("EService Details card title must be present in DOM")
+                .isTrue();
+        eServiceDetailsCard.eserviceDetailsCardTitle().readAndAssert("Dettagli dell'e-service");
+
+        assertThat(eServiceDetailsCard.subTitle().get(Gettable.FindPolicy.VISIBLE).isPresent())
+                .as("EService Details card subtitle must be present in DOM")
+                .isTrue();
+        eServiceDetailsCard.subTitle().readAndAssert("Queste informazioni non sono modificabili.");
+
+        assertThat(eServiceDetailsCard.exchangeDataLabel().get(Gettable.FindPolicy.VISIBLE).isPresent())
+                .as("EService Details card exchange data label must be present in DOM")
+                .isTrue();
+        eServiceDetailsCard.exchangeDataLabel().readAndAssert("Scambio dati");
+        assertThat(eServiceDetailsCard.exchangeDataValue().get(Gettable.FindPolicy.VISIBLE).isPresent())
+                .as("EService Details card exchange data value must be present in DOM")
+                .isTrue();
+
+        assertThat(eServiceDetailsCard.technologyLabel().get(Gettable.FindPolicy.VISIBLE).isPresent())
+                .as("EService Details card technology label must be present in DOM")
+                .isTrue();
+        eServiceDetailsCard.technologyLabel().readAndAssert("Tecnologia API");
+        assertThat(eServiceDetailsCard.technologyValue().get(Gettable.FindPolicy.VISIBLE).isPresent())
+                .as("EService Details card technology value must be present in DOM")
+                .isTrue();
+
+        assertThat(eServiceDetailsCard.producerOrConsumerLabel().get(Gettable.FindPolicy.VISIBLE).isPresent())
+                .as("EService Details card producer or consumer label must be present in DOM")
+                .isTrue();
+        eServiceDetailsCard.producerOrConsumerLabel().readAndAssert("L’e-service eroga o riceve dati?");
+        assertThat(eServiceDetailsCard.producerOrConsumerValue().get(Gettable.FindPolicy.VISIBLE).isPresent())
+                .as("EService Details card producer or consumer value must be present in DOM")
+                .isTrue();
+
+        assertThat(eServiceDetailsCard.personalDataLabel().get(Gettable.FindPolicy.VISIBLE).isPresent())
+                .as("EService Details card personal data label must be present in DOM")
+                .isTrue();
+        eServiceDetailsCard.personalDataLabel().readAndAssert("Eroga dati personali");
+        assertThat(eServiceDetailsCard.personalDataValue().get(Gettable.FindPolicy.VISIBLE).isPresent())
+                .as("EService Details card personal data value must be present in DOM")
+                .isTrue();
+    }
+
+    private void assertEServiceTemplateCaratherizationCard(GeneralInfoStep.EServiceTemplateCharacterizationCard eServiceTemplateCharacterizationCard) {
+        assertThat(eServiceTemplateCharacterizationCard.get(Gettable.FindPolicy.VISIBLE).isPresent())
+                .as("EService Template Characterization card container must be present and VISIBLE in DOM")
+                .isTrue();
+
+        assertThat(eServiceTemplateCharacterizationCard.templateCharacterizationCardTitle().get(Gettable.FindPolicy.VISIBLE).isPresent())
+                .as("EService Template Characterization card title must be present in DOM")
+                .isTrue();
+        eServiceTemplateCharacterizationCard.templateCharacterizationCardTitle().readAndAssert("Caratterizzazione template di e-service");
+
+        assertThat(eServiceTemplateCharacterizationCard.subtitle().get(Gettable.FindPolicy.VISIBLE).isPresent())
+                .as("EService Template Characterization card subtitle must be present in DOM")
+                .isTrue();
+        eServiceTemplateCharacterizationCard.subtitle().readAndAssert("Queste informazioni non sono modificabili.");
+
+        assertThat(eServiceTemplateCharacterizationCard.eserviceTemplateNameLabel().get(Gettable.FindPolicy.VISIBLE).isPresent())
+                .as("EService Template Characterization card eservice name label must be present in DOM")
+                .isTrue();
+        eServiceTemplateCharacterizationCard.eserviceTemplateNameLabel().readAndAssert("Nome del template di e-service");
+        assertThat(eServiceTemplateCharacterizationCard.eserviceTemplateNameValue().get(Gettable.FindPolicy.VISIBLE).isPresent())
+                .as("EService Template Characterization card eservice name value must be present in DOM")
+                .isTrue();
+
+        assertThat(eServiceTemplateCharacterizationCard.templateScopeLabel().get(Gettable.FindPolicy.VISIBLE).isPresent())
+                .as("EService Template Characterization card template scope label must be present in DOM")
+                .isTrue();
+        eServiceTemplateCharacterizationCard.templateScopeLabel().readAndAssert("A chi è rivolto questo template?");
+        assertThat(eServiceTemplateCharacterizationCard.templateScopeValue().get(Gettable.FindPolicy.VISIBLE).isPresent())
+                .as("EService Template Characterization card template scope value must be present in DOM")
+                .isTrue();
+
+        assertThat(eServiceTemplateCharacterizationCard.templateUseLabel().get(Gettable.FindPolicy.VISIBLE).isPresent())
+                .as("EService Template Characterization card template use label must be present in DOM")
+                .isTrue();
+        eServiceTemplateCharacterizationCard.templateUseLabel().readAndAssert("Cosa permette di fare questo template?");
+        assertThat(eServiceTemplateCharacterizationCard.templateUseValue().get(Gettable.FindPolicy.VISIBLE).isPresent())
+                .as("EService Template Characterization card template use value must be present in DOM")
+                .isTrue();
+
     }
 
     private void assertBreadcrumbs(ProducerEServiceTemplateEditPage page) {
@@ -87,6 +192,13 @@ class WebProducerEServiceTemplateEditPageContractTest {
         assertThat(page.breadcrumbs().links())
                 .as("Breadcrumbs must contain navigation links")
                 .isNotEmpty();
+
+        assertThat(page.pageTitle().get(Gettable.FindPolicy.VISIBLE))
+                .as("Page title must be present and VISIBLE in DOM")
+                .isPresent();
+        assertThat(page.pageDescription().get(Gettable.FindPolicy.VISIBLE))
+                .as("Page description must be present and VISIBLE in DOM")
+                .isPresent();
     }
 
     private void assertStepper(ProducerEServiceTemplateEditPage page) {
@@ -134,105 +246,27 @@ class WebProducerEServiceTemplateEditPageContractTest {
         }
     }
 
-//    private void assertSignalHubCard(ProducerEServiceTemplateEditPage.SignalHubSection signalHub) {
-//        assertThat(signalHub.get().isPresent())
-//                .as("Signal Hub card container must be present in DOM")
-//                .isTrue();
-//        assertThat(signalHub.get().isVisible())
-//                .as("Signal Hub card container must be visible")
-//                .isTrue();
-//
-//        assertThat(signalHub.title().get().isPresent())
-//                .as("Signal Hub card title must be present in DOM")
-//                .isTrue();
-//        assertThat(signalHub.title().get().isVisible())
-//                .as("Signal Hub card title must be visible")
-//                .isTrue();
-//        signalHub.title().readAndAssert(CARD_SIGNAL_HUB_TITLE);
-//
-//        assertThat(signalHub.isSignalHubEnabledCheckbox().get().isPresent())
-//                .as("Signal Hub enable checkbox input must be present in DOM")
-//                .isTrue();
-//        assertThat(signalHub.isSignalHubEnabledCheckbox().get().isDisabled())
-//                .as("Signal Hub enable checkbox input must be initially disabled")
-//                .isTrue();
-//
-//        assertThat(signalHub.switchPrimaryLabel().get().isPresent())
-//                .as("Signal Hub switch primary label must be present in DOM")
-//                .isTrue();
-//        assertThat(signalHub.switchPrimaryLabel().get().isVisible())
-//                .as("Signal Hub switch primary label must be visible")
-//                .isTrue();
-//        signalHub.switchPrimaryLabel().readAndAssert(SIGNAL_HUB_SWITCH_PRIMARY_LABEL);
-//
-//        assertThat(signalHub.switchDescription().get().isPresent())
-//                .as("Signal Hub switch description paragraph must be present in DOM")
-//                .isTrue();
-//        assertThat(signalHub.switchDescription().get().isVisible())
-//                .as("Signal Hub switch description paragraph must be visible")
-//                .isTrue();
-//        signalHub.switchDescription().readAndAssert(SIGNAL_HUB_SWITCH_DESCRIPTION);
-//
-//        assertThat(signalHub.pushNotificationsLink().get().isPresent())
-//                .as("Signal Hub push notifications manual link must be present in DOM")
-//                .isTrue();
-//        assertThat(signalHub.pushNotificationsLink().get().isVisible())
-//                .as("Signal Hub push notifications manual link must be visible")
-//                .isTrue();
-//        signalHub.pushNotificationsLink().readAndAssert(SIGNAL_HUB_PUSH_NOTIFICATIONS_LINK_TEXT);
-//        assertThat(signalHub.pushNotificationsLink().get().getAttribute("href"))
-//                .as("Signal Hub manual link href must point to PagoPA developer documentation")
-//                .isEqualTo(SIGNAL_HUB_MANUAL_HREF);
-//        assertThat(signalHub.pushNotificationsLink().get().getAttribute("aria-disabled"))
-//                .as("Signal Hub manual link must have aria-disabled set to true")
-//                .isEqualTo("true");
-//    }
-//
-//    private void assertUnmountedFutureSteps(ProducerEServiceTemplateEditPage page) {
-//        assertThat(
-//                page.thresholdsAndAttributesSection()
-//                        .apiThresholdsCardTitle()
-//                        .get(Gettable.FindPolicy.NO_WAIT)
-//                        .isPresent())
-//                .as("Step 2 API thresholds card must not be present in DOM on initial load")
-//                .isFalse();
-//        assertThat(
-//                page.technicalSpecsSection()
-//                        .interfaceCardTitle()
-//                        .get(Gettable.FindPolicy.NO_WAIT)
-//                        .isPresent())
-//                .as("Step 3 Interface card must not be present in DOM on initial load")
-//                .isFalse();
-//        assertThat(
-//                page.additionalInfoSection()
-//                        .versionDescriptionCardTitle()
-//                        .get(Gettable.FindPolicy.NO_WAIT)
-//                        .isPresent())
-//                .as("Step 4 Version description card must not be present in DOM on initial load")
-//                .isFalse();
-//    }
-//
-//    private void assertFooterButtons(ProducerEServiceTemplateEditPage page) {
-//        assertThat(page.saveDraftButton().get().isPresent())
-//                .as("Save draft button must be present in DOM")
-//                .isTrue();
-//        assertThat(page.saveDraftButton().get().isVisible())
-//                .as("Save draft button must be visible")
-//                .isTrue();
-//        assertThat(page.saveDraftButton().get().isDisabled())
-//                .as("Save draft button must be enabled")
-//                .isFalse();
-//        page.saveDraftButton().readAndAssert(BTN_SAVE_DRAFT);
-//
-//        assertThat(page.nextStepButton().get().isPresent())
-//                .as("Next step button must be present in DOM")
-//                .isTrue();
-//        assertThat(page.nextStepButton().get().isVisible())
-//                .as("Next step button must be visible")
-//                .isTrue();
-//        assertThat(page.nextStepButton().get().isDisabled())
-//                .as("Next step button must be enabled")
-//                .isFalse();
-//        page.nextStepButton().readAndAssert(BTN_NEXT);
-//    }
+    private void assertSignalHubCard(GeneralInfoStep.SignalHubCard signalHub) {
+        assertThat(signalHub.get(Gettable.FindPolicy.VISIBLE).isPresent())
+                .as("Signal Hub card container must be present and VISIBLE in DOM")
+                .isTrue();
+
+        assertThat(signalHub.signalHubCardTitle().get(Gettable.FindPolicy.VISIBLE).isPresent())
+                .as("Signal Hub card title must be present in DOM")
+                .isTrue();
+        signalHub.signalHubCardTitle().readAndAssert(CARD_SIGNAL_HUB_TITLE);
+
+        assertThat(signalHub.switchDescription().get(Gettable.FindPolicy.VISIBLE).isPresent())
+                .as("Signal Hub description paragraph must be present in DOM")
+                .isTrue();
+
+        assertThat(signalHub.switchPrimaryLabel().get(Gettable.FindPolicy.VISIBLE).isPresent())
+                .as("Signal Hub primary label must be present in DOM")
+                .isTrue();
+        signalHub.switchPrimaryLabel().readAndAssert("Suggerisci a chi userà questo template di segnalare le variazioni dei dati con Signal Hub");
+
+        assertThat(signalHub.switchSignalHub().isDisabled())
+                .as("Signal Hub switch input must be initially disabled")
+                .isTrue();
+    }
 }
