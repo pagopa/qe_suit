@@ -1,0 +1,1414 @@
+rae:
+  release: ''
+  scope: NIGHTLY
+  issue_jira: ''
+  data_ora: '2026-11-25T13:51:19Z'
+  durata: 00:12:20
+  numero_ko: 121
+  run: https://github.com/pagopa/qe_suit/actions/runs/45627663729/attempts/1
+  suite: MessErroreBilingualSuiteTest
+  environment: qa
+  executor: speratimatteo
+  source_branch: feature/QA-18434-error-messages
+ko_know: []
+ko:
+- id_test: '[ERROR_168] - Impossibilità di scaricare un documento firmato non ancora disponibile [Given=BFF,When=BFF,Then=BFF]'
+  error_log: |
+    java.lang.AssertionError: [Status HTTP di errore per BFF_CONTRACT_EXCEPTION] 
+    Expecting actual:
+      503
+    to be between:
+      [400, 499]
+
+    	at it.pagopa.interop.bff.infrastructure.cucumber.BffErrorMessageSteps.assertErrorMessage(BffErrorMessageSteps.java:62)
+    	at ✽.il messaggio di errore corrisponde al caso "BFF_CONTRACT_EXCEPTION"(classpath:feature-expanded/agreement/contratto-e-allegati-messaggi-errore.feature:34)
+  procedure: ''
+  result: ''
+  link_prod_bug: ''
+  link_suite_bug: ''
+- id_test: '[ERROR_168] - Impossibilità di scaricare un documento firmato non ancora disponibile [Given=BFF:en,When=BFF:en,Then=BFF:en]'
+  error_log: |
+    java.lang.AssertionError: [Status HTTP di errore per BFF_CONTRACT_EXCEPTION] 
+    Expecting actual:
+      503
+    to be between:
+      [400, 499]
+
+    	at it.pagopa.interop.bff.infrastructure.cucumber.BffErrorMessageSteps.assertErrorMessage(BffErrorMessageSteps.java:62)
+    	at ✽.il messaggio di errore corrisponde al caso "BFF_CONTRACT_EXCEPTION"(classpath:feature-expanded/agreement/contratto-e-allegati-messaggi-errore.feature:56)
+  procedure: ''
+  result: ''
+  link_prod_bug: ''
+  link_suite_bug: ''
+- id_test: '[ERROR_197] - Rifiuto di un allegato con contenuto non valido [Given=BFF,When=BFF,Then=BFF]'
+  error_log: |
+    java.lang.IllegalStateException: Risorsa non trovata nel classpath: assets/agreement/esempio.csv
+    	at it.pagopa.utils.FileUtils.loadClasspathResourceAsTempFile(FileUtils.java:31)
+    	at it.pagopa.interop.bff.agreement.infrastructure.BffAgreementGateway.attemptInvalidFormatConsumerDocumentUpload(BffAgreementGateway.java:284)
+    	at java.base/jdk.internal.reflect.NativeMethodAccessorImpl.invoke0(Native Method)
+    	at java.base/jdk.internal.reflect.NativeMethodAccessorImpl.invoke(NativeMethodAccessorImpl.java:77)
+    	at java.base/jdk.internal.reflect.DelegatingMethodAccessorImpl.invoke(DelegatingMethodAccessorImpl.java:43)
+    	at java.base/java.lang.reflect.Method.invoke(Method.java:569)
+    	at it.pagopa.infrastructure.channel.ChannelRouter.invoke(ChannelRouter.java:43)
+    	at it.pagopa.interop.common.infrastructure.ChannelRoutingInterceptor.invoke(ChannelRoutingInterceptor.java:40)
+    	at org.springframework.aop.framework.ReflectiveMethodInvocation.proceed(ReflectiveMethodInvocation.java:179)
+    	at org.springframework.aop.framework.JdkDynamicAopProxy.invoke(JdkDynamicAopProxy.java:222)
+    	at jdk.proxy2/jdk.proxy2.$Proxy152.attemptInvalidFormatConsumerDocumentUpload(Unknown Source)
+    	at it.pagopa.interop.common.agreement.application.AgreementUseCase.attemptInvalidFormatConsumerDocumentUpload(AgreementUseCase.java:180)
+    	at it.pagopa.interop.common.agreement.infrastructure.cucumber.AgreementSteps.attemptInvalidFormatConsumerDocumentUpload(AgreementSteps.java:255)
+    	at ✽.il fruitore tenta di allegare la richiesta di fruizione un file con formato non valido(classpath:feature-expanded/agreement/contratto-e-allegati-messaggi-errore.feature:79)
+  procedure: ''
+  result: ''
+  link_prod_bug: ''
+  link_suite_bug: ''
+- id_test: '[ERROR_197] - Rifiuto di un allegato con contenuto non valido [Given=BFF:en,When=BFF:en,Then=BFF:en]'
+  error_log: |
+    java.lang.IllegalStateException: Risorsa non trovata nel classpath: assets/agreement/esempio.csv
+    	at it.pagopa.utils.FileUtils.loadClasspathResourceAsTempFile(FileUtils.java:31)
+    	at it.pagopa.interop.bff.agreement.infrastructure.BffAgreementGateway.attemptInvalidFormatConsumerDocumentUpload(BffAgreementGateway.java:284)
+    	at java.base/jdk.internal.reflect.NativeMethodAccessorImpl.invoke0(Native Method)
+    	at java.base/jdk.internal.reflect.NativeMethodAccessorImpl.invoke(NativeMethodAccessorImpl.java:77)
+    	at java.base/jdk.internal.reflect.DelegatingMethodAccessorImpl.invoke(DelegatingMethodAccessorImpl.java:43)
+    	at java.base/java.lang.reflect.Method.invoke(Method.java:569)
+    	at it.pagopa.infrastructure.channel.ChannelRouter.invoke(ChannelRouter.java:43)
+    	at it.pagopa.interop.common.infrastructure.ChannelRoutingInterceptor.invoke(ChannelRoutingInterceptor.java:40)
+    	at org.springframework.aop.framework.ReflectiveMethodInvocation.proceed(ReflectiveMethodInvocation.java:179)
+    	at org.springframework.aop.framework.JdkDynamicAopProxy.invoke(JdkDynamicAopProxy.java:222)
+    	at jdk.proxy2/jdk.proxy2.$Proxy152.attemptInvalidFormatConsumerDocumentUpload(Unknown Source)
+    	at it.pagopa.interop.common.agreement.application.AgreementUseCase.attemptInvalidFormatConsumerDocumentUpload(AgreementUseCase.java:180)
+    	at it.pagopa.interop.common.agreement.infrastructure.cucumber.AgreementSteps.attemptInvalidFormatConsumerDocumentUpload(AgreementSteps.java:255)
+    	at ✽.il fruitore tenta di allegare la richiesta di fruizione un file con formato non valido(classpath:feature-expanded/agreement/contratto-e-allegati-messaggi-errore.feature:102)
+  procedure: ''
+  result: ''
+  link_prod_bug: ''
+  link_suite_bug: ''
+- id_test: '[ERROR_153] - Impossibilità di riattivare una richiesta per una versione archiviata [Given=BFF,When=BFF,Then=BFF]'
+  error_log: |
+    java.lang.AssertionError: [Status HTTP di errore per AGREEMENT_DESCRIPTOR_NOT_IN_EXPECTED_STATE__POST_AGREEMENTS_AGREEMENT_ID_UNSUSPEND] 
+    Expecting actual:
+      200
+    to be between:
+      [400, 499]
+
+    	at it.pagopa.interop.bff.infrastructure.cucumber.BffErrorMessageSteps.assertErrorMessage(BffErrorMessageSteps.java:62)
+    	at ✽.il messaggio di errore corrisponde al caso "AGREEMENT_DESCRIPTOR_NOT_IN_EXPECTED_STATE__POST_AGREEMENTS_AGREEMENT_ID_UNSUSPEND"(classpath:feature-expanded/agreement/operazioni-messaggi-errore.feature:198)
+  procedure: ''
+  result: ''
+  link_prod_bug: ''
+  link_suite_bug: ''
+- id_test: '[ERROR_153] - Impossibilità di riattivare una richiesta per una versione archiviata [Given=BFF:en,When=BFF:en,Then=BFF:en]'
+  error_log: |
+    java.lang.AssertionError: [Status HTTP di errore per AGREEMENT_DESCRIPTOR_NOT_IN_EXPECTED_STATE__POST_AGREEMENTS_AGREEMENT_ID_UNSUSPEND] 
+    Expecting actual:
+      200
+    to be between:
+      [400, 499]
+
+    	at it.pagopa.interop.bff.infrastructure.cucumber.BffErrorMessageSteps.assertErrorMessage(BffErrorMessageSteps.java:62)
+    	at ✽.il messaggio di errore corrisponde al caso "AGREEMENT_DESCRIPTOR_NOT_IN_EXPECTED_STATE__POST_AGREEMENTS_AGREEMENT_ID_UNSUSPEND"(classpath:feature-expanded/agreement/operazioni-messaggi-errore.feature:215)
+  procedure: ''
+  result: ''
+  link_prod_bug: ''
+  link_suite_bug: ''
+- id_test: '[ERROR_165] - Impossibilità di duplicare una richiesta dopo la perdita di un attributo certificato [Given=BFF,When=BFF,Then=BFF]'
+  error_log: |
+    java.lang.IllegalStateException: Polling in timeout dopo 20 secondi.
+
+    	at it.pagopa.utils.async.PollingUtils.pollUntil(PollingUtils.java:68)
+    	at it.pagopa.utils.async.PollingUtils.pollUntil(PollingUtils.java:93)
+    	at it.pagopa.infrastructure.template.action.PollingAction.handle(PollingAction.java:32)
+    	at it.pagopa.infrastructure.template.action.TestChain.withPolling(TestChain.java:23)
+    	at it.pagopa.interop.bff.tenant.infrastructure.BffTenantGateway.executeWithPolling(BffTenantGateway.java:200)
+    	at it.pagopa.interop.bff.tenant.infrastructure.BffTenantGateway.revokeCertifiedAttribute(BffTenantGateway.java:157)
+    	at java.base/jdk.internal.reflect.NativeMethodAccessorImpl.invoke0(Native Method)
+    	at java.base/jdk.internal.reflect.NativeMethodAccessorImpl.invoke(NativeMethodAccessorImpl.java:77)
+    	at java.base/jdk.internal.reflect.DelegatingMethodAccessorImpl.invoke(DelegatingMethodAccessorImpl.java:43)
+    	at java.base/java.lang.reflect.Method.invoke(Method.java:569)
+    	at it.pagopa.infrastructure.channel.ChannelRouter.invoke(ChannelRouter.java:43)
+    	at it.pagopa.interop.common.infrastructure.ChannelRoutingInterceptor.invoke(ChannelRoutingInterceptor.java:40)
+    	at org.springframework.aop.framework.ReflectiveMethodInvocation.proceed(ReflectiveMethodInvocation.java:179)
+    	at org.springframework.aop.framework.JdkDynamicAopProxy.invoke(JdkDynamicAopProxy.java:222)
+    	at jdk.proxy2/jdk.proxy2.$Proxy158.revokeCertifiedAttribute(Unknown Source)
+    	at it.pagopa.interop.common.tenant.application.TenantUseCase.revokeCertifiedAttribute(TenantUseCase.java:52)
+    	at it.pagopa.interop.common.attribute.infrastructure.cucumber.AttributeSteps.revokeCertifiedAttribute(AttributeSteps.java:29)
+    	at ✽.l'attributo certificato "CERT-1" revocato a PagoPA(classpath:feature-expanded/agreement/operazioni-messaggi-errore.feature:660)
+    Caused by: org.awaitility.core.ConditionTimeoutException: Lambda expression in it.pagopa.utils.async.PollingUtils expected the predicate to return <true> but it returned <false> for input of <it.pagopa.infrastructure.response.ApiResponse@4f14bbb> within 20 seconds.
+    	at org.awaitility.core.ConditionAwaiter.await(ConditionAwaiter.java:167)
+    	at org.awaitility.core.AbstractHamcrestCondition.await(AbstractHamcrestCondition.java:86)
+    	at org.awaitility.core.ConditionFactory.until(ConditionFactory.java:1160)
+    	at org.awaitility.core.ConditionFactory.until(ConditionFactory.java:712)
+    	at org.awaitility.core.ConditionFactory.until(ConditionFactory.java:729)
+    	at it.pagopa.utils.async.PollingUtils.pollUntil(PollingUtils.java:48)
+    	... 17 more
+  procedure: ''
+  result: ''
+  link_prod_bug: ''
+  link_suite_bug: ''
+- id_test: '[ERROR_165] - Impossibilità di duplicare una richiesta dopo la perdita di un attributo certificato [Given=BFF:en,When=BFF:en,Then=BFF:en]'
+  error_log: |
+    java.lang.IllegalStateException: Polling in timeout dopo 20 secondi.
+
+    	at it.pagopa.utils.async.PollingUtils.pollUntil(PollingUtils.java:68)
+    	at it.pagopa.utils.async.PollingUtils.pollUntil(PollingUtils.java:93)
+    	at it.pagopa.infrastructure.template.action.PollingAction.handle(PollingAction.java:32)
+    	at it.pagopa.infrastructure.template.action.TestChain.withPolling(TestChain.java:23)
+    	at it.pagopa.interop.bff.tenant.infrastructure.BffTenantGateway.executeWithPolling(BffTenantGateway.java:200)
+    	at it.pagopa.interop.bff.tenant.infrastructure.BffTenantGateway.revokeCertifiedAttribute(BffTenantGateway.java:157)
+    	at java.base/jdk.internal.reflect.NativeMethodAccessorImpl.invoke0(Native Method)
+    	at java.base/jdk.internal.reflect.NativeMethodAccessorImpl.invoke(NativeMethodAccessorImpl.java:77)
+    	at java.base/jdk.internal.reflect.DelegatingMethodAccessorImpl.invoke(DelegatingMethodAccessorImpl.java:43)
+    	at java.base/java.lang.reflect.Method.invoke(Method.java:569)
+    	at it.pagopa.infrastructure.channel.ChannelRouter.invoke(ChannelRouter.java:43)
+    	at it.pagopa.interop.common.infrastructure.ChannelRoutingInterceptor.invoke(ChannelRoutingInterceptor.java:40)
+    	at org.springframework.aop.framework.ReflectiveMethodInvocation.proceed(ReflectiveMethodInvocation.java:179)
+    	at org.springframework.aop.framework.JdkDynamicAopProxy.invoke(JdkDynamicAopProxy.java:222)
+    	at jdk.proxy2/jdk.proxy2.$Proxy158.revokeCertifiedAttribute(Unknown Source)
+    	at it.pagopa.interop.common.tenant.application.TenantUseCase.revokeCertifiedAttribute(TenantUseCase.java:52)
+    	at it.pagopa.interop.common.attribute.infrastructure.cucumber.AttributeSteps.revokeCertifiedAttribute(AttributeSteps.java:29)
+    	at ✽.l'attributo certificato "CERT-1" revocato a PagoPA(classpath:feature-expanded/agreement/operazioni-messaggi-errore.feature:692)
+    Caused by: org.awaitility.core.ConditionTimeoutException: Lambda expression in it.pagopa.utils.async.PollingUtils expected the predicate to return <true> but it returned <false> for input of <it.pagopa.infrastructure.response.ApiResponse@24abf9e0> within 20 seconds.
+    	at org.awaitility.core.ConditionAwaiter.await(ConditionAwaiter.java:167)
+    	at org.awaitility.core.AbstractHamcrestCondition.await(AbstractHamcrestCondition.java:86)
+    	at org.awaitility.core.ConditionFactory.until(ConditionFactory.java:1160)
+    	at org.awaitility.core.ConditionFactory.until(ConditionFactory.java:712)
+    	at org.awaitility.core.ConditionFactory.until(ConditionFactory.java:729)
+    	at it.pagopa.utils.async.PollingUtils.pollUntil(PollingUtils.java:48)
+    	... 17 more
+  procedure: ''
+  result: ''
+  link_prod_bug: ''
+  link_suite_bug: ''
+- id_test: '[ERROR_166] - Impossibilità di duplicare una richiesta quando ne esiste già un''altra in corso [Given=BFF,When=BFF,Then=BFF]'
+  error_log: |
+    org.opentest4j.AssertionFailedError: [userMessage per AGREEMENT_AGREEMENT_ALREADY_EXISTS__POST_AGREEMENTS_AGREEMENT_ID_CLONE in lingua it] 
+    expected: "Non puoi duplicare questa richiesta di fruizione perché per questo e-service esiste già una richiesta in corso o attiva. "
+     but was: null
+    	at it.pagopa.interop.bff.infrastructure.cucumber.BffErrorMessageSteps.assertErrorMessage(BffErrorMessageSteps.java:66)
+    	at ✽.il messaggio di errore corrisponde al caso "AGREEMENT_AGREEMENT_ALREADY_EXISTS__POST_AGREEMENTS_AGREEMENT_ID_CLONE"(classpath:feature-expanded/agreement/operazioni-messaggi-errore.feature:716)
+  procedure: ''
+  result: ''
+  link_prod_bug: ''
+  link_suite_bug: ''
+- id_test: '[ERROR_166] - Impossibilità di duplicare una richiesta quando ne esiste già un''altra in corso [Given=BFF:en,When=BFF:en,Then=BFF:en]'
+  error_log: |
+    org.opentest4j.AssertionFailedError: [userMessage per AGREEMENT_AGREEMENT_ALREADY_EXISTS__POST_AGREEMENTS_AGREEMENT_ID_CLONE in lingua en] 
+    expected: "You cannot duplicate the service request because another request for this e-service is already in progress or active."
+     but was: null
+    	at it.pagopa.interop.bff.infrastructure.cucumber.BffErrorMessageSteps.assertErrorMessage(BffErrorMessageSteps.java:66)
+    	at ✽.il messaggio di errore corrisponde al caso "AGREEMENT_AGREEMENT_ALREADY_EXISTS__POST_AGREEMENTS_AGREEMENT_ID_CLONE"(classpath:feature-expanded/agreement/operazioni-messaggi-errore.feature:738)
+  procedure: ''
+  result: ''
+  link_prod_bug: ''
+  link_suite_bug: ''
+- id_test: '[ERROR_203] - Impossibilità per il delegato di associare un portachiavi a un e-service gestito in delega
+    [Given=BFF,When=BFF,Then=BFF]'
+  error_log: |
+    org.opentest4j.AssertionFailedError: [userMessage per AUTHORIZATION_TENANT_NOT_ALLOWED_ON_ESERVICE__POST_PRODUCER_KEYCHAINS_PRODUCER_KEYCHAIN_ID_ESERVICES in lingua it] 
+    expected: "Non puoi associare un portachiavi a questo e-service perché lo gestisci in delega. Può associarlo solo l'ente delegante."
+     but was: null
+    	at it.pagopa.interop.bff.infrastructure.cucumber.BffErrorMessageSteps.assertErrorMessage(BffErrorMessageSteps.java:66)
+    	at ✽.il messaggio di errore corrisponde al caso "AUTHORIZATION_TENANT_NOT_ALLOWED_ON_ESERVICE__POST_PRODUCER_KEYCHAINS_PRODUCER_KEYCHAIN_ID_ESERVICES"(classpath:feature-expanded/authorization/operazioni-messaggi-errore.feature:32)
+  procedure: ''
+  result: ''
+  link_prod_bug: ''
+  link_suite_bug: ''
+- id_test: '[ERROR_203] - Impossibilità per il delegato di associare un portachiavi a un e-service gestito in delega
+    [Given=BFF:en,When=BFF:en,Then=BFF:en]'
+  error_log: |
+    org.opentest4j.AssertionFailedError: [userMessage per AUTHORIZATION_TENANT_NOT_ALLOWED_ON_ESERVICE__POST_PRODUCER_KEYCHAINS_PRODUCER_KEYCHAIN_ID_ESERVICES in lingua en] 
+    expected: "You can't associate a keychain with this e-service because you manage it as a delegate. Only the delegating party can associate it."
+     but was: null
+    	at it.pagopa.interop.bff.infrastructure.cucumber.BffErrorMessageSteps.assertErrorMessage(BffErrorMessageSteps.java:66)
+    	at ✽.il messaggio di errore corrisponde al caso "AUTHORIZATION_TENANT_NOT_ALLOWED_ON_ESERVICE__POST_PRODUCER_KEYCHAINS_PRODUCER_KEYCHAIN_ID_ESERVICES"(classpath:feature-expanded/authorization/operazioni-messaggi-errore.feature:55)
+  procedure: ''
+  result: ''
+  link_prod_bug: ''
+  link_suite_bug: ''
+- id_test: '[ERROR_106] - Impossibilità di registrare nuovamente una chiave già presente nel client [Given=BFF,When=BFF,Then=BFF]'
+  error_log: |
+    org.opentest4j.AssertionFailedError: [userMessage per AUTHORIZATION_KEY_ALREADY_EXISTS in lingua it] 
+    expected: "Hai inserito una chiave già registrata su PDND. Se te ne serve una nuova, genera una coppia RSA da almeno 2048 bit e inserisci la chiave pubblica in formato PEM."
+     but was: null
+    	at it.pagopa.interop.bff.infrastructure.cucumber.BffErrorMessageSteps.assertErrorMessage(BffErrorMessageSteps.java:66)
+    	at ✽.il messaggio di errore corrisponde al caso "AUTHORIZATION_KEY_ALREADY_EXISTS"(classpath:feature-expanded/authorization/operazioni-messaggi-errore.feature:281)
+  procedure: ''
+  result: ''
+  link_prod_bug: ''
+  link_suite_bug: ''
+- id_test: '[ERROR_106] - Impossibilità di registrare nuovamente una chiave già presente nel client [Given=BFF:en,When=BFF:en,Then=BFF:en]'
+  error_log: |
+    org.opentest4j.AssertionFailedError: [userMessage per AUTHORIZATION_KEY_ALREADY_EXISTS in lingua en] 
+    expected: "You entered a key that is already registered on PDND. If you need a new one, generate an RSA key pair of at least 2048 bits and enter the public key in PEM format."
+     but was: null
+    	at it.pagopa.interop.bff.infrastructure.cucumber.BffErrorMessageSteps.assertErrorMessage(BffErrorMessageSteps.java:66)
+    	at ✽.il messaggio di errore corrisponde al caso "AUTHORIZATION_KEY_ALREADY_EXISTS"(classpath:feature-expanded/authorization/operazioni-messaggi-errore.feature:295)
+  procedure: ''
+  result: ''
+  link_prod_bug: ''
+  link_suite_bug: ''
+- id_test: '[ERROR_180] - Impossibilità di verificare la client assertion di un client di un altro ente [Given=BFF,When=BFF,Then=BFF]'
+  error_log: |
+    java.lang.IllegalStateException: No channel plugin found.
+    Requested interface: it.pagopa.interop.common.client.application.DebugClientAssertionGateway
+    Requested method: executeClientAssertionValidation
+    Active channel: BFF
+    Registered plugins: [it.pagopa.interop.web.debug_client_assertion.infrastructure.WebDebugClientAssertionGateway, jdk.proxy2.$Proxy156]
+
+    	at it.pagopa.infrastructure.channel.ChannelRouter.lambda$invoke$0(ChannelRouter.java:39)
+    	at java.base/java.util.Optional.orElseThrow(Optional.java:403)
+    	at it.pagopa.infrastructure.channel.ChannelRouter.invoke(ChannelRouter.java:38)
+    	at it.pagopa.interop.common.infrastructure.ChannelRoutingInterceptor.invoke(ChannelRoutingInterceptor.java:40)
+    	at org.springframework.aop.framework.ReflectiveMethodInvocation.proceed(ReflectiveMethodInvocation.java:179)
+    	at org.springframework.aop.framework.JdkDynamicAopProxy.invoke(JdkDynamicAopProxy.java:222)
+    	at jdk.proxy2/jdk.proxy2.$Proxy156.executeClientAssertionValidation(Unknown Source)
+    	at it.pagopa.interop.common.client.application.DebugClientAssertionUseCase.executeClientAssertionValidation(DebugClientAssertionUseCase.java:15)
+    	at it.pagopa.interop.common.client.infrastructure.cucumber.DebugClientAssertionSteps.executeClientAssertionValidation(DebugClientAssertionSteps.java:49)
+    	at ✽.l'utente inoltra la richiesta di validazione specificando client assertion creata e client creato(classpath:feature-expanded/authorization/verifica-client-assertion-messaggi-errore.feature:22)
+  procedure: ''
+  result: ''
+  link_prod_bug: ''
+  link_suite_bug: ''
+- id_test: '[ERROR_180] - Impossibilità di verificare la client assertion di un client di un altro ente [Given=BFF:en,When=BFF:en,Then=BFF:en]'
+  error_log: |
+    java.lang.IllegalStateException: No channel plugin found.
+    Requested interface: it.pagopa.interop.common.client.application.DebugClientAssertionGateway
+    Requested method: executeClientAssertionValidation
+    Active channel: BFF
+    Registered plugins: [it.pagopa.interop.web.debug_client_assertion.infrastructure.WebDebugClientAssertionGateway, jdk.proxy2.$Proxy156]
+
+    	at it.pagopa.infrastructure.channel.ChannelRouter.lambda$invoke$0(ChannelRouter.java:39)
+    	at java.base/java.util.Optional.orElseThrow(Optional.java:403)
+    	at it.pagopa.infrastructure.channel.ChannelRouter.invoke(ChannelRouter.java:38)
+    	at it.pagopa.interop.common.infrastructure.ChannelRoutingInterceptor.invoke(ChannelRoutingInterceptor.java:40)
+    	at org.springframework.aop.framework.ReflectiveMethodInvocation.proceed(ReflectiveMethodInvocation.java:179)
+    	at org.springframework.aop.framework.JdkDynamicAopProxy.invoke(JdkDynamicAopProxy.java:222)
+    	at jdk.proxy2/jdk.proxy2.$Proxy156.executeClientAssertionValidation(Unknown Source)
+    	at it.pagopa.interop.common.client.application.DebugClientAssertionUseCase.executeClientAssertionValidation(DebugClientAssertionUseCase.java:15)
+    	at it.pagopa.interop.common.client.infrastructure.cucumber.DebugClientAssertionSteps.executeClientAssertionValidation(DebugClientAssertionSteps.java:49)
+    	at ✽.l'utente inoltra la richiesta di validazione specificando client assertion creata e client creato(classpath:feature-expanded/authorization/verifica-client-assertion-messaggi-errore.feature:36)
+  procedure: ''
+  result: ''
+  link_prod_bug: ''
+  link_suite_bug: ''
+- id_test: '[ERROR_004] - Impossibilità di proporre una delega in erogazione a un ente non pubblico [Given=BFF,When=BFF,Then=BFF]'
+  error_log: |
+    org.opentest4j.AssertionFailedError: [userMessage per DELEGATION_DELEGATION_NOT_ALLOWED_FOR_TENANT__POST_PRODUCERS_DELEGATIONS in lingua it] 
+    expected: "Non puoi scegliere questo ente per la delega perché non è una Pubblica Amministrazione. Scegli un altro ente."
+     but was: null
+    	at it.pagopa.interop.bff.infrastructure.cucumber.BffErrorMessageSteps.assertErrorMessage(BffErrorMessageSteps.java:66)
+    	at ✽.il messaggio di errore corrisponde al caso "DELEGATION_DELEGATION_NOT_ALLOWED_FOR_TENANT__POST_PRODUCERS_DELEGATIONS"(classpath:feature-expanded/delegation/operazioni-messaggi-errore.feature:80)
+  procedure: ''
+  result: ''
+  link_prod_bug: ''
+  link_suite_bug: ''
+- id_test: '[ERROR_004] - Impossibilità di proporre una delega in erogazione a un ente non pubblico [Given=BFF:en,When=BFF:en,Then=BFF:en]'
+  error_log: |
+    org.opentest4j.AssertionFailedError: [userMessage per DELEGATION_DELEGATION_NOT_ALLOWED_FOR_TENANT__POST_PRODUCERS_DELEGATIONS in lingua en] 
+    expected: "You can't select this party for the delegation because it isn't a Public Administration. Select another party."
+     but was: null
+    	at it.pagopa.interop.bff.infrastructure.cucumber.BffErrorMessageSteps.assertErrorMessage(BffErrorMessageSteps.java:66)
+    	at ✽.il messaggio di errore corrisponde al caso "DELEGATION_DELEGATION_NOT_ALLOWED_FOR_TENANT__POST_PRODUCERS_DELEGATIONS"(classpath:feature-expanded/delegation/operazioni-messaggi-errore.feature:91)
+  procedure: ''
+  result: ''
+  link_prod_bug: ''
+  link_suite_bug: ''
+- id_test: '[ERROR_007] - Impossibilità di proporre una delega in fruizione a un ente non pubblico [Given=BFF,When=BFF,Then=BFF]'
+  error_log: |
+    org.opentest4j.AssertionFailedError: [userMessage per DELEGATION_DELEGATION_NOT_ALLOWED_FOR_TENANT__POST_CONSUMERS_DELEGATIONS in lingua it] 
+    expected: "Non puoi scegliere questo ente per la delega perché non è una Pubblica Amministrazione. Scegli un altro ente."
+     but was: null
+    	at it.pagopa.interop.bff.infrastructure.cucumber.BffErrorMessageSteps.assertErrorMessage(BffErrorMessageSteps.java:66)
+    	at ✽.il messaggio di errore corrisponde al caso "DELEGATION_DELEGATION_NOT_ALLOWED_FOR_TENANT__POST_CONSUMERS_DELEGATIONS"(classpath:feature-expanded/delegation/operazioni-messaggi-errore.feature:164)
+  procedure: ''
+  result: ''
+  link_prod_bug: ''
+  link_suite_bug: ''
+- id_test: '[ERROR_007] - Impossibilità di proporre una delega in fruizione a un ente non pubblico [Given=BFF:en,When=BFF:en,Then=BFF:en]'
+  error_log: |
+    org.opentest4j.AssertionFailedError: [userMessage per DELEGATION_DELEGATION_NOT_ALLOWED_FOR_TENANT__POST_CONSUMERS_DELEGATIONS in lingua en] 
+    expected: "You can't select this party for the delegation because it isn't a Public Administration. Select another party."
+     but was: null
+    	at it.pagopa.interop.bff.infrastructure.cucumber.BffErrorMessageSteps.assertErrorMessage(BffErrorMessageSteps.java:66)
+    	at ✽.il messaggio di errore corrisponde al caso "DELEGATION_DELEGATION_NOT_ALLOWED_FOR_TENANT__POST_CONSUMERS_DELEGATIONS"(classpath:feature-expanded/delegation/operazioni-messaggi-errore.feature:176)
+  procedure: ''
+  result: ''
+  link_prod_bug: ''
+  link_suite_bug: ''
+- id_test: '[ERROR_009] - Impossibilità di revocare una delega in fruizione già revocata [Given=BFF,When=BFF,Then=BFF]'
+  error_log: |
+    java.lang.IllegalStateException: Polling in timeout dopo 20 secondi.
+
+    	at it.pagopa.utils.async.PollingUtils.pollUntil(PollingUtils.java:68)
+    	at it.pagopa.utils.async.PollingUtils.pollUntil(PollingUtils.java:93)
+    	at it.pagopa.infrastructure.template.action.PollingAction.handle(PollingAction.java:32)
+    	at it.pagopa.infrastructure.template.action.TestChain.withPolling(TestChain.java:23)
+    	at it.pagopa.interop.bff.delegation.infrastructure.BffDelegationGateway.createConsumerDelegation(BffDelegationGateway.java:32)
+    	at java.base/jdk.internal.reflect.NativeMethodAccessorImpl.invoke0(Native Method)
+    	at java.base/jdk.internal.reflect.NativeMethodAccessorImpl.invoke(NativeMethodAccessorImpl.java:77)
+    	at java.base/jdk.internal.reflect.DelegatingMethodAccessorImpl.invoke(DelegatingMethodAccessorImpl.java:43)
+    	at java.base/java.lang.reflect.Method.invoke(Method.java:569)
+    	at it.pagopa.infrastructure.channel.ChannelRouter.invoke(ChannelRouter.java:43)
+    	at it.pagopa.interop.common.infrastructure.ChannelRoutingInterceptor.invoke(ChannelRoutingInterceptor.java:40)
+    	at org.springframework.aop.framework.ReflectiveMethodInvocation.proceed(ReflectiveMethodInvocation.java:179)
+    	at org.springframework.aop.framework.JdkDynamicAopProxy.invoke(JdkDynamicAopProxy.java:222)
+    	at jdk.proxy2/jdk.proxy2.$Proxy157.createConsumerDelegation(Unknown Source)
+    	at it.pagopa.interop.common.delegation.application.DelegationUseCase.createConsumerDelegation(DelegationUseCase.java:39)
+    	at it.pagopa.interop.common.delegation.application.DelegationUseCase.createConsumerDelegation(DelegationUseCase.java:50)
+    	at it.pagopa.interop.common.journey.infrastructure.DelegationJourneyImpl.createConsumerDelegation(DelegationJourneyImpl.java:58)
+    	at java.base/jdk.internal.reflect.NativeMethodAccessorImpl.invoke0(Native Method)
+    	at java.base/jdk.internal.reflect.NativeMethodAccessorImpl.invoke(NativeMethodAccessorImpl.java:77)
+    	at java.base/jdk.internal.reflect.DelegatingMethodAccessorImpl.invoke(DelegatingMethodAccessorImpl.java:43)
+    	at java.base/java.lang.reflect.Method.invoke(Method.java:569)
+    	at it.pagopa.interop.common.journey.infrastructure.config.JourneyInvocationHandler.invoke(JourneyInvocationHandler.java:25)
+    	at jdk.proxy2/jdk.proxy2.$Proxy173.createConsumerDelegation(Unknown Source)
+    	at it.pagopa.interop.common.journey.infrastructure.cucumber.DelegationJourneySteps.createConsumerDelegation(DelegationJourneySteps.java:57)
+    	at ✽.l'e-service è delegato in fruizione da PagoPA al Comune di Pozzallo con una delega in stato ACTIVE(classpath:feature-expanded/delegation/operazioni-messaggi-errore.feature:210)
+    Caused by: org.awaitility.core.ConditionTimeoutException: Lambda expression in it.pagopa.utils.async.PollingUtils expected the predicate to return <true> but it returned <false> for input of <it.pagopa.infrastructure.response.ApiResponse@5bd3babe> within 20 seconds.
+    	at org.awaitility.core.ConditionAwaiter.await(ConditionAwaiter.java:167)
+    	at org.awaitility.core.AbstractHamcrestCondition.await(AbstractHamcrestCondition.java:86)
+    	at org.awaitility.core.ConditionFactory.until(ConditionFactory.java:1160)
+    	at org.awaitility.core.ConditionFactory.until(ConditionFactory.java:712)
+    	at org.awaitility.core.ConditionFactory.until(ConditionFactory.java:729)
+    	at it.pagopa.utils.async.PollingUtils.pollUntil(PollingUtils.java:48)
+    	... 24 more
+  procedure: ''
+  result: ''
+  link_prod_bug: ''
+  link_suite_bug: ''
+- id_test: '[ERROR_009] - Impossibilità di revocare una delega in fruizione già revocata [Given=BFF:en,When=BFF:en,Then=BFF:en]'
+  error_log: |
+    java.lang.IllegalStateException: Polling in timeout dopo 20 secondi.
+
+    	at it.pagopa.utils.async.PollingUtils.pollUntil(PollingUtils.java:68)
+    	at it.pagopa.utils.async.PollingUtils.pollUntil(PollingUtils.java:93)
+    	at it.pagopa.infrastructure.template.action.PollingAction.handle(PollingAction.java:32)
+    	at it.pagopa.infrastructure.template.action.TestChain.withPolling(TestChain.java:23)
+    	at it.pagopa.interop.bff.delegation.infrastructure.BffDelegationGateway.createConsumerDelegation(BffDelegationGateway.java:32)
+    	at java.base/jdk.internal.reflect.NativeMethodAccessorImpl.invoke0(Native Method)
+    	at java.base/jdk.internal.reflect.NativeMethodAccessorImpl.invoke(NativeMethodAccessorImpl.java:77)
+    	at java.base/jdk.internal.reflect.DelegatingMethodAccessorImpl.invoke(DelegatingMethodAccessorImpl.java:43)
+    	at java.base/java.lang.reflect.Method.invoke(Method.java:569)
+    	at it.pagopa.infrastructure.channel.ChannelRouter.invoke(ChannelRouter.java:43)
+    	at it.pagopa.interop.common.infrastructure.ChannelRoutingInterceptor.invoke(ChannelRoutingInterceptor.java:40)
+    	at org.springframework.aop.framework.ReflectiveMethodInvocation.proceed(ReflectiveMethodInvocation.java:179)
+    	at org.springframework.aop.framework.JdkDynamicAopProxy.invoke(JdkDynamicAopProxy.java:222)
+    	at jdk.proxy2/jdk.proxy2.$Proxy157.createConsumerDelegation(Unknown Source)
+    	at it.pagopa.interop.common.delegation.application.DelegationUseCase.createConsumerDelegation(DelegationUseCase.java:39)
+    	at it.pagopa.interop.common.delegation.application.DelegationUseCase.createConsumerDelegation(DelegationUseCase.java:50)
+    	at it.pagopa.interop.common.journey.infrastructure.DelegationJourneyImpl.createConsumerDelegation(DelegationJourneyImpl.java:58)
+    	at java.base/jdk.internal.reflect.NativeMethodAccessorImpl.invoke0(Native Method)
+    	at java.base/jdk.internal.reflect.NativeMethodAccessorImpl.invoke(NativeMethodAccessorImpl.java:77)
+    	at java.base/jdk.internal.reflect.DelegatingMethodAccessorImpl.invoke(DelegatingMethodAccessorImpl.java:43)
+    	at java.base/java.lang.reflect.Method.invoke(Method.java:569)
+    	at it.pagopa.interop.common.journey.infrastructure.config.JourneyInvocationHandler.invoke(JourneyInvocationHandler.java:25)
+    	at jdk.proxy2/jdk.proxy2.$Proxy173.createConsumerDelegation(Unknown Source)
+    	at it.pagopa.interop.common.journey.infrastructure.cucumber.DelegationJourneySteps.createConsumerDelegation(DelegationJourneySteps.java:57)
+    	at ✽.l'e-service è delegato in fruizione da PagoPA al Comune di Pozzallo con una delega in stato ACTIVE(classpath:feature-expanded/delegation/operazioni-messaggi-errore.feature:224)
+    Caused by: org.awaitility.core.ConditionTimeoutException: Lambda expression in it.pagopa.utils.async.PollingUtils expected the predicate to return <true> but it returned <false> for input of <it.pagopa.infrastructure.response.ApiResponse@504dbc08> within 20 seconds.
+    	at org.awaitility.core.ConditionAwaiter.await(ConditionAwaiter.java:167)
+    	at org.awaitility.core.AbstractHamcrestCondition.await(AbstractHamcrestCondition.java:86)
+    	at org.awaitility.core.ConditionFactory.until(ConditionFactory.java:1160)
+    	at org.awaitility.core.ConditionFactory.until(ConditionFactory.java:712)
+    	at org.awaitility.core.ConditionFactory.until(ConditionFactory.java:729)
+    	at it.pagopa.utils.async.PollingUtils.pollUntil(PollingUtils.java:48)
+    	... 24 more
+  procedure: ''
+  result: ''
+  link_prod_bug: ''
+  link_suite_bug: ''
+- id_test: '[ERROR_011] - Rifiuto di una delega in fruizione con un link nella motivazione [Given=BFF,When=BFF,Then=BFF]'
+  error_log: |
+    java.lang.IllegalStateException: Polling in timeout dopo 20 secondi.
+
+    	at it.pagopa.utils.async.PollingUtils.pollUntil(PollingUtils.java:68)
+    	at it.pagopa.utils.async.PollingUtils.pollUntil(PollingUtils.java:93)
+    	at it.pagopa.infrastructure.template.action.PollingAction.handle(PollingAction.java:32)
+    	at it.pagopa.infrastructure.template.action.TestChain.withPolling(TestChain.java:23)
+    	at it.pagopa.interop.bff.delegation.infrastructure.BffDelegationGateway.createConsumerDelegation(BffDelegationGateway.java:32)
+    	at java.base/jdk.internal.reflect.NativeMethodAccessorImpl.invoke0(Native Method)
+    	at java.base/jdk.internal.reflect.NativeMethodAccessorImpl.invoke(NativeMethodAccessorImpl.java:77)
+    	at java.base/jdk.internal.reflect.DelegatingMethodAccessorImpl.invoke(DelegatingMethodAccessorImpl.java:43)
+    	at java.base/java.lang.reflect.Method.invoke(Method.java:569)
+    	at it.pagopa.infrastructure.channel.ChannelRouter.invoke(ChannelRouter.java:43)
+    	at it.pagopa.interop.common.infrastructure.ChannelRoutingInterceptor.invoke(ChannelRoutingInterceptor.java:40)
+    	at org.springframework.aop.framework.ReflectiveMethodInvocation.proceed(ReflectiveMethodInvocation.java:179)
+    	at org.springframework.aop.framework.JdkDynamicAopProxy.invoke(JdkDynamicAopProxy.java:222)
+    	at jdk.proxy2/jdk.proxy2.$Proxy157.createConsumerDelegation(Unknown Source)
+    	at it.pagopa.interop.common.delegation.application.DelegationUseCase.createConsumerDelegation(DelegationUseCase.java:39)
+    	at it.pagopa.interop.common.delegation.application.DelegationUseCase.createConsumerDelegation(DelegationUseCase.java:50)
+    	at it.pagopa.interop.common.journey.infrastructure.DelegationJourneyImpl.createConsumerDelegation(DelegationJourneyImpl.java:58)
+    	at java.base/jdk.internal.reflect.NativeMethodAccessorImpl.invoke0(Native Method)
+    	at java.base/jdk.internal.reflect.NativeMethodAccessorImpl.invoke(NativeMethodAccessorImpl.java:77)
+    	at java.base/jdk.internal.reflect.DelegatingMethodAccessorImpl.invoke(DelegatingMethodAccessorImpl.java:43)
+    	at java.base/java.lang.reflect.Method.invoke(Method.java:569)
+    	at it.pagopa.interop.common.journey.infrastructure.config.JourneyInvocationHandler.invoke(JourneyInvocationHandler.java:25)
+    	at jdk.proxy2/jdk.proxy2.$Proxy173.createConsumerDelegation(Unknown Source)
+    	at it.pagopa.interop.common.journey.infrastructure.cucumber.DelegationJourneySteps.createConsumerDelegation(DelegationJourneySteps.java:57)
+    	at ✽.l'e-service è delegato in fruizione da PagoPA al Comune di Pozzallo con una delega in stato WAITING_FOR_APPROVAL(classpath:feature-expanded/delegation/operazioni-messaggi-errore.feature:268)
+    Caused by: org.awaitility.core.ConditionTimeoutException: Lambda expression in it.pagopa.utils.async.PollingUtils expected the predicate to return <true> but it returned <false> for input of <it.pagopa.infrastructure.response.ApiResponse@1025d591> within 20 seconds.
+    	at org.awaitility.core.ConditionAwaiter.await(ConditionAwaiter.java:167)
+    	at org.awaitility.core.AbstractHamcrestCondition.await(AbstractHamcrestCondition.java:86)
+    	at org.awaitility.core.ConditionFactory.until(ConditionFactory.java:1160)
+    	at org.awaitility.core.ConditionFactory.until(ConditionFactory.java:712)
+    	at org.awaitility.core.ConditionFactory.until(ConditionFactory.java:729)
+    	at it.pagopa.utils.async.PollingUtils.pollUntil(PollingUtils.java:48)
+    	... 24 more
+  procedure: ''
+  result: ''
+  link_prod_bug: ''
+  link_suite_bug: ''
+- id_test: '[ERROR_011] - Rifiuto di una delega in fruizione con un link nella motivazione [Given=BFF:en,When=BFF:en,Then=BFF:en]'
+  error_log: |
+    java.lang.IllegalStateException: Polling in timeout dopo 20 secondi.
+
+    	at it.pagopa.utils.async.PollingUtils.pollUntil(PollingUtils.java:68)
+    	at it.pagopa.utils.async.PollingUtils.pollUntil(PollingUtils.java:93)
+    	at it.pagopa.infrastructure.template.action.PollingAction.handle(PollingAction.java:32)
+    	at it.pagopa.infrastructure.template.action.TestChain.withPolling(TestChain.java:23)
+    	at it.pagopa.interop.bff.delegation.infrastructure.BffDelegationGateway.createConsumerDelegation(BffDelegationGateway.java:32)
+    	at java.base/jdk.internal.reflect.NativeMethodAccessorImpl.invoke0(Native Method)
+    	at java.base/jdk.internal.reflect.NativeMethodAccessorImpl.invoke(NativeMethodAccessorImpl.java:77)
+    	at java.base/jdk.internal.reflect.DelegatingMethodAccessorImpl.invoke(DelegatingMethodAccessorImpl.java:43)
+    	at java.base/java.lang.reflect.Method.invoke(Method.java:569)
+    	at it.pagopa.infrastructure.channel.ChannelRouter.invoke(ChannelRouter.java:43)
+    	at it.pagopa.interop.common.infrastructure.ChannelRoutingInterceptor.invoke(ChannelRoutingInterceptor.java:40)
+    	at org.springframework.aop.framework.ReflectiveMethodInvocation.proceed(ReflectiveMethodInvocation.java:179)
+    	at org.springframework.aop.framework.JdkDynamicAopProxy.invoke(JdkDynamicAopProxy.java:222)
+    	at jdk.proxy2/jdk.proxy2.$Proxy157.createConsumerDelegation(Unknown Source)
+    	at it.pagopa.interop.common.delegation.application.DelegationUseCase.createConsumerDelegation(DelegationUseCase.java:39)
+    	at it.pagopa.interop.common.delegation.application.DelegationUseCase.createConsumerDelegation(DelegationUseCase.java:50)
+    	at it.pagopa.interop.common.journey.infrastructure.DelegationJourneyImpl.createConsumerDelegation(DelegationJourneyImpl.java:58)
+    	at java.base/jdk.internal.reflect.NativeMethodAccessorImpl.invoke0(Native Method)
+    	at java.base/jdk.internal.reflect.NativeMethodAccessorImpl.invoke(NativeMethodAccessorImpl.java:77)
+    	at java.base/jdk.internal.reflect.DelegatingMethodAccessorImpl.invoke(DelegatingMethodAccessorImpl.java:43)
+    	at java.base/java.lang.reflect.Method.invoke(Method.java:569)
+    	at it.pagopa.interop.common.journey.infrastructure.config.JourneyInvocationHandler.invoke(JourneyInvocationHandler.java:25)
+    	at jdk.proxy2/jdk.proxy2.$Proxy173.createConsumerDelegation(Unknown Source)
+    	at it.pagopa.interop.common.journey.infrastructure.cucumber.DelegationJourneySteps.createConsumerDelegation(DelegationJourneySteps.java:57)
+    	at ✽.l'e-service è delegato in fruizione da PagoPA al Comune di Pozzallo con una delega in stato WAITING_FOR_APPROVAL(classpath:feature-expanded/delegation/operazioni-messaggi-errore.feature:279)
+    Caused by: org.awaitility.core.ConditionTimeoutException: Lambda expression in it.pagopa.utils.async.PollingUtils expected the predicate to return <true> but it returned <false> for input of <it.pagopa.infrastructure.response.ApiResponse@555e3ee6> within 20 seconds.
+    	at org.awaitility.core.ConditionAwaiter.await(ConditionAwaiter.java:167)
+    	at org.awaitility.core.AbstractHamcrestCondition.await(AbstractHamcrestCondition.java:86)
+    	at org.awaitility.core.ConditionFactory.until(ConditionFactory.java:1160)
+    	at org.awaitility.core.ConditionFactory.until(ConditionFactory.java:712)
+    	at org.awaitility.core.ConditionFactory.until(ConditionFactory.java:729)
+    	at it.pagopa.utils.async.PollingUtils.pollUntil(PollingUtils.java:48)
+    	... 24 more
+  procedure: ''
+  result: ''
+  link_prod_bug: ''
+  link_suite_bug: ''
+- id_test: '[ERROR_175] - Impossibilità di allegare un documento a una versione eliminata [Given=BFF,When=BFF,Then=BFF]'
+  error_log: |
+    org.opentest4j.AssertionFailedError: [userMessage per BFF_ESERVICE_TEMPLATE_VERSION_NOT_FOUND in lingua it] 
+    expected: "Non puoi caricare il file perché questa bozza di versione del template e-service non è più disponibile."
+     but was: null
+    	at it.pagopa.interop.bff.infrastructure.cucumber.BffErrorMessageSteps.assertErrorMessage(BffErrorMessageSteps.java:66)
+    	at ✽.il messaggio di errore corrisponde al caso "BFF_ESERVICE_TEMPLATE_VERSION_NOT_FOUND"(classpath:feature-expanded/eservice-template/caricamento-documenti-messaggi-errore.feature:26)
+  procedure: ''
+  result: ''
+  link_prod_bug: ''
+  link_suite_bug: ''
+- id_test: '[ERROR_175] - Impossibilità di allegare un documento a una versione eliminata [Given=BFF:en,When=BFF:en,Then=BFF:en]'
+  error_log: |
+    org.opentest4j.AssertionFailedError: [userMessage per BFF_ESERVICE_TEMPLATE_VERSION_NOT_FOUND in lingua en] 
+    expected: "You can't upload the file because this draft e-service template version is no longer available."
+     but was: null
+    	at it.pagopa.interop.bff.infrastructure.cucumber.BffErrorMessageSteps.assertErrorMessage(BffErrorMessageSteps.java:66)
+    	at ✽.il messaggio di errore corrisponde al caso "BFF_ESERVICE_TEMPLATE_VERSION_NOT_FOUND"(classpath:feature-expanded/eservice-template/caricamento-documenti-messaggi-errore.feature:41)
+  procedure: ''
+  result: ''
+  link_prod_bug: ''
+  link_suite_bug: ''
+- id_test: '[ERROR_122] - Rifiuto del caricamento di un documento con un nome già in uso [Given=BFF,When=BFF,Then=BFF]'
+  error_log: 'Step i seguenti documenti PDF allegati alla versione del template:: undefined'
+  procedure: ''
+  result: ''
+  link_prod_bug: ''
+  link_suite_bug: ''
+- id_test: '[ERROR_122] - Rifiuto del caricamento di un documento con un nome già in uso [Given=BFF:en,When=BFF:en,Then=BFF:en]'
+  error_log: 'Step i seguenti documenti PDF allegati alla versione del template:: undefined'
+  procedure: ''
+  result: ''
+  link_prod_bug: ''
+  link_suite_bug: ''
+- id_test: '[ERROR_123] - Rifiuto del caricamento di un documento con contenuto già presente [Given=BFF,When=BFF,Then=BFF]'
+  error_log: 'Step i seguenti documenti PDF allegati alla versione del template:: undefined'
+  procedure: ''
+  result: ''
+  link_prod_bug: ''
+  link_suite_bug: ''
+- id_test: '[ERROR_123] - Rifiuto del caricamento di un documento con contenuto già presente [Given=BFF:en,When=BFF:en,Then=BFF:en]'
+  error_log: 'Step i seguenti documenti PDF allegati alla versione del template:: undefined'
+  procedure: ''
+  result: ''
+  link_prod_bug: ''
+  link_suite_bug: ''
+- id_test: '[ERROR_124] - Impossibilità di rinominare un documento con il nome di un altro allegato [Given=BFF,When=BFF,Then=BFF]'
+  error_log: 'Step i seguenti documenti PDF allegati alla versione del template:: undefined'
+  procedure: ''
+  result: ''
+  link_prod_bug: ''
+  link_suite_bug: ''
+- id_test: '[ERROR_124] - Impossibilità di rinominare un documento con il nome di un altro allegato [Given=BFF:en,When=BFF:en,Then=BFF:en]'
+  error_log: 'Step i seguenti documenti PDF allegati alla versione del template:: undefined'
+  procedure: ''
+  result: ''
+  link_prod_bug: ''
+  link_suite_bug: ''
+- id_test: '[ERROR_127] - Impossibilità di scaricare un documento assente dalla versione del template [Given=BFF,When=BFF,Then=BFF]'
+  error_log: 'Step l''erogatore tenta di scaricare un documento assente dalla versione del template: undefined'
+  procedure: ''
+  result: ''
+  link_prod_bug: ''
+  link_suite_bug: ''
+- id_test: '[ERROR_127] - Impossibilità di scaricare un documento assente dalla versione del template [Given=BFF:en,When=BFF:en,Then=BFF:en]'
+  error_log: 'Step l''erogatore tenta di scaricare un documento assente dalla versione del template: undefined'
+  procedure: ''
+  result: ''
+  link_prod_bug: ''
+  link_suite_bug: ''
+- id_test: '[ERROR_131] - Rifiuto della rinomina di un documento con un link nel nome [Given=BFF,When=BFF,Then=BFF]'
+  error_log: 'Step i seguenti documenti PDF allegati alla versione del template:: undefined'
+  procedure: ''
+  result: ''
+  link_prod_bug: ''
+  link_suite_bug: ''
+- id_test: '[ERROR_131] - Rifiuto della rinomina di un documento con un link nel nome [Given=BFF:en,When=BFF:en,Then=BFF:en]'
+  error_log: 'Step i seguenti documenti PDF allegati alla versione del template:: undefined'
+  procedure: ''
+  result: ''
+  link_prod_bug: ''
+  link_suite_bug: ''
+- id_test: '[ERROR_174] - Impossibilità per l''erogatore di esportare un e-service con delega attiva [Given=BFF,When=BFF,Then=BFF]'
+  error_log: |
+    java.lang.AssertionError: [Status HTTP di errore per BFF_DELEGATED_ESERVICE_NOT_EXPORTABLE] 
+    Expecting actual:
+      500
+    to be between:
+      [400, 499]
+
+    	at it.pagopa.interop.bff.infrastructure.cucumber.BffErrorMessageSteps.assertErrorMessage(BffErrorMessageSteps.java:62)
+    	at ✽.il messaggio di errore corrisponde al caso "BFF_DELEGATED_ESERVICE_NOT_EXPORTABLE"(classpath:feature-expanded/eservice/file-esportazione-consultazione-messaggi-errore.feature:163)
+  procedure: ''
+  result: ''
+  link_prod_bug: ''
+  link_suite_bug: ''
+- id_test: '[ERROR_174] - Impossibilità per l''erogatore di esportare un e-service con delega attiva [Given=BFF:en,When=BFF:en,Then=BFF:en]'
+  error_log: |
+    java.lang.AssertionError: [Status HTTP di errore per BFF_DELEGATED_ESERVICE_NOT_EXPORTABLE] 
+    Expecting actual:
+      500
+    to be between:
+      [400, 499]
+
+    	at it.pagopa.interop.bff.infrastructure.cucumber.BffErrorMessageSteps.assertErrorMessage(BffErrorMessageSteps.java:62)
+    	at ✽.il messaggio di errore corrisponde al caso "BFF_DELEGATED_ESERVICE_NOT_EXPORTABLE"(classpath:feature-expanded/eservice/file-esportazione-consultazione-messaggi-errore.feature:178)
+  procedure: ''
+  result: ''
+  link_prod_bug: ''
+  link_suite_bug: ''
+- id_test: '[ERROR_039] - Rifiuto della creazione di un''istanza con una parola identificativa già usata [Given=BFF,When=BFF,Then=BFF]'
+  error_log: 'Step il messaggio di errore corrisponde al caso "CATALOG_E_SERVICE_NAME_DUPLICATE_FOR_PRODUCER__POST_TEMPLATES_TEMPLATE_ID_ESERVICES"
+    in lingua  con i valori:: undefined'
+  procedure: ''
+  result: ''
+  link_prod_bug: ''
+  link_suite_bug: ''
+- id_test: '[ERROR_039] - Rifiuto della creazione di un''istanza con una parola identificativa già usata [Given=BFF:en,When=BFF:en,Then=BFF:en]'
+  error_log: 'Step il messaggio di errore corrisponde al caso "CATALOG_E_SERVICE_NAME_DUPLICATE_FOR_PRODUCER__POST_TEMPLATES_TEMPLATE_ID_ESERVICES"
+    in lingua  con i valori:: undefined'
+  procedure: ''
+  result: ''
+  link_prod_bug: ''
+  link_suite_bug: ''
+- id_test: '[ERROR_040] - Rifiuto della modifica di un''istanza con una parola identificativa già usata [Given=BFF,When=BFF,Then=BFF]'
+  error_log: 'Step il messaggio di errore corrisponde al caso "CATALOG_E_SERVICE_NAME_DUPLICATE_FOR_PRODUCER__POST_TEMPLATES_ESERVICES_E_SERVICE_ID"
+    in lingua  con i valori:: undefined'
+  procedure: ''
+  result: ''
+  link_prod_bug: ''
+  link_suite_bug: ''
+- id_test: '[ERROR_040] - Rifiuto della modifica di un''istanza con una parola identificativa già usata [Given=BFF:en,When=BFF:en,Then=BFF:en]'
+  error_log: 'Step il messaggio di errore corrisponde al caso "CATALOG_E_SERVICE_NAME_DUPLICATE_FOR_PRODUCER__POST_TEMPLATES_ESERVICES_E_SERVICE_ID"
+    in lingua  con i valori:: undefined'
+  procedure: ''
+  result: ''
+  link_prod_bug: ''
+  link_suite_bug: ''
+- id_test: '[ERROR_041] - Rifiuto dell''archiviazione dell''e-service con un preavviso inferiore a quello di una
+    versione [Given=BFF,When=BFF,Then=BFF]'
+  error_log: |
+    java.lang.IllegalStateException: Polling in timeout dopo 20 secondi.
+
+    	at it.pagopa.utils.async.PollingUtils.pollUntil(PollingUtils.java:68)
+    	at it.pagopa.utils.async.PollingUtils.pollUntil(PollingUtils.java:93)
+    	at it.pagopa.infrastructure.template.action.PollingAction.handle(PollingAction.java:32)
+    	at it.pagopa.infrastructure.template.action.TestChain.withPolling(TestChain.java:23)
+    	at it.pagopa.interop.bff.eservice.infrastructure.BffEServiceGateway.archiveEService(BffEServiceGateway.java:141)
+    	at java.base/jdk.internal.reflect.NativeMethodAccessorImpl.invoke0(Native Method)
+    	at java.base/jdk.internal.reflect.NativeMethodAccessorImpl.invoke(NativeMethodAccessorImpl.java:77)
+    	at java.base/jdk.internal.reflect.DelegatingMethodAccessorImpl.invoke(DelegatingMethodAccessorImpl.java:43)
+    	at java.base/java.lang.reflect.Method.invoke(Method.java:569)
+    	at it.pagopa.infrastructure.channel.ChannelRouter.invoke(ChannelRouter.java:43)
+    	at it.pagopa.interop.common.infrastructure.ChannelRoutingInterceptor.invoke(ChannelRoutingInterceptor.java:40)
+    	at org.springframework.aop.framework.ReflectiveMethodInvocation.proceed(ReflectiveMethodInvocation.java:179)
+    	at org.springframework.aop.framework.JdkDynamicAopProxy.invoke(JdkDynamicAopProxy.java:222)
+    	at jdk.proxy2/jdk.proxy2.$Proxy159.archiveEService(Unknown Source)
+    	at it.pagopa.interop.common.eservice.application.EServiceUseCase.archiveEService(EServiceUseCase.java:59)
+    	at it.pagopa.interop.common.eservice.infrastructure.cucumber.EServiceSteps.archiveEService(EServiceSteps.java:117)
+    	at ✽.l'erogatore tenta di archiviare l'e-service con un periodo di preavviso di 60 giorni e una motivazione valida(classpath:feature-expanded/eservice/operazioni-messaggi-errore.feature:182)
+    Caused by: org.awaitility.core.ConditionTimeoutException: Lambda expression in it.pagopa.utils.async.PollingUtils expected the predicate to return <true> but it returned <false> for input of <it.pagopa.infrastructure.response.ApiResponse@36aefaf1> within 20 seconds.
+    	at org.awaitility.core.ConditionAwaiter.await(ConditionAwaiter.java:167)
+    	at org.awaitility.core.AbstractHamcrestCondition.await(AbstractHamcrestCondition.java:86)
+    	at org.awaitility.core.ConditionFactory.until(ConditionFactory.java:1160)
+    	at org.awaitility.core.ConditionFactory.until(ConditionFactory.java:712)
+    	at org.awaitility.core.ConditionFactory.until(ConditionFactory.java:729)
+    	at it.pagopa.utils.async.PollingUtils.pollUntil(PollingUtils.java:48)
+    	... 16 more
+  procedure: ''
+  result: ''
+  link_prod_bug: ''
+  link_suite_bug: ''
+- id_test: '[ERROR_041] - Rifiuto dell''archiviazione dell''e-service con un preavviso inferiore a quello di una
+    versione [Given=BFF:en,When=BFF:en,Then=BFF:en]'
+  error_log: |
+    java.lang.IllegalStateException: Polling in timeout dopo 20 secondi.
+
+    	at it.pagopa.utils.async.PollingUtils.pollUntil(PollingUtils.java:68)
+    	at it.pagopa.utils.async.PollingUtils.pollUntil(PollingUtils.java:93)
+    	at it.pagopa.infrastructure.template.action.PollingAction.handle(PollingAction.java:32)
+    	at it.pagopa.infrastructure.template.action.TestChain.withPolling(TestChain.java:23)
+    	at it.pagopa.interop.bff.eservice.infrastructure.BffEServiceGateway.archiveEService(BffEServiceGateway.java:141)
+    	at java.base/jdk.internal.reflect.NativeMethodAccessorImpl.invoke0(Native Method)
+    	at java.base/jdk.internal.reflect.NativeMethodAccessorImpl.invoke(NativeMethodAccessorImpl.java:77)
+    	at java.base/jdk.internal.reflect.DelegatingMethodAccessorImpl.invoke(DelegatingMethodAccessorImpl.java:43)
+    	at java.base/java.lang.reflect.Method.invoke(Method.java:569)
+    	at it.pagopa.infrastructure.channel.ChannelRouter.invoke(ChannelRouter.java:43)
+    	at it.pagopa.interop.common.infrastructure.ChannelRoutingInterceptor.invoke(ChannelRoutingInterceptor.java:40)
+    	at org.springframework.aop.framework.ReflectiveMethodInvocation.proceed(ReflectiveMethodInvocation.java:179)
+    	at org.springframework.aop.framework.JdkDynamicAopProxy.invoke(JdkDynamicAopProxy.java:222)
+    	at jdk.proxy2/jdk.proxy2.$Proxy159.archiveEService(Unknown Source)
+    	at it.pagopa.interop.common.eservice.application.EServiceUseCase.archiveEService(EServiceUseCase.java:59)
+    	at it.pagopa.interop.common.eservice.infrastructure.cucumber.EServiceSteps.archiveEService(EServiceSteps.java:117)
+    	at ✽.l'erogatore tenta di archiviare l'e-service con un periodo di preavviso di 60 giorni e una motivazione valida(classpath:feature-expanded/eservice/operazioni-messaggi-errore.feature:196)
+    Caused by: org.awaitility.core.ConditionTimeoutException: Lambda expression in it.pagopa.utils.async.PollingUtils expected the predicate to return <true> but it returned <false> for input of <it.pagopa.infrastructure.response.ApiResponse@37472b36> within 20 seconds.
+    	at org.awaitility.core.ConditionAwaiter.await(ConditionAwaiter.java:167)
+    	at org.awaitility.core.AbstractHamcrestCondition.await(AbstractHamcrestCondition.java:86)
+    	at org.awaitility.core.ConditionFactory.until(ConditionFactory.java:1160)
+    	at org.awaitility.core.ConditionFactory.until(ConditionFactory.java:712)
+    	at org.awaitility.core.ConditionFactory.until(ConditionFactory.java:729)
+    	at it.pagopa.utils.async.PollingUtils.pollUntil(PollingUtils.java:48)
+    	... 16 more
+  procedure: ''
+  result: ''
+  link_prod_bug: ''
+  link_suite_bug: ''
+- id_test: '[ERROR_046] - Rifiuto dell''aggiunta di un''analisi del rischio con un nome già usato [Given=BFF,When=BFF,Then=BFF]'
+  error_log: 'Step l''erogatore tenta di aggiungere all''e-service un''analisi del rischio con il nome di quella
+    esistente: undefined'
+  procedure: ''
+  result: ''
+  link_prod_bug: ''
+  link_suite_bug: ''
+- id_test: '[ERROR_046] - Rifiuto dell''aggiunta di un''analisi del rischio con un nome già usato [Given=BFF:en,When=BFF:en,Then=BFF:en]'
+  error_log: 'Step l''erogatore tenta di aggiungere all''e-service un''analisi del rischio con il nome di quella
+    esistente: undefined'
+  procedure: ''
+  result: ''
+  link_prod_bug: ''
+  link_suite_bug: ''
+- id_test: '[ERROR_050] - Rifiuto dell''aggiornamento della sola parola identificativa con un valore già usato [Given=BFF,When=BFF,Then=BFF]'
+  error_log: 'Step il messaggio di errore corrisponde al caso "CATALOG_E_SERVICE_NAME_DUPLICATE_FOR_PRODUCER__POST_TEMPLATES_ESERVICES_E_SERVICE_ID_INSTANCE_LABEL_UPDATE"
+    in lingua  con i valori:: undefined'
+  procedure: ''
+  result: ''
+  link_prod_bug: ''
+  link_suite_bug: ''
+- id_test: '[ERROR_050] - Rifiuto dell''aggiornamento della sola parola identificativa con un valore già usato [Given=BFF:en,When=BFF:en,Then=BFF:en]'
+  error_log: 'Step il messaggio di errore corrisponde al caso "CATALOG_E_SERVICE_NAME_DUPLICATE_FOR_PRODUCER__POST_TEMPLATES_ESERVICES_E_SERVICE_ID_INSTANCE_LABEL_UPDATE"
+    in lingua  con i valori:: undefined'
+  procedure: ''
+  result: ''
+  link_prod_bug: ''
+  link_suite_bug: ''
+- id_test: '[ERROR_052] - Impossibilità di eliminare un e-service in bozza dopo la revoca della delega [Given=BFF,When=BFF,Then=BFF]'
+  error_log: 'Step l''erogatore tenta di eliminare l''e-service in bozza: undefined'
+  procedure: ''
+  result: ''
+  link_prod_bug: ''
+  link_suite_bug: ''
+- id_test: '[ERROR_052] - Impossibilità di eliminare un e-service in bozza dopo la revoca della delega [Given=BFF:en,When=BFF:en,Then=BFF:en]'
+  error_log: 'Step l''erogatore tenta di eliminare l''e-service in bozza: undefined'
+  procedure: ''
+  result: ''
+  link_prod_bug: ''
+  link_suite_bug: ''
+- id_test: '[ERROR_054] - Impossibilità per un ente diverso dal delegato di annullare l''archiviazione dell''e-service
+    [Given=BFF,When=BFF,Then=BFF]'
+  error_log: 'Step una richiesta di archiviazione dell''intero e-service inoltrata al delegante con 60 giorni di
+    preavviso e una motivazione valida: undefined'
+  procedure: ''
+  result: ''
+  link_prod_bug: ''
+  link_suite_bug: ''
+- id_test: '[ERROR_054] - Impossibilità per un ente diverso dal delegato di annullare l''archiviazione dell''e-service
+    [Given=BFF:en,When=BFF:en,Then=BFF:en]'
+  error_log: 'Step una richiesta di archiviazione dell''intero e-service inoltrata al delegante con 60 giorni di
+    preavviso e una motivazione valida: undefined'
+  procedure: ''
+  result: ''
+  link_prod_bug: ''
+  link_suite_bug: ''
+- id_test: '[ERROR_055] - Impossibilità per un ente diverso dal delegato di richiedere l''archiviazione di una versione
+    [Given=BFF,When=BFF,Then=BFF]'
+  error_log: 'Step il delegato richiede al delegante l''archiviazione della versione 1 dell''e-service con 60 giorni
+    di preavviso e una motivazione valida: undefined'
+  procedure: ''
+  result: ''
+  link_prod_bug: ''
+  link_suite_bug: ''
+- id_test: '[ERROR_055] - Impossibilità per un ente diverso dal delegato di richiedere l''archiviazione di una versione
+    [Given=BFF:en,When=BFF:en,Then=BFF:en]'
+  error_log: 'Step il delegato richiede al delegante l''archiviazione della versione 1 dell''e-service con 60 giorni
+    di preavviso e una motivazione valida: undefined'
+  procedure: ''
+  result: ''
+  link_prod_bug: ''
+  link_suite_bug: ''
+- id_test: '[ERROR_056] - Impossibilità per un ente diverso dal delegato di annullare l''archiviazione di una versione
+    [Given=BFF,When=BFF,Then=BFF]'
+  error_log: 'Step una richiesta di archiviazione della versione 1 dell''e-service inoltrata al delegante con 60
+    giorni di preavviso e una motivazione valida: undefined'
+  procedure: ''
+  result: ''
+  link_prod_bug: ''
+  link_suite_bug: ''
+- id_test: '[ERROR_056] - Impossibilità per un ente diverso dal delegato di annullare l''archiviazione di una versione
+    [Given=BFF:en,When=BFF:en,Then=BFF:en]'
+  error_log: 'Step una richiesta di archiviazione della versione 1 dell''e-service inoltrata al delegante con 60
+    giorni di preavviso e una motivazione valida: undefined'
+  procedure: ''
+  result: ''
+  link_prod_bug: ''
+  link_suite_bug: ''
+- id_test: '[ERROR_057] - Impossibilità di allegare un documento dopo la revoca della delega [Given=BFF,When=BFF,Then=BFF]'
+  error_log: |
+    org.opentest4j.AssertionFailedError: [userMessage per CATALOG_OPERATION_FORBIDDEN__POST_ESERVICES_E_SERVICE_ID_DESCRIPTORS_DESCRIPTOR_ID_DOCUMENTS in lingua it] 
+    expected: "Non puoi caricare il file perché la tua delega per l’erogazione di questo e-service non è più attiva. Torna ai tuoi e-service per vedere quelli che puoi gestire."
+     but was: null
+    	at it.pagopa.interop.bff.infrastructure.cucumber.BffErrorMessageSteps.assertErrorMessage(BffErrorMessageSteps.java:66)
+    	at ✽.il messaggio di errore corrisponde al caso "CATALOG_OPERATION_FORBIDDEN__POST_ESERVICES_E_SERVICE_ID_DESCRIPTORS_DESCRIPTOR_ID_DOCUMENTS"(classpath:feature-expanded/eservice/operazioni-messaggi-errore.feature:735)
+  procedure: ''
+  result: ''
+  link_prod_bug: ''
+  link_suite_bug: ''
+- id_test: '[ERROR_057] - Impossibilità di allegare un documento dopo la revoca della delega [Given=BFF:en,When=BFF:en,Then=BFF:en]'
+  error_log: |
+    org.opentest4j.AssertionFailedError: [userMessage per CATALOG_OPERATION_FORBIDDEN__POST_ESERVICES_E_SERVICE_ID_DESCRIPTORS_DESCRIPTOR_ID_DOCUMENTS in lingua en] 
+    expected: "You can't upload the file because your delegation for producing this e-service is no longer active. Go back to your e-services to see which ones you can manage."
+     but was: null
+    	at it.pagopa.interop.bff.infrastructure.cucumber.BffErrorMessageSteps.assertErrorMessage(BffErrorMessageSteps.java:66)
+    	at ✽.il messaggio di errore corrisponde al caso "CATALOG_OPERATION_FORBIDDEN__POST_ESERVICES_E_SERVICE_ID_DESCRIPTORS_DESCRIPTOR_ID_DOCUMENTS"(classpath:feature-expanded/eservice/operazioni-messaggi-errore.feature:752)
+  procedure: ''
+  result: ''
+  link_prod_bug: ''
+  link_suite_bug: ''
+- id_test: '[ERROR_058] - Impossibilità di eliminare un documento dopo la revoca della delega [Given=BFF,When=BFF,Then=BFF]'
+  error_log: 'Step l''erogatore tenta di eliminare il documento "Allegato A" della versione dell''e-service: undefined'
+  procedure: ''
+  result: ''
+  link_prod_bug: ''
+  link_suite_bug: ''
+- id_test: '[ERROR_058] - Impossibilità di eliminare un documento dopo la revoca della delega [Given=BFF:en,When=BFF:en,Then=BFF:en]'
+  error_log: 'Step l''erogatore tenta di eliminare il documento "Allegato A" della versione dell''e-service: undefined'
+  procedure: ''
+  result: ''
+  link_prod_bug: ''
+  link_suite_bug: ''
+- id_test: '[ERROR_059] - Impossibilità di rinominare un documento dopo la revoca della delega [Given=BFF,When=BFF,Then=BFF]'
+  error_log: 'Step l''erogatore rinomina il documento "Allegato A" della versione dell''e-service in "Allegato B":
+    undefined'
+  procedure: ''
+  result: ''
+  link_prod_bug: ''
+  link_suite_bug: ''
+- id_test: '[ERROR_059] - Impossibilità di rinominare un documento dopo la revoca della delega [Given=BFF:en,When=BFF:en,Then=BFF:en]'
+  error_log: 'Step l''erogatore rinomina il documento "Allegato A" della versione dell''e-service in "Allegato B":
+    undefined'
+  procedure: ''
+  result: ''
+  link_prod_bug: ''
+  link_suite_bug: ''
+- id_test: '[ERROR_060] - Impossibilità di creare una versione dopo la revoca della delega [Given=BFF,When=BFF,Then=BFF]'
+  error_log: 'Step l''erogatore tenta di creare una nuova versione dell''e-service: undefined'
+  procedure: ''
+  result: ''
+  link_prod_bug: ''
+  link_suite_bug: ''
+- id_test: '[ERROR_060] - Impossibilità di creare una versione dopo la revoca della delega [Given=BFF:en,When=BFF:en,Then=BFF:en]'
+  error_log: 'Step l''erogatore tenta di creare una nuova versione dell''e-service: undefined'
+  procedure: ''
+  result: ''
+  link_prod_bug: ''
+  link_suite_bug: ''
+- id_test: '[ERROR_061] - Impossibilità di eliminare una versione in bozza dopo la revoca della delega [Given=BFF,When=BFF,Then=BFF]'
+  error_log: 'Step l''erogatore tenta di eliminare la versione 1 dell''e-service: undefined'
+  procedure: ''
+  result: ''
+  link_prod_bug: ''
+  link_suite_bug: ''
+- id_test: '[ERROR_061] - Impossibilità di eliminare una versione in bozza dopo la revoca della delega [Given=BFF:en,When=BFF:en,Then=BFF:en]'
+  error_log: 'Step l''erogatore tenta di eliminare la versione 1 dell''e-service: undefined'
+  procedure: ''
+  result: ''
+  link_prod_bug: ''
+  link_suite_bug: ''
+- id_test: '[ERROR_062] - Impossibilità di modificare la versione in bozza di un''istanza dopo la revoca della delega
+    [Given=BFF,When=BFF,Then=BFF]'
+  error_log: 'Step l''erogatore tenta di modificare la configurazione della versione 1 dell''e-service appena istanziato
+    con dati validi: undefined'
+  procedure: ''
+  result: ''
+  link_prod_bug: ''
+  link_suite_bug: ''
+- id_test: '[ERROR_062] - Impossibilità di modificare la versione in bozza di un''istanza dopo la revoca della delega
+    [Given=BFF:en,When=BFF:en,Then=BFF:en]'
+  error_log: 'Step l''erogatore tenta di modificare la configurazione della versione 1 dell''e-service appena istanziato
+    con dati validi: undefined'
+  procedure: ''
+  result: ''
+  link_prod_bug: ''
+  link_suite_bug: ''
+- id_test: '[ERROR_063] - Impossibilità di pubblicare una versione dopo la revoca della delega [Given=BFF,When=BFF,Then=BFF]'
+  error_log: 'Step l''erogatore tenta di pubblicare la versione 1 dell''e-service: undefined'
+  procedure: ''
+  result: ''
+  link_prod_bug: ''
+  link_suite_bug: ''
+- id_test: '[ERROR_063] - Impossibilità di pubblicare una versione dopo la revoca della delega [Given=BFF:en,When=BFF:en,Then=BFF:en]'
+  error_log: 'Step l''erogatore tenta di pubblicare la versione 1 dell''e-service: undefined'
+  procedure: ''
+  result: ''
+  link_prod_bug: ''
+  link_suite_bug: ''
+- id_test: '[ERROR_064] - Impossibilità di sospendere una versione dopo la revoca della delega [Given=BFF,When=BFF,Then=BFF]'
+  error_log: 'Step l''erogatore tenta di sospendere la versione 1 dell''e-service: undefined'
+  procedure: ''
+  result: ''
+  link_prod_bug: ''
+  link_suite_bug: ''
+- id_test: '[ERROR_064] - Impossibilità di sospendere una versione dopo la revoca della delega [Given=BFF:en,When=BFF:en,Then=BFF:en]'
+  error_log: 'Step l''erogatore tenta di sospendere la versione 1 dell''e-service: undefined'
+  procedure: ''
+  result: ''
+  link_prod_bug: ''
+  link_suite_bug: ''
+- id_test: '[ERROR_065] - Impossibilità di riattivare una versione dopo la revoca della delega [Given=BFF,When=BFF,Then=BFF]'
+  error_log: 'Step l''erogatore tenta di riattivare la versione 1 dell''e-service: undefined'
+  procedure: ''
+  result: ''
+  link_prod_bug: ''
+  link_suite_bug: ''
+- id_test: '[ERROR_065] - Impossibilità di riattivare una versione dopo la revoca della delega [Given=BFF:en,When=BFF:en,Then=BFF:en]'
+  error_log: 'Step l''erogatore tenta di riattivare la versione 1 dell''e-service: undefined'
+  procedure: ''
+  result: ''
+  link_prod_bug: ''
+  link_suite_bug: ''
+- id_test: '[ERROR_066] - Impossibilità di modificare la configurazione di una versione dopo la revoca della delega
+    [Given=BFF,When=BFF,Then=BFF]'
+  error_log: 'Step l''erogatore tenta di modificare la configurazione della versione 1 dell''e-service con dati
+    validi: undefined'
+  procedure: ''
+  result: ''
+  link_prod_bug: ''
+  link_suite_bug: ''
+- id_test: '[ERROR_066] - Impossibilità di modificare la configurazione di una versione dopo la revoca della delega
+    [Given=BFF:en,When=BFF:en,Then=BFF:en]'
+  error_log: 'Step l''erogatore tenta di modificare la configurazione della versione 1 dell''e-service con dati
+    validi: undefined'
+  procedure: ''
+  result: ''
+  link_prod_bug: ''
+  link_suite_bug: ''
+- id_test: '[ERROR_067] - Impossibilità di modificare l''approvazione delle fruizioni dopo la revoca della delega
+    [Given=BFF,When=BFF,Then=BFF]'
+  error_log: 'Step l''erogatore tenta di modificare la modalità di approvazione delle richieste di fruizione della
+    versione 1 dell''e-service con dati validi: undefined'
+  procedure: ''
+  result: ''
+  link_prod_bug: ''
+  link_suite_bug: ''
+- id_test: '[ERROR_067] - Impossibilità di modificare l''approvazione delle fruizioni dopo la revoca della delega
+    [Given=BFF:en,When=BFF:en,Then=BFF:en]'
+  error_log: 'Step l''erogatore tenta di modificare la modalità di approvazione delle richieste di fruizione della
+    versione 1 dell''e-service con dati validi: undefined'
+  procedure: ''
+  result: ''
+  link_prod_bug: ''
+  link_suite_bug: ''
+- id_test: '[ERROR_069] - Impossibilità di modificare le impostazioni di delega dopo la revoca della delega [Given=BFF,When=BFF,Then=BFF]'
+  error_log: 'Step l''erogatore tenta di modificare le impostazioni di delega dell''e-service con dati validi: undefined'
+  procedure: ''
+  result: ''
+  link_prod_bug: ''
+  link_suite_bug: ''
+- id_test: '[ERROR_069] - Impossibilità di modificare le impostazioni di delega dopo la revoca della delega [Given=BFF:en,When=BFF:en,Then=BFF:en]'
+  error_log: 'Step l''erogatore tenta di modificare le impostazioni di delega dell''e-service con dati validi: undefined'
+  procedure: ''
+  result: ''
+  link_prod_bug: ''
+  link_suite_bug: ''
+- id_test: '[ERROR_070] - Impossibilità di modificare il nome di un e-service dopo la revoca della delega [Given=BFF,When=BFF,Then=BFF]'
+  error_log: 'Step l''erogatore tenta di modificare il nome dell''e-service con un nome disponibile: undefined'
+  procedure: ''
+  result: ''
+  link_prod_bug: ''
+  link_suite_bug: ''
+- id_test: '[ERROR_070] - Impossibilità di modificare il nome di un e-service dopo la revoca della delega [Given=BFF:en,When=BFF:en,Then=BFF:en]'
+  error_log: 'Step l''erogatore tenta di modificare il nome dell''e-service con un nome disponibile: undefined'
+  procedure: ''
+  result: ''
+  link_prod_bug: ''
+  link_suite_bug: ''
+- id_test: '[ERROR_071] - Impossibilità di modificare l''adesione a Signal Hub dopo la revoca della delega [Given=BFF,When=BFF,Then=BFF]'
+  error_log: 'Step l''erogatore tenta di modificare l''adesione dell''e-service a Signal Hub con dati validi: undefined'
+  procedure: ''
+  result: ''
+  link_prod_bug: ''
+  link_suite_bug: ''
+- id_test: '[ERROR_071] - Impossibilità di modificare l''adesione a Signal Hub dopo la revoca della delega [Given=BFF:en,When=BFF:en,Then=BFF:en]'
+  error_log: 'Step l''erogatore tenta di modificare l''adesione dell''e-service a Signal Hub con dati validi: undefined'
+  procedure: ''
+  result: ''
+  link_prod_bug: ''
+  link_suite_bug: ''
+- id_test: '[ERROR_072] - Impossibilità di modificare gli attributi richiesti dopo la revoca della delega [Given=BFF,When=BFF,Then=BFF]'
+  error_log: 'Step l''erogatore tenta di modificare gli attributi richiesti dalla versione 1 dell''e-service con
+    dati validi: undefined'
+  procedure: ''
+  result: ''
+  link_prod_bug: ''
+  link_suite_bug: ''
+- id_test: '[ERROR_072] - Impossibilità di modificare gli attributi richiesti dopo la revoca della delega [Given=BFF:en,When=BFF:en,Then=BFF:en]'
+  error_log: 'Step l''erogatore tenta di modificare gli attributi richiesti dalla versione 1 dell''e-service con
+    dati validi: undefined'
+  procedure: ''
+  result: ''
+  link_prod_bug: ''
+  link_suite_bug: ''
+- id_test: '[ERROR_073] - Impossibilità di aggiornare un''istanza al nuovo template dopo la revoca della delega
+    [Given=BFF,When=BFF,Then=BFF]'
+  error_log: 'Step l''erogatore tenta di aggiornare l''e-service alla nuova versione del template: undefined'
+  procedure: ''
+  result: ''
+  link_prod_bug: ''
+  link_suite_bug: ''
+- id_test: '[ERROR_073] - Impossibilità di aggiornare un''istanza al nuovo template dopo la revoca della delega
+    [Given=BFF:en,When=BFF:en,Then=BFF:en]'
+  error_log: 'Step l''erogatore tenta di aggiornare l''e-service alla nuova versione del template: undefined'
+  procedure: ''
+  result: ''
+  link_prod_bug: ''
+  link_suite_bug: ''
+- id_test: '[ERROR_074] - Impossibilità di configurare l''interfaccia SOAP di un''istanza dopo la revoca della delega
+    [Given=BFF,When=BFF,Then=BFF]'
+  error_log: 'Step l''erogatore tenta di configurare l''interfaccia SOAP della versione 1 dell''e-service con indirizzi
+    validi: undefined'
+  procedure: ''
+  result: ''
+  link_prod_bug: ''
+  link_suite_bug: ''
+- id_test: '[ERROR_074] - Impossibilità di configurare l''interfaccia SOAP di un''istanza dopo la revoca della delega
+    [Given=BFF:en,When=BFF:en,Then=BFF:en]'
+  error_log: 'Step l''erogatore tenta di configurare l''interfaccia SOAP della versione 1 dell''e-service con indirizzi
+    validi: undefined'
+  procedure: ''
+  result: ''
+  link_prod_bug: ''
+  link_suite_bug: ''
+- id_test: '[ERROR_075] - Impossibilità di configurare l''interfaccia REST di un''istanza dopo la revoca della delega
+    [Given=BFF,When=BFF,Then=BFF]'
+  error_log: 'Step l''erogatore tenta di configurare l''interfaccia REST della versione 1 dell''e-service con dati
+    validi: undefined'
+  procedure: ''
+  result: ''
+  link_prod_bug: ''
+  link_suite_bug: ''
+- id_test: '[ERROR_075] - Impossibilità di configurare l''interfaccia REST di un''istanza dopo la revoca della delega
+    [Given=BFF:en,When=BFF:en,Then=BFF:en]'
+  error_log: 'Step l''erogatore tenta di configurare l''interfaccia REST della versione 1 dell''e-service con dati
+    validi: undefined'
+  procedure: ''
+  result: ''
+  link_prod_bug: ''
+  link_suite_bug: ''
+- id_test: '[ERROR_076] - Impossibilità di aggiornare la versione pubblicata di un''istanza dopo la revoca della
+    delega [Given=BFF,When=BFF,Then=BFF]'
+  error_log: 'Step l''erogatore tenta di modificare la configurazione della versione 1 dell''istanza "ES-1" con
+    dati validi: undefined'
+  procedure: ''
+  result: ''
+  link_prod_bug: ''
+  link_suite_bug: ''
+- id_test: '[ERROR_076] - Impossibilità di aggiornare la versione pubblicata di un''istanza dopo la revoca della
+    delega [Given=BFF:en,When=BFF:en,Then=BFF:en]'
+  error_log: 'Step l''erogatore tenta di modificare la configurazione della versione 1 dell''istanza "ES-1" con
+    dati validi: undefined'
+  procedure: ''
+  result: ''
+  link_prod_bug: ''
+  link_suite_bug: ''
+- id_test: '[ERROR_077] - Impossibilità di modificare l''indicazione sui dati personali dopo la revoca della delega
+    [Given=BFF,When=BFF,Then=BFF]'
+  error_log: 'Step l''erogatore tenta di modificare l''indicazione sul trattamento dei dati personali dell''e-service
+    con dati validi: undefined'
+  procedure: ''
+  result: ''
+  link_prod_bug: ''
+  link_suite_bug: ''
+- id_test: '[ERROR_077] - Impossibilità di modificare l''indicazione sui dati personali dopo la revoca della delega
+    [Given=BFF:en,When=BFF:en,Then=BFF:en]'
+  error_log: 'Step l''erogatore tenta di modificare l''indicazione sul trattamento dei dati personali dell''e-service
+    con dati validi: undefined'
+  procedure: ''
+  result: ''
+  link_prod_bug: ''
+  link_suite_bug: ''
+- id_test: '[ERROR_079] - Rifiuto della configurazione REST di un''istanza con una versione OpenAPI non supportata
+    [Given=BFF,When=BFF,Then=BFF]'
+  error_log: 'Step un''istanza REST in bozza derivata da un template con una versione OpenAPI non supportata: undefined'
+  procedure: ''
+  result: ''
+  link_prod_bug: ''
+  link_suite_bug: ''
+- id_test: '[ERROR_079] - Rifiuto della configurazione REST di un''istanza con una versione OpenAPI non supportata
+    [Given=BFF:en,When=BFF:en,Then=BFF:en]'
+  error_log: 'Step un''istanza REST in bozza derivata da un template con una versione OpenAPI non supportata: undefined'
+  procedure: ''
+  result: ''
+  link_prod_bug: ''
+  link_suite_bug: ''
+- id_test: '[ERROR_081] - Rifiuto della creazione di un''istanza con un link nella parola identificativa [Given=BFF,When=BFF,Then=BFF]'
+  error_log: |
+    org.opentest4j.AssertionFailedError: [userMessage per CATALOG_HYPERLINK_DETECTION_ERROR__POST_TEMPLATES_TEMPLATE_ID_ESERVICES in lingua it] 
+    expected: "Non puoi inserire un link nella parola identificativa dell’e-service. Rimuovi il link e riprova."
+     but was: null
+    	at it.pagopa.interop.bff.infrastructure.cucumber.BffErrorMessageSteps.assertErrorMessage(BffErrorMessageSteps.java:66)
+    	at ✽.il messaggio di errore corrisponde al caso "CATALOG_HYPERLINK_DETECTION_ERROR__POST_TEMPLATES_TEMPLATE_ID_ESERVICES"(classpath:feature-expanded/eservice/operazioni-messaggi-errore.feature:1575)
+  procedure: ''
+  result: ''
+  link_prod_bug: ''
+  link_suite_bug: ''
+- id_test: '[ERROR_081] - Rifiuto della creazione di un''istanza con un link nella parola identificativa [Given=BFF:en,When=BFF:en,Then=BFF:en]'
+  error_log: |
+    org.opentest4j.AssertionFailedError: [userMessage per CATALOG_HYPERLINK_DETECTION_ERROR__POST_TEMPLATES_TEMPLATE_ID_ESERVICES in lingua en] 
+    expected: "You can't include a link in the e-service identifier. Remove the link and try again."
+     but was: null
+    	at it.pagopa.interop.bff.infrastructure.cucumber.BffErrorMessageSteps.assertErrorMessage(BffErrorMessageSteps.java:66)
+    	at ✽.il messaggio di errore corrisponde al caso "CATALOG_HYPERLINK_DETECTION_ERROR__POST_TEMPLATES_TEMPLATE_ID_ESERVICES"(classpath:feature-expanded/eservice/operazioni-messaggi-errore.feature:1589)
+  procedure: ''
+  result: ''
+  link_prod_bug: ''
+  link_suite_bug: ''
+- id_test: '[ERROR_090] - Rifiuto dell''aggiornamento parziale con il nome di un altro e-service dell''erogatore
+    [Given=BFF,When=BFF,Then=BFF]'
+  error_log: 'Step l''erogatore tenta di aggiornare parzialmente i dati dell''e-service "ES-2" con il nome dell''e-service
+    "ES-1": undefined'
+  procedure: ''
+  result: ''
+  link_prod_bug: ''
+  link_suite_bug: ''
+- id_test: '[ERROR_090] - Rifiuto dell''aggiornamento parziale con il nome di un altro e-service dell''erogatore
+    [Given=BFF:en,When=BFF:en,Then=BFF:en]'
+  error_log: 'Step l''erogatore tenta di aggiornare parzialmente i dati dell''e-service "ES-2" con il nome dell''e-service
+    "ES-1": undefined'
+  procedure: ''
+  result: ''
+  link_prod_bug: ''
+  link_suite_bug: ''
+- id_test: '[ERROR_091] - Rifiuto dell''aggiornamento parziale di un e-service con il nome di un template [Given=BFF,When=BFF,Then=BFF]'
+  error_log: 'Step l''erogatore tenta di aggiornare parzialmente i dati dell''e-service con il nome del template:
+    undefined'
+  procedure: ''
+  result: ''
+  link_prod_bug: ''
+  link_suite_bug: ''
+- id_test: '[ERROR_091] - Rifiuto dell''aggiornamento parziale di un e-service con il nome di un template [Given=BFF:en,When=BFF:en,Then=BFF:en]'
+  error_log: 'Step l''erogatore tenta di aggiornare parzialmente i dati dell''e-service con il nome del template:
+    undefined'
+  procedure: ''
+  result: ''
+  link_prod_bug: ''
+  link_suite_bug: ''
+- id_test: '[ERROR_207] - Rifiuto della modifica di un template finalità con un link in una risposta dell''analisi
+    del rischio [Given=BFF,When=BFF,Then=BFF]'
+  error_log: |
+    org.opentest4j.AssertionFailedError: [userMessage per PURPOSE_TEMPLATE_RISK_ANALYSIS_VALIDATION_FAILED__PUT_PURPOSE_TEMPLATES_PURPOSE_TEMPLATE_ID in lingua it] 
+    expected: "Non puoi inserire un link in una risposta dell’analisi del rischio. Rimuovi il link e riprova."
+     but was: null
+    	at it.pagopa.interop.bff.infrastructure.cucumber.BffErrorMessageSteps.assertErrorMessage(BffErrorMessageSteps.java:66)
+    	at ✽.il messaggio di errore corrisponde al caso "PURPOSE_TEMPLATE_RISK_ANALYSIS_VALIDATION_FAILED__PUT_PURPOSE_TEMPLATES_PURPOSE_TEMPLATE_ID"(classpath:feature-expanded/purpose-template/operazioni-messaggi-errore.feature:79)
+  procedure: ''
+  result: ''
+  link_prod_bug: ''
+  link_suite_bug: ''
+- id_test: '[ERROR_207] - Rifiuto della modifica di un template finalità con un link in una risposta dell''analisi
+    del rischio [Given=BFF:en,When=BFF:en,Then=BFF:en]'
+  error_log: |
+    org.opentest4j.AssertionFailedError: [userMessage per PURPOSE_TEMPLATE_RISK_ANALYSIS_VALIDATION_FAILED__PUT_PURPOSE_TEMPLATES_PURPOSE_TEMPLATE_ID in lingua en] 
+    expected: "You can't include a link in a risk analysis answer. Remove the link and try again."
+     but was: null
+    	at it.pagopa.interop.bff.infrastructure.cucumber.BffErrorMessageSteps.assertErrorMessage(BffErrorMessageSteps.java:66)
+    	at ✽.il messaggio di errore corrisponde al caso "PURPOSE_TEMPLATE_RISK_ANALYSIS_VALIDATION_FAILED__PUT_PURPOSE_TEMPLATES_PURPOSE_TEMPLATE_ID"(classpath:feature-expanded/purpose-template/operazioni-messaggi-errore.feature:97)
+  procedure: ''
+  result: ''
+  link_prod_bug: ''
+  link_suite_bug: ''
+- id_test: '[ERROR_140] - Rifiuto di un allegato all''annotazione con un nome già in uso [Given=BFF,When=BFF,Then=BFF]'
+  error_log: |
+    java.lang.IllegalStateException: Polling in timeout dopo 20 secondi.
+
+    	at it.pagopa.utils.async.PollingUtils.pollUntil(PollingUtils.java:68)
+    	at it.pagopa.utils.async.PollingUtils.pollUntil(PollingUtils.java:93)
+    	at it.pagopa.infrastructure.template.action.PollingAction.handle(PollingAction.java:32)
+    	at it.pagopa.infrastructure.template.action.TestChain.withPolling(TestChain.java:23)
+    	at it.pagopa.interop.bff.purpose_template.infrastructure.BffPurposeTemplateGateway.addRiskAnalysisAnswerAnnotationDocument(BffPurposeTemplateGateway.java:288)
+    	at java.base/jdk.internal.reflect.NativeMethodAccessorImpl.invoke0(Native Method)
+    	at java.base/jdk.internal.reflect.NativeMethodAccessorImpl.invoke(NativeMethodAccessorImpl.java:77)
+    	at java.base/jdk.internal.reflect.DelegatingMethodAccessorImpl.invoke(DelegatingMethodAccessorImpl.java:43)
+    	at java.base/java.lang.reflect.Method.invoke(Method.java:569)
+    	at it.pagopa.infrastructure.channel.ChannelRouter.invoke(ChannelRouter.java:43)
+    	at it.pagopa.interop.common.infrastructure.ChannelRoutingInterceptor.invoke(ChannelRoutingInterceptor.java:40)
+    	at org.springframework.aop.framework.ReflectiveMethodInvocation.proceed(ReflectiveMethodInvocation.java:179)
+    	at org.springframework.aop.framework.JdkDynamicAopProxy.invoke(JdkDynamicAopProxy.java:222)
+    	at jdk.proxy2/jdk.proxy2.$Proxy172.addRiskAnalysisAnswerAnnotationDocument(Unknown Source)
+    	at it.pagopa.interop.common.purpose_template.application.PurposeTemplateUseCase.addRiskAnalysisAnswerAnnotationDocument(PurposeTemplateUseCase.java:157)
+    	at it.pagopa.interop.common.purpose_template.infrastructure.cucumber.PurposeTemplateSteps.pdfDocumentsAttachedToPurposeTemplateAnnotation(PurposeTemplateSteps.java:306)
+    	at ✽.i seguenti documenti PDF allegati all'annotazione del template finalità:(classpath:feature-expanded/purpose-template/operazioni-messaggi-errore.feature:179)
+    Caused by: org.awaitility.core.ConditionTimeoutException: Lambda expression in it.pagopa.utils.async.PollingUtils expected the predicate to return <true> but it returned <false> for input of <it.pagopa.infrastructure.response.ApiResponse@644f3818> within 20 seconds.
+    	at org.awaitility.core.ConditionAwaiter.await(ConditionAwaiter.java:167)
+    	at org.awaitility.core.AbstractHamcrestCondition.await(AbstractHamcrestCondition.java:86)
+    	at org.awaitility.core.ConditionFactory.until(ConditionFactory.java:1160)
+    	at org.awaitility.core.ConditionFactory.until(ConditionFactory.java:712)
+    	at org.awaitility.core.ConditionFactory.until(ConditionFactory.java:729)
+    	at it.pagopa.utils.async.PollingUtils.pollUntil(PollingUtils.java:48)
+    	... 16 more
+  procedure: ''
+  result: ''
+  link_prod_bug: ''
+  link_suite_bug: ''
+- id_test: '[ERROR_140] - Rifiuto di un allegato all''annotazione con un nome già in uso [Given=BFF:en,When=BFF:en,Then=BFF:en]'
+  error_log: |
+    java.lang.IllegalStateException: Polling in timeout dopo 20 secondi.
+
+    	at it.pagopa.utils.async.PollingUtils.pollUntil(PollingUtils.java:68)
+    	at it.pagopa.utils.async.PollingUtils.pollUntil(PollingUtils.java:93)
+    	at it.pagopa.infrastructure.template.action.PollingAction.handle(PollingAction.java:32)
+    	at it.pagopa.infrastructure.template.action.TestChain.withPolling(TestChain.java:23)
+    	at it.pagopa.interop.bff.purpose_template.infrastructure.BffPurposeTemplateGateway.addRiskAnalysisAnswerAnnotationDocument(BffPurposeTemplateGateway.java:288)
+    	at java.base/jdk.internal.reflect.NativeMethodAccessorImpl.invoke0(Native Method)
+    	at java.base/jdk.internal.reflect.NativeMethodAccessorImpl.invoke(NativeMethodAccessorImpl.java:77)
+    	at java.base/jdk.internal.reflect.DelegatingMethodAccessorImpl.invoke(DelegatingMethodAccessorImpl.java:43)
+    	at java.base/java.lang.reflect.Method.invoke(Method.java:569)
+    	at it.pagopa.infrastructure.channel.ChannelRouter.invoke(ChannelRouter.java:43)
+    	at it.pagopa.interop.common.infrastructure.ChannelRoutingInterceptor.invoke(ChannelRoutingInterceptor.java:40)
+    	at org.springframework.aop.framework.ReflectiveMethodInvocation.proceed(ReflectiveMethodInvocation.java:179)
+    	at org.springframework.aop.framework.JdkDynamicAopProxy.invoke(JdkDynamicAopProxy.java:222)
+    	at jdk.proxy2/jdk.proxy2.$Proxy172.addRiskAnalysisAnswerAnnotationDocument(Unknown Source)
+    	at it.pagopa.interop.common.purpose_template.application.PurposeTemplateUseCase.addRiskAnalysisAnswerAnnotationDocument(PurposeTemplateUseCase.java:157)
+    	at it.pagopa.interop.common.purpose_template.infrastructure.cucumber.PurposeTemplateSteps.pdfDocumentsAttachedToPurposeTemplateAnnotation(PurposeTemplateSteps.java:306)
+    	at ✽.i seguenti documenti PDF allegati all'annotazione del template finalità:(classpath:feature-expanded/purpose-template/operazioni-messaggi-errore.feature:199)
+    Caused by: org.awaitility.core.ConditionTimeoutException: Lambda expression in it.pagopa.utils.async.PollingUtils expected the predicate to return <true> but it returned <false> for input of <it.pagopa.infrastructure.response.ApiResponse@1a0c2627> within 20 seconds.
+    	at org.awaitility.core.ConditionAwaiter.await(ConditionAwaiter.java:167)
+    	at org.awaitility.core.AbstractHamcrestCondition.await(AbstractHamcrestCondition.java:86)
+    	at org.awaitility.core.ConditionFactory.until(ConditionFactory.java:1160)
+    	at org.awaitility.core.ConditionFactory.until(ConditionFactory.java:712)
+    	at org.awaitility.core.ConditionFactory.until(ConditionFactory.java:729)
+    	at it.pagopa.utils.async.PollingUtils.pollUntil(PollingUtils.java:48)
+    	... 16 more
+  procedure: ''
+  result: ''
+  link_prod_bug: ''
+  link_suite_bug: ''
+- id_test: '[ERROR_141] - Rifiuto di un allegato all''annotazione con contenuto già presente [Given=BFF:en,When=BFF:en,Then=BFF:en]'
+  error_log: |
+    java.lang.IllegalStateException: Polling in timeout dopo 20 secondi.
+
+    	at it.pagopa.utils.async.PollingUtils.pollUntil(PollingUtils.java:68)
+    	at it.pagopa.utils.async.PollingUtils.pollUntil(PollingUtils.java:93)
+    	at it.pagopa.infrastructure.template.action.PollingAction.handle(PollingAction.java:32)
+    	at it.pagopa.infrastructure.template.action.TestChain.withPolling(TestChain.java:23)
+    	at it.pagopa.interop.bff.purpose_template.infrastructure.BffPurposeTemplateGateway.addRiskAnalysisAnswerAnnotationDocument(BffPurposeTemplateGateway.java:288)
+    	at java.base/jdk.internal.reflect.NativeMethodAccessorImpl.invoke0(Native Method)
+    	at java.base/jdk.internal.reflect.NativeMethodAccessorImpl.invoke(NativeMethodAccessorImpl.java:77)
+    	at java.base/jdk.internal.reflect.DelegatingMethodAccessorImpl.invoke(DelegatingMethodAccessorImpl.java:43)
+    	at java.base/java.lang.reflect.Method.invoke(Method.java:569)
+    	at it.pagopa.infrastructure.channel.ChannelRouter.invoke(ChannelRouter.java:43)
+    	at it.pagopa.interop.common.infrastructure.ChannelRoutingInterceptor.invoke(ChannelRoutingInterceptor.java:40)
+    	at org.springframework.aop.framework.ReflectiveMethodInvocation.proceed(ReflectiveMethodInvocation.java:179)
+    	at org.springframework.aop.framework.JdkDynamicAopProxy.invoke(JdkDynamicAopProxy.java:222)
+    	at jdk.proxy2/jdk.proxy2.$Proxy172.addRiskAnalysisAnswerAnnotationDocument(Unknown Source)
+    	at it.pagopa.interop.common.purpose_template.application.PurposeTemplateUseCase.addRiskAnalysisAnswerAnnotationDocument(PurposeTemplateUseCase.java:157)
+    	at it.pagopa.interop.common.purpose_template.infrastructure.cucumber.PurposeTemplateSteps.pdfDocumentsAttachedToPurposeTemplateAnnotation(PurposeTemplateSteps.java:306)
+    	at ✽.i seguenti documenti PDF allegati all'annotazione del template finalità:(classpath:feature-expanded/purpose-template/operazioni-messaggi-errore.feature:238)
+    Caused by: org.awaitility.core.ConditionTimeoutException: Lambda expression in it.pagopa.utils.async.PollingUtils expected the predicate to return <true> but it returned <false> for input of <it.pagopa.infrastructure.response.ApiResponse@27f7e8f2> within 20 seconds.
+    	at org.awaitility.core.ConditionAwaiter.await(ConditionAwaiter.java:167)
+    	at org.awaitility.core.AbstractHamcrestCondition.await(AbstractHamcrestCondition.java:86)
+    	at org.awaitility.core.ConditionFactory.until(ConditionFactory.java:1160)
+    	at org.awaitility.core.ConditionFactory.until(ConditionFactory.java:712)
+    	at org.awaitility.core.ConditionFactory.until(ConditionFactory.java:729)
+    	at it.pagopa.utils.async.PollingUtils.pollUntil(PollingUtils.java:48)
+    	... 16 more
+  procedure: ''
+  result: ''
+  link_prod_bug: ''
+  link_suite_bug: ''
+- id_test: '[ERROR_144] - Impossibilità di rinominare un allegato con il nome di un altro documento [Given=BFF,When=BFF,Then=BFF]'
+  error_log: |
+    java.lang.IllegalStateException: Polling in timeout dopo 20 secondi.
+
+    	at it.pagopa.utils.async.PollingUtils.pollUntil(PollingUtils.java:68)
+    	at it.pagopa.utils.async.PollingUtils.pollUntil(PollingUtils.java:93)
+    	at it.pagopa.infrastructure.template.action.PollingAction.handle(PollingAction.java:32)
+    	at it.pagopa.infrastructure.template.action.TestChain.withPolling(TestChain.java:23)
+    	at it.pagopa.interop.bff.purpose_template.infrastructure.BffPurposeTemplateGateway.addRiskAnalysisAnswerAnnotationDocument(BffPurposeTemplateGateway.java:288)
+    	at java.base/jdk.internal.reflect.NativeMethodAccessorImpl.invoke0(Native Method)
+    	at java.base/jdk.internal.reflect.NativeMethodAccessorImpl.invoke(NativeMethodAccessorImpl.java:77)
+    	at java.base/jdk.internal.reflect.DelegatingMethodAccessorImpl.invoke(DelegatingMethodAccessorImpl.java:43)
+    	at java.base/java.lang.reflect.Method.invoke(Method.java:569)
+    	at it.pagopa.infrastructure.channel.ChannelRouter.invoke(ChannelRouter.java:43)
+    	at it.pagopa.interop.common.infrastructure.ChannelRoutingInterceptor.invoke(ChannelRoutingInterceptor.java:40)
+    	at org.springframework.aop.framework.ReflectiveMethodInvocation.proceed(ReflectiveMethodInvocation.java:179)
+    	at org.springframework.aop.framework.JdkDynamicAopProxy.invoke(JdkDynamicAopProxy.java:222)
+    	at jdk.proxy2/jdk.proxy2.$Proxy172.addRiskAnalysisAnswerAnnotationDocument(Unknown Source)
+    	at it.pagopa.interop.common.purpose_template.application.PurposeTemplateUseCase.addRiskAnalysisAnswerAnnotationDocument(PurposeTemplateUseCase.java:157)
+    	at it.pagopa.interop.common.purpose_template.infrastructure.cucumber.PurposeTemplateSteps.pdfDocumentsAttachedToPurposeTemplateAnnotation(PurposeTemplateSteps.java:306)
+    	at ✽.i seguenti documenti PDF allegati all'annotazione del template finalità:(classpath:feature-expanded/purpose-template/operazioni-messaggi-errore.feature:319)
+    Caused by: org.awaitility.core.ConditionTimeoutException: Lambda expression in it.pagopa.utils.async.PollingUtils expected the predicate to return <true> but it returned <false> for input of <it.pagopa.infrastructure.response.ApiResponse@7ae8b514> within 20 seconds.
+    	at org.awaitility.core.ConditionAwaiter.await(ConditionAwaiter.java:167)
+    	at org.awaitility.core.AbstractHamcrestCondition.await(AbstractHamcrestCondition.java:86)
+    	at org.awaitility.core.ConditionFactory.until(ConditionFactory.java:1160)
+    	at org.awaitility.core.ConditionFactory.until(ConditionFactory.java:712)
+    	at org.awaitility.core.ConditionFactory.until(ConditionFactory.java:729)
+    	at it.pagopa.utils.async.PollingUtils.pollUntil(PollingUtils.java:48)
+    	... 16 more
+  procedure: ''
+  result: ''
+  link_prod_bug: ''
+  link_suite_bug: ''
+- id_test: '[ERROR_022] - Impossibilità di duplicare una finalità quando il nome derivato è già in uso [Given=BFF,When=BFF,Then=BFF]'
+  error_log: |
+    java.lang.AssertionError: [Status HTTP di errore per PURPOSE_DUPLICATED_PURPOSE_TITLE__POST_PURPOSES_PURPOSE_ID_CLONE] 
+    Expecting actual:
+      200
+    to be between:
+      [400, 499]
+
+    	at it.pagopa.interop.bff.infrastructure.cucumber.BffErrorMessageSteps.assertErrorMessage(BffErrorMessageSteps.java:62)
+    	at ✽.il messaggio di errore corrisponde al caso "PURPOSE_DUPLICATED_PURPOSE_TITLE__POST_PURPOSES_PURPOSE_ID_CLONE"(classpath:feature-expanded/purpose/operazioni-messaggi-errore.feature:162)
+  procedure: ''
+  result: ''
+  link_prod_bug: ''
+  link_suite_bug: ''
+- id_test: '[ERROR_022] - Impossibilità di duplicare una finalità quando il nome derivato è già in uso [Given=BFF:en,When=BFF:en,Then=BFF:en]'
+  error_log: |
+    java.lang.AssertionError: [Status HTTP di errore per PURPOSE_DUPLICATED_PURPOSE_TITLE__POST_PURPOSES_PURPOSE_ID_CLONE] 
+    Expecting actual:
+      200
+    to be between:
+      [400, 499]
+
+    	at it.pagopa.interop.bff.infrastructure.cucumber.BffErrorMessageSteps.assertErrorMessage(BffErrorMessageSteps.java:62)
+    	at ✽.il messaggio di errore corrisponde al caso "PURPOSE_DUPLICATED_PURPOSE_TITLE__POST_PURPOSES_PURPOSE_ID_CLONE"(classpath:feature-expanded/purpose/operazioni-messaggi-errore.feature:184)
+  procedure: ''
+  result: ''
+  link_prod_bug: ''
+  link_suite_bug: ''
+- id_test: '[ERROR_027] - Impossibilità di firmare un''analisi del rischio aggiornata dopo la lettura [Given=BFF,When=BFF,Then=BFF]'
+  error_log: 'Step i dati dell''analisi del rischio letti dal valutatore: undefined'
+  procedure: ''
+  result: ''
+  link_prod_bug: ''
+  link_suite_bug: ''
+- id_test: '[ERROR_027] - Impossibilità di firmare un''analisi del rischio aggiornata dopo la lettura [Given=BFF:en,When=BFF:en,Then=BFF:en]'
+  error_log: 'Step i dati dell''analisi del rischio letti dal valutatore: undefined'
+  procedure: ''
+  result: ''
+  link_prod_bug: ''
+  link_suite_bug: ''
+- id_test: '[ERROR_012] - Impossibilità di impostare nel passato la scadenza di un attributo verificato [Given=BFF:en,When=BFF:en,Then=BFF:en]'
+  error_log: |
+    org.opentest4j.AssertionFailedError: [userMessage per TENANT_EXPIRATION_DATE_CANNOT_BE_IN_THE_PAST__POST_TENANTS_TENANT_ID_ATTRIBUTES_VERIFIED_ATTRIBUTE_ID in lingua en] 
+    expected: 
+      "The expiration date must be later than today. Select a future date.
+      "
+     but was: 
+      "The expiration date must be later than today. Select a future date."
+    	at it.pagopa.interop.bff.infrastructure.cucumber.BffErrorMessageSteps.assertErrorMessage(BffErrorMessageSteps.java:66)
+    	at ✽.il messaggio di errore corrisponde al caso "TENANT_EXPIRATION_DATE_CANNOT_BE_IN_THE_PAST__POST_TENANTS_TENANT_ID_ATTRIBUTES_VERIFIED_ATTRIBUTE_ID"(classpath:feature-expanded/tenant/operazioni-messaggi-errore.feature:38)
+  procedure: ''
+  result: ''
+  link_prod_bug: ''
+  link_suite_bug: ''
+- id_test: '[ERROR_013] - Impossibilità di assegnare un attributo certificato già posseduto dall''ente [Given=BFF,When=BFF,Then=BFF]'
+  error_log: |
+    java.lang.IllegalArgumentException: Missing copy placeholder value: attributeName
+    	at it.pagopa.interop.common.infrastructure.copy.CopyTemplateResolver.render(CopyTemplateResolver.java:44)
+    	at it.pagopa.interop.common.infrastructure.copy.ExpectedErrorMessages.render(ExpectedErrorMessages.java:116)
+    	at it.pagopa.interop.bff.infrastructure.cucumber.BffErrorMessageSteps.assertErrorMessage(BffErrorMessageSteps.java:57)
+    	at ✽.il messaggio di errore corrisponde al caso "TENANT_CERTIFIED_ATTRIBUTE_ALREADY_ASSIGNED__POST_TENANTS_TENANT_ID_ATTRIBUTES_CERTIFIED"(classpath:feature-expanded/tenant/operazioni-messaggi-errore.feature:54)
+  procedure: ''
+  result: ''
+  link_prod_bug: ''
+  link_suite_bug: ''
+- id_test: '[ERROR_013] - Impossibilità di assegnare un attributo certificato già posseduto dall''ente [Given=BFF:en,When=BFF:en,Then=BFF:en]'
+  error_log: |
+    java.lang.IllegalArgumentException: Missing copy placeholder value: attributeName
+    	at it.pagopa.interop.common.infrastructure.copy.CopyTemplateResolver.render(CopyTemplateResolver.java:44)
+    	at it.pagopa.interop.common.infrastructure.copy.ExpectedErrorMessages.render(ExpectedErrorMessages.java:116)
+    	at it.pagopa.interop.bff.infrastructure.cucumber.BffErrorMessageSteps.assertErrorMessage(BffErrorMessageSteps.java:57)
+    	at ✽.il messaggio di errore corrisponde al caso "TENANT_CERTIFIED_ATTRIBUTE_ALREADY_ASSIGNED__POST_TENANTS_TENANT_ID_ATTRIBUTES_CERTIFIED"(classpath:feature-expanded/tenant/operazioni-messaggi-errore.feature:72)
+  procedure: ''
+  result: ''
+  link_prod_bug: ''
+  link_suite_bug: ''
+- id_test: '[ERROR_014] - Impossibilità di assegnare un attributo certificato discreto già posseduto dall''ente
+    [Given=BFF,When=BFF,Then=BFF]'
+  error_log: 'Step l''attributo certificato discreto "DISC-1" già assegnato all''ente PagoPA con un valore ammesso:
+    undefined'
+  procedure: ''
+  result: ''
+  link_prod_bug: ''
+  link_suite_bug: ''
+- id_test: '[ERROR_014] - Impossibilità di assegnare un attributo certificato discreto già posseduto dall''ente
+    [Given=BFF:en,When=BFF:en,Then=BFF:en]'
+  error_log: 'Step l''attributo certificato discreto "DISC-1" già assegnato all''ente PagoPA con un valore ammesso:
+    undefined'
+  procedure: ''
+  result: ''
+  link_prod_bug: ''
+  link_suite_bug: ''
+- id_test: '[ERROR_016] - Impossibilità per un ente non pubblico di abilitarsi alle deleghe [Given=BFF,When=BFF,Then=BFF]'
+  error_log: |
+    org.opentest4j.AssertionFailedError: [userMessage per TENANT_OPERATION_FORBIDDEN in lingua it] 
+    expected: "Non puoi aggiornare la disponibilità alle deleghe perché il tuo ente non è una Pubblica Amministrazione e quindi non è abilitato a usarle."
+     but was: null
+    	at it.pagopa.interop.bff.infrastructure.cucumber.BffErrorMessageSteps.assertErrorMessage(BffErrorMessageSteps.java:66)
+    	at ✽.il messaggio di errore corrisponde al caso "TENANT_OPERATION_FORBIDDEN"(classpath:feature-expanded/tenant/operazioni-messaggi-errore.feature:166)
+  procedure: ''
+  result: ''
+  link_prod_bug: ''
+  link_suite_bug: ''
+- id_test: '[ERROR_016] - Impossibilità per un ente non pubblico di abilitarsi alle deleghe [Given=BFF:en,When=BFF:en,Then=BFF:en]'
+  error_log: |
+    org.opentest4j.AssertionFailedError: [userMessage per TENANT_OPERATION_FORBIDDEN in lingua en] 
+    expected: "You can't update your delegation availability because your party is not a Public Administration and therefore isn't eligible to use delegations."
+     but was: null
+    	at it.pagopa.interop.bff.infrastructure.cucumber.BffErrorMessageSteps.assertErrorMessage(BffErrorMessageSteps.java:66)
+    	at ✽.il messaggio di errore corrisponde al caso "TENANT_OPERATION_FORBIDDEN"(classpath:feature-expanded/tenant/operazioni-messaggi-errore.feature:178)
+  procedure: ''
+  result: ''
+  link_prod_bug: ''
+  link_suite_bug: ''
