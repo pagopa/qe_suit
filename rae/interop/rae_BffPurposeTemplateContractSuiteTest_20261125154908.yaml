@@ -1,0 +1,14 @@
+rae:
+  release: ''
+  scope: NIGHTLY
+  issue_jira: ''
+  data_ora: '2026-11-25T15:47:45Z'
+  durata: 00:00:55
+  numero_ko: 0
+  run: https://github.com/pagopa/qe_suit/actions/runs/45648674254/attempts/1
+  suite: BffPurposeTemplateContractSuiteTest
+  environment: qa
+  executor: luigi-gjoni-alten-p
+  source_branch: feature/QA-19751
+ko_know: []
+ko: []
