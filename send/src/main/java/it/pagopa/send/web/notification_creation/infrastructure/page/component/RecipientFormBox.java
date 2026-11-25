@@ -72,6 +72,10 @@ public interface RecipientFormBox extends Component {
     @XPath(".//input[contains(@name, '.province')]")
     TextField province();
 
+    // precompilato dal portale con "Italia"
+    @XPath(".//input[contains(@name, '.foreignState')]")
+    TextField foreignState();
+
     default boolean isEmpty() {
         return taxId().read().isEmpty();
     }
@@ -117,6 +121,9 @@ public interface RecipientFormBox extends Component {
             municipalityDetails().write(physicalAddress.municipalityDetails());
         }
         province().write(physicalAddress.province());
+        if (physicalAddress.foreignState() != null) {
+            foreignState().cleanAndWrite(physicalAddress.foreignState());
+        }
     }
 
     private static String denomination(RecipientSpec spec, String defaultDenomination) {
