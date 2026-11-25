@@ -19,7 +19,6 @@ import static io.cucumber.junit.platform.engine.Constants.PLUGIN_PROPERTY_NAME;
 @GenerateContractReport
 @IncludeEngines({"cucumber", "junit-jupiter"})
 @SelectClasspathResource("feature-expanded")
-@SelectPackages("it.pagopa.interop.suite.contract")
 @ExcludeTags({"wait_for_qa", "ignore"})
 @ConfigurationParameters({
         @ConfigurationParameter(key = PLUGIN_PROPERTY_NAME, value = "pretty"),

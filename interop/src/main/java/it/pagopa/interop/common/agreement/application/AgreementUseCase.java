@@ -180,16 +180,8 @@ public class AgreementUseCase {
         agreementGateway.attemptInvalidFormatConsumerDocumentUpload(agreement);
     }
 
-    public void attemptAgreementDocumentDownload(Agreement agreement) {
-        agreementGateway.attemptAgreementDocumentDownload(agreement, null);
-    }
-
     public void attemptAgreementDocumentDownload(Agreement agreement, UUID documentId) {
         agreementGateway.attemptAgreementDocumentDownload(agreement, documentId);
-    }
-
-    public void attemptAgreementDocumentDeletion(Agreement agreement) {
-        agreementGateway.attemptAgreementDocumentDeletion(agreement, null);
     }
 
     public void attemptAgreementDocumentDeletion(Agreement agreement, UUID documentId) {

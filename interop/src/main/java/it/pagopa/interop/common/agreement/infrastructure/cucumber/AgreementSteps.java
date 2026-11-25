@@ -257,7 +257,7 @@ public class AgreementSteps {
 
     @When("l'utente tenta di scaricare il documento dalla {currentAgreement}")
     public void attemptAgreementDocumentDownload(Agreement agreement) {
-        agreementUseCase.attemptAgreementDocumentDownload(agreement);
+        agreementUseCase.attemptAgreementDocumentDownload(agreement, null);
     }
 
     @When("l'utente tenta di scaricare il documento già eliminato dalla {currentAgreement}")
@@ -268,7 +268,7 @@ public class AgreementSteps {
 
     @When("il fruitore tenta di eliminare il documento dalla {currentAgreement}")
     public void attemptAgreementDocumentDeletion(Agreement agreement) {
-        agreementUseCase.attemptAgreementDocumentDeletion(agreement);
+        agreementUseCase.attemptAgreementDocumentDeletion(agreement, null);
     }
 
     @When("il fruitore tenta di eliminare il documento già eliminato dalla {currentAgreement}")
