@@ -44,6 +44,7 @@ import static io.cucumber.junit.platform.engine.Constants.*;
                 value = """
                         (@debug-client-assertion-page-ui-flow
                          or @agreement
+                         or @purpose-management
                          or @eservice-archiving
                          or @private-catalog
                          or @eservice-template-interface
