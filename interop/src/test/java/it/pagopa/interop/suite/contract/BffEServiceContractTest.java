@@ -4,7 +4,9 @@ import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import io.restassured.response.Response;
 import it.pagopa.infrastructure.fuzzing.FuzzScenario;
+import it.pagopa.infrastructure.contract.http.TargetExpression;
 import it.pagopa.interop.TestBootApp;
+import it.pagopa.interop.common.infrastructure.config.JunitEnvironmentProfiles;
 import it.pagopa.interop.bff.eservice.infrastructure.BffEServiceRequestFactory;
 import it.pagopa.interop.bff.infrastructure.config.BffApiContractConfig;
 import it.pagopa.interop.bff.infrastructure.config.BffRestApiClientConfig;
@@ -14,17 +16,21 @@ import it.pagopa.interop.common.eservice_template.domain.EServiceTemplateVersion
 import it.pagopa.interop.common.infrastructure.config.JunitContextConfig;
 import it.pagopa.interop.common.infrastructure.contract.InteropHttpContractValidator;
 import it.pagopa.interop.common.journey.application.InteropJourney;
-import it.pagopa.interop.common.kernel.context.CurrentUserSession;
+import it.pagopa.interop.common.kernel.context.AuthSession;
 import it.pagopa.interop.common.kernel.domain.Tenant;
 import it.pagopa.interop.common.kernel.domain.User;
 import it.pagopa.interop.common.kernel.domain.UserRole;
 import it.pagopa.interop.generated.openapi.clients.bff.ApiClient;
 import it.pagopa.interop.generated.openapi.clients.bff.model.CatalogFilterPayload;
-import lombok.RequiredArgsConstructor;
+import it.pagopa.interop.generated.openapi.clients.bff.model.EServiceMode;
+import it.pagopa.interop.generated.openapi.clients.bff.model.EServiceTechnology;
+import it.pagopa.interop.generated.openapi.clients.bff.model.PatchUpdateEServiceSeed;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.junit.jupiter.api.DynamicTest;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.TestFactory;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.TestConstructor;
 
 import java.util.ArrayList;
@@ -35,25 +41,39 @@ import java.util.UUID;
 import java.util.function.Function;
 import java.util.function.Supplier;
 import java.util.stream.Stream;
+import java.util.function.Consumer;
 
 import static it.pagopa.interop.bff.infrastructure.config.BffApiContractConfig.DEFAULT_SUCCESS_STATUS_CODE;
 import static org.hamcrest.Matchers.containsStringIgnoringCase;
+import static it.pagopa.utils.RandomUtils.randomAlphanumericName;
 import static org.hamcrest.Matchers.is;
 import static org.junit.jupiter.api.DynamicTest.dynamicTest;
 
+@ActiveProfiles(resolver = JunitEnvironmentProfiles.class)
 @SpringBootTest(classes = {TestBootApp.class, JunitContextConfig.class, BffApiContractConfig.class})
 @TestConstructor(autowireMode = TestConstructor.AutowireMode.ALL)
-@RequiredArgsConstructor
 public class BffEServiceContractTest {
 
     private final ApiClient apiClient;
     private final InteropHttpContractValidator httpContractValidator;
     private final InteropJourney interopJourney;
     private final BffEServiceRequestFactory requestFactory;
-    private final CurrentUserSession currentUserSession;
+    private final AuthSession authSession;
     private final ObjectMapper objectMapper;
 
     private static final List<String> ATTRIBUTE_GROUPS = List.of("certified", "declared", "verified");
+
+    public BffEServiceContractTest(ApiClient apiClient,
+            @Qualifier("bffInteropHttpContractValidator") InteropHttpContractValidator httpContractValidator,
+            InteropJourney interopJourney, BffEServiceRequestFactory requestFactory,
+            @Qualifier("userAuthSession") AuthSession authSession, ObjectMapper objectMapper) {
+        this.apiClient = apiClient;
+        this.httpContractValidator = httpContractValidator;
+        this.interopJourney = interopJourney;
+        this.requestFactory = requestFactory;
+        this.authSession = authSession;
+        this.objectMapper = objectMapper;
+    }
 
     @TestFactory
     Stream<DynamicTest> createEService() {
@@ -93,7 +113,6 @@ public class BffEServiceContractTest {
                 .payload(requestFactory::updateDescriptionRequest)
                 .tests();
     }
-
 
     @Tag("private-catalog")
     @TestFactory
@@ -216,7 +235,7 @@ public class BffEServiceContractTest {
         attributes.put(group, value);
         payload.put("attributes", attributes);
 
-        currentUserSession.set(User.getTenantUser(Tenant.COMUNE_DI_MILANO, UserRole.ADMIN), Tenant.COMUNE_DI_MILANO);
+        authSession.set(User.getTenantUser(Tenant.COMUNE_DI_MILANO, UserRole.ADMIN), Tenant.COMUNE_DI_MILANO);
         return apiClient.eservices().updateDraftDescriptorTemplateInstance()
                 .eServiceIdPath(draftInstance.getId())
                 .descriptorIdPath(draftInstance.getLatestDescriptor().getId())
@@ -232,13 +251,83 @@ public class BffEServiceContractTest {
                 .get(EService.class);
     }
 
+    @TestFactory
+    Stream<DynamicTest> patchUpdateEServiceById() {
+        return httpContractValidator
+                .as(Tenant.COMUNE_DI_MILANO, UserRole.ADMIN)
+                .apiCall(() -> apiClient.eservices().patchUpdateEServiceById())
+                .pathParams(() -> Map.of("eServiceId", createEService(EServiceDescriptorState.DRAFT).getId()))
+                .payload(() -> metadataSeed()
+                        .technology(EServiceTechnology.REST)
+                        .mode(EServiceMode.DELIVER)
+                        .isSignalHubEnabled(false)
+                        .isConsumerDelegable(true)
+                        .isClientAccessDelegable(true)
+                        .personalData(false)
+                        .asyncExchange(false))
+                .targets(FuzzScenario.REMOVED, expectSuccess(), ALL_FIELDS)
+                .targets(FuzzScenario.REPLACED_WITH_NULL, expectSuccess(), NULLABLE_FIELDS)
+                .targets(FuzzScenario.REPLACED_WITH_NULL, expectValidationError(), NON_NULLABLE_FIELDS)
+                .targets(INVALID_VALUE_SCENARIOS, expectValidationError(), ALL_FIELDS)
+                .tests();
+    }
+
+    private static final List<FuzzScenario> INVALID_VALUE_SCENARIOS = List.of(
+            FuzzScenario.REPLACED_WITH_EMPTY_STRING,
+            FuzzScenario.REPLACED_WITH_BLANK_STRING,
+            FuzzScenario.REPLACED_WITH_LONG_STRING,
+            FuzzScenario.REPLACED_WITH_WRONG_TYPE_STRING,
+            FuzzScenario.REPLACED_WITH_WRONG_TYPE_NUMBER,
+            FuzzScenario.REPLACED_WITH_WRONG_TYPE_DECIMAL,
+            FuzzScenario.REPLACED_WITH_ZERO,
+            FuzzScenario.REPLACED_WITH_NEGATIVE_VALUE,
+            FuzzScenario.REPLACED_WITH_MIN_VALUE,
+            FuzzScenario.REPLACED_WITH_MAX_VALUE,
+            FuzzScenario.REPLACED_WITH_UNKNOWN_ENUM
+    );
+    private static final TargetExpression<PatchUpdateEServiceSeed> NAME = PatchUpdateEServiceSeed::getName;
+    private static final TargetExpression<PatchUpdateEServiceSeed> DESCRIPTION = PatchUpdateEServiceSeed::getDescription;
+    private static final TargetExpression<PatchUpdateEServiceSeed> TECHNOLOGY = PatchUpdateEServiceSeed::getTechnology;
+    private static final TargetExpression<PatchUpdateEServiceSeed> MODE = PatchUpdateEServiceSeed::getMode;
+    private static final TargetExpression<PatchUpdateEServiceSeed> IS_SIGNAL_HUB_ENABLED = PatchUpdateEServiceSeed::getIsSignalHubEnabled;
+    private static final TargetExpression<PatchUpdateEServiceSeed> IS_CONSUMER_DELEGABLE = PatchUpdateEServiceSeed::getIsConsumerDelegable;
+    private static final TargetExpression<PatchUpdateEServiceSeed> IS_CLIENT_ACCESS_DELEGABLE = PatchUpdateEServiceSeed::getIsClientAccessDelegable;
+    private static final TargetExpression<PatchUpdateEServiceSeed> PERSONAL_DATA = PatchUpdateEServiceSeed::getPersonalData;
+    private static final TargetExpression<PatchUpdateEServiceSeed> ASYNC_EXCHANGE = PatchUpdateEServiceSeed::getAsyncExchange;
+
+    private static final List<TargetExpression<PatchUpdateEServiceSeed>> METADATA_FIELDS = List.of(NAME, DESCRIPTION);
+    private static final List<TargetExpression<PatchUpdateEServiceSeed>> OPERATIONAL_FIELDS = List.of(
+            TECHNOLOGY, MODE, IS_SIGNAL_HUB_ENABLED, IS_CONSUMER_DELEGABLE, IS_CLIENT_ACCESS_DELEGABLE, PERSONAL_DATA, ASYNC_EXCHANGE
+    );
+    private static final List<TargetExpression<PatchUpdateEServiceSeed>> ALL_FIELDS =
+            Stream.concat(METADATA_FIELDS.stream(), OPERATIONAL_FIELDS.stream()).toList();
+    private static final List<TargetExpression<PatchUpdateEServiceSeed>> NULLABLE_FIELDS = List.of(PERSONAL_DATA, ASYNC_EXCHANGE);
+    private static final List<TargetExpression<PatchUpdateEServiceSeed>> NON_NULLABLE_FIELDS =
+            ALL_FIELDS.stream().filter(field -> !NULLABLE_FIELDS.contains(field)).toList();
+
+    private PatchUpdateEServiceSeed metadataSeed() {
+        return new PatchUpdateEServiceSeed()
+                .name(randomAlphanumericName("contract", 20))
+                .description(randomAlphanumericName("contract description", 20));
+    }
+
+    private static Consumer<Response> expectSuccess() {
+        return response -> response.then().statusCode(is(DEFAULT_SUCCESS_STATUS_CODE));
+    }
+
+    private static Consumer<Response> expectValidationError() {
+        return response -> response.then().statusCode(is(400));
+    }
+
     private UUID createEServiceId(EServiceDescriptorState descriptorState) {
-        EService createdEService = interopJourney
+        return createEService(descriptorState).getId();
+    }
+
+    private EService createEService(EServiceDescriptorState descriptorState) {
+        return interopJourney
                 .withProducer(Tenant.COMUNE_DI_MILANO, UserRole.ADMIN)
                 .createEService(descriptorState)
                 .get(EService.class);
-
-        return createdEService.getId();
     }
 
     private static final class LazyReference<T> implements Supplier<T> {

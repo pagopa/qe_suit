@@ -11,7 +11,6 @@ import it.pagopa.application.context.EntityStore;
 import it.pagopa.interop.common.journey.application.InteropJourney;
 import it.pagopa.interop.common.kernel.domain.Tenant;
 import it.pagopa.interop.common.kernel.domain.TenantRef;
-import it.pagopa.interop.common.kernel.domain.UserRole;
 import org.junit.jupiter.api.Test;
 
 import java.util.List;
@@ -42,7 +41,7 @@ class RequiredAttributeJourneyStepsTest {
         steps.configureRequiredAttributes(selected, Tenant.COMUNE_DI_MILANO, List.of(row));
 
         var order = inOrder(journey);
-        order.verify(journey).withProducer(Tenant.COMUNE_DI_MILANO, UserRole.ADMIN);
+        order.verify(journey).withProducer(Tenant.COMUNE_DI_MILANO);
         order.verify(journey).configureRequiredAttributes(service, 1,
                 TenantRef.of(Tenant.COMUNE_DI_MILANO.getOrganizationId()), expected);
         verifyNoMoreInteractions(journey);

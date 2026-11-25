@@ -6,10 +6,13 @@ import it.pagopa.infrastructure.channel.CurrentChannel;
 import it.pagopa.interop.common.eservice.application.EServiceDescriptorApprovalUseCase;
 import it.pagopa.interop.common.eservice.application.EServiceDescriptorUseCase;
 import it.pagopa.interop.common.eservice.application.EServiceUseCase;
+import it.pagopa.interop.common.eservice.application.EServiceRequestFactory;
+import it.pagopa.utils.RandomUtils;
 import it.pagopa.interop.common.eservice.domain.EService;
 import it.pagopa.interop.common.eservice.domain.EServiceDescriptorState;
 import it.pagopa.interop.common.eservice.domain.GracePeriodDays;
-import it.pagopa.interop.common.kernel.context.CurrentUserSession;
+import it.pagopa.interop.common.eservice_template.domain.EServiceTemplate;
+import it.pagopa.interop.common.kernel.context.AuthSession;
 import it.pagopa.interop.common.kernel.domain.Channel;
 import it.pagopa.interop.common.kernel.domain.Tenant;
 import it.pagopa.interop.common.kernel.domain.User;
@@ -17,30 +20,36 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 
 import java.util.UUID;
+import java.util.stream.Collectors;
 
 @Slf4j
 @RequiredArgsConstructor
 public class EServiceHooks {
     private final EntityStore entityStore;
     private final EServiceUseCase eServiceUseCase;
+    private final EServiceRequestFactory requestFactory;
     private final EServiceDescriptorApprovalUseCase descriptorUseCase;
     private final EServiceDescriptorUseCase descriptorReader;
-    private final CurrentUserSession currentUserSession;
+    private final AuthSession authSession;
     private final CurrentChannel<Channel> currentChannel;
 
     /**
      * Rejects pending versions, deletes drafts and schedules retirement through BFF.
      * All cleanups are attempted; failures are propagated together.
      */
-    @After(value = "@private-catalog", order = 100)
+    @After(value = "@private-catalog or @clean-up", order = 100)
     public void cleanUpEServices() {
         var eservices = entityStore.getAll(EService.class);
         if (eservices.isEmpty()) {
             return;
         }
 
-        var previousUser = currentUserSession.getUser();
-        var previousTenant = currentUserSession.getTenant();
+        var templateInstanceIds = entityStore.getAll(EServiceTemplate.class).stream()
+                .flatMap(template -> template.getInstances().stream())
+                .map(instance -> instance.eserviceRef().id())
+                .collect(Collectors.toSet());
+        var previousUser = authSession.getActor();
+        var previousTenant = authSession.getTenant();
         var previousChannel = currentChannel.getCurrentChannel();
         var cleanupFailure = new IllegalStateException("Cleanup degli e-service non completato");
 
@@ -49,7 +58,7 @@ public class EServiceHooks {
             for (EService eservice : eservices) {
                 try {
                     Tenant producer = Tenant.fromOrganizationId(UUID.fromString(eservice.getProducerId()));
-                    currentUserSession.set(User.getTenantAdmin(producer), producer);
+                    authSession.set(producer);
                     var descriptors = eservice.getDescriptors().stream()
                             .map(descriptor -> descriptor.getState() == EServiceDescriptorState.WAITING_FOR_APPROVAL
                                     ? descriptorReader.getDescriptor(eservice, descriptor) : descriptor)
@@ -62,19 +71,35 @@ public class EServiceHooks {
                                 case ARCHIVING, ARCHIVING_SUSPENDED, ARCHIVED -> true;
                                 default -> false;
                             });
-                    if (retirementAlreadyScheduled) {
-                        log.info("E-service gia' in archiviazione o archiviato, nessuna nuova richiesta: {}",
-                                eservice.getId());
-                        continue;
-                    }
                     boolean draftOnly = descriptors.stream()
                             .allMatch(descriptor -> descriptor.getState() == EServiceDescriptorState.DRAFT);
-                    if (draftOnly) {
+                    if (draftOnly && !retirementAlreadyScheduled) {
                         eServiceUseCase.deleteEService(eservice);
                         log.info("E-service eliminato: {}", eservice.getId());
                     } else {
-                        eServiceUseCase.archiveEService(eservice, GracePeriodDays.NUMBER_60);
-                        log.info("Archiviazione e-service avviata: {}", eservice.getId());
+                        // Archiving does not release (producer, name). Rename first to make
+                        // literal fixture names reusable in the next scenario execution.
+                        // A failed rename must not prevent retirement from being attempted.
+
+                        if (templateInstanceIds.contains(eservice.getId())) {
+                            // Il nome dell'istanza viene propagato dal template padre.
+                            log.info("Istanza di template {}: nessuna rinomina diretta", eservice.getId());
+                        } else {
+                            try {
+                                var command = requestFactory.defaultUpdateEServiceCommand()
+                                        .name(RandomUtils.randomAlphanumericName("cleanup-eservice", 20));
+                                eServiceUseCase.updateEServiceMetadata(eservice, command);
+                            } catch (RuntimeException | AssertionError exception) {
+                                log.error("Impossibile rinominare l'e-service {} durante il cleanup", eservice.getId(), exception);
+                                cleanupFailure.addSuppressed(exception);
+                            }
+                        }
+                        if (!retirementAlreadyScheduled) {
+                            eServiceUseCase.archiveEService(eservice, GracePeriodDays.NUMBER_60);
+                            log.info("Archiviazione e-service avviata: {}", eservice.getId());
+                        } else {
+                            log.info("E-service gia' in archiviazione o archiviato: {}", eservice.getId());
+                        }
                     }
                 } catch (RuntimeException | AssertionError exception) {
                     log.error("Errore durante il cleanup dell'e-service {}", eservice.getId(), exception);
@@ -82,8 +107,8 @@ public class EServiceHooks {
                 }
             }
         } finally {
-            currentUserSession.set(previousUser, previousTenant);
             currentChannel.setCurrentChannel(previousChannel);
+            authSession.set(previousUser, previousTenant);
         }
 
         if (cleanupFailure.getSuppressed().length > 0) {

@@ -8,22 +8,32 @@ if [[ -z "$BRANCH" ]]; then
   exit 1
 fi
 
-# Branches long-lived / di integrazione: non li forziamo a seguire il naming feature/*
-if [[ "$BRANCH" =~ ^(main|develop|master)$ ]] || [[ "$BRANCH" =~ ^release\/[^/]+$ ]]; then
+# Branch long-lived / di integrazione.
+if [[ "$BRANCH" =~ ^(main|develop|master)$ ]] || [[ "$BRANCH" =~ ^release/[^/]+$ ]]; then
   echo "Branch '$BRANCH' allowed as long-lived branch"
   exit 0
 fi
 
-# eccezioni comuni automatiche
+# Branch creati automaticamente da bot.
 if [[ "$BRANCH" =~ ^(dependabot|renovate)/ ]]; then
   echo "Bot branch allowed"
   exit 0
 fi
 
-if [[ ! "$BRANCH" =~ ^(feature|bugfix|hotfix|fix|chore|refactor)\/[A-Za-z0-9._-]+$ ]]; then
+# Solo convenzione RAE attuale: rae/<namespace>/rae_<suite>_<YYYYMMDDHHMMSS>.
+if [[ "$BRANCH" =~ ^rae/([A-Za-z0-9][A-Za-z0-9._-]*)/(rae_[A-Za-z0-9._-]+_[0-9]{14})$ ]]; then
+  NAMESPACE="${BASH_REMATCH[1]}"
+  if [[ "$NAMESPACE" != "." && "$NAMESPACE" != ".." ]]; then
+    echo "RAE branch '$BRANCH' conforms to the standard"
+    exit 0
+  fi
+fi
+
+# Gli altri branch mantengono la convenzione a un solo livello.
+# Il vecchio formato rae/rae_* non e' piu' ammesso.
+if [[ ! "$BRANCH" =~ ^(feature|bugfix|hotfix|fix|chore|refactor)/[A-Za-z0-9._-]+$ ]]; then
   echo "Branch name non conforme allo standard: $BRANCH" >&2
   exit 1
 fi
 
 echo "Branch '$BRANCH' conforms to the standard"
-

@@ -5,12 +5,17 @@ import it.pagopa.infrastructure.channel.CurrentChannel;
 import it.pagopa.interop.common.eservice.application.EServiceDescriptorApprovalUseCase;
 import it.pagopa.interop.common.eservice.application.EServiceDescriptorUseCase;
 import it.pagopa.interop.common.eservice.application.EServiceUseCase;
+import it.pagopa.interop.common.eservice.application.EServiceRequestFactory;
+import it.pagopa.interop.common.eservice.application.command.EServiceUpdateCommand;
 import it.pagopa.interop.common.eservice.domain.EService;
 import it.pagopa.interop.common.eservice.domain.EServiceDescriptor;
 import it.pagopa.interop.common.eservice.domain.EServiceDescriptorState;
 import it.pagopa.interop.common.eservice.domain.GracePeriodDays;
-import it.pagopa.interop.common.kernel.context.CurrentUserSession;
+import it.pagopa.interop.common.eservice_template.domain.EServiceTemplate;
+import it.pagopa.interop.common.eservice_template.domain.EServiceTemplateInstance;
+import it.pagopa.interop.common.kernel.context.AuthSession;
 import it.pagopa.interop.common.kernel.domain.Channel;
+import it.pagopa.interop.common.kernel.domain.InteropActor;
 import it.pagopa.interop.common.kernel.domain.Tenant;
 import it.pagopa.interop.common.kernel.domain.User;
 import org.junit.jupiter.api.Test;
@@ -28,19 +33,26 @@ import static org.mockito.Mockito.*;
 class EServiceHooksTest {
     private final EntityStore store = mock(EntityStore.class);
     private final EServiceUseCase services = mock(EServiceUseCase.class);
+    private final EServiceRequestFactory factory = mock(EServiceRequestFactory.class);
+    private final EServiceUpdateCommand updateCommand = mock(EServiceUpdateCommand.class);
     private final EServiceDescriptorApprovalUseCase descriptors = mock(EServiceDescriptorApprovalUseCase.class);
     private final EServiceDescriptorUseCase reader = mock(EServiceDescriptorUseCase.class);
-    private final CurrentUserSession session = mock(CurrentUserSession.class);
+    private final AuthSession session = mock(AuthSession.class);
     @SuppressWarnings("unchecked")
     private final CurrentChannel<Channel> channel = mock(CurrentChannel.class);
-    private final EServiceHooks hooks = new EServiceHooks(store, services, descriptors, reader, session, channel);
+    private final EServiceHooks hooks = new EServiceHooks(store, services, factory, descriptors, reader, session, channel);
+
+    {
+        when(factory.defaultUpdateEServiceCommand()).thenReturn(updateCommand);
+        when(updateCommand.name(anyString())).thenReturn(updateCommand);
+    }
 
     @Test
     void deletesDraftEServiceAsProducerThroughBffAndRestoresContext() {
         EService draft = eService(DRAFT);
         User previousUser = mock(User.class);
         when(store.getAll(EService.class)).thenReturn(List.of(draft));
-        when(session.getUser()).thenReturn(previousUser);
+        when(session.getActor()).thenReturn(previousUser);
         when(session.getTenant()).thenReturn(Tenant.AGID);
         when(channel.getCurrentChannel()).thenReturn(Channel.WEB_BROWSER);
 
@@ -48,10 +60,10 @@ class EServiceHooksTest {
 
         var order = inOrder(channel, session, services);
         order.verify(channel).setCurrentChannel(Channel.BFF);
-        order.verify(session).set(User.getTenantAdmin(Tenant.COMUNE_DI_MILANO), Tenant.COMUNE_DI_MILANO);
+        order.verify(session).set(Tenant.COMUNE_DI_MILANO);
         order.verify(services).deleteEService(draft);
-        order.verify(session).set(previousUser, Tenant.AGID);
         order.verify(channel).setCurrentChannel(Channel.WEB_BROWSER);
+        order.verify(session).set(previousUser, Tenant.AGID);
         verifyNoMoreInteractions(services);
     }
 
@@ -63,6 +75,7 @@ class EServiceHooksTest {
 
         hooks.cleanUpEServices();
 
+        verify(services).updateEServiceMetadata(eq(service), eq(updateCommand));
         verify(services).archiveEService(service, GracePeriodDays.NUMBER_60);
         verifyNoMoreInteractions(services);
     }
@@ -72,13 +85,14 @@ class EServiceHooksTest {
         EService service = eService(ARCHIVING, ARCHIVING_SUSPENDED, ARCHIVED);
         User previousUser = mock(User.class);
         when(store.getAll(EService.class)).thenReturn(List.of(service));
-        when(session.getUser()).thenReturn(previousUser);
+        when(session.getActor()).thenReturn(previousUser);
         when(session.getTenant()).thenReturn(Tenant.AGID);
         when(channel.getCurrentChannel()).thenReturn(Channel.WEB_BROWSER);
 
         hooks.cleanUpEServices();
 
-        verifyNoInteractions(services);
+        verify(services).updateEServiceMetadata(any(EService.class), eq(updateCommand));
+        verifyNoMoreInteractions(services);
         verify(session).set(previousUser, Tenant.AGID);
         verify(channel).setCurrentChannel(Channel.WEB_BROWSER);
     }
@@ -91,7 +105,8 @@ class EServiceHooksTest {
 
         hooks.cleanUpEServices();
 
-        verifyNoInteractions(services);
+        verify(services).updateEServiceMetadata(any(EService.class), eq(updateCommand));
+        verifyNoMoreInteractions(services);
     }
 
     @ParameterizedTest
@@ -102,6 +117,7 @@ class EServiceHooksTest {
 
         hooks.cleanUpEServices();
 
+        verify(services).updateEServiceMetadata(eq(service), eq(updateCommand));
         verify(services).archiveEService(service, GracePeriodDays.NUMBER_60);
         verifyNoMoreInteractions(services);
     }
@@ -115,6 +131,7 @@ class EServiceHooksTest {
         hooks.cleanUpEServices();
 
         verify(services).deleteEService(draft);
+        verify(services).updateEServiceMetadata(eq(retiring), eq(updateCommand));
         verifyNoMoreInteractions(services);
     }
 
@@ -125,6 +142,7 @@ class EServiceHooksTest {
 
         hooks.cleanUpEServices();
 
+        verify(services).updateEServiceMetadata(eq(service), eq(updateCommand));
         verify(services).archiveEService(service, GracePeriodDays.NUMBER_60);
         verifyNoMoreInteractions(services);
     }
@@ -152,6 +170,7 @@ class EServiceHooksTest {
 
         hooks.cleanUpEServices();
 
+        verify(services).updateEServiceMetadata(eq(service), eq(updateCommand));
         verify(services).archiveEService(service, GracePeriodDays.NUMBER_60);
         verifyNoMoreInteractions(services);
         verifyNoInteractions(descriptors);
@@ -185,6 +204,7 @@ class EServiceHooksTest {
 
         var order = inOrder(descriptors, services);
         order.verify(descriptors).rejectDescriptor(service, pending, "Cleanup dello scenario");
+        order.verify(services).updateEServiceMetadata(service, updateCommand);
         order.verify(services).archiveEService(service, GracePeriodDays.NUMBER_60);
         verifyNoMoreInteractions(services, descriptors);
     }
@@ -202,7 +222,7 @@ class EServiceHooksTest {
 
         verify(services).deleteEService(draft);
         verifyNoMoreInteractions(services);
-        verify(session).set(null, null);
+        verify(session).set((InteropActor) null, null);
         verify(channel).setCurrentChannel(null);
     }
 
@@ -214,7 +234,7 @@ class EServiceHooksTest {
         AssertionError archiveFailure = new AssertionError("archive failed");
         when(store.getAll(EService.class)).thenReturn(List.of(draft, published));
         User previousUser = mock(User.class);
-        when(session.getUser()).thenReturn(previousUser);
+        when(session.getActor()).thenReturn(previousUser);
         when(session.getTenant()).thenReturn(Tenant.AGID);
         when(channel.getCurrentChannel()).thenReturn(Channel.WEB_BROWSER);
         doThrow(deleteFailure).when(services).deleteEService(draft);
@@ -229,6 +249,22 @@ class EServiceHooksTest {
         verify(services).archiveEService(published, GracePeriodDays.NUMBER_60);
         verify(session).set(previousUser, Tenant.AGID);
         verify(channel).setCurrentChannel(Channel.WEB_BROWSER);
+    }
+
+    @Test
+    void skipsDirectRenameForTemplateInstances() {
+        var instance = eService(PUBLISHED);
+        var ordinary = eService(PUBLISHED);
+        var template = EServiceTemplate.builder().id(UUID.randomUUID())
+                .instance(new EServiceTemplateInstance("label", instance.getRef())).build();
+        when(store.getAll(EService.class)).thenReturn(List.of(instance, ordinary));
+        when(store.getAll(EServiceTemplate.class)).thenReturn(List.of(
+                EServiceTemplate.builder().id(UUID.randomUUID()).build(), template));
+        hooks.cleanUpEServices();
+        verify(services).archiveEService(instance, GracePeriodDays.NUMBER_60);
+        verify(services).updateEServiceMetadata(ordinary, updateCommand);
+        verify(services).archiveEService(ordinary, GracePeriodDays.NUMBER_60);
+        verifyNoMoreInteractions(services);
     }
 
     @Test

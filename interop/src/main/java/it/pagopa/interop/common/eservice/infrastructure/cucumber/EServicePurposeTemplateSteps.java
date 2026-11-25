@@ -18,16 +18,18 @@ public class EServicePurposeTemplateSteps {
     @Given("l'e-service {string} collegato a un template di finalità {purposeTemplateState}")
     public void linkPurposeTemplate(String alias, PurposeTemplateState state) {
         EService eService = entities.getByAliasOrThrow(alias, EService.class);
-        journey.withConsumer(Tenant.PAGO_PA, UserRole.ADMIN)
+        journey.withConsumer(Tenant.PAGO_PA)
                 .createPurposeTemplate(Tenant.PAGO_PA, state)
                 .linkEServiceToPurposeTemplate(eService);
     }
 
-    @ParameterType("pubblicato|in bozza")
+    @ParameterType("pubblicato|in bozza|sospeso|archiviato")
     public PurposeTemplateState purposeTemplateState(String state) {
         return switch (state) {
             case "pubblicato" -> PurposeTemplateState.PUBLISHED;
             case "in bozza" -> PurposeTemplateState.DRAFT;
+            case "sospeso" -> PurposeTemplateState.SUSPENDED;
+            case "archiviato" -> PurposeTemplateState.ARCHIVED;
             default -> throw new IllegalArgumentException("Stato template di finalità non supportato: " + state);
         };
     }

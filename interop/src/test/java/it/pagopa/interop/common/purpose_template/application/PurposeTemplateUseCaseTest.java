@@ -1,5 +1,6 @@
 package it.pagopa.interop.common.purpose_template.application;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import it.pagopa.interop.common.kernel.domain.Tenant;
 import it.pagopa.interop.common.kernel.domain.EServiceTemplateRef;
 import it.pagopa.interop.common.eservice.domain.EService;
@@ -20,6 +21,74 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Mockito.*;
 
 class PurposeTemplateUseCaseTest {
+    @Test
+    void retrievesTheLatestPurposeTemplateFromTheGateway() {
+        var gateway = mock(PurposeTemplateGateway.class);
+        var useCase = new PurposeTemplateUseCase(
+                gateway, mock(RiskAnalysisGateway.class), mock(RiskAnalysisDataFactory.class));
+        var purposeTemplate = PurposeTemplate.builder().id(UUID.randomUUID()).build();
+        when(gateway.getPurposeTemplate(purposeTemplate.getId())).thenReturn(purposeTemplate);
+
+        assertThat(useCase.getPurposeTemplate(purposeTemplate)).isSameAs(purposeTemplate);
+
+        verify(gateway).getPurposeTemplate(purposeTemplate.getId());
+        verifyNoMoreInteractions(gateway);
+    }
+
+    @Test
+    void updatesTemplateMetadataAndWaitsForTheRequestedValues() {
+        var gateway = mock(PurposeTemplateGateway.class);
+        var purposeTemplate = PurposeTemplate.builder()
+                .id(UUID.randomUUID())
+                .title("old title")
+                .description("old description")
+                .targetDescription("old target")
+                .build();
+        var updatedTemplate = purposeTemplate.toBuilder()
+                .title("new title")
+                .description("new description")
+                .targetDescription("new target")
+                .purposeIsFreeOfCharge(false)
+                .purposeDailyCalls(500)
+                .handlesPersonalData(true)
+                .build();
+        when(gateway.getPurposeTemplate(purposeTemplate.getId())).thenReturn(updatedTemplate);
+        var useCase = new PurposeTemplateUseCase(
+                gateway, mock(RiskAnalysisGateway.class), mock(RiskAnalysisDataFactory.class));
+
+        assertThat(useCase.updateMetadata(
+                purposeTemplate, "new title", "new description", "new target", false, 500, true))
+                .isEqualTo(updatedTemplate);
+
+        verify(gateway).updateMetadata(purposeTemplate, "new title", "new description", "new target",
+                false, 500, true);
+        verify(gateway).getPurposeTemplate(purposeTemplate.getId());
+        verifyNoMoreInteractions(gateway);
+    }
+
+    @Test
+    void createsAMinimalRiskAnalysisForPublicAdministrationsWithoutPersonalData() {
+        var gateway = mock(PurposeTemplateGateway.class);
+        var configs = mock(RiskAnalysisGateway.class);
+        var data = new RiskAnalysisDataFactory(new ObjectMapper());
+        data.init();
+        var config = RiskAnalysisFormConfig.builder().version("2.1").questions(List.of()).build();
+        when(configs.getLatestRiskAnalysisConfig(Tenant.AGID)).thenReturn(config);
+
+        new PurposeTemplateUseCase(gateway, configs, data).createPurposeTemplate(Tenant.AGID);
+
+        var form = ArgumentCaptor.forClass(RiskAnalysisForm.class);
+        verify(gateway).createPurposeTemplate(eq(Tenant.AGID), form.capture(), same(config));
+        assertThat(form.getValue().getVersion()).isEqualTo("2.1");
+        assertThat(form.getValue().getAnswers()).containsExactlyInAnyOrderEntriesOf(Map.of(
+                "institutionalPurpose", List.of("prova prova prova"),
+                "isRequestOnBehalfOfThirdParties", List.of("NO"),
+                "purpose", List.of("INSTITUTIONAL"),
+                "usesPersonalData", List.of("NO"),
+                "usesThirdPartyPersonalData", List.of("NO")));
+        verifyNoMoreInteractions(gateway);
+    }
+
     @Test
     void linksTheOriginTemplateForAnInstanceInsteadOfTheEService() {
         var gateway = mock(PurposeTemplateGateway.class);

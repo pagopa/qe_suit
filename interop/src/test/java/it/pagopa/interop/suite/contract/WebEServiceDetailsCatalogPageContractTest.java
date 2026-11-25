@@ -4,6 +4,7 @@ import it.pagopa.application.context.EntityStore;
 import it.pagopa.infrastructure.contract.browser.WebScenario;
 import it.pagopa.infrastructure.suit.component.Label;
 import it.pagopa.interop.TestBootApp;
+import it.pagopa.interop.common.infrastructure.config.JunitEnvironmentProfiles;
 import it.pagopa.interop.common.attribute.domain.Attribute;
 import it.pagopa.interop.common.attribute.domain.Attributes;
 import it.pagopa.interop.common.delegation.domain.Delegation;
@@ -29,15 +30,19 @@ import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.DynamicTest;
 import org.junit.jupiter.api.TestFactory;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.TestConstructor;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
+import java.util.UUID;
 import java.util.stream.Stream;
 
+@ActiveProfiles(resolver = JunitEnvironmentProfiles.class)
 @SpringBootTest(
         classes = {TestBootApp.class, JunitContextConfig.class, WebJUnitSuitConfig.class},
-        properties = {"spring.profiles.include=junit", "channel.web.browser=chrome"}
+        properties = {"channel.web.browser=chrome"}
 )
 @TestConstructor(autowireMode = TestConstructor.AutowireMode.ALL)
 @RequiredArgsConstructor
@@ -334,9 +339,10 @@ public class WebEServiceDetailsCatalogPageContractTest {
         Tenant portalUser = (params.isProducerThePortalUser) ? producer : consumer;
 
         TenantRef consumerTenantRef = TenantRef.of(consumer.getOrganizationId());
-        if (params.certifiedAttributeToConsumer) { interopJourney
-                .withProducer(producer, UserRole.ADMIN)
-                .createCertifiedAttribute();
+        Attribute consumerAttribute = null;
+        if (params.certifiedAttributeToConsumer) {
+            consumerAttribute = interopJourney.withProducer(producer, UserRole.ADMIN)
+                    .createCertifiedAttribute("attribute-" + UUID.randomUUID() + "-CERTIFIED");
         }
 
         EServiceCreationCommand eServiceCommand =
@@ -346,7 +352,9 @@ public class WebEServiceDetailsCatalogPageContractTest {
 
         List<Attribute> requirement = new ArrayList<>();
         if (params.customThresholdToCertifiedAttributeForConsumer) // Fruitore
-            addNthAttributeWithCustomThresholdToAttributeRequirement(-1, customThresholdForYourTenant, requirement);
+            addAttributeWithCustomThresholdToAttributeRequirement(
+                    Objects.requireNonNull(consumerAttribute, "Consumer attribute was not created"),
+                    customThresholdForYourTenant, requirement);
         Attributes attributes = Attributes.builder().certified(requirement).build();
         updateCommand.attributes(attributes);
 
@@ -355,7 +363,8 @@ public class WebEServiceDetailsCatalogPageContractTest {
                 .createEService(eServiceCommand, EServiceDescriptorState.DRAFT)
                 .updateDescriptor(updateCommand, EServiceDescriptorState.PUBLISHED);
 
-        if (params.certifiedAttributeToConsumer) interopJourney.assignCertifiedAttribute(consumerTenantRef);
+        if (params.certifiedAttributeToConsumer)
+            interopJourney.assignCertifiedAttribute(consumerTenantRef, consumerAttribute.getRef());
 
         EService eService = entityStore.getLastOrThrow(EService.class);
         return new PreparedScenario(
@@ -394,10 +403,11 @@ public class WebEServiceDetailsCatalogPageContractTest {
         TenantRef delegatorTenantRef = TenantRef.of(delegator.getOrganizationId());
         TenantRef delegateeTenantRef = TenantRef.of(delegatee.getOrganizationId());
 
-        interopJourney
-                .withProducer(producer, UserRole.ADMIN)
-                .createCertifiedAttribute()  // Per delegante
-                .createCertifiedAttribute(); // Per delegato
+        interopJourney.withProducer(producer, UserRole.ADMIN);
+        Attribute delegatorAttribute =
+                interopJourney.createCertifiedAttribute("attribute-" + UUID.randomUUID() + "-CERTIFIED");
+        Attribute delegateeAttribute =
+                interopJourney.createCertifiedAttribute("attribute-" + UUID.randomUUID() + "-CERTIFIED");
 
         EServiceCreationCommand eServiceCommand =
                 eServiceDescriptorUseCase.getDefaultEServiceCreationCommand(params.eServiceAsyncExchange);
@@ -406,9 +416,9 @@ public class WebEServiceDetailsCatalogPageContractTest {
 
         List<Attribute> requirement = new ArrayList<>();
         if (params.customThresholdToCertifiedAttributeForDelegator) // Fruitore delegante
-            addNthAttributeWithCustomThresholdToAttributeRequirement(1, customThresholdForDelegator, requirement);
+            addAttributeWithCustomThresholdToAttributeRequirement(delegatorAttribute, customThresholdForDelegator, requirement);
         if (params.customThresholdToCertifiedAttributeForConsumer)  // Fruitore delegato
-            addNthAttributeWithCustomThresholdToAttributeRequirement(-1, customThresholdForDelegatee, requirement);
+            addAttributeWithCustomThresholdToAttributeRequirement(delegateeAttribute, customThresholdForDelegatee, requirement);
         Attributes attributes = Attributes.builder().certified(requirement).build();
         updateCommand.attributes(attributes);
 
@@ -418,9 +428,9 @@ public class WebEServiceDetailsCatalogPageContractTest {
                 .updateDescriptor(updateCommand, EServiceDescriptorState.PUBLISHED);
 
         if (params.certifiedAttributeToDelegator)
-            interopJourney.assignCertifiedAttribute(delegatorTenantRef, 1);
+            interopJourney.assignCertifiedAttribute(delegatorTenantRef, delegatorAttribute.getRef());
         if (params.certifiedAttributeToConsumer)
-            interopJourney.assignCertifiedAttribute(delegateeTenantRef, -1);
+            interopJourney.assignCertifiedAttribute(delegateeTenantRef, delegateeAttribute.getRef());
 
         EService eService = entityStore.getLastOrThrow(EService.class);
         interopJourney
@@ -461,17 +471,9 @@ public class WebEServiceDetailsCatalogPageContractTest {
     ) {
     }
 
-    private void addNthAttributeWithCustomThresholdToAttributeRequirement(int nthAttribute, int customThreshold, List<Attribute> requirement) {
-        Attribute attribute;
-        if (nthAttribute == 1) {
-            attribute = entityStore.getFirstOrThrow(Attribute.class);
-        } else if (nthAttribute == -1) {
-            attribute = entityStore.getLastOrThrow(Attribute.class);
-        } else {
-            throw new IllegalArgumentException("Not supported Nth attribute value: " + nthAttribute);
-        }
-        attribute = attribute.toBuilder().dailyCallsPerConsumer(customThreshold).build();
-        requirement.add(attribute);
+    private void addAttributeWithCustomThresholdToAttributeRequirement(
+            Attribute attribute, int customThreshold, List<Attribute> requirement) {
+        requirement.add(attribute.toBuilder().dailyCallsPerConsumer(customThreshold).build());
     }
 
     private void assertLabelEqualsTo(

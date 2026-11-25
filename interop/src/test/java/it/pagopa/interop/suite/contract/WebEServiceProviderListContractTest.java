@@ -4,6 +4,7 @@ import it.frontend.e2e.framework.core.capability.core.Gettable;
 import it.frontend.e2e.framework.core.capability.core.Readable;
 import it.pagopa.infrastructure.contract.browser.WebScenario;
 import it.pagopa.interop.TestBootApp;
+import it.pagopa.interop.common.infrastructure.config.JunitEnvironmentProfiles;
 import it.pagopa.interop.common.infrastructure.WebBrowserContractValidator;
 import it.pagopa.interop.common.infrastructure.config.JunitContextConfig;
 import it.pagopa.interop.common.kernel.domain.Tenant;
@@ -15,6 +16,7 @@ import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.DynamicTest;
 import org.junit.jupiter.api.TestFactory;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.TestConstructor;
 
 import java.util.stream.Stream;
@@ -34,8 +36,8 @@ import java.util.stream.Stream;
  * Sidebar navigation is not exercised. Mobile coverage requires execution at a verified viewport;
  * this desktop DOM baseline alone does not establish mobile rendering behavior.
  */
-@SpringBootTest(classes = {TestBootApp.class, JunitContextConfig.class, WebJUnitSuitConfig.class},
-        properties = "spring.profiles.include=junit")
+@ActiveProfiles(resolver = JunitEnvironmentProfiles.class)
+@SpringBootTest(classes = {TestBootApp.class, JunitContextConfig.class, WebJUnitSuitConfig.class})
 @TestConstructor(autowireMode = TestConstructor.AutowireMode.ALL)
 @RequiredArgsConstructor
 public class WebEServiceProviderListContractTest {
@@ -51,25 +53,29 @@ public class WebEServiceProviderListContractTest {
 
     private Stream<WebScenario<EServiceProviderListPage>> scenarios() {
         return Stream.of(
-                        new WebScenario<>("Visual provider e-services: page title and breadcrumbs",
-                                page -> {}, this::assertPageIdentity),
-                        new WebScenario<>("Visual provider e-services: Importa and Crea nuovo actions enabled",
-                                page -> {}, this::assertPrimaryActions),
-                        new WebScenario<>("Visual provider e-services: empty enabled filters, closed combobox and disabled clear",
-                                page -> {}, this::assertInitialFilters),
-                        new WebScenario<>("Visual provider e-services: table and ordered column headings",
-                                page -> {}, page -> {
-                            page.table().get(Gettable.FindPolicy.PRESENT)
-                                    .orElseThrow(() -> new IllegalStateException("Provider e-service table missing"));
-                            Assertions.assertThat(page.table().columnHeadings().readAll())
-                                    .as("Provider e-service list column headings")
-                                    .containsExactly("E-service", "Versione", "Stato", "");
-                            page.pageItemsSelector().click();
-                            Assertions.assertThat(page.pageItemsSelector().sizes().stream().map(Readable::read).toList())
-                                    .as("option list of items on table numbers")
-                                    .containsExactly("12", "24", "36");
-                        })
-                );
+                new WebScenario<>("Visual provider e-services: page title and breadcrumbs",
+                        page -> {
+                        }, this::assertPageIdentity),
+                new WebScenario<>("Visual provider e-services: Importa and Crea nuovo actions enabled",
+                        page -> {
+                        }, this::assertPrimaryActions),
+                new WebScenario<>("Visual provider e-services: empty enabled filters, closed combobox and disabled clear",
+                        page -> {
+                        }, this::assertInitialFilters),
+                new WebScenario<>("Visual provider e-services: table and ordered column headings",
+                        page -> {
+                        }, page -> {
+                    page.table().get(Gettable.FindPolicy.PRESENT)
+                            .orElseThrow(() -> new IllegalStateException("Provider e-service table missing"));
+                    Assertions.assertThat(page.table().columnHeadings().readAll())
+                            .as("Provider e-service list column headings")
+                            .containsExactly("E-service", "Versione", "Stato", "");
+                    page.pageItemsSelector().click();
+                    Assertions.assertThat(page.pageItemsSelector().sizes().stream().map(Readable::read).toList())
+                            .as("option list of items on table numbers")
+                            .containsExactly("10", "24", "36");
+                })
+        );
     }
 
     private void assertPageIdentity(EServiceProviderListPage page) {

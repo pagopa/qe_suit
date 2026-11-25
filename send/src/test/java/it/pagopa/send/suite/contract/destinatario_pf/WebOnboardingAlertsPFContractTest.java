@@ -15,18 +15,16 @@ import lombok.RequiredArgsConstructor;
 import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.DynamicTest;
 import org.junit.jupiter.api.TestFactory;
-import org.junit.jupiter.api.parallel.Execution;
-import org.junit.jupiter.api.parallel.ExecutionMode;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.TestConstructor;
 
 import java.util.List;
 import java.util.stream.Stream;
 
-import static it.pagopa.send.suite.contract.destinatario_pf.OnboardingIoExpectedTexts.DOWNLOAD_IO_APP;
-import static it.pagopa.send.suite.contract.destinatario_pf.OnboardingIoExpectedTexts.IO_ALREADY_INSTALLED;
-import static it.pagopa.send.suite.contract.destinatario_pf.OnboardingIoExpectedTexts.IO_DESCRIPTION;
-import static it.pagopa.send.suite.contract.destinatario_pf.OnboardingIoExpectedTexts.IO_TITLE;
+import static it.pagopa.send.suite.contract.destinatario_pf.WebOnboardingIoPFContractTest.DOWNLOAD_IO_APP;
+import static it.pagopa.send.suite.contract.destinatario_pf.WebOnboardingIoPFContractTest.IO_ALREADY_INSTALLED;
+import static it.pagopa.send.suite.contract.destinatario_pf.WebOnboardingIoPFContractTest.IO_DESCRIPTION;
+import static it.pagopa.send.suite.contract.destinatario_pf.WebOnboardingIoPFContractTest.IO_TITLE;
 
 /**
  * Contract test del wizard di onboarding "Attivazione avvisi" del cittadino ({@code {baseUrl}/onboarding/avvisi}).
@@ -40,7 +38,6 @@ import static it.pagopa.send.suite.contract.destinatario_pf.OnboardingIoExpected
  * attivo con "Modifica" oppure campo per inserirlo) e non vengono verificati. Nessuno scenario preme "Conferma" del
  * wizard.
  */
-@Execution(ExecutionMode.CONCURRENT)
 @SpringBootTest(classes = {
         TestBootApp.class,
         JunitContextConfig.class,

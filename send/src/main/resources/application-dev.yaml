@@ -69,14 +69,33 @@ url:
       app-status: ${url.notifiche.mittente.base}/app-status
       statistics: ${url.notifiche.mittente.base}/statistiche
       campaigns: ${url.notifiche.mittente.base}/campaigns
+    partner-tecnologico:
+      base: https://partner.dev.notifichedigitali.it
+    # link "Accessibilità" del footer dei portali, diverso per ambiente
+    accessibilita: https://form.agid.gov.it/view/978876c0-df2d-11ef-8637-9f856ac3da10
     supporto:
       base: https://uat.selfcare.pagopa.it
+
+# BackOffice dei Partner Tecnologici: abilita i test del portale PT in questo ambiente
+partner-tecnologico:
+  enabled: true
+
+# API di test di Selfcare per creare le deleghe PA -> PT: le deleghe di tutti gli ambienti SEND stanno sul
+# Selfcare di uat, ognuno con il suo prodotto (prod-pn-dev)
+selfcare:
+  delegations-test:
+    base-url: https://api.uat.selfcare.pagopa.it/external/test/v1
+    product-id: prod-pn-dev
+    # subscription key APIM delle API di test di Selfcare (header Ocp-Apim-Subscription-Key), nei secrets
+    subscription-key: ${pn.external.selfcare-subscription-key:REPLACE_ME}
 
 # Selettori XPath da properties
 selettore:
   login:
     pg:
       area-riservata-selettore-env: '//*[@id="root"]/div/div[2]/div[2]/main/div/div[3]/div[2]/div[8]/div/div/div/div[3]/button'
+    pa:
+      area-riservata-selettore-env: '//*[@id="forward_prod-pn-dev"]'
   supporto:
     area-riservata-selettore-env: '//*[@id="root"]//table//tr[4]/td[5]//button'
 
@@ -92,8 +111,11 @@ token:
     garibaldi: ${pn.external.session-token.garibaldi:REPLACE_ME}
     dantealighieri: ${pn.external.session-token.dantealighieri:REPLACE_ME}
     francescopetrarca: ${pn.external.session-token.francescopetrarca:REPLACE_ME}
+    lucioanneoseneca: ${pn.external.session-token.lucioanneoseneca:REPLACE_ME}
     grossini: ${pn.external.session-token.grossini:REPLACE_ME}
     albino63: ${pn.external.session-token.albino63:REPLACE_ME}
+    m.curie: ${pn.external.session-token.m.curie:REPLACE_ME}
+    msisti: ${pn.external.session-token.msisti:REPLACE_ME}
 
 # ============================================================================
 # WebAPI Configuration (host condiviso da BFF e client mandate)

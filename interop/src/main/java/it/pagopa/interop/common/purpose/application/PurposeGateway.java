@@ -14,13 +14,45 @@ import org.springframework.plugin.core.Plugin;
 public interface PurposeGateway extends Plugin<Channel> {
     Purpose getPurpose(PurposeRef purposeRef);
 
+    Purpose updatePurposeMetadata(
+            PurposeRef purposeRef, String name, String description,
+            @Nullable Boolean isFreeOfCharge, @Nullable String freeOfChargeReason, @Nullable Integer dailyCalls);
+
+    Purpose updateReversePurposeMetadata(
+            PurposeRef purposeRef, String name, String description,
+            @Nullable Boolean isFreeOfCharge, @Nullable String freeOfChargeReason, @Nullable Integer dailyCalls);
+
+    void tryToUpdatePurposeMetadata(
+            PurposeRef purposeRef, String name, String description,
+            @Nullable Boolean isFreeOfCharge, @Nullable String freeOfChargeReason, @Nullable Integer dailyCalls);
+
+    void tryToUpdateReversePurposeMetadata(
+            PurposeRef purposeRef, String name, String description,
+            @Nullable Boolean isFreeOfCharge, @Nullable String freeOfChargeReason, @Nullable Integer dailyCalls);
+
+    void shouldFailToUpdatePurposeMetadataAsMalformed();
+
+    void shouldFailToUpdatePurposeMetadataAsForbidden();
+
+    void shouldFailToUpdatePurposeMetadataAsConflict();
+
+    Purpose updatePurposeDailyCalls(PurposeRef purposeRef, int dailyCalls);
+
     Purpose createPurpose(PurposeCreateCommand createCommand);
 
     Purpose createReversePurpose(EServiceRef eServiceRef, EServiceRiskAnalysisRef riskAnalysisRef);
 
     Purpose createPurposeFromTemplate(PurposeTemplateRef purposeTemplateRef, EServiceRef eServiceRef);
 
+    Purpose createPurposeFromTemplate(PurposeTemplateRef purposeTemplateRef, PurposeCreateCommand createCommand);
+
     Purpose activatePurpose(PurposeRef purposeRef, PurposeVersionRef purposeVersionRef, @Nullable DelegationRef delegationRef);
 
+    Purpose rejectPurpose(PurposeRef purposeRef, PurposeVersionRef purposeVersionRef, String rejectionReason);
+
+    Purpose askForApprovalPurpose(PurposeRef purposeRef, PurposeVersionRef purposeVersionRef, @Nullable DelegationRef delegationRef);
+
     Purpose suspendPurpose(PurposeRef purposeRef, PurposeVersionRef purposeVersionRef, @Nullable DelegationRef delegationRef);
+
+    Purpose archivePurpose(PurposeRef purposeRef, PurposeVersionRef purposeVersionRef);
 }

@@ -1,5 +1,6 @@
 package it.pagopa.interop.bff.eservice_template.infrastructure;
 
+import it.pagopa.application.context.EntityStore;
 import it.pagopa.infrastructure.template.action.strategy.PollingStrategy;
 import it.pagopa.interop.bff.eservice.application.BffEServiceTemplateInstanceUpdateDescriptorCommand;
 import it.pagopa.interop.bff.eservice.infrastructure.BffEServiceDescriptorGateway;
@@ -12,11 +13,11 @@ import it.pagopa.interop.common.eservice.domain.EServiceDescriptorState;
 import it.pagopa.interop.common.eservice_template.application.EServiceTemplateInstanceGateway;
 import it.pagopa.interop.common.eservice_template.application.command.EServiceTemplateInstanceCreationCommand;
 import it.pagopa.interop.common.eservice_template.domain.EServiceTemplate;
+import it.pagopa.interop.common.eservice_template.domain.EServiceTemplateInstance;
 import it.pagopa.interop.common.kernel.domain.Channel;
 import it.pagopa.interop.common.kernel.domain.EServiceDescriptorRef;
 import it.pagopa.interop.common.kernel.domain.EServiceRef;
 import it.pagopa.interop.generated.openapi.clients.bff.model.CreatedResource;
-import it.pagopa.interop.generated.openapi.clients.bff.model.InstanceEServiceSeed;
 import it.pagopa.interop.generated.openapi.clients.bff.model.UpdateEServiceDescriptorTemplateInstanceSeed;
 import it.pagopa.interop.generated.openapi.clients.bff.model.UpdateEServiceTemplateInstanceDescriptorQuotas;
 import lombok.RequiredArgsConstructor;
@@ -28,22 +29,25 @@ public class BffEServiceTemplateInstanceGateway implements EServiceTemplateInsta
     private final BffEServiceRestClient restClient;
     private final BffEServiceGateway eServiceGateway;
     private final BffEServiceDescriptorGateway descriptorGateway;
+    private final EntityStore entityStore;
 
     @Override
     public EService createEServiceInstance(EServiceTemplate template, EServiceTemplateInstanceCreationCommand command) {
         if (!(command instanceof BffEServiceTemplateInstanceCreationCommand bffCommand)) {
             throw new IllegalArgumentException("Expected BffEServiceTemplateInstanceCreationCommand");
         }
-        var created = restClient.createEServiceInstanceFromTemplate(
-                        template.getId(), bffCommand.getBffPayload()
-                )
+        var payload = bffCommand.getBffPayload();
+        String suffix = payload.getInstanceLabel();
+        var created = restClient.createEServiceInstanceFromTemplate(template.getId(), payload)
                 .withPolling(PollingStrategy.UNTIL_SUCCESS)
                 .get();
 
         EServiceRef serviceRef = EServiceRef.of(created.getId());
-        EServiceDescriptorRef descriptorRef = EServiceDescriptorRef.of(created.getDescriptorId());
+        EServiceTemplate storedTemplate = entityStore.getById(template.getId(), EServiceTemplate.class)
+                .orElse(template);
+        entityStore.upsert(storedTemplate.withUpsertedInstance(new EServiceTemplateInstance(suffix, serviceRef)));
 
-        descriptorGateway.getEServiceDescriptor(serviceRef, descriptorRef);
+        descriptorGateway.getEServiceDescriptor(serviceRef, EServiceDescriptorRef.of(created.getDescriptorId()));
         return eServiceGateway.getEService(serviceRef);
     }
 

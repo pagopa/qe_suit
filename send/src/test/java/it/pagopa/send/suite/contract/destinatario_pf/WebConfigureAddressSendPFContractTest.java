@@ -13,8 +13,6 @@ import lombok.RequiredArgsConstructor;
 import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.DynamicTest;
 import org.junit.jupiter.api.TestFactory;
-import org.junit.jupiter.api.parallel.Execution;
-import org.junit.jupiter.api.parallel.ExecutionMode;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.TestConstructor;
 
@@ -32,7 +30,6 @@ import java.util.stream.Stream;
  * La terza card, "Preferisco attivare solo SEND sull'app IO", è mostrata solo agli utenti senza recapiti di cortesia e
  * non viene verificata. Nessuno scenario preme "Salta e vai alle tue notifiche", che segna la configurazione come fatta, né conferma i wizard.
  */
-@Execution(ExecutionMode.CONCURRENT)
 @SpringBootTest(classes = {
         TestBootApp.class,
         JunitContextConfig.class,

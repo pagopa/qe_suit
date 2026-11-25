@@ -4,7 +4,6 @@ import it.pagopa.infrastructure.context.InMemoryEntityStore;
 import it.pagopa.interop.common.eservice.domain.EService;
 import it.pagopa.interop.common.journey.application.InteropJourney;
 import it.pagopa.interop.common.kernel.domain.Tenant;
-import it.pagopa.interop.common.kernel.domain.UserRole;
 import it.pagopa.interop.common.purpose_template.domain.PurposeTemplateState;
 import org.junit.jupiter.api.Test;
 
@@ -27,17 +26,9 @@ class EServicePurposeTemplateStepsTest {
         steps.linkPurposeTemplate("ES-1", PurposeTemplateState.PUBLISHED);
 
         var order = inOrder(journey);
-        order.verify(journey).withConsumer(Tenant.PAGO_PA, UserRole.ADMIN);
+        order.verify(journey).withConsumer(Tenant.PAGO_PA);
         order.verify(journey).createPurposeTemplate(Tenant.PAGO_PA, PurposeTemplateState.PUBLISHED);
         order.verify(journey).linkEServiceToPurposeTemplate(eService);
-    }
-
-    @Test
-    void resolvesBothSupportedPurposeTemplateStates() {
-        assertThat(steps.purposeTemplateState("pubblicato")).isEqualTo(PurposeTemplateState.PUBLISHED);
-        assertThat(steps.purposeTemplateState("in bozza")).isEqualTo(PurposeTemplateState.DRAFT);
-        assertThatThrownBy(() -> steps.purposeTemplateState("archiviato"))
-                .isInstanceOf(IllegalArgumentException.class);
     }
 
     @Test

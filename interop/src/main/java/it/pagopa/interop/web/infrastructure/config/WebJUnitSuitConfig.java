@@ -12,7 +12,8 @@ import it.pagopa.infrastructure.suit.capability.AuthenticatedLocatableCapability
 import it.pagopa.infrastructure.suit.capability.AuthenticatedLocatableCapabilityHandler;
 import it.pagopa.interop.bff.infrastructure.security.bearer.BearerAuthProvider;
 import it.pagopa.interop.common.infrastructure.WebBrowserContractValidator;
-import it.pagopa.interop.common.kernel.context.CurrentUserSession;
+import it.pagopa.interop.common.kernel.context.AuthSession;
+import it.pagopa.interop.common.kernel.domain.User;
 import it.pagopa.interop.web.infrastructure.config.suit.WebSuitConfig;
 import org.springframework.beans.factory.ObjectProvider;
 import org.springframework.beans.factory.annotation.Qualifier;
@@ -38,9 +39,9 @@ public class WebJUnitSuitConfig {
     @Bean
     WebBrowserContractValidator webBrowserContractValidator(
             WebContractValidator webContractValidator,
-            CurrentUserSession currentUserSession
+            AuthSession authSession
     ) {
-        return new WebBrowserContractValidator(webContractValidator, currentUserSession);
+        return new WebBrowserContractValidator(webContractValidator, authSession);
     }
 
     @Bean("junitWebPresentationGateway")
@@ -49,7 +50,7 @@ public class WebJUnitSuitConfig {
             WebSuitConfig webSuitConfig,
             Environment environment,
             BrowserContext browserContext,
-            CurrentUserSession currentUserSession,
+            AuthSession authSession,
             BearerAuthProvider bearerAuthProvider
     ) {
         BrowserSettings settings = BrowserSettings.of(
@@ -63,9 +64,9 @@ public class WebJUnitSuitConfig {
                 new SeleniumApiAdapter(settings);
 
         WebSessionProvider webSessionConfigurer = () -> {
-            var currentUser = currentUserSession.getUser();
-            var currentTenant = currentUserSession.getTenant();
-            String sessionToken = bearerAuthProvider.getToken(currentUser, currentTenant);
+            var currentUser = authSession.getActor();
+            var currentTenant = authSession.getTenant();
+            String sessionToken = bearerAuthProvider.getToken((User) currentUser, currentTenant);
 
             if (browserContext.getCurrentUrl() == null) {
                 adapter.navigateTo(Url.of(environment.getRequiredProperty("interop.web.catalog")));

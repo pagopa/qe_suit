@@ -26,6 +26,7 @@ public class Purpose implements Identifiable {
     String title;
     String description;
     Boolean isFreeOfCharge;
+    String freeOfChargeReason;
     UUID delegationId;
 
     @Singular("version")
@@ -43,6 +44,12 @@ public class Purpose implements Identifiable {
 
     public PurposeVersion getLastActiveVersion() {
         return versions.stream().filter(version -> version.getPurposeVersionState() == PurposeVersionState.ACTIVE)
+                .max(Comparator.comparing(PurposeVersion::getCreatedAt))
+                .orElse(null);
+    }
+
+    public PurposeVersion getLastWaitingForApprovalVersion() {
+        return versions.stream().filter(version -> version.getPurposeVersionState() == PurposeVersionState.WAITING_FOR_APPROVAL)
                 .max(Comparator.comparing(PurposeVersion::getCreatedAt))
                 .orElse(null);
     }

@@ -1,0 +1,132 @@
+package it.pagopa.interop.m2m.purpose.infrastructure;
+
+import it.pagopa.infrastructure.template.RestClient;
+import it.pagopa.infrastructure.template.action.TestChain;
+import it.pagopa.infrastructure.template.action.TestChainFactory;
+import it.pagopa.interop.generated.openapi.clients.m2m.v3.ApiClient;
+import it.pagopa.interop.generated.openapi.clients.m2m.v3.api.PurposesApi;
+import it.pagopa.interop.generated.openapi.clients.m2m.v3.model.DelegationRef;
+import it.pagopa.interop.generated.openapi.clients.m2m.v3.model.Purpose;
+import it.pagopa.interop.generated.openapi.clients.m2m.v3.model.PurposeSeed;
+import it.pagopa.interop.generated.openapi.clients.m2m.v3.model.PurposeVersion;
+import it.pagopa.interop.generated.openapi.clients.m2m.v3.model.PurposeFromTemplateSeed;
+import it.pagopa.interop.generated.openapi.clients.m2m.v3.model.PurposeVersionSeed;
+import it.pagopa.interop.generated.openapi.clients.m2m.v3.model.PurposeRejection;
+import it.pagopa.interop.generated.openapi.clients.m2m.v3.model.ReversePurposeDraftUpdateSeed;
+import it.pagopa.interop.generated.openapi.clients.m2m.v3.model.UpdateDraftPurposeRequest;
+import jakarta.annotation.Nonnull;
+import org.springframework.stereotype.Component;
+
+import java.util.UUID;
+import java.util.function.Function;
+
+@Component
+public class M2MPurposeRestClient extends RestClient {
+
+    private final PurposesApi purposesApi;
+
+    public M2MPurposeRestClient(TestChainFactory chainFactory, ApiClient apiClient) {
+        super(chainFactory);
+        this.purposesApi = apiClient.purposes();
+    }
+
+    public TestChain<Purpose> getPurpose(@Nonnull UUID purposeId) {
+        return execute(
+                () -> purposesApi.getPurpose()
+                        .purposeIdPath(purposeId)
+                        .execute(Function.identity()),
+                Purpose.class
+        );
+    }
+
+    public TestChain<Purpose> createPurpose(@Nonnull PurposeSeed payload) {
+        return execute(
+                () -> purposesApi.createPurpose()
+                        .body(payload)
+                        .execute(Function.identity()),
+                Purpose.class
+        );
+    }
+
+    public TestChain<Purpose> createPurposeFromTemplate(
+            @Nonnull UUID purposeTemplateId,
+            @Nonnull PurposeFromTemplateSeed payload
+    ) {
+        return execute(
+                () -> purposesApi.createPurposeFromTemplate()
+                        .purposeTemplateIdPath(purposeTemplateId)
+                        .body(payload)
+                        .execute(Function.identity()),
+                Purpose.class
+        );
+    }
+
+    public TestChain<Purpose> updatePurposeMetadata(
+            @Nonnull UUID purposeId, @Nonnull String title, @Nonnull String description,
+            Boolean isFreeOfCharge, String freeOfChargeReason, Integer dailyCalls) {
+        return execute(
+                () -> purposesApi.updateDraftPurpose()
+                        .purposeIdPath(purposeId)
+                        .reqSpec(reqSpec -> reqSpec.setContentType("application/merge-patch+json; charset=UTF-8"))
+                        .body(new UpdateDraftPurposeRequest().title(title).description(description)
+                                .isFreeOfCharge(isFreeOfCharge).freeOfChargeReason(freeOfChargeReason)
+                                .dailyCalls(dailyCalls))
+                        .execute(Function.identity()),
+                Purpose.class
+        );
+    }
+
+    public TestChain<Purpose> updateReversePurposeMetadata(
+            @Nonnull UUID purposeId, @Nonnull String title, @Nonnull String description,
+            Boolean isFreeOfCharge, String freeOfChargeReason, Integer dailyCalls) {
+        return execute(
+                () -> purposesApi.updateDraftReversePurpose()
+                        .purposeIdPath(purposeId)
+                        .reqSpec(reqSpec -> reqSpec.setContentType("application/merge-patch+json; charset=UTF-8"))
+                        .body(new ReversePurposeDraftUpdateSeed().title(title).description(description)
+                                .isFreeOfCharge(isFreeOfCharge).freeOfChargeReason(freeOfChargeReason)
+                                .dailyCalls(dailyCalls))
+                        .execute(Function.identity()),
+                Purpose.class
+        );
+    }
+
+    public TestChain<Purpose> approvePurpose(@Nonnull UUID purposeId, DelegationRef delegationRef) {
+        return execute(
+                () -> purposesApi.approvePurpose()
+                        .purposeIdPath(purposeId)
+                        .body(delegationRef)
+                        .execute(Function.identity()),
+                Purpose.class
+        );
+    }
+
+    public TestChain<Purpose> rejectPurpose(@Nonnull UUID purposeId, @Nonnull String rejectionReason) {
+        return execute(
+                () -> purposesApi.rejectPurpose()
+                        .purposeIdPath(purposeId)
+                        .body(new PurposeRejection().rejectionReason(rejectionReason))
+                        .execute(Function.identity()),
+                Purpose.class
+        );
+    }
+
+    public TestChain<Purpose> archivePurpose(@Nonnull UUID purposeId) {
+        return execute(
+                () -> purposesApi.archivePurpose()
+                        .purposeIdPath(purposeId)
+                        .execute(Function.identity()),
+                Purpose.class
+        );
+    }
+
+    public TestChain<PurposeVersion> createPurposeVersion(@Nonnull UUID purposeId, @Nonnull PurposeVersionSeed payload) {
+        return execute(
+                () -> purposesApi.createPurposeVersion()
+                        .purposeIdPath(purposeId)
+                        .body(payload)
+                        .execute(Function.identity()),
+                PurposeVersion.class
+        );
+    }
+}
