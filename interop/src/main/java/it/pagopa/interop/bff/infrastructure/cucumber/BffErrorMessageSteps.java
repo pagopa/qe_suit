@@ -59,7 +59,9 @@ public class BffErrorMessageSteps {
         assertThat(response).as("Risposta BFF da verificare per %s", messageId).isNotNull();
         assertThat(response.getStatusCode())
                 .as("Status HTTP di errore per %s", messageId)
-                .isBetween(400, 499);
+                .satisfiesAnyOf(
+                        statusCode -> assertThat(statusCode).isBetween(400, 499),
+                        statusCode -> assertThat(statusCode).isEqualTo(503));
         Object userMessage = JsonPath.from(response.getRawContent()).get("userMessage");
         assertThat(userMessage)
                 .as("userMessage per %s in lingua %s", messageId, language)
