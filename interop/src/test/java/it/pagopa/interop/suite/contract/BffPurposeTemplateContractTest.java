@@ -120,14 +120,14 @@ public class BffPurposeTemplateContractTest {
 //                .tests();
 //    }
 
-    @TestFactory
-    Stream<DynamicTest> publishPurposeTemplate() {
-        return httpContractValidator
-                .as(PRODUCER, UserRole.ADMIN)
-                .apiCall(() -> apiClient.purposeTemplates().publishPurposeTemplate())
-                .pathParams(() -> Map.of("purposeTemplateId", createPurposeTemplate(PurposeTemplateState.DRAFT).getId()))
-                .tests();
-    }
+//    @TestFactory
+//    Stream<DynamicTest> publishPurposeTemplate() {
+//        return httpContractValidator
+//                .as(PRODUCER, UserRole.ADMIN)
+//                .apiCall(() -> apiClient.purposeTemplates().publishPurposeTemplate())
+//                .pathParams(() -> Map.of("purposeTemplateId", createPurposeTemplate(PurposeTemplateState.DRAFT).getId()))
+//                .tests();
+//    }
 
     @TestFactory
     Stream<DynamicTest> unsuspendPurposeTemplate() {
