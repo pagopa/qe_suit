@@ -6,7 +6,9 @@ import it.pagopa.infrastructure.template.action.TestChainFactory;
 import it.pagopa.interop.generated.openapi.clients.m2m.v3.ApiClient;
 import it.pagopa.interop.generated.openapi.clients.m2m.v3.api.EservicesApi;
 import it.pagopa.interop.generated.openapi.clients.m2m.v3.model.Document;
+import it.pagopa.interop.generated.openapi.clients.m2m.v3.model.EService;
 import it.pagopa.interop.generated.openapi.clients.m2m.v3.model.EServiceDescriptor;
+import it.pagopa.interop.generated.openapi.clients.m2m.v3.model.EServiceDraftUpdateSeed;
 import it.pagopa.interop.m2m.eservice_template.infrastructure.FileDownloadMultipart;
 import it.pagopa.interop.m2m.eservice_template.infrastructure.FileDownloadMultipartUtils;
 import jakarta.annotation.Nonnull;
@@ -58,6 +60,30 @@ public class M2MEServiceRestClient extends RestClient {
         );
     }
 
+    public TestChain<EService> getEService(@Nonnull UUID eserviceId) {
+        return execute(
+                () -> eservicesApi.getEService().eserviceIdPath(eserviceId).execute(Function.identity()),
+                EService.class
+        );
+    }
+
+    public TestChain<EService> updateEServiceMetadata(
+            @Nonnull UUID eserviceId,
+            @Nonnull EServiceDraftUpdateSeed payload
+    ) {
+        return execute(
+                () -> eservicesApi
+                        // La patch consente di modificare e-service che non sono in stato draft.
+                        // Il nome updateDraftEService è dovuto all'operationId definito nell'OpenAPI.
+                        .updateDraftEService()
+                        .eserviceIdPath(eserviceId)
+                        .body(payload)
+                        .reqSpec(reqSpec -> reqSpec.setContentType("application/merge-patch+json; charset=UTF-8"))
+                        .execute(Function.identity()),
+                EService.class
+        );
+    }
+
     public TestChain<FileDownloadMultipart> downloadEServiceDescriptorInterface(
             @Nonnull UUID eserviceId,
             @Nonnull UUID descriptorId
@@ -73,4 +99,3 @@ public class M2MEServiceRestClient extends RestClient {
         );
     }
 }
-

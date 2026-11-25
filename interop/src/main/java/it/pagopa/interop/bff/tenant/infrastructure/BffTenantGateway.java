@@ -143,7 +143,8 @@ public class BffTenantGateway implements TenantGateway {
     @Override
     public void revokeVerifiedAttribute(@NonNull TenantRef tenantRef, @NonNull AttributeRef attributeRef, @NonNull AgreementRef agreementRef) {
         var command = bffCommand(requestFactory.revokeVerifiedAttributeCommand(agreementRef), BffRevokeVerifiedAttributeCommand.class);
-        executeWithPolling(restClient.revokeVerifiedAttribute(tenantRef.id(), attributeRef.id(), command.getBffPayload()));
+        executeWithPolling(restClient.revokeVerifiedAttribute(tenantRef.id(), attributeRef.id(), command.getAgreement()
+            .id()));
     }
 
     @Override
