@@ -45,6 +45,7 @@ interop:
     agreement: ${interop.web.base-url}/fruizione/richieste
     producer-e-service-list: ${interop.web.base-url}/erogazione/e-service
     producer-e-service-template-list: ${interop.web.base-url}/erogazione/template-eservice
+    consumer-e-service-template-catalog: ${interop.web.base-url}/erogazione/catalogo-template
     consumer-agreement-list: ${interop.web.base-url}/fruizione/richieste
     producer-agreement-list: ${interop.web.base-url}/erogazione/richieste
     producer-purpose-list: ${interop.web.base-url}/erogazione/finalita

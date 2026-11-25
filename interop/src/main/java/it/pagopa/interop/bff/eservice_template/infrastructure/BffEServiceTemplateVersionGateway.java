@@ -24,6 +24,7 @@ import org.springframework.stereotype.Service;
 import java.io.File;
 import java.nio.file.Path;
 import java.util.List;
+import java.util.Objects;
 import java.util.Optional;
 import java.util.UUID;
 
@@ -91,7 +92,8 @@ public class BffEServiceTemplateVersionGateway implements EServiceTemplateVersio
     @Override
     public EServiceTemplateVersion uploadInterface(EServiceTemplateRef templateRef, EServiceTemplateVersionRef versionRef, String fixturePath) {
         File document = FileUtils.loadClasspathResourceAsTempFile(fixturePath);
-        String prettyName = Path.of(fixturePath).getFileName().toString();
+        EServiceTemplate eServiceTemplate = entityStore.getById(templateRef.id(), EServiceTemplate.class).orElse(null);
+        String prettyName = "Specifica API_" + Objects.requireNonNull(eServiceTemplate).getName() + "_Comune di Milano_v1";
 
         var created = restClient.createEServiceTemplateDocument(
                         templateRef.id(), versionRef.versionId(), DocumentKind.INTERFACE.name(), prettyName, document

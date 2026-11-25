@@ -47,7 +47,7 @@ public interface EServiceTemplateTechnicalInfoSection extends Component {
     @XPath(".//p[normalize-space()='Elenco documenti']")
     Label documentsListLabel();
 
-    @XPath(".//button[normalize-space()='Specifica API'] | .//a[normalize-space()='Specifica API']")
+    @XPath(".//div[normalize-space()='Elenco documenti']/parent::div/div[2]//button")
     Button apiSpecLink();
 
     @XPath(".//*[self::h3 or self::h4 or self::p][normalize-space()='Link utili']")
