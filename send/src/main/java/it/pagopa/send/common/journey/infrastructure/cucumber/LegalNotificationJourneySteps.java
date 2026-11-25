@@ -1,20 +1,18 @@
 package it.pagopa.send.common.journey.infrastructure.cucumber;
 
-import it.pagopa.send.common.legal_notification.domain.FeePolicy;
-import it.pagopa.send.common.legal_notification.domain.PhysicalCommunicationType;
-import it.pagopa.send.common.legal_notification.infrastructure.factory.LegalNotificationCreationCommandFactory;
+import io.cucumber.datatable.DataTable;
 import io.cucumber.java.en.Given;
 import io.cucumber.java.en.When;
-import it.pagopa.send.common.user.domain.User;
-import it.pagopa.send.common.user.domain.UserAlias;
-import it.pagopa.send.common.user.domain.UserProvider;
-import it.pagopa.send.common.journey.application.SendJourney;
 import it.pagopa.send.common.kernel.context.CurrentUserSession;
 import it.pagopa.send.common.legal_notification.domain.LegalNotificationCreationCommand;
+import it.pagopa.send.common.user.domain.User;
+import it.pagopa.send.common.journey.application.SendJourney;
 import it.pagopa.send.common.legal_notification.domain.NotificationStatus;
 import it.pagopa.send.common.legal_notification.domain.LegalNotificationType;
-import it.pagopa.send.common.legal_notification.domain.RecipientSpec;
-import it.pagopa.send.common.legal_notification.infrastructure.factory.RecipientSpecFactory;
+import it.pagopa.send.common.legal_notification.domain.PhysicalCommunicationKind;
+import it.pagopa.send.common.legal_notification.domain.RecipientCardinality;
+import it.pagopa.send.common.legal_notification.infrastructure.factory.LegalNotificationCreationCommandFactory;
+import it.pagopa.send.common.user.domain.UserType;
 import lombok.RequiredArgsConstructor;
 
 import java.util.Map;
@@ -23,97 +21,61 @@ import java.util.Map;
 public class LegalNotificationJourneySteps {
 
     private final SendJourney sendJourney;
-    private final RecipientSpecFactory recipientSpecFactory;
     private final LegalNotificationCreationCommandFactory commandFactory;
     private final CurrentUserSession currentUserSession;
-    private final UserProvider userProvider;
 
     @Given("una notifica di tipo {legalNotificationType} creata dalla PA {user} per il destinatario {user} in stato {string}")
     public void createLegalNotification(LegalNotificationType type, User sender, User recipient, String targetStatus) {
-        RecipientSpec recipientSpec = recipientSpecFactory.build(recipient, type.recipientOverrides());
         sendJourney
-                .prepareNotification(new LegalNotificationCreationCommand().sender(sender).recipient(recipientSpec))
+                .prepareNotification(commandFactory.forLegalNotificationType(sender, type, recipient))
                 .sendNotification(sender, NotificationStatus.fromValue(targetStatus));
     }
 
     @Given("la PA {user} ha creato ed annullato una notifica di tipo {legalNotificationType} per il destinatario {user}")
     public void createAndCancelLegalNotification(User sender, LegalNotificationType type, User recipient) {
-        RecipientSpec recipientSpec = recipientSpecFactory.build(recipient, type.recipientOverrides());
         sendJourney
-                .prepareNotification(new LegalNotificationCreationCommand().sender(sender).recipient(recipientSpec))
+                .prepareNotification(commandFactory.forLegalNotificationType(sender, type, recipient))
                 .sendNotification(sender, NotificationStatus.ACCEPTED)
                 .deleteNotification();
     }
 
-    /**
-     * Step "tutto-in-uno" per una notifica multi-destinatario con due destinatari fissi
-     * (Lucrezia e Petrarca), utile per scenari che non hanno bisogno di destinatari/dati
-     * configurabili. Per scenari che richiedono destinatari/dati variabili, usare invece i tre
-     * step separati ({@link #prepareNotification}, {@link #addRecipientToNotification},
-     * {@link #sendNotification}).
-     */
-    @Given("una notifica di tipo multidestinatario creata dalla PA {user}")
-    public void createMultiRecipientNotification(User sender) {
-        RecipientSpec lucrezia = recipientSpecFactory.build(userProvider.resolve(UserAlias.USER_1), Map.of(
-                "physicalAddress_address", "Via Ok 890",
-                "physicalAddress_municipality", "Palermo",
-                "physicalAddress_province", "PA",
-                "physicalAddress_zip", "90100",
-                "pagoPA_number", "0",
-                "F24_number", "0"
-        ));
+    @Given("una notifica creata dalla PA {user} di tipo {physicalCommunicationKind} per il destinatario {user}")
+    public void createNotificationWithRecipient(User sender, PhysicalCommunicationKind kind, User recipient) {
+        LegalNotificationCreationCommand command = commandFactory.forExplicitRecipients(sender, Map.of(recipient, Map.of()))
+                .physicalCommunication(kind.physicalCommunication());
+        sendJourney.prepareNotification(command).sendNotification(sender, NotificationStatus.ACCEPTED);
+    }
 
-        // IMPRESA_1: stesso codice fiscale numerico (12666810299) del destinatario PG usato finora
-        RecipientSpec petrarca = recipientSpecFactory.build(userProvider.resolve(UserAlias.IMPRESA_1), Map.of(
-                "digitalDomicile", "test@pec.it",
-                "pagoPA_number", "1",
-                "F24_number", "0"
-        ));
+    @Given("una notifica {recipientCardinality} creata dalla PA {user} di tipo {physicalCommunicationKind} con destinatario {userType}")
+    public void createNotificationWithIndifferentRecipient(RecipientCardinality cardinality, User sender,
+                                                           PhysicalCommunicationKind kind, UserType recipientType) {
+        LegalNotificationCreationCommand command = commandFactory.forGeneratedRecipients(sender, recipientType, cardinality)
+                .physicalCommunication(kind.physicalCommunication());
+        sendJourney.prepareNotification(command).sendNotification(sender, NotificationStatus.ACCEPTED);
+    }
 
-        sendJourney
-                .prepareNotification(new LegalNotificationCreationCommand()
-                        .sender(sender)
-                        .subject("Comunicazione di test multi-destinatario")
-                        .physicalCommunication(PhysicalCommunicationType.REGISTERED_LETTER_890)
-                        .feePolicy(FeePolicy.FLAT_RATE)
-                        .recipient(lucrezia)
-                        .recipient(petrarca))
+    @Given("una notifica {recipientCardinality} creata dalla PA {user} con destinatario di tipo {userType}")
+    public void createNotificationWithGeneratedRecipients(RecipientCardinality cardinality, User sender, UserType recipientType) {
+        LegalNotificationCreationCommand command = commandFactory.forGeneratedRecipients(sender, recipientType, cardinality);
+        sendJourney.prepareNotification(command).sendNotification(sender, NotificationStatus.ACCEPTED);
+    }
+
+    @When("l'ente {user} crea una notifica di tipo {legalNotificationType} per il destinatario {user}")
+    public void createNotificationBySender(User sender, LegalNotificationType type, User recipient) {
+        sendJourney.prepareNotification(commandFactory.forLegalNotificationType(sender, type, recipient))
                 .sendNotification(sender, NotificationStatus.ACCEPTED);
     }
 
-    /**
-     * Primo step del flusso di creazione notifica multi-destinatario: compila i campi base della
-     * notifica e imposta la PA indicata come utente della sessione. Agnostico dal channel;
-     * ripetibile in combinazione con {@link #addRecipientToNotification} e concluso da
-     * {@link #sendNotification}. A differenza degli step sopra, che compongono un unico step,
-     * questi tre restano su step Cucumber separati e chiamano {@link SendJourney} un metodo alla volta.
-     */
-    @Given("la PA {user} predispone una nuova notifica con i seguenti dati:")
-    public void prepareNotification(User tenant, Map<String, String> data) {
-        sendJourney.prepareNotification(commandFactory.fromNotificationData(tenant, data));
+    @When("l'ente crea una notifica di tipo {legalNotificationType} per il destinatario {user}")
+    public void createNotificationBySessionSender(LegalNotificationType type, User recipient) {
+        User sender = currentUserSession.getUser();
+        sendJourney.prepareNotification(commandFactory.forLegalNotificationType(sender, type, recipient))
+                .sendNotification(sender, NotificationStatus.ACCEPTED);
     }
 
-    /**
-     * Secondo step, ripetibile una volta per destinatario: aggiunge un destinatario censito
-     * ({@link User}) alla notifica in preparazione, con default sensati (1 pagoPA + 1 F24,
-     * indirizzo fisico di default) sovrascrivibili puntualmente da {@link RecipientSpecFactory}.
-     */
-    @Given("viene aggiunto {user} come destinatario con i seguenti dati:")
-    public void addRecipientToNotification(User recipient, Map<String, String> data) {
-        sendJourney.withRecipient(recipientSpecFactory.build(recipient, data));
-    }
-
-    /**
-     * Terzo e ultimo step: invia la notifica predisposta tramite il canale attivo e attende che
-     * raggiunga lo stato indicato.
-     */
-    @When("la notifica viene sottomessa e si attende che lo stato diventi {string}")
-    public void sendNotification(String targetStatus) {
-        // il mittente è l'utente impostato dallo step "la PA ... predispone una nuova notifica"
-        // sendNotification attende lo stato della richiesta (che arriva al massimo ad ACCEPTED): lo stato
-        // della notifica indicato nella feature si attende a parte
-        sendJourney
-                .sendNotification(currentUserSession.getUser(), NotificationStatus.ACCEPTED)
-                .waitForNotificationStatus(NotificationStatus.fromValue(targetStatus));
+    @When("l'ente {user} crea una notifica di tipo {legalNotificationType} per il destinatario {user} con i seguenti valori:")
+    public void createNotificationWithRecipientValues(User sender, LegalNotificationType type, User recipient, DataTable overrides) {
+        sendJourney.prepareNotification(commandFactory.forLegalNotificationType(sender, type, recipient, overrides.asMap(String.class, String.class)))
+                .sendNotification(sender, NotificationStatus.ACCEPTED);
     }
 }

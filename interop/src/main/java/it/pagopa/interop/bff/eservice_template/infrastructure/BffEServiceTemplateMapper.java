@@ -39,6 +39,8 @@ public interface BffEServiceTemplateMapper {
     @Mapping(target = "version", ignore = true)
     @Mapping(target = "riskAnalyses", ignore = true)
     @Mapping(target = "riskAnalysis", ignore = true)
+    @Mapping(target = "instances", ignore = true)
+    @Mapping(target = "instance", ignore = true)
     EServiceTemplate toTemplateBase(EServiceTemplateDetails source);
 
     @Mapping(
@@ -83,12 +85,16 @@ public interface BffEServiceTemplateMapper {
     @Mapping(target = "mode", source = "source.eserviceTemplate.mode")
     @Mapping(target = "state", source = "source.eserviceTemplate", qualifiedByName = "resolveTemplateState")
     @Mapping(target = "personalData", source = "source.eserviceTemplate.personalData")
+    @Mapping(target = "isSignalHubEnabled", source = "source.eserviceTemplate.isSignalHubEnabled")
+    @Mapping(target = "asyncExchange", source = "source.eserviceTemplate.asyncExchange")
     @Mapping(target = "createdAt", source = "existing.createdAt")
     @Mapping(target = "updatedAt", source = "existing.updatedAt")
     @Mapping(target = "versions", ignore = true)
     @Mapping(target = "version", ignore = true)
     @Mapping(target = "riskAnalyses", expression = "java(resolveRiskAnalyses(source, existing))")
     @Mapping(target = "riskAnalysis", ignore = true)
+    @Mapping(target = "instances", expression = "java(existing == null ? java.util.List.of() : existing.getInstances())")
+    @Mapping(target = "instance", ignore = true)
     EServiceTemplate toTemplateFromVersionDetails(EServiceTemplateVersionDetails source, EServiceTemplate existing);
 
     @Named("resolveTemplateState")
@@ -111,6 +117,8 @@ public interface BffEServiceTemplateMapper {
                                 == it.pagopa.interop.generated.openapi.clients.bff.model
                                 .EServiceTemplateVersionState.PUBLISHED
                 );
+
+        // TODO Attualmente gli unici stati previsti sono DRAFT e PUBLISHED, ma vanno gestiti anche i rimanenti.
 
         return hasPublished
                 ? EServiceTemplateState.PUBLISHED

@@ -23,11 +23,13 @@ public class EServicePurposeTemplateSteps {
                 .linkEServiceToPurposeTemplate(eService);
     }
 
-    @ParameterType("pubblicato|in bozza")
+    @ParameterType("pubblicato|in bozza|sospeso|archiviato")
     public PurposeTemplateState purposeTemplateState(String state) {
         return switch (state) {
             case "pubblicato" -> PurposeTemplateState.PUBLISHED;
             case "in bozza" -> PurposeTemplateState.DRAFT;
+            case "sospeso" -> PurposeTemplateState.SUSPENDED;
+            case "archiviato" -> PurposeTemplateState.ARCHIVED;
             default -> throw new IllegalArgumentException("Stato template di finalità non supportato: " + state);
         };
     }
