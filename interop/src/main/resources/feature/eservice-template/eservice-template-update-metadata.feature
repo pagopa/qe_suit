@@ -1,0 +1,357 @@
+Feature: Modifica dei metadati dei template e-service
+  Come creatore di un template e-service
+  Voglio modificare nome, descrizione e destinatari del template
+  Per mantenere aggiornate le informazioni senza modificare versioni, stati e configurazioni operative.
+
+  @work-item:QA-19036
+  @channel:Given=BFF,When=BFF,Then=BFF
+  Scenario Outline: [ESERVICE_TEMPLATE_METADATA_1] - Modifica di un singolo metadato indipendentemente dalle versioni
+  Dato un template e-service con la configurazione di versioni prevista,
+  quando il creatore ne modifica un singolo metadato,
+  allora il template salva il valore richiesto e conserva gli altri metadati, le versioni e le configurazioni.
+
+    Given un admin appartenente all'erogatore Comune di Milano
+    And un template e-service con versione <versioni>
+    When un admin del Comune di Milano richiede la modifica dei metadati del template e-service:
+      | campo   | valore   |
+      | <campo> | <valore> |
+    Then il template e-service presenta i metadati richiesti e conserva quelli non modificati
+
+    Examples:
+      | versioni                 | campo          | valore                              |
+      | in bozza                 | descrizione    | Descrizione aggiornata del template |
+      | pubblicata               | intendedTarget | Nuovo testo dei destinatari         |
+      | sospesa                  | nome           | Template anagrafico aggiornato      |
+      | pubblicata e nuova bozza | intendedTarget | Nuovo testo dei destinatari         |
+
+  @work-item:QA-19036 @m2m
+  @channel:Given=BFF,When=M2M,Then=BFF
+  Scenario Outline: [ESERVICE_TEMPLATE_METADATA_1_M2M] - Modifica di un singolo metadato indipendentemente dalle versioni
+  Dato un template e-service con la configurazione di versioni prevista,
+  quando il creatore ne modifica un singolo metadato,
+  allora il template salva il valore richiesto e conserva gli altri metadati, le versioni e le configurazioni.
+
+    Given un admin appartenente all'erogatore Comune di Milano
+    And un template e-service con versione <versioni>
+    When un sistema informatico autenticato con ruolo M2M_ADMIN del Comune di Milano richiede la modifica dei metadati del template e-service:
+      | campo   | valore   |
+      | <campo> | <valore> |
+    Then il template e-service presenta i metadati richiesti e conserva quelli non modificati
+
+    Examples:
+      | versioni                 | campo          | valore                              |
+      | in bozza                 | descrizione    | Descrizione aggiornata del template |
+      | pubblicata               | intendedTarget | Nuovo testo dei destinatari         |
+      | sospesa                  | nome           | Template anagrafico aggiornato      |
+      | pubblicata e nuova bozza | intendedTarget | Nuovo testo dei destinatari         |
+
+  @work-item:QA-19036
+  @channel:Given=BFF,When=BFF,Then=BFF
+  Scenario: [ESERVICE_TEMPLATE_METADATA_2] - Modifica congiunta dei metadati senza creare versioni
+  Dato un template e-service con una versione pubblicata e una nuova versione in bozza,
+  quando il creatore modifica nome, descrizione e destinatari,
+  allora i nuovi metadati vengono salvati senza creare versioni o alterare le configurazioni operative.
+
+    Given un admin appartenente all'erogatore Comune di Milano
+    And un template e-service con versione pubblicata e nuova bozza
+    When un admin del Comune di Milano richiede la modifica dei metadati del template e-service:
+      | campo          | valore                              |
+      | nome           | Template anagrafico aggiornato      |
+      | descrizione    | Descrizione aggiornata del template |
+      | intendedTarget | Nuovo testo dei destinatari         |
+    Then il template e-service presenta i metadati richiesti e conserva quelli non modificati
+
+  @work-item:QA-19036 @m2m
+  @channel:Given=BFF,When=M2M,Then=BFF
+  Scenario: [ESERVICE_TEMPLATE_METADATA_2_M2M] - Modifica congiunta dei metadati senza creare versioni
+  Dato un template e-service con una versione pubblicata e una nuova versione in bozza,
+  quando il creatore modifica nome, descrizione e destinatari,
+  allora i nuovi metadati vengono salvati senza creare versioni o alterare le configurazioni operative.
+
+    Given un admin appartenente all'erogatore Comune di Milano
+    And un template e-service con versione pubblicata e nuova bozza
+    When un sistema informatico autenticato con ruolo M2M_ADMIN del Comune di Milano richiede la modifica dei metadati del template e-service:
+      | campo          | valore                              |
+      | nome           | Template anagrafico aggiornato      |
+      | descrizione    | Descrizione aggiornata del template |
+      | intendedTarget | Nuovo testo dei destinatari         |
+    Then il template e-service presenta i metadati richiesti e conserva quelli non modificati
+
+  @work-item:QA-19036
+  @channel:Given=BFF,When=BFF,Then=BFF
+  Scenario Outline: [ESERVICE_TEMPLATE_METADATA_PROTECTION_1] - Rifiuto della richiesta di modifica in presenza di metadati non ammessi
+  Dato un template non in stato bozza e modificabile da un attore autorizzato,
+  quando l'attore invia una modifica con un metadato valido e un altro non valido,
+  allora il sistema rifiuta tutta la modifica e mantiene invariata la risorsa.
+
+    Given un admin appartenente all'erogatore Comune di Milano
+    And un template e-service con versione pubblicata
+    When un admin del Comune di Milano tenta la modifica dei metadati del template e-service:
+      | campo    | valore               |
+      | <campo1> | <valore_ammesso>     |
+      | <campo2> | <valore_non_ammesso> |
+    Then la modifica dei metadati del template e-service viene rifiutata per <errore>
+
+    Examples:
+      | campo1 | valore_ammesso                 | campo2             | valore_non_ammesso | errore                       |
+      | nome   | Servizio anagrafico aggiornato | descrizione        | desc               | INVALID_DATA                 |
+      | nome   | Servizio anagrafico aggiornato | technology         | REST               | OUT_OF_DRAFT_OPERATION_FIELD |
+      | nome   | Servizio anagrafico aggiornato | technology         | %last-used         | OUT_OF_DRAFT_OPERATION_FIELD |
+      | nome   | Servizio anagrafico aggiornato | mode               | DELIVER            | OUT_OF_DRAFT_OPERATION_FIELD |
+      | nome   | Servizio anagrafico aggiornato | isSignalHubEnabled | false              | OUT_OF_DRAFT_OPERATION_FIELD |
+      | nome   | Servizio anagrafico aggiornato | personalData       | false              | OUT_OF_DRAFT_OPERATION_FIELD |
+      | nome   | Servizio anagrafico aggiornato | asyncExchange      | false              | OUT_OF_DRAFT_OPERATION_FIELD |
+
+  @work-item:QA-19036 @m2m
+  @channel:Given=BFF,When=M2M,Then=BFF
+  Scenario Outline: [ESERVICE_TEMPLATE_METADATA_PROTECTION_1_M2M] - Rifiuto della richiesta di modifica in presenza di metadati non ammessi
+  Dato un template non in stato bozza e modificabile da un attore autorizzato,
+  quando l'attore invia una modifica con un metadato valido e un altro non valido,
+  allora il sistema rifiuta tutta la modifica e mantiene invariata la risorsa.
+
+    Given un admin appartenente all'erogatore Comune di Milano
+    And un template e-service con versione pubblicata
+    When un sistema informatico autenticato con ruolo M2M_ADMIN del Comune di Milano tenta la modifica dei metadati del template e-service:
+      | campo    | valore               |
+      | <campo1> | <valore_ammesso>     |
+      | <campo2> | <valore_non_ammesso> |
+    Then la modifica dei metadati del template e-service viene rifiutata per <errore>
+
+    Examples:
+      | campo1 | valore_ammesso                 | campo2             | valore_non_ammesso | errore                       |
+      | nome   | Servizio anagrafico aggiornato | descrizione        | desc               | INVALID_DATA                 |
+      | nome   | Servizio anagrafico aggiornato | technology         | REST               | OUT_OF_DRAFT_OPERATION_FIELD |
+      | nome   | Servizio anagrafico aggiornato | technology         | %last-used         | OUT_OF_DRAFT_OPERATION_FIELD |
+      | nome   | Servizio anagrafico aggiornato | mode               | DELIVER            | OUT_OF_DRAFT_OPERATION_FIELD |
+      | nome   | Servizio anagrafico aggiornato | isSignalHubEnabled | false              | OUT_OF_DRAFT_OPERATION_FIELD |
+      | nome   | Servizio anagrafico aggiornato | personalData       | false              | OUT_OF_DRAFT_OPERATION_FIELD |
+
+  @work-item:QA-19036
+  @channel:Given=BFF,When=BFF,Then=BFF
+  Scenario: [ESERVICE_TEMPLATE_METADATA_PROTECTION_2] - Ripetizione dei metadati correnti senza effetti operativi
+  Dato un template i cui metadati sono modificabili,
+  quando l’attore ripete una modifica già applicata,
+  allora la ripetizione ha successo senza modificare versioni stati o relazioni.
+
+    Given un admin appartenente all'erogatore Comune di Milano
+    And un template e-service con versione pubblicata
+    When un admin del Comune di Milano richiede la modifica dei metadati del template e-service:
+      | campo       | valore            |
+      | nome        | Nuovo nome        |
+      | descrizione | Nuova descrizione |
+    When un admin del Comune di Milano richiede la modifica dei metadati del template e-service:
+      | campo       | valore     |
+      | nome        | %last-used |
+      | descrizione | %last-used |
+    Then il template e-service presenta i metadati richiesti e conserva quelli non modificati
+
+  @work-item:QA-19036 @m2m
+  @channel:Given=BFF,When=M2M,Then=BFF
+  Scenario: [ESERVICE_TEMPLATE_METADATA_PROTECTION_2_M2M] - Ripetizione dei metadati correnti senza effetti operativi
+  Dato un template i cui metadati sono modificabili,
+  quando l’attore ripete una modifica già applicata,
+  allora la ripetizione ha successo senza modificare versioni stati o relazioni.
+
+    Given un admin appartenente all'erogatore Comune di Milano
+    And un template e-service con versione pubblicata
+    When un sistema informatico autenticato con ruolo M2M_ADMIN del Comune di Milano richiede la modifica dei metadati del template e-service:
+      | campo       | valore            |
+      | nome        | Nuovo nome        |
+      | descrizione | Nuova descrizione |
+    When un sistema informatico autenticato con ruolo M2M_ADMIN del Comune di Milano richiede la modifica dei metadati del template e-service:
+      | campo       | valore     |
+      | nome        | %last-used |
+      | descrizione | %last-used |
+    Then il template e-service presenta i metadati richiesti e conserva quelli non modificati
+
+  @work-item:QA-19036
+  @channel:Given=BFF,When=BFF,Then=BFF
+  Scenario: [ESERVICE_TEMPLATE_METADATA_PROTECTION_3] - Impossibilità di sovrascrivere i metadati di un e-service derivato
+  Dato un e-service ottenuto da un template,
+  quando l’erogatore tenta di modificarne direttamente i metadati ereditati,
+  allora la modifica è respinta senza cambiare il template o la sua istanza.
+
+    Given i seguenti template e-service pubblicati:
+      | alias | nome                  | tecnologia |
+      | TPL-1 | Template Modello Alfa | REST       |
+    And le seguenti istanze di template pubblicate:
+      | alias | template | suffisso |
+      | ES-1  | TPL-1    | suff-001 |
+    When un admin del Comune di Milano tenta la modifica dei metadati dell'e-service "ES-1":
+      | campo       | valore                              |
+      | nome        | Nome aggiornato dell'istanza        |
+      | descrizione | Descrizione aggiornata dell'istanza |
+    Then la modifica dei metadati dell'e-service "ES-1" viene rifiutata per NOT_ALLOWED
+
+  @work-item:QA-19036 @m2m
+  @channel:Given=BFF,When=M2M,Then=BFF
+  Scenario: [ESERVICE_TEMPLATE_METADATA_PROTECTION_3_M2M] - Impossibilità di sovrascrivere i metadati di un e-service derivato
+  Dato un e-service ottenuto da un template,
+  quando l’erogatore tenta di modificarne direttamente i metadati ereditati,
+  allora la modifica è respinta senza cambiare il template o la sua istanza.
+
+    Given i seguenti template e-service pubblicati:
+      | alias | nome                  | tecnologia |
+      | TPL-1 | Template Modello Alfa | REST       |
+    And le seguenti istanze di template pubblicate:
+      | alias | template | suffisso |
+      | ES-1  | TPL-1    | suff-001 |
+    When un sistema informatico autenticato con ruolo M2M_ADMIN per conto del Comune di Milano tenta la modifica dei metadati dell'e-service "ES-1":
+      | campo       | valore                              |
+      | nome        | Nome aggiornato dell'istanza        |
+      | descrizione | Descrizione aggiornata dell'istanza |
+    Then la modifica dei metadati dell'e-service "ES-1" viene rifiutata per NOT_ALLOWED
+
+  @work-item:QA-19036
+  @channel:Given=BFF,When=BFF,Then=BFF
+  Scenario Outline: [ESERVICE_TEMPLATE_METADATA_AUTHORIZATION] - Rifiuto della modifica dei metadati per ruolo non autorizzato.
+  Dato un template e-service pubblicato,
+  quando un operatore con ruolo non autorizzato o che non possiede la titolarità tenta la modifica dei metadati,
+  allora il sistema non accetta le richiesta.
+
+    Given i seguenti template e-service pubblicati:
+      | alias | erogatore          | nome                  | tecnologia |
+      | TPL-1 | Comune di Pozzallo | Template Modello Alfa | REST       |
+    When un <ruolo> del <ente> tenta la modifica dei metadati del template e-service:
+      | campo | valore                         |
+      | nome  | Servizio anagrafico aggiornato |
+    Then la modifica dei metadati del template e-service viene rifiutata per UNAUTHORIZED
+
+    Examples:
+      | ente               | ruolo    |
+      | Comune di Pozzallo | SECURITY |
+      | Comune di Pozzallo | SUPPORT  |
+      | Comune di Pozzallo | REVIEWER |
+      | Comune di Pozzallo | VIEWER   |
+      | Comune di Milano   | ADMIN    |
+
+  @work-item:QA-19036 @m2m
+  @channel:Given=BFF,When=M2M,Then=BFF
+  Scenario Outline: [ESERVICE_TEMPLATE_METADATA_AUTHORIZATION_M2M] - Rifiuto della modifica dei metadati per ruolo non autorizzato.
+  Dato un template e-service pubblicato,
+  quando un operatore con ruolo non autorizzato o che non possiede la titolarità tenta la modifica dei metadati,
+  allora il sistema non accetta le richiesta.
+
+    Given i seguenti template e-service pubblicati:
+      | alias | erogatore          | nome                  | tecnologia |
+      | TPL-1 | Comune di Pozzallo | Template Modello Alfa | REST       |
+    When un sistema informatico autenticato con ruolo <ruolo> del <ente> tenta la modifica dei metadati del template e-service:
+      | campo | valore                         |
+      | nome  | Servizio anagrafico aggiornato |
+    Then la modifica dei metadati del template e-service viene rifiutata per UNAUTHORIZED
+
+    Examples:
+      | ente               | ruolo     |
+      | Comune di Pozzallo | M2M       |
+      | Comune di Milano   | M2M_ADMIN |
+      | Comune di Milano   | M2M_ADMIN |
+
+  @work-item:QA-19036
+  @channel:Given=BFF,When=BFF,Then=BFF
+  Scenario Outline: [ESERVICE_TEMPLATE_METADATA_UNIQUENESS] - Rifiuto della rinomina in conflitto per un template e-service
+  Dato due risorse con nomi distinti,
+  quando l’attore rinomina una risorsa usando il nome dell’altra e una descrizione valida,
+  allora la modifica è respinta integralmente lasciando intatte entrambe le risorse.
+
+    Given i seguenti template e-service pubblicati:
+      | alias | erogatore        | nome                  | tecnologia |
+      | TPL-1 | Comune di Milano | Template Modello Alfa | REST       |
+      | TPL-2 | <erogatore>      | Template Modello Beta | REST       |
+    When un admin del Comune di Milano richiede di assegnare al template e-service "TPL-1" il nome del template e-service "TPL-2" cambiandone soltanto le maiuscole e una nuova descrizione
+    Then la modifica dei metadati del template e-service viene rifiutata per CONFLICT
+
+    Examples:
+      | erogatore          |
+      | Comune di Milano   |
+      | Comune di Pozzallo |
+
+  @work-item:QA-19036 @m2m
+  @channel:Given=BFF,When=M2M,Then=BFF
+  Scenario Outline: [ESERVICE_TEMPLATE_METADATA_UNIQUENESS_M2M] - Rifiuto della rinomina in conflitto per un template e-service
+  Dato due risorse con nomi distinti,
+  quando l’attore rinomina una risorsa usando il nome dell’altra e una descrizione valida,
+  allora la modifica è respinta integralmente lasciando intatte entrambe le risorse.
+
+    Given i seguenti template e-service pubblicati:
+      | alias | erogatore        | nome                  | tecnologia |
+      | TPL-1 | Comune di Milano | Template Modello Alfa | REST       |
+      | TPL-2 | <erogatore>      | Template Modello Beta | REST       |
+    When un sistema informatico autenticato con ruolo M2M_ADMIN del Comune di Milano richiede di assegnare al template e-service "TPL-1" il nome del template e-service "TPL-2" cambiandone soltanto le maiuscole e una nuova descrizione
+    Then la modifica dei metadati del template e-service viene rifiutata per CONFLICT
+
+    Examples:
+      | erogatore          |
+      | Comune di Milano   |
+      | Comune di Pozzallo |
+
+  @work-item:QA-19036
+  @channel:Given=BFF,When=BFF,Then=BFF
+  Scenario Outline: [ESERVICE_TEMPLATE_METADATA_VALIDATION_1] - Rispetto dei limiti di lunghezza dei metadati
+  Dato una risorsa modificabile con un campo soggetto a limiti di lunghezza,
+  quando l’attore propone un testo con lunghezza oltre tali limiti,
+  allora il sistema rifiuta i valori senza modifiche parziali.
+
+    Given i seguenti template e-service pubblicati:
+      | alias | erogatore        | nome                  | tecnologia |
+      | TPL-1 | Comune di Milano | Template Modello Alfa | REST       |
+    When un admin del Comune di Milano tenta la modifica del campo "<campo>" del template e-service "TPL-1" con un valore di <lunghezza> caratteri
+    Then la modifica dei metadati del template e-service viene rifiutata per INVALID_DATA
+
+    Examples:
+      | campo       | lunghezza |
+      | nome        | 4         |
+      | nome        | 46        |
+      | descrizione | 9         |
+      | descrizione | 401       |
+      | destinatari | 9         |
+      | destinatari | 251       |
+
+  @work-item:QA-19036 @m2m
+  @channel:Given=BFF,When=M2M,Then=BFF
+  Scenario Outline: [ESERVICE_TEMPLATE_METADATA_VALIDATION_1_M2M] - Rispetto dei limiti di lunghezza dei metadati
+  Dato una risorsa modificabile con un campo soggetto a limiti di lunghezza,
+  quando l’attore propone un testo con lunghezza oltre tali limiti,
+  allora il sistema rifiuta i valori senza modifiche parziali.
+
+    Given i seguenti template e-service pubblicati:
+      | alias | erogatore        | nome                  | tecnologia |
+      | TPL-1 | Comune di Milano | Template Modello Alfa | REST       |
+    When un sistema informatico autenticato con ruolo M2M_ADMIN del Comune di Milano tenta la modifica del campo "<campo>" del template e-service "TPL-1" con un valore di <lunghezza> caratteri
+    Then la modifica dei metadati del template e-service viene rifiutata per INVALID_DATA
+
+    Examples:
+      | campo       | lunghezza |
+      | nome        | 4         |
+      | nome        | 46        |
+      | descrizione | 9         |
+      | descrizione | 401       |
+      | destinatari | 9         |
+      | destinatari | 251       |
+
+  @work-item:QA-19036
+  @channel:Given=BFF,When=BFF,Then=BFF
+  Scenario: [TEMPLATE_ESERVICE_METADATA_VALIDATION_2] - Rifiuto di valori non ammessi nei metadati di un template e-service
+  Dato una risorsa modificabile da un attore autorizzato,
+  quando l’attore richiede una modifica con un valore vietato,
+  allora il sistema rifiuta la richiesta e conserva i dati originari.
+
+    Given i seguenti template e-service pubblicati:
+      | alias | erogatore        | nome                  | tecnologia |
+      | TPL-1 | Comune di Milano | Template Modello Alfa | REST       |
+    When un admin del Comune di Milano richiede la modifica del template e-service "TPL-1" con un payload vuoto
+    Then la modifica dei metadati del template e-service viene rifiutata per INVALID_DATA
+    And il template e-service presenta i metadati richiesti e conserva quelli non modificati
+
+  # Un payload vuoto dovrebbe restituire un errore 400; tuttavia, per le PATCH M2M v3 già esistenti, come da SRS, viene mantenuto il comportamento attuale.
+  @work-item:QA-19036 @m2m
+  @channel:Given=BFF,When=M2M,Then=BFF
+  Scenario: [TEMPLATE_ESERVICE_METADATA_VALIDATION_2_M2M] - Rifiuto di valori non ammessi nei metadati di un template e-service
+  Dato una risorsa modificabile da un attore autorizzato,
+  quando l’attore richiede una modifica con un valore vietato,
+  allora il sistema rifiuta la richiesta e conserva i dati originari.
+
+    Given i seguenti template e-service pubblicati:
+      | alias | erogatore        | nome                  | tecnologia |
+      | TPL-1 | Comune di Milano | Template Modello Alfa | REST       |
+    When un sistema informatico autenticato con ruolo M2M_ADMIN del Comune di Milano richiede la modifica del template e-service "TPL-1" con un payload vuoto
+    Then il template e-service presenta i metadati richiesti e conserva quelli non modificati

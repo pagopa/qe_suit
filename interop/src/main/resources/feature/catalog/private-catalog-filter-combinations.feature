@@ -44,8 +44,8 @@ Feature: Combinazioni di filtri nel catalogo privato
     And la versione 1 dell'e-service "ES-1" del Comune di Milano pubblicata
     And la versione 1 dell'e-service "ES-2" del Comune di Milano pubblicata
     And la versione 1 dell'e-service "ES-3" del Comune di Milano configurata con i seguenti attributi richiesti:
-      | tipo        | gruppo | attributo                            |
-      | certificato | 1      | CERT-1                               |
+      | tipo        | gruppo | attributo |
+      | certificato | 1      | CERT-1    |
     And la versione 1 dell'e-service "ES-3" del Comune di Milano pubblicata
     And l'e-service "ES-2" del Comune di Milano sottoscritto da PagoPA con una richiesta di fruizione attiva
     When PagoPA cerca nel catalogo "Fruibile" con i seguenti filtri:
@@ -64,9 +64,9 @@ Feature: Combinazioni di filtri nel catalogo privato
       | TPL-1 | Template Giunto Alfa | SOAP       |
       | TPL-2 | Template Giunto Beta | SOAP       |
     And le seguenti istanze di template e-service pubblicate:
-      | alias | template | suffisso   |
-      | ES-1  | TPL-1    | eservice-1 |
-      | ES-2  | TPL-2    | eservice-2 |
+      | alias | template | suffisso (letterale) |
+      | ES-1  | TPL-1    | eservice-1           |
+      | ES-2  | TPL-2    | eservice-2           |
     And i seguenti e-service pubblicati:
       | alias | erogatore        | nome                  |
       | ES-3  | Comune di Milano | E-service Giunto Beta |
@@ -135,8 +135,8 @@ Feature: Combinazioni di filtri nel catalogo privato
       | alias | nome                  | tecnologia |
       | TPL-1 | Template Sintesi Alfa | SOAP       |
     And le seguenti istanze di template pubblicate:
-      | alias | template |
-      | ES-1  | TPL-1    |
+      | alias | template | suffisso |
+      | ES-1  | TPL-1    | eservice |
     And i seguenti e-service pubblicati:
       | alias | erogatore        | nome                      |
       | ES-2  | Comune di Milano | E-service Sintesi Beta    |
