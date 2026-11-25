@@ -5,6 +5,8 @@ import it.pagopa.infrastructure.template.action.TestChain;
 import it.pagopa.infrastructure.template.action.TestChainFactory;
 import it.pagopa.interop.generated.openapi.clients.m2m.v3.ApiClient;
 import it.pagopa.interop.generated.openapi.clients.m2m.v3.api.EserviceTemplatesApi;
+import it.pagopa.interop.generated.openapi.clients.m2m.v3.model.EServiceTemplate;
+import it.pagopa.interop.generated.openapi.clients.m2m.v3.model.EServiceTemplateDraftUpdateSeed;
 import it.pagopa.interop.generated.openapi.clients.m2m.v3.model.EServiceTemplateVersion;
 import jakarta.annotation.Nonnull;
 import org.springframework.stereotype.Component;
@@ -20,6 +22,34 @@ public class M2MEServiceTemplateRestClient extends RestClient {
     public M2MEServiceTemplateRestClient(TestChainFactory chainFactory, ApiClient apiClient) {
         super(chainFactory);
         this.eServiceTemplatesApi = apiClient.eserviceTemplates();
+    }
+
+    public TestChain<EServiceTemplate> getEServiceTemplate(@Nonnull UUID templateId) {
+        return execute(
+                () -> eServiceTemplatesApi
+                        .getEServiceTemplate()
+                        .templateIdPath(templateId)
+                        .execute(Function.identity()),
+                EServiceTemplate.class
+        );
+    }
+
+    public TestChain<EServiceTemplate> updateEServiceTemplateMetadata(
+            @Nonnull UUID templateId,
+            @Nonnull EServiceTemplateDraftUpdateSeed payload
+    ) {
+        return execute(
+                () -> eServiceTemplatesApi
+                        // La patch consente di modificare template e-service che non sono in stato draft.
+                        // Il nome updateDraftEServiceTemplate è dovuto all'operationId definito nell'OpenAPI.
+                        .updateDraftEServiceTemplate()
+                        .templateIdPath(templateId)
+                        .reqSpec(reqSpec -> reqSpec.setContentType(
+                                "application/merge-patch+json; charset=UTF-8"))
+                        .body(payload)
+                        .execute(Function.identity()),
+                EServiceTemplate.class
+        );
     }
 
     public TestChain<EServiceTemplateVersion> getEServiceTemplateVersion(

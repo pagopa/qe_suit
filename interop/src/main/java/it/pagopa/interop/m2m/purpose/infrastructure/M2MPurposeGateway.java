@@ -1,5 +1,7 @@
 package it.pagopa.interop.m2m.purpose.infrastructure;
 
+import it.pagopa.application.context.LastApiResponseStore;
+import it.pagopa.infrastructure.response.ApiResponse;
 import it.pagopa.infrastructure.template.action.strategy.PollingStrategy;
 import it.pagopa.interop.common.kernel.domain.Channel;
 import it.pagopa.interop.common.kernel.domain.DelegationRef;
@@ -19,12 +21,86 @@ import lombok.RequiredArgsConstructor;
 import org.jspecify.annotations.NonNull;
 import org.springframework.stereotype.Service;
 
+import static org.assertj.core.api.Assertions.assertThat;
+
 @Service
 @RequiredArgsConstructor
 public class M2MPurposeGateway implements PurposeGateway {
 
     private final M2MPurposeRestClient restClient;
     private final M2MPurposeMapper mapper;
+    private final M2MPurposeRequestFactory requestFactory;
+    private final LastApiResponseStore lastApiResponseStore;
+
+    @Override
+    public void shouldFailToUpdatePurposeMetadataAsMalformed() {
+        assertThat(lastApiResponseStore.getLastResponse())
+                .as("Risposta al tentativo di modifica dei metadati della finalita")
+                .isNotNull()
+                .extracting(ApiResponse::getStatusCode)
+                .as("Modifica dei metadati della finalita malformata")
+                .isEqualTo(400);
+    }
+
+    @Override
+    public void shouldFailToUpdatePurposeMetadataAsForbidden() {
+        assertThat(lastApiResponseStore.getLastResponse())
+                .as("Risposta al tentativo di modifica dei metadati della finalita")
+                .isNotNull()
+                .extracting(ApiResponse::getStatusCode)
+                .as("Modifica dei metadati della finalita vietata")
+                .isEqualTo(403);
+    }
+
+    @Override
+    public void shouldFailToUpdatePurposeMetadataAsConflict() {
+        assertThat(lastApiResponseStore.getLastResponse())
+                .as("Risposta al tentativo di modifica dei metadati della finalita")
+                .isNotNull()
+                .extracting(ApiResponse::getStatusCode)
+                .as("Modifica dei metadati della finalita in conflitto")
+                .isEqualTo(409);
+    }
+
+    @Override
+    public Purpose updatePurposeMetadata(
+            PurposeRef purposeRef, String name, String description,
+            Boolean isFreeOfCharge, String freeOfChargeReason, Integer dailyCalls) {
+        return restClient.updatePurposeMetadata(
+                        purposeRef.id(), name, description, isFreeOfCharge, freeOfChargeReason, dailyCalls)
+                .withPolling(PollingStrategy.UNTIL_SUCCESS)
+                .map(ignored -> getPurpose(purposeRef))
+                .updateContext()
+                .get();
+    }
+
+    @Override
+    public Purpose updateReversePurposeMetadata(
+            PurposeRef purposeRef, String name, String description,
+            Boolean isFreeOfCharge, String freeOfChargeReason, Integer dailyCalls) {
+        return restClient.updateReversePurposeMetadata(
+                        purposeRef.id(), name, description, isFreeOfCharge, freeOfChargeReason, dailyCalls)
+                .withPolling(PollingStrategy.UNTIL_SUCCESS)
+                .map(ignored -> getPurpose(purposeRef))
+                .updateContext()
+                .get();
+    }
+
+    @Override
+    public void tryToUpdatePurposeMetadata(
+            PurposeRef purposeRef, String name, String description,
+            Boolean isFreeOfCharge, String freeOfChargeReason, Integer dailyCalls) {
+        restClient.updatePurposeMetadata(
+                purposeRef.id(), name, description, isFreeOfCharge, freeOfChargeReason, dailyCalls).withoutPolling();
+    }
+
+    @Override
+    public void tryToUpdateReversePurposeMetadata(
+            PurposeRef purposeRef, String name, String description,
+            Boolean isFreeOfCharge, String freeOfChargeReason, Integer dailyCalls) {
+        restClient.updateReversePurposeMetadata(
+                purposeRef.id(), name, description, isFreeOfCharge, freeOfChargeReason, dailyCalls).withoutPolling();
+    }
 
     @Override
     public Purpose getPurpose(PurposeRef purposeRef) {
@@ -64,7 +140,14 @@ public class M2MPurposeGateway implements PurposeGateway {
 
     @Override
     public Purpose createPurposeFromTemplate(PurposeTemplateRef purposeTemplateRef, EServiceRef eServiceRef) {
-        throw unsupportedOperation();
+        return restClient.createPurposeFromTemplate(
+                        purposeTemplateRef.id(),
+                        requestFactory.creationFromTemplateRequest(eServiceRef, purposeTemplateRef)
+                )
+                .withPolling(PollingStrategy.UNTIL_SUCCESS)
+                .map(createdPurpose -> getPurpose(PurposeRef.of(createdPurpose.getId())))
+                .updateContext()
+                .get();
     }
 
     @Override
@@ -115,6 +198,19 @@ public class M2MPurposeGateway implements PurposeGateway {
     @Override
     public Purpose suspendPurpose(PurposeRef purposeRef, PurposeVersionRef purposeVersionRef, @Nullable DelegationRef delegationRef) {
         throw unsupportedOperation();
+    }
+
+    @Override
+    public Purpose archivePurpose(PurposeRef purposeRef, PurposeVersionRef purposeVersionRef) {
+        restClient.archivePurpose(purposeRef.id())
+                .withPolling(PollingStrategy.UNTIL_SUCCESS);
+
+        return PollingUtils.pollUntil(
+                () -> getPurpose(purposeRef),
+                purpose -> purpose.findVersionById(purposeVersionRef.id())
+                        .map(version -> version.getPurposeVersionState() == PurposeVersionState.ARCHIVED)
+                        .orElse(false)
+        );
     }
 
     @Override

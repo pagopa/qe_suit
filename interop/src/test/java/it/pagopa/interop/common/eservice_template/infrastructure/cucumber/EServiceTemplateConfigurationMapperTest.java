@@ -7,6 +7,8 @@ import it.pagopa.interop.common.eservice_template.domain.EServiceTemplatePrepara
 import it.pagopa.interop.common.eservice_template.infrastructure.cucumber.dto.EServiceTemplateInstanceConfiguration;
 import it.pagopa.interop.common.eservice_template.infrastructure.cucumber.dto.EServiceTemplatePublicationConfiguration;
 import it.pagopa.interop.common.eservice_template.infrastructure.cucumber.dto.mapper.EServiceTemplateConfigurationMapper;
+import it.pagopa.interop.common.eservice_template.infrastructure.cucumber.dto.mapper.EServiceTemplateConfigurationMapperImpl;
+import it.pagopa.interop.common.infrastructure.SharedMapper;
 import it.pagopa.interop.common.infrastructure.cucumber.DataTableMapper;
 import it.pagopa.interop.common.kernel.domain.Tenant;
 import jakarta.validation.ConstraintViolationException;
@@ -17,18 +19,24 @@ import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.ValueSource;
-import org.mapstruct.factory.Mappers;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.test.context.junit.jupiter.SpringJUnitConfig;
 
 import java.nio.file.Path;
 import java.util.Map;
 
 import static org.assertj.core.api.Assertions.*;
 
+@SpringJUnitConfig(classes = {
+        EServiceTemplateConfigurationMapperImpl.class,
+        SharedMapper.class
+})
 class EServiceTemplateConfigurationMapperTest {
     private static final ValidatorFactory VALIDATORS = Validation.buildDefaultValidatorFactory();
     private final DataTableMapper tables = new DataTableMapper(VALIDATORS.getValidator());
-    private final EServiceTemplateConfigurationMapper mapper = Mappers.getMapper(EServiceTemplateConfigurationMapper.class);
     private final BffEServiceTemplateRequestFactory factory = new BffEServiceTemplateRequestFactory();
+    @Autowired
+    private EServiceTemplateConfigurationMapper mapper;
 
     @AfterAll
     static void closeValidators() {
@@ -78,11 +86,22 @@ class EServiceTemplateConfigurationMapperTest {
     }
 
     @Test
+    void publicationUsesLiteralNameWhenRequested() {
+        var dto = (EServiceTemplatePublicationConfiguration) tables.transform(Map.of(
+                "alias", "TPL-1", "nome (letterale)", "Template Stampo Alfa", "tecnologia", "SOAP"),
+                EServiceTemplatePublicationConfiguration.class);
+        var command = (BffEServiceTemplateCreationCommand) factory.defaultCreationEServiceTemplateCommand();
+        mapper.apply(dto, command);
+        assertThat(command.getBffCreationPayload().getName()).isEqualTo("Template Stampo Alfa");
+    }
+
+    @Test
     void suffixMapsToSupportedInstanceLabelAndOmissionPreservesUniqueFactoryLabel() {
         var command = (BffEServiceTemplateInstanceCreationCommand) factory.defaultCreationEServiceTemplateInstanceCommand();
         String originalLabel = command.getBffPayload().getInstanceLabel();
-        var dto = (EServiceTemplateInstanceConfiguration) tables.transform(Map.of(
-                "alias", "ES-1", "template", "TPL-1"), EServiceTemplateInstanceConfiguration.class);
+        var dto = new EServiceTemplateInstanceConfiguration();
+        dto.setAlias("ES-1");
+        dto.setTemplate("TPL-1");
         mapper.apply(dto, command);
         assertThat(command.getBffPayload().getInstanceLabel()).isEqualTo(originalLabel).isNotBlank();
 
@@ -97,6 +116,8 @@ class EServiceTemplateConfigurationMapperTest {
         assertThatThrownBy(() -> tables.transform(Map.of("nome", "Template", "tecnologia", "SOAP"),
                 EServiceTemplatePublicationConfiguration.class)).isInstanceOf(ConstraintViolationException.class);
         assertThatThrownBy(() -> tables.transform(Map.of("alias", "ES-1", "template", " "),
+                EServiceTemplateInstanceConfiguration.class)).isInstanceOf(ConstraintViolationException.class);
+        assertThatThrownBy(() -> tables.transform(Map.of("alias", "ES-1", "template", "TPL-1"),
                 EServiceTemplateInstanceConfiguration.class)).isInstanceOf(ConstraintViolationException.class);
         assertThatThrownBy(() -> tables.transform(Map.of("alias", "ES-1", "template", "TPL-1", "suffisso", " "),
                 EServiceTemplateInstanceConfiguration.class)).isInstanceOf(ConstraintViolationException.class);

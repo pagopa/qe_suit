@@ -8,6 +8,8 @@ import it.pagopa.interop.generated.openapi.clients.bff.api.ClientsApi;
 import it.pagopa.interop.generated.openapi.clients.bff.model.*;
 import org.springframework.stereotype.Component;
 
+import java.util.LinkedHashMap;
+import java.util.Map;
 import java.util.UUID;
 import java.util.function.Function;
 
@@ -87,6 +89,26 @@ public class BffClientRestClient extends RestClient {
                         .body(setAdminToClientRequest)
                         .execute(Function.identity()),
                 Client.class
+        );
+    }
+
+    public TestChain<Void> updateClient(UUID clientId, ClientUpdateSeed clientUpdateSeed) {
+        return execute(
+                () -> {
+                    // The generated anyOf model forces null fields into JSON; PATCH requires their omission.
+                    Map<String, String> payload = new LinkedHashMap<>();
+                    if (clientUpdateSeed.getName() != null) {
+                        payload.put(ClientUpdateSeed.JSON_PROPERTY_NAME, clientUpdateSeed.getName());
+                    }
+                    if (clientUpdateSeed.getDescription() != null) {
+                        payload.put(ClientUpdateSeed.JSON_PROPERTY_DESCRIPTION, clientUpdateSeed.getDescription());
+                    }
+                    return clientsApi.updateClient()
+                            .clientIdPath(clientId)
+                            .reqSpec(builder -> builder.setBody(payload))
+                            .execute(Function.identity());
+                },
+                Void.class
         );
     }
 }

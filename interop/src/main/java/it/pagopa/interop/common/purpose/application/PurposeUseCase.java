@@ -5,21 +5,86 @@ import it.pagopa.interop.common.kernel.domain.DelegationRef;
 import it.pagopa.interop.common.kernel.domain.EServiceRiskAnalysis;
 import it.pagopa.interop.common.purpose.domain.Purpose;
 import it.pagopa.interop.common.purpose.domain.PurposeVersion;
-import it.pagopa.interop.common.purpose.domain.PurposeVersionState;
 import it.pagopa.interop.common.purpose_template.domain.PurposeTemplate;
+import it.pagopa.utils.async.PollingUtils;
 import jakarta.annotation.Nullable;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
+import java.util.Objects;
 import java.util.function.Consumer;
-
-import static org.assertj.core.api.Assertions.assertThat;
 
 @Service
 @RequiredArgsConstructor
 public class PurposeUseCase {
     private final PurposeGateway purposeGateway;
     private final PurposeCommandFactory purposeCommandFactory;
+
+    public Purpose getPurpose(Purpose purpose) {
+        return purposeGateway.getPurpose(purpose.getRef());
+    }
+
+    public Purpose updatePurposeMetadata(
+            Purpose purpose, String name, String description,
+            Boolean isFreeOfCharge, String freeOfChargeReason, Integer dailyCalls) {
+        purposeGateway.updatePurposeMetadata(
+                purpose.getRef(), name, description, isFreeOfCharge, freeOfChargeReason, dailyCalls);
+
+        return pollForUpdatedMetadata(purpose, name, description, isFreeOfCharge, freeOfChargeReason, dailyCalls);
+    }
+
+    public Purpose updateReversePurposeMetadata(
+            Purpose purpose, String name, String description,
+            Boolean isFreeOfCharge, String freeOfChargeReason, Integer dailyCalls) {
+        purposeGateway.updateReversePurposeMetadata(
+                purpose.getRef(), name, description, isFreeOfCharge, freeOfChargeReason, dailyCalls);
+
+        return pollForUpdatedMetadata(purpose, name, description, isFreeOfCharge, freeOfChargeReason, dailyCalls);
+    }
+
+    public void tryToUpdatePurposeMetadata(
+            Purpose purpose, String name, String description,
+            Boolean isFreeOfCharge, String freeOfChargeReason, Integer dailyCalls) {
+        purposeGateway.tryToUpdatePurposeMetadata(
+                purpose.getRef(), name, description, isFreeOfCharge, freeOfChargeReason, dailyCalls);
+    }
+
+    public void tryToUpdateReversePurposeMetadata(
+            Purpose purpose, String name, String description,
+            Boolean isFreeOfCharge, String freeOfChargeReason, Integer dailyCalls) {
+        purposeGateway.tryToUpdateReversePurposeMetadata(
+                purpose.getRef(), name, description, isFreeOfCharge, freeOfChargeReason, dailyCalls);
+    }
+
+    public void shouldFailToUpdatePurposeMetadataAsMalformed() {
+        purposeGateway.shouldFailToUpdatePurposeMetadataAsMalformed();
+    }
+
+    public void shouldFailToUpdatePurposeMetadataAsForbidden() {
+        purposeGateway.shouldFailToUpdatePurposeMetadataAsForbidden();
+    }
+
+    public void shouldFailToUpdatePurposeMetadataAsConflict() {
+        purposeGateway.shouldFailToUpdatePurposeMetadataAsConflict();
+    }
+
+    private Purpose pollForUpdatedMetadata(
+            Purpose purpose, String name, String description,
+            Boolean isFreeOfCharge, String freeOfChargeReason, Integer dailyCalls) {
+        return PollingUtils.pollUntil(
+                () -> getPurpose(purpose),
+                refreshed -> Objects.equals(name, refreshed.getTitle())
+                        && Objects.equals(description, refreshed.getDescription())
+                        && (isFreeOfCharge == null
+                        || Objects.equals(isFreeOfCharge, refreshed.getIsFreeOfCharge()))
+                        && (freeOfChargeReason == null
+                        || Objects.equals(freeOfChargeReason, refreshed.getFreeOfChargeReason()))
+                        && (dailyCalls == null
+                        || refreshed.getLastDraftVersion() != null
+                        && Objects.equals(dailyCalls, refreshed.getLastDraftVersion().getDailyCalls())),
+                "Purpose " + purpose.getId() + " metadata did not reach the requested values"
+        );
+    }
 
     public Purpose updatePurposeDailyCallsEstimateBeyondThreshold(Purpose purpose, EService eService) {
         PurposeVersion activeVersion = purpose.getLastActiveVersion();
@@ -78,5 +143,9 @@ public class PurposeUseCase {
 
     public Purpose suspendPurpose(Purpose purpose, PurposeVersion purposeVersion, @Nullable DelegationRef delegationRef) {
         return purposeGateway.suspendPurpose(purpose.getRef(), purposeVersion.getRef(), delegationRef);
+    }
+
+    public Purpose archivePurpose(Purpose purpose, PurposeVersion purposeVersion) {
+        return purposeGateway.archivePurpose(purpose.getRef(), purposeVersion.getRef());
     }
 }
