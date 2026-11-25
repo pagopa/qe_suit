@@ -7,7 +7,6 @@ import it.frontend.e2e.framework.web.capability.core.Readable;
 import it.frontend.e2e.framework.web.domain.Page;
 import it.pagopa.infrastructure.suit.component.Button;
 import it.pagopa.send.common.legal_notification.domain.LegalNotificationCreationRequest;
-import it.pagopa.send.common.legal_notification.domain.RecipientSpec;
 import it.pagopa.send.web.infrastructure.page.component.ErrorSnackbar;
 import it.pagopa.send.web.login.infrastructure.page.component.OneTrustBanner;
 import it.pagopa.send.web.mittente.infrastructure.page.DashboardPage;
@@ -17,6 +16,7 @@ import it.pagopa.send.web.notification_creation.infrastructure.page.component.De
 import it.pagopa.send.web.notification_creation.infrastructure.page.component.AttachmentsStep;
 import it.pagopa.send.web.notification_creation.infrastructure.page.component.ExitDialog;
 import it.pagopa.send.web.notification_creation.infrastructure.page.component.PreliminaryInformationStep;
+import it.pagopa.send.web.notification_creation.infrastructure.page.component.RecipientForm;
 import it.pagopa.utils.async.PollingUtils;
 import org.assertj.core.api.Assertions;
 
@@ -157,7 +157,7 @@ public interface CreateNotificationPage extends Page, CreateNotificationForm {
         preliminaryInformationStep().fillFields(request);
     }
 
-    default void fillRecipient(RecipientSpec recipient) {
+    default void fillRecipient(RecipientForm recipient) {
         recipientsStep().nextEmptyRecipientBox().fillFields(recipient);
     }
 

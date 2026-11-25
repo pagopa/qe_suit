@@ -40,6 +40,7 @@ public class WebLegalNotificationGateway implements LegalNotificationGateway {
     private static final String TEST_DOCUMENT = "documents/test-attachment.pdf";
 
     private final CreateNotificationPage createNotificationPage;
+    private final WebRecipientFormMapper recipientFormMapper;
     private final NotificationSuccessPage notificationSuccessPage;
     private final MittenteNotificationDetailsPage notificationDetailsPage;
     private final LegalNotificationRequestFactory requestFactory;
@@ -64,7 +65,7 @@ public class WebLegalNotificationGateway implements LegalNotificationGateway {
         if (!recipient.payments().isEmpty()) {
             throw new UnsupportedOperationException("I pagamenti dei destinatari non sono ancora supportati sul canale Web");
         }
-        createNotificationPage.fillRecipient(recipient);
+        createNotificationPage.fillRecipient(recipientFormMapper.toForm(recipient));
     }
 
     /**
