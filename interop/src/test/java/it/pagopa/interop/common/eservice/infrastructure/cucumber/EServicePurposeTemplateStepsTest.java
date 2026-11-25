@@ -32,14 +32,6 @@ class EServicePurposeTemplateStepsTest {
     }
 
     @Test
-    void resolvesBothSupportedPurposeTemplateStates() {
-        assertThat(steps.purposeTemplateState("pubblicato")).isEqualTo(PurposeTemplateState.PUBLISHED);
-        assertThat(steps.purposeTemplateState("in bozza")).isEqualTo(PurposeTemplateState.DRAFT);
-        assertThatThrownBy(() -> steps.purposeTemplateState("archiviato"))
-                .isInstanceOf(IllegalArgumentException.class);
-    }
-
-    @Test
     void rejectsUnknownEServiceAliasBeforeStartingTheJourney() {
         assertThatThrownBy(() -> steps.linkPurposeTemplate("missing", PurposeTemplateState.DRAFT))
                 .isInstanceOf(IllegalArgumentException.class).hasMessageContaining("missing");

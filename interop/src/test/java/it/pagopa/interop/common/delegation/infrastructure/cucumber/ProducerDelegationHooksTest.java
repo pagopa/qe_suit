@@ -160,8 +160,8 @@ class ProducerDelegationHooksTest {
                 .getAnnotation(After.class);
         After eserviceAfter = EServiceHooks.class.getMethod("cleanUpEServices").getAnnotation(After.class);
 
-        assertThat(before.value()).isEqualTo("@private-catalog");
-        assertThat(after.value()).isEqualTo("@private-catalog");
+        assertThat(before.value()).isEqualTo("@private-catalog or @clean-up");
+        assertThat(after.value()).isEqualTo("@private-catalog or @clean-up");
         assertThat(after.order()).isGreaterThan(eserviceAfter.order());
     }
 
