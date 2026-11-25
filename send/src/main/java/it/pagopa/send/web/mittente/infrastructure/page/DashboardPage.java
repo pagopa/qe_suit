@@ -4,6 +4,7 @@ import it.frontend.e2e.framework.annotation.location.web.Url;
 import it.frontend.e2e.framework.annotation.selector.XPath;
 import it.frontend.e2e.framework.core.capability.core.Clickable;
 import it.frontend.e2e.framework.web.capability.core.Readable;
+import it.frontend.e2e.framework.web.domain.Component;
 import it.pagopa.infrastructure.suit.component.Button;
 import it.pagopa.infrastructure.suit.component.TextField;
 import it.pagopa.send.web.infrastructure.page.component.Footer;
@@ -77,6 +78,11 @@ public interface DashboardPage extends NotificationSearchPage {
 
     @XPath("//*[@data-testid=\"notificationsTable\"]")
     Table notificationsTable();
+
+    // lista vuota: al posto di filtri e tabella se l'ente non ha notifiche, al posto della tabella se la ricerca non
+    // dà risultati
+    @XPath("//*[@data-testid=\"emptyState\"]")
+    Component emptyState();
 
     Optional<OneTrustBanner> oneTrustBanner();
 
