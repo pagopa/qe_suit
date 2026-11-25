@@ -37,6 +37,32 @@ def build_learning(history, ignore_rules=None):
                 and indexed[source].get('_source_suite') == row.get('_source_suite')):
             parent[root(current)] = root(source)
 
+    # Old manually analyzed RAEs have no ``matching`` lineage.  Multiple
+    # independent QA-approved occurrences of the *same normalized full log*
+    # and the *same ticket identity* are equivalent evidence, not competing
+    # defect groups. Never merge unconfirmed proposals or bot auto-matches.
+    identical = {}
+    for row in history:
+        key = _key(row)
+        if key not in indexed:
+            continue
+        matching = row.get('matching') or {}
+        if (matching.get('status') == 'auto_matched'
+                or (matching.get('status') == 'pending_confirmation'
+                    and not is_qa_confirmed(row, approved_history=True))):
+            continue
+        ticket = (str(row.get('link_prod_bug') or ''),
+                  str(row.get('link_suite_bug') or ''))
+        if ticket == ('', ''):
+            continue
+        log = (ignore_rules.normalize(str(row['error_log']))
+               if ignore_rules else str(row['error_log']))
+        identity = (str(row.get('_source_suite', '')),
+                    str(row['id_test']).strip().casefold(), ticket, log)
+        previous = identical.setdefault(identity, key)
+        if previous != key:
+            parent[root(key)] = root(previous)
+
     groups = defaultdict(list)
     for k, row in indexed.items():
         groups[root(k)].append(row)
