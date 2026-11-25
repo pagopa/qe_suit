@@ -3,17 +3,23 @@ package it.pagopa.interop.common.client.infrastructure;
 import io.jsonwebtoken.JwtBuilder;
 import io.jsonwebtoken.Jwts;
 import it.pagopa.application.context.EntityStore;
+import it.pagopa.infrastructure.template.action.strategy.PollingStrategy;
 import it.pagopa.interop.common.client.application.ClientAssertionGateway;
 import it.pagopa.interop.common.client.domain.Client;
 import it.pagopa.interop.common.client.domain.ClientAssertion;
 import it.pagopa.interop.common.client.domain.ClientAssertionClaimOverride;
+import it.pagopa.interop.common.infrastructure.auth.AuthRestClient;
 import it.pagopa.interop.common.purpose.domain.Purpose;
+import it.pagopa.kernel.security.AccessToken;
+import it.pagopa.kernel.security.DPoPProof;
+import it.pagopa.kernel.security.TokenType;
 import lombok.RequiredArgsConstructor;
 import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
+import javax.annotation.Nullable;
 import java.security.KeyPair;
 import java.security.NoSuchAlgorithmException;
 import java.time.Instant;
@@ -36,6 +42,22 @@ public class CommonClientAssertionGateway implements ClientAssertionGateway {
     private String clientAssertionAudience;
     private final EntityStore  entityStore;
     private final ClientAssertionClaimOverrideMapper mapper;
+    private final AuthRestClient authRestClient;
+
+    @Override
+    public AccessToken generateVoucher(Client client, @Nullable Purpose purpose, @Nullable DPoPProof dPoPProof)
+            throws NoSuchAlgorithmException {
+        ClientAssertion assertion = createClientAssertion(client, purpose, client.getLastKey().pair(), List.of());
+
+        return authRestClient.createToken(client.getId(), assertion.getClientAssertion(),
+                        dPoPProof != null ? dPoPProof.getJwt() : null)
+                .withPolling(PollingStrategy.UNTIL_SUCCESS)
+                .map(credentials -> new AccessToken(
+                        credentials.getAccessToken(),
+                        TokenType.valueOf(credentials.getTokenType().getValue().toUpperCase()),
+                        credentials.getExpiresIn()))
+                .get();
+    }
 
     public ClientAssertion createClientAssertion(Client client, Purpose purpose, KeyPair keyPair, List<ClientAssertionClaimOverride> overrides) throws NoSuchAlgorithmException {
         KeyPair kp = Optional.ofNullable(keyPair).orElseGet(() -> client.getLastKey().pair());

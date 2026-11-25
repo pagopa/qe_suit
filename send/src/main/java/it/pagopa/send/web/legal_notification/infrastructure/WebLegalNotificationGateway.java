@@ -1,6 +1,5 @@
 package it.pagopa.send.web.legal_notification.infrastructure;
 
-import it.frontend.e2e.framework.web.WebPresentationGateway;
 import it.pagopa.application.context.EntityStore;
 import it.pagopa.send.common.kernel.domain.Channel;
 import it.pagopa.send.common.legal_notification.application.LegalNotificationGateway;
@@ -42,7 +41,9 @@ public class WebLegalNotificationGateway implements LegalNotificationGateway {
     private static final String TEST_DOCUMENT = "documents/test-attachment.pdf";
     private static final String TEST_F24_METADATA = "documents/f24-metadata.json";
 
-    private final WebPresentationGateway browser;
+    private final CreateNotificationPage createNotificationPage;
+    private final NotificationSuccessPage notificationSuccessPage;
+    private final MittenteNotificationDetailsPage notificationDetailsPage;
     private final LegalNotificationRequestFactory requestFactory;
     private final LegalNotificationCreationRequest request;
     private final WebLegalNotificationReadGateway readGateway;
@@ -52,11 +53,10 @@ public class WebLegalNotificationGateway implements LegalNotificationGateway {
     @Override
     public void prepareNotification(LegalNotificationCreationCommand command) {
         requestFactory.applyPreliminaryData(request, command);
-        CreateNotificationPage page = browser.bind(CreateNotificationPage.class);
-        page.navigateTo();
-        page.assertLoaded();
-        page.compileInformazioniPreliminari(request);
-        page.continueToNextStep();
+        createNotificationPage.navigateTo();
+        createNotificationPage.assertLoaded();
+        createNotificationPage.compileInformazioniPreliminari(request);
+        createNotificationPage.continueToNextStep();
         command.getRecipients().forEach(this::addRecipient);
     }
 
@@ -66,7 +66,7 @@ public class WebLegalNotificationGateway implements LegalNotificationGateway {
      */
     @Override
     public void addRecipient(RecipientSpec recipient) {
-        browser.bind(CreateNotificationPage.class).compileDestinatario(recipient);
+        createNotificationPage.compileDestinatario(recipient);
         request.addRecipient(requestFactory.resolveRecipient(recipient));
     }
 
@@ -80,12 +80,11 @@ public class WebLegalNotificationGateway implements LegalNotificationGateway {
         if (targetStatus == NotificationStatus.REFUSED) {
             throw new UnsupportedOperationException("Lo stato REFUSED non è osservabile dal portale della PA");
         }
-        CreateNotificationPage page = browser.bind(CreateNotificationPage.class);
-        page.continueToNextStep();
-        compilePayments(page);
-        page.documentazioneStep().fillFields(request.getSubject(), resourcePath(TEST_DOCUMENT));
-        page.continueToNextStep();
-        browser.bind(NotificationSuccessPage.class).assertLoaded();
+        createNotificationPage.continueToNextStep();
+        compilePayments();
+        createNotificationPage.documentazioneStep().fillFields(request.getSubject(), resourcePath(TEST_DOCUMENT));
+        createNotificationPage.continueToNextStep();
+        notificationSuccessPage.assertLoaded();
 
         // la notifica compare tra quelle della PA solo dopo l'accettazione, quando ha lo IUN
         String iun = PollingUtils.pollUntil(
@@ -119,11 +118,10 @@ public class WebLegalNotificationGateway implements LegalNotificationGateway {
     /** Annulla la notifica dal suo dettaglio nel portale della PA e attende che risulti annullata, come il canale BFF. */
     @Override
     public void deleteNotification(String iun) {
-        MittenteNotificationDetailsPage details = browser.bind(MittenteNotificationDetailsPage.class);
-        details.navigateTo(iun);
-        details.assertLoaded();
-        details.cancelNotificationButton().click();
-        details.confirmCancelNotificationButton().click();
+        notificationDetailsPage.navigateTo(iun);
+        notificationDetailsPage.assertLoaded();
+        notificationDetailsPage.cancelNotificationButton().click();
+        notificationDetailsPage.confirmCancelNotificationButton().click();
         PollingUtils.pollUntil(
                 () -> readNotification(iun).getStatus(),
                 status -> status == NotificationStatus.CANCELLED,
@@ -155,7 +153,7 @@ public class WebLegalNotificationGateway implements LegalNotificationGateway {
      * "Posizione debitoria" e, se un destinatario ha dei pagamenti, "Dettaglio posizione debitoria". Con più
      * destinatari con pagamenti si caricherebbero gli stessi file di test più volte, che il portale non accetta.
      */
-    private void compilePayments(CreateNotificationPage page) {
+    private void compilePayments() {
         List<ResolvedRecipient> recipientsWithPayments = request.getRecipients().stream()
                 .filter(recipient -> !recipient.payments().isEmpty())
                 .toList();
@@ -163,12 +161,12 @@ public class WebLegalNotificationGateway implements LegalNotificationGateway {
             throw new UnsupportedOperationException("Più destinatari con pagamenti non sono supportati sul canale Web:"
                     + " il portale non accetta lo stesso file più di una volta");
         }
-        page.dettaglioPosizioneDebitoriaStep().selectPaymentModels(request.getRecipients());
-        page.continueToNextStep();
+        createNotificationPage.dettaglioPosizioneDebitoriaStep().selectPaymentModels(request.getRecipients());
+        createNotificationPage.continueToNextStep();
         if (!recipientsWithPayments.isEmpty()) {
-            page.paymentDetailStep().fillFields(request.getFeePolicy(), recipientsWithPayments,
+            createNotificationPage.paymentDetailStep().fillFields(request.getFeePolicy(), recipientsWithPayments,
                     resourcePath(TEST_DOCUMENT), resourcePath(TEST_F24_METADATA));
-            page.continueToNextStep();
+            createNotificationPage.continueToNextStep();
         }
     }
 

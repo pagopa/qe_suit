@@ -46,6 +46,73 @@ class PurposeUseCaseTest {
     }
 
     @Test
+    void verifiesConflictingMetadataUpdateThroughTheGateway() {
+        useCase.shouldFailToUpdatePurposeMetadataAsConflict();
+
+        verify(gateway).shouldFailToUpdatePurposeMetadataAsConflict();
+        verifyNoMoreInteractions(gateway);
+    }
+
+    @Test
+    void updatesOrdinaryPurposeMetadata() {
+        Purpose updated = purpose.toBuilder().title("new title").description("new description").build();
+        when(gateway.getPurpose(purpose.getRef())).thenReturn(updated);
+
+        assertThat(useCase.updatePurposeMetadata(purpose, "new title", "new description", null, null, null))
+                .isSameAs(updated);
+
+        verify(gateway).updatePurposeMetadata(purpose.getRef(), "new title", "new description", null, null, null);
+        verify(gateway).getPurpose(purpose.getRef());
+        verifyNoMoreInteractions(gateway);
+    }
+
+    @Test
+    void waitsForAllRequestedMetadataFields() {
+        PurposeVersion draft = active.toBuilder()
+                .purposeVersionState(PurposeVersionState.DRAFT)
+                .dailyCalls(500)
+                .build();
+        Purpose updated = purpose.toBuilder()
+                .clearVersions()
+                .title("new title")
+                .description("new description")
+                .isFreeOfCharge(true)
+                .freeOfChargeReason("new reason")
+                .version(draft)
+                .build();
+        Purpose staleFreeOfCharge = updated.toBuilder().isFreeOfCharge(false).build();
+        Purpose staleFreeOfChargeReason = updated.toBuilder().freeOfChargeReason("old reason").build();
+        Purpose staleDailyCalls = updated.toBuilder()
+                .clearVersions()
+                .version(draft.toBuilder().dailyCalls(10).build())
+                .build();
+        when(gateway.getPurpose(purpose.getRef()))
+                .thenReturn(staleFreeOfCharge, staleFreeOfChargeReason, staleDailyCalls, updated);
+
+        assertThat(useCase.updatePurposeMetadata(
+                purpose, "new title", "new description", true, "new reason", 500))
+                .isSameAs(updated);
+
+        verify(gateway).updatePurposeMetadata(purpose.getRef(), "new title", "new description", true, "new reason", 500);
+        verify(gateway, times(4)).getPurpose(purpose.getRef());
+        verifyNoMoreInteractions(gateway);
+    }
+
+    @Test
+    void updatesReversePurposeMetadata() {
+        Purpose updated = purpose.toBuilder().title("new title").description("new description").build();
+        when(gateway.getPurpose(purpose.getRef())).thenReturn(updated);
+
+        assertThat(useCase.updateReversePurposeMetadata(purpose, "new title", "new description", null, null, null))
+                .isSameAs(updated);
+
+        verify(gateway).updateReversePurposeMetadata(
+                purpose.getRef(), "new title", "new description", null, null, null);
+        verify(gateway).getPurpose(purpose.getRef());
+        verifyNoMoreInteractions(gateway);
+    }
+
+    @Test
     void requiresAnActiveVersion() {
         assertThatThrownBy(() -> useCase.updatePurposeDailyCallsEstimateBeyondThreshold(
                 purpose.toBuilder().clearVersions().build(), eService))
@@ -67,5 +134,18 @@ class PurposeUseCaseTest {
                 purpose, eService.toBuilder().id(UUID.randomUUID()).build()))
                 .isInstanceOf(IllegalArgumentException.class).hasMessageContaining("does not belong");
         verifyNoInteractions(gateway);
+    }
+
+    @Test
+    void archivesTheRequestedPurposeVersion() {
+        Purpose archived = purpose.toBuilder()
+                .version(active.toBuilder().purposeVersionState(PurposeVersionState.ARCHIVED).build())
+                .build();
+        when(gateway.archivePurpose(purpose.getRef(), active.getRef())).thenReturn(archived);
+
+        assertThat(useCase.archivePurpose(purpose, active)).isSameAs(archived);
+
+        verify(gateway).archivePurpose(purpose.getRef(), active.getRef());
+        verifyNoMoreInteractions(gateway);
     }
 }

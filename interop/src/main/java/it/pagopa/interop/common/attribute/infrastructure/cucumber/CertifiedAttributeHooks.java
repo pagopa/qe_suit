@@ -18,7 +18,7 @@ public class CertifiedAttributeHooks {
     private final AuthSession authSession;
     private final CurrentChannel<Channel> currentChannel;
 
-    @After(value = "@private-catalog", order = 80)
+    @After(value = "@private-catalog or @clean-up", order = 80)
     public void revokeScenarioAssignments() {
         var assignments = fixtures.assignments();
         if (assignments.isEmpty()) {

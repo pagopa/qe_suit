@@ -28,8 +28,8 @@ public class BffEServiceTemplateRequestFactory implements EServiceTemplateReques
     }
 
     @Override
-    public UpdateEServiceTemplateCommand defaultUpdateEServiceTemplateCommand() {
-        return BffUpdateEServiceTemplateCommand.from(updateRequest());
+    public UpdateEServiceTemplateCommand defaultUpdateEServiceTemplateCommand(Boolean empty) {
+        return Boolean.TRUE.equals(empty) ? new BffUpdateEServiceTemplateCommand() : BffUpdateEServiceTemplateCommand.from(updateRequest());
     }
 
     @Override
