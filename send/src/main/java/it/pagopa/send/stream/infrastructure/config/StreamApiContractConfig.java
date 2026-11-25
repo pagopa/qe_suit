@@ -21,8 +21,8 @@ import java.util.function.UnaryOperator;
 
 /**
  * Validator e policy dei contract test pn-stream v3.0, sul modello di {@code BffApiContractConfig}
- * di interop: stessi scenari a 400, SQL injection esclusa, NIL uuid 404 (risorsa inesistente), XSS
- * 403 (bloccata dal WAF del gateway). Lo status di successo dipende dall'operazione (lo spec dichiara
+ * di interop: tutti gli scenari standard a 400 (SQL injection inclusa), NIL uuid 404 (risorsa inesistente), XSS
+ * 403 (bloccata dal WAF del gateway, da confermare al primo run). Lo status di successo dipende dall'operazione (lo spec dichiara
  * 204 per remove, 200 per tutte le altre), da qui le policy distinte, come in {@code M2Mv3ApiContractConfig}:
  * <ul>
  *   <li>{@code streamHttpContractValidator}: successo 200;</li>
@@ -43,6 +43,7 @@ public class StreamApiContractConfig {
             FuzzScenario.REPLACED_WITH_EMPTY_STRING,
             FuzzScenario.REPLACED_WITH_BLANK_STRING,
             FuzzScenario.REPLACED_WITH_LONG_STRING,
+            FuzzScenario.REPLACED_WITH_SQL_INJECTION,
             FuzzScenario.REPLACED_WITH_URL_INJECTION,
             FuzzScenario.REPLACED_WITH_WRONG_TYPE_STRING,
             FuzzScenario.REPLACED_WITH_WRONG_TYPE_NUMBER,
@@ -109,7 +110,6 @@ public class StreamApiContractConfig {
         return HttpContractPolicy.builder()
                 .success(decorator.apply(status(successStatus)))
                 .scenario(VALIDATION_ERROR_SCENARIOS, decorator.apply(status(400)))
-                .skipScenario(FuzzScenario.REPLACED_WITH_SQL_INJECTION)
                 .scenario(FuzzScenario.REPLACED_WITH_NIL_UUID, decorator.apply(status(404)))
                 .scenario(FuzzScenario.REPLACED_WITH_XSS, decorator.apply(status(403)))
                 .build();
