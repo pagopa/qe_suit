@@ -120,34 +120,51 @@ public class BffPurposeTemplateContractTest {
 //                .tests();
 //    }
 
-//    @TestFactory
-//    Stream<DynamicTest> publishPurposeTemplate() {
-//        return httpContractValidator
-//                .as(PRODUCER, UserRole.ADMIN)
-//                .apiCall(() -> apiClient.purposeTemplates().publishPurposeTemplate())
-//                .pathParams(() -> Map.of("purposeTemplateId", createPurposeTemplate(PurposeTemplateState.DRAFT).getId()))
-//                .tests();
-//    }
-
     @TestFactory
-    Stream<DynamicTest> unsuspendPurposeTemplate() {
+    Stream<DynamicTest> publishPurposeTemplate() {
         return httpContractValidator
                 .as(PRODUCER, UserRole.ADMIN)
                 .apiCall(() -> {
-                    var operation = apiClient.purposeTemplates().unsuspendPurposeTemplate();
+                    var operation = apiClient.purposeTemplates().publishPurposeTemplate();
                     operation.reqSpec(req -> req.setContentType(ContentType.JSON));
                     return operation;
                 })
-                .pathParams(() -> Map.of("purposeTemplateId", createPurposeTemplate(PurposeTemplateState.SUSPENDED).getId()))
+                .pathParams(() -> Map.of("purposeTemplateId", createPurposeTemplate(PurposeTemplateState.DRAFT).getId()))
                 .tests();
     }
 
+//    @TestFactory
+//    Stream<DynamicTest> unsuspendPurposeTemplate() {
+//        return httpContractValidator
+//                .as(PRODUCER, UserRole.ADMIN)
+//                .apiCall(() -> {
+//                    var operation = apiClient.purposeTemplates().unsuspendPurposeTemplate();
+//                    operation.reqSpec(req -> req.setContentType(ContentType.JSON));
+//                    return operation;
+//                })
+//                .pathParams(() -> Map.of("purposeTemplateId", createPurposeTemplate(PurposeTemplateState.SUSPENDED).getId()))
+//                .tests();
+//    }
+//
+//    @Test
+//    void unsuspendPurposeTemplateHavingContentTypeMultipartFormData() {
+//        PurposeTemplate purposeTemplate = createPurposeTemplate(PurposeTemplateState.SUSPENDED);
+//
+//        apiClient.purposeTemplates()
+//                .unsuspendPurposeTemplate()
+//                .purposeTemplateIdPath(purposeTemplate.getId())
+//                .reqSpec(req -> req.setContentType(ContentType.MULTIPART))
+//                .execute(Function.identity())
+//                .then()
+//                .statusCode(400);
+//    }
+
     @Test
-    void unsuspendPurposeTemplateHavingContentTypeMultipartFormData() {
-        PurposeTemplate purposeTemplate = createPurposeTemplate(PurposeTemplateState.SUSPENDED);
+    void publishPurposeTemplateHavingContentTypeMultipartFormData() {
+        PurposeTemplate purposeTemplate = createPurposeTemplate(PurposeTemplateState.DRAFT);
 
         apiClient.purposeTemplates()
-                .unsuspendPurposeTemplate()
+                .publishPurposeTemplate()
                 .purposeTemplateIdPath(purposeTemplate.getId())
                 .reqSpec(req -> req.setContentType(ContentType.MULTIPART))
                 .execute(Function.identity())
