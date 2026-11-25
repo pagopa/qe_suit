@@ -133,7 +133,11 @@ public class BffPurposeTemplateContractTest {
     Stream<DynamicTest> unsuspendPurposeTemplate() {
         return httpContractValidator
                 .as(PRODUCER, UserRole.ADMIN)
-                .apiCall(() -> apiClient.purposeTemplates().unsuspendPurposeTemplate().reqSpec(req->req.setContentType(ContentType.JSON)))
+                .apiCall(() -> {
+                    var operation = apiClient.purposeTemplates().unsuspendPurposeTemplate();
+                    operation.reqSpec(req -> req.setContentType(ContentType.JSON));
+                    return operation;
+                })
                 .pathParams(() -> Map.of("purposeTemplateId", createPurposeTemplate(PurposeTemplateState.SUSPENDED).getId()))
                 .tests();
     }
