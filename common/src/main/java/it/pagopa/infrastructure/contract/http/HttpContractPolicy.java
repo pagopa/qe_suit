@@ -12,6 +12,8 @@ public interface HttpContractPolicy {
 
     Consumer<Response> expectationFor(FuzzScenario scenario);
 
+    boolean isSkipped(FuzzScenario scenario);
+
     static Builder builder() {
         return new DefaultHttpContractPolicy.BuilderImpl();
     }
@@ -29,6 +31,10 @@ public interface HttpContractPolicy {
         Builder scenarioStatus(FuzzScenario scenario, int status);
 
         Builder scenarioStatus(List<FuzzScenario> scenarios, int status);
+
+        Builder skipScenario(FuzzScenario scenario);
+
+        Builder skipScenario(List<FuzzScenario> scenarios);
 
         HttpContractPolicy build();
     }

@@ -1,0 +1,3 @@
+version: 1
+test_ids:
+  append_report_name: false

@@ -30,6 +30,10 @@ import java.util.function.Function;
 public class DocumentPreloadService {
 
     private static final String TEST_PDF_CLASSPATH = "documents/test-attachment.pdf";
+    private static final String PDF_CONTENT_TYPE = "application/pdf";
+    // metadati di un F24 semplificato: il BFF li vuole come JSON, non come PDF
+    private static final String F24_METADATA_CLASSPATH = "documents/f24-metadata.json";
+    private static final String JSON_CONTENT_TYPE = "application/json";
 
     private final NotificationSentApi notificationSentApi;
 
@@ -39,12 +43,21 @@ public class DocumentPreloadService {
      * restituito.
      */
     public PreloadedDocument preloadTestPdf(String preloadIdx) {
-        byte[] fileBytes = readClasspathResource(TEST_PDF_CLASSPATH);
+        return preload(preloadIdx, TEST_PDF_CLASSPATH, PDF_CONTENT_TYPE);
+    }
+
+    /** Come {@link #preloadTestPdf}, per il JSON dei metadati di un pagamento F24. */
+    public PreloadedDocument preloadF24Metadata(String preloadIdx) {
+        return preload(preloadIdx, F24_METADATA_CLASSPATH, JSON_CONTENT_TYPE);
+    }
+
+    private PreloadedDocument preload(String preloadIdx, String classpath, String contentType) {
+        byte[] fileBytes = readClasspathResource(classpath);
         String sha256Base64 = sha256Base64(fileBytes);
 
         PreLoadRequest preLoadRequest = new PreLoadRequest()
                 .preloadIdx(preloadIdx)
-                .contentType("application/pdf")
+                .contentType(contentType)
                 .sha256(sha256Base64);
 
         List<PreLoadResponse> responses = executePreload(preLoadRequest);
@@ -54,7 +67,7 @@ public class DocumentPreloadService {
                 .findFirst()
                 .orElseThrow(() -> new IllegalStateException("Nessuna risposta di preload per idx " + preloadIdx));
 
-        uploadFile(response, fileBytes, sha256Base64);
+        uploadFile(response, fileBytes, sha256Base64, contentType);
 
         return new PreloadedDocument(response.getKey(), "v1", sha256Base64);
     }
@@ -100,10 +113,10 @@ public class DocumentPreloadService {
      * si usa quindi java.net.http.HttpClient, che tratta l'URL come stringa opaca (comportamento
      * analogo a URI.create(url) + RestTemplate usato in pn-b2b-client per lo stesso upload).
      */
-    private void uploadFile(PreLoadResponse response, byte[] fileBytes, String sha256Base64) {
+    private void uploadFile(PreLoadResponse response, byte[] fileBytes, String sha256Base64, String contentType) {
         try {
             HttpRequest request = HttpRequest.newBuilder(URI.create(response.getUrl()))
-                    .header("Content-Type", "application/pdf")
+                    .header("Content-Type", contentType)
                     .header("x-amz-checksum-sha256", sha256Base64)
                     .header("x-amz-meta-secret", response.getSecret())
                     .method(response.getHttpMethod().name(), HttpRequest.BodyPublishers.ofByteArray(fileBytes))

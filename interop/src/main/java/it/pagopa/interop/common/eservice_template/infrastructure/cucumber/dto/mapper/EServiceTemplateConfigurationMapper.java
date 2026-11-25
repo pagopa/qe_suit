@@ -5,11 +5,13 @@ import it.pagopa.interop.common.eservice_template.application.command.EServiceTe
 import it.pagopa.interop.common.eservice_template.domain.EServiceTemplatePreparationConfiguration;
 import it.pagopa.interop.common.eservice_template.infrastructure.cucumber.dto.EServiceTemplatePublicationConfiguration;
 import it.pagopa.interop.common.eservice_template.infrastructure.cucumber.dto.EServiceTemplateInstanceConfiguration;
+import it.pagopa.interop.common.infrastructure.SharedMapper;
 import it.pagopa.interop.common.infrastructure.config.TestMapperConfig;
-import it.pagopa.utils.RandomUtils;
+import it.pagopa.interop.common.kernel.dto.ConfigurableText;
+import it.pagopa.interop.common.kernel.dto.ConfigurableTextValueResolver;
 import org.mapstruct.*;
 
-@Mapper(config = TestMapperConfig.class)
+@Mapper(config = TestMapperConfig.class, uses = { SharedMapper.class })
 public interface EServiceTemplateConfigurationMapper {
     @BeanMapping(ignoreByDefault = true)
     @Mapping(target = "technology", source = "technology")
@@ -18,17 +20,12 @@ public interface EServiceTemplateConfigurationMapper {
 
     @BeanMapping(ignoreByDefault = true)
     @Mapping(target = "technology", source = "technology")
-    @Mapping(target = "name", source = "name", qualifiedByName = "randomized")
+    @Mapping(target = "name", source = "name", qualifiedByName = "resolveConfigurableText")
     void apply(EServiceTemplatePublicationConfiguration source, @MappingTarget EServiceTemplateCreationCommand target);
 
     @BeanMapping(ignoreByDefault = true, nullValuePropertyMappingStrategy = NullValuePropertyMappingStrategy.IGNORE)
-    @Mapping(target = "instanceLabel", source = "instanceLabel")
+    @Mapping(target = "instanceLabel", source = "instanceLabel", qualifiedByName = "resolveConfigurableText")
     void apply(EServiceTemplateInstanceConfiguration source, @MappingTarget EServiceTemplateInstanceCreationCommand target);
-
-    @Named("randomized")
-    default String randomized(String value) {
-        return RandomUtils.randomAlphanumericName(value);
-    }
 
     @Named("fixturePath")
     default String fixturePath(String fixture) {

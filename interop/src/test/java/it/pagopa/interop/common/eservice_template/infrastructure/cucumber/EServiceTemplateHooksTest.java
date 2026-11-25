@@ -4,8 +4,9 @@ import it.pagopa.infrastructure.channel.CurrentChannel;
 import it.pagopa.infrastructure.context.InMemoryEntityStore;
 import it.pagopa.interop.bff.eservice_template.infrastructure.BffEServiceTemplateRequestFactory;
 import it.pagopa.interop.common.eservice_template.application.*;
+import it.pagopa.interop.common.eservice_template.application.command.UpdateEServiceTemplateCommand;
 import it.pagopa.interop.common.eservice_template.domain.*;
-import it.pagopa.interop.common.kernel.context.CurrentUserSession;
+import it.pagopa.interop.common.kernel.context.AuthSession;
 import it.pagopa.interop.common.kernel.domain.*;
 import org.junit.jupiter.api.Test;
 
@@ -18,16 +19,20 @@ import static org.mockito.Mockito.*;
 class EServiceTemplateHooksTest {
     private final InMemoryEntityStore entities = new InMemoryEntityStore();
     private final EServiceTemplateUseCase templates = mock(EServiceTemplateUseCase.class);
+    private final EServiceTemplateRequestFactory factory = mock(EServiceTemplateRequestFactory.class);
     private final EServiceTemplateVersionGateway gateway = mock(EServiceTemplateVersionGateway.class);
     private final EServiceTemplateVersionUseCase versions = new EServiceTemplateVersionUseCase(
             gateway, new BffEServiceTemplateRequestFactory());
-    private final CurrentUserSession session = mock(CurrentUserSession.class);
+    private final AuthSession session = mock(AuthSession.class);
     @SuppressWarnings("unchecked")
     private final CurrentChannel<Channel> channel = mock(CurrentChannel.class);
-    private final EServiceTemplateHooks hook = new EServiceTemplateHooks(entities, templates, versions, session, channel);
+    private final EServiceTemplateHooks hook = new EServiceTemplateHooks(entities, templates, factory, versions, session, channel);
 
     @Test
     void deletesDraftsSuspendsPublishedVersionsAndRestoresSessionAndChannel() {
+        var command = mock(UpdateEServiceTemplateCommand.class);
+        when(factory.defaultUpdateEServiceTemplateCommand(true)).thenReturn(command);
+        when(command.name(anyString())).thenReturn(command);
         var draft = version(DRAFT);
         var published = version(PUBLISHED);
         var suspended = version(SUSPENDED);
@@ -36,7 +41,7 @@ class EServiceTemplateHooksTest {
                 .version(draft).version(published).version(suspended).build();
         entities.upsert("TPL-1", template);
         when(templates.getEServiceTemplate(template)).thenReturn(template);
-        when(session.getUser()).thenReturn(User.getTenantAdmin(Tenant.PAGO_PA));
+        when(session.getActor()).thenReturn(User.getTenantAdmin(Tenant.PAGO_PA));
         when(session.getTenant()).thenReturn(Tenant.PAGO_PA);
         when(channel.getCurrentChannel()).thenReturn(Channel.WEB_BROWSER);
 
@@ -47,14 +52,17 @@ class EServiceTemplateHooksTest {
         order.verify(session).set(User.getTenantAdmin(Tenant.COMUNE_DI_MILANO), Tenant.COMUNE_DI_MILANO);
         order.verify(gateway).deleteDraftVersion(template.getRef(), draft.getRef());
         order.verify(gateway).suspendVersion(template.getRef(), published.getRef());
-        order.verify(session).set(User.getTenantAdmin(Tenant.PAGO_PA), Tenant.PAGO_PA);
         order.verify(channel).setCurrentChannel(Channel.WEB_BROWSER);
+        order.verify(session).set(User.getTenantAdmin(Tenant.PAGO_PA), Tenant.PAGO_PA);
         verifyNoMoreInteractions(gateway);
         assertThat(entities.getByAliasOrThrow("TPL-1", EServiceTemplate.class)).isSameAs(template);
     }
 
     @Test
     void aggregatesFailuresAndStillAttemptsOtherTemplatesAsTheirCreators() {
+        var command = mock(UpdateEServiceTemplateCommand.class);
+        when(factory.defaultUpdateEServiceTemplateCommand(true)).thenReturn(command);
+        when(command.name(anyString())).thenReturn(command);
         var first = EServiceTemplate.builder().id(UUID.randomUUID())
                 .creatorId(Tenant.COMUNE_DI_MILANO.getOrganizationId()).version(version(PUBLISHED)).build();
         var second = EServiceTemplate.builder().id(UUID.randomUUID())
@@ -70,7 +78,7 @@ class EServiceTemplateHooksTest {
 
         verify(gateway).suspendVersion(second.getRef(), second.getLatestVersion().getRef());
         verify(session).set(User.getTenantAdmin(Tenant.SOGECAP), Tenant.SOGECAP);
-        verify(session).set(null, null);
+        verify(session).set((InteropActor) null, null);
         verify(channel, times(2)).setCurrentChannel(Channel.BFF);
     }
 

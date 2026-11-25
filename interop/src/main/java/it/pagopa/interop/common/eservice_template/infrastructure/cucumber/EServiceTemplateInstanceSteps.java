@@ -23,7 +23,7 @@ public class EServiceTemplateInstanceSteps {
     @Given("una istanza dell'e-service template in bozza creato dal {tenant} con un attributo certificato e una soglia personalizzata di {int}")
     public void createDraftTemplateInstanceWithCertifiedAttributeAndCustomThreshold(Tenant producer, int customThreshold) {
         interopJourney
-                .withProducer(producer, UserRole.ADMIN)
+                .withProducer(producer)
                 .createCertifiedAttribute()
                 .createEServiceTemplate(
                         config -> config

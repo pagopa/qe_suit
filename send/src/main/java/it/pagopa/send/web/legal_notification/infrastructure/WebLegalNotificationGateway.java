@@ -1,5 +1,6 @@
 package it.pagopa.send.web.legal_notification.infrastructure;
 
+import it.pagopa.send.common.legal_notification.domain.LegalNotificationCreationCommand;
 import it.pagopa.application.context.EntityStore;
 import it.pagopa.send.bff.delivery.infrastructure.BffDeliveryRestClient;
 import it.pagopa.send.common.user.domain.User;
@@ -30,7 +31,7 @@ public class WebLegalNotificationGateway implements LegalNotificationGateway {
     private final EntityStore entityStore;
 
     @Override
-    public void prepareNotification(Map<String, String> data) {
+    public void prepareNotification(LegalNotificationCreationCommand command) {
         throw new UnsupportedOperationException("prepareNotification non è stato ancora implementato per il canale Web");
     }
 

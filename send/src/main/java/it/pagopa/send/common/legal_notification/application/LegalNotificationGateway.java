@@ -1,5 +1,6 @@
 package it.pagopa.send.common.legal_notification.application;
 
+import it.pagopa.send.common.legal_notification.domain.LegalNotificationCreationCommand;
 import it.pagopa.send.common.user.domain.User;
 import it.pagopa.send.common.kernel.domain.Channel;
 import it.pagopa.send.common.legal_notification.domain.LegalNotificationDomain;
@@ -17,7 +18,8 @@ import java.util.Map;
  * la propria {@code LegalNotificationCreationRequest} interna ad ogni chiamata.
  */
 public interface LegalNotificationGateway extends Plugin<Channel> {
-    void prepareNotification(Map<String, String> data);
+    /** Predispone la notifica con i campi e i destinatari del command; il resto resta ai valori di default. */
+    void prepareNotification(LegalNotificationCreationCommand command);
     void addRecipient(RecipientSpec recipient);
     void sendNotification(User sender, NotificationStatus targetStatus);
     void waitForNotificationStatus(NotificationStatus targetStatus);
