@@ -1,7 +1,7 @@
 rae:
-  release: ''
+  release: '2.25.0-RC1'
   scope: NIGHTLY
-  issue_jira: ''
+  issue_jira: 'https://pagopa.atlassian.net/browse/QA-19032'
   data_ora: '2026-11-25T09:06:09Z'
   durata: 00:02:33
   numero_ko: 0
