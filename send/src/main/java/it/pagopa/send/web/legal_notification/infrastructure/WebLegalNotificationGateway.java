@@ -42,6 +42,7 @@ public class WebLegalNotificationGateway implements LegalNotificationGateway {
     private static final String TEST_F24_METADATA = "documents/f24-metadata.json";
 
     private final CreateNotificationPage createNotificationPage;
+    private final WebRecipientFormMapper recipientFormMapper;
     private final NotificationSuccessPage notificationSuccessPage;
     private final MittenteNotificationDetailsPage notificationDetailsPage;
     private final LegalNotificationRequestFactory requestFactory;
@@ -55,7 +56,7 @@ public class WebLegalNotificationGateway implements LegalNotificationGateway {
         requestFactory.applyPreliminaryData(request, command);
         createNotificationPage.navigateTo();
         createNotificationPage.assertLoaded();
-        createNotificationPage.compileInformazioniPreliminari(request);
+        createNotificationPage.fillPreliminaryInformation(request);
         createNotificationPage.continueToNextStep();
         command.getRecipients().forEach(this::addRecipient);
     }
@@ -66,7 +67,7 @@ public class WebLegalNotificationGateway implements LegalNotificationGateway {
      */
     @Override
     public void addRecipient(RecipientSpec recipient) {
-        createNotificationPage.compileDestinatario(recipient);
+        createNotificationPage.fillRecipient(recipientFormMapper.toForm(recipient));
         request.addRecipient(requestFactory.resolveRecipient(recipient));
     }
 
@@ -82,7 +83,7 @@ public class WebLegalNotificationGateway implements LegalNotificationGateway {
         }
         createNotificationPage.continueToNextStep();
         compilePayments();
-        createNotificationPage.documentazioneStep().fillFields(request.getSubject(), resourcePath(TEST_DOCUMENT));
+        createNotificationPage.attachmentsStep().fillFields(request.getSubject(), resourcePath(TEST_DOCUMENT));
         createNotificationPage.continueToNextStep();
         notificationSuccessPage.assertLoaded();
 
@@ -161,7 +162,7 @@ public class WebLegalNotificationGateway implements LegalNotificationGateway {
             throw new UnsupportedOperationException("Più destinatari con pagamenti non sono supportati sul canale Web:"
                     + " il portale non accetta lo stesso file più di una volta");
         }
-        createNotificationPage.dettaglioPosizioneDebitoriaStep().selectPaymentModels(request.getRecipients());
+        createNotificationPage.debtPositionStep().selectPaymentModels(request.getRecipients());
         createNotificationPage.continueToNextStep();
         if (!recipientsWithPayments.isEmpty()) {
             createNotificationPage.paymentDetailStep().fillFields(request.getFeePolicy(), recipientsWithPayments,

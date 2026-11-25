@@ -15,7 +15,7 @@ import java.util.function.Predicate;
 /**
  * Passo "Informazioni preliminari" di "Invia una nuova notifica" ({@code CreateNotificationPage}).
  */
-public interface InformazioniPreliminariStep extends Component {
+public interface PreliminaryInformationStep extends Component {
     @XPath(".//*[@id=\"subject\"]")
     Writable<String> subject();
 
