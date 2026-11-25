@@ -41,7 +41,7 @@ public class ZendeskAuthRequestSpecFactory {
                 ))
                 .addHeader(
                         "Authorization",
-                        "Bearer " + tokenProvider.requireToken(currentUserSession.getUser().getSessionTokenKey())
+                        "Bearer " + tokenProvider.requireToken(currentUserSession.getUser().getUsername())
                 )
                 .addFilter(new HttpLoggingFilter());
     }
