@@ -30,6 +30,10 @@ public class PurposeTemplateJourneyImpl implements PurposeTemplateJourney<Purpos
                 PurposeTemplate published = purposeTemplateUseCase.publishPurposeTemplate(draft);
                 purposeTemplateUseCase.suspendPurposeTemplate(published);
             }
+            case ARCHIVED -> {
+                PurposeTemplate published = purposeTemplateUseCase.publishPurposeTemplate(draft);
+                purposeTemplateUseCase.archivePurposeTemplate(published);
+            }
             default -> throw new UnsupportedOperationException(
                     String.format("La transizione allo stato %s non ancora supportata nel Journey.", state)
             );
@@ -45,4 +49,3 @@ public class PurposeTemplateJourneyImpl implements PurposeTemplateJourney<Purpos
         return this;
     }
 }
-

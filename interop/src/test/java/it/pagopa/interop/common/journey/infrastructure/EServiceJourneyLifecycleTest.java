@@ -3,6 +3,7 @@ package it.pagopa.interop.common.journey.infrastructure;
 import it.pagopa.application.context.EntityStore;
 import it.pagopa.interop.common.eservice.application.*;
 import it.pagopa.interop.common.eservice.application.command.EServiceCreationCommand;
+import it.pagopa.interop.common.eservice.application.command.EServiceUpdateCommand;
 import it.pagopa.interop.common.eservice.domain.EService;
 import it.pagopa.interop.common.eservice.domain.EServiceDescriptor;
 import it.pagopa.interop.common.kernel.context.AuthSession;
@@ -118,5 +119,26 @@ class EServiceJourneyLifecycleTest {
                 .hasMessageContaining("active producer delegation");
 
         verifyNoInteractions(services, lifecycle);
+    }
+
+    @Test
+    void configuresDefaultCommandBeforeTryingToUpdateTheService() {
+        var journey = new EServiceJourneyImpl(services, descriptors, lifecycle, store,
+                mock(EServiceRiskAnalysisUseCase.class), session, requestFactory);
+        var command = mock(EServiceUpdateCommand.class);
+        when(requestFactory.defaultUpdateEServiceCommand()).thenReturn(command);
+        when(command.name("updated name")).thenReturn(command);
+        when(store.getLastOrThrow(EService.class)).thenReturn(eService);
+
+        assertThat(journey.tryUpdateEServiceMetadata(updateCommand -> updateCommand.name("updated name")))
+                .isSameAs(journey);
+
+        var order = inOrder(requestFactory, command, store, services);
+        order.verify(requestFactory).defaultUpdateEServiceCommand();
+        order.verify(command).name("updated name");
+        order.verify(command).getAlias();
+        order.verify(store).getLastOrThrow(EService.class);
+        order.verify(services).tryUpdateEServiceMetadata(eService, command);
+        verify(services, never()).updateEServiceMetadata(any(), any());
     }
 }

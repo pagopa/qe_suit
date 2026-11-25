@@ -2,6 +2,7 @@ package it.pagopa.interop.common.eservice_template.application.command;
 
 import it.pagopa.interop.common.eservice.domain.EServiceMode;
 import it.pagopa.interop.common.eservice.domain.EServiceTechnology;
+import org.jspecify.annotations.Nullable;
 
 public interface UpdateEServiceTemplateCommand {
     UpdateEServiceTemplateCommand name(String name);
@@ -19,5 +20,8 @@ public interface UpdateEServiceTemplateCommand {
     UpdateEServiceTemplateCommand handlePersonalData(Boolean handlePersonalData);
 
     UpdateEServiceTemplateCommand isAsync(Boolean isAsync);
-}
 
+    UpdateEServiceTemplateCommand alias(@Nullable String alias);
+
+    String getAlias();
+}

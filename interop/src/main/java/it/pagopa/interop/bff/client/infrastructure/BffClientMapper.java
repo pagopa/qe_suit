@@ -4,6 +4,7 @@ import it.pagopa.interop.bff.infrastructure.mapping.BffCommonMapper;
 import it.pagopa.interop.common.client.domain.Client;
 import it.pagopa.interop.common.infrastructure.SharedMapper;
 import it.pagopa.interop.common.infrastructure.config.TestMapperConfig;
+import it.pagopa.interop.common.purpose.domain.Purpose;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
 
@@ -45,5 +46,11 @@ public interface BffClientMapper {
     @Mapping(target = "users", ignore = true)
     Client toClient(
             it.pagopa.interop.generated.openapi.clients.bff.model.Client source
+    );
+
+    @Mapping(target = "id", source = "purposeId")
+    @Mapping(target = "eserviceId", source = "eservice.id")
+    Purpose toPurpose(
+            it.pagopa.interop.generated.openapi.clients.bff.model.ClientPurpose source
     );
 }
