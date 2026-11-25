@@ -174,8 +174,15 @@ public class M2MPurposeGateway implements PurposeGateway {
 
     @Override
     public Purpose rejectPurpose(PurposeRef purposeRef, PurposeVersionRef purposeVersionRef, String rejectionReason) {
-        // TODO con il rilascio della 2.25 verrà introdotto l'endpoint per rifiutare una finalità in M2M V3
-        throw new UnsupportedOperationException("Purpose rejection is not supported on M2M v3");
+        restClient.rejectPurpose(purposeRef.id(), rejectionReason)
+                .withPolling(PollingStrategy.UNTIL_SUCCESS);
+
+        return PollingUtils.pollUntil(
+                () -> getPurpose(purposeRef),
+                purpose -> purpose.findVersionById(purposeVersionRef.id())
+                        .map(version -> version.getPurposeVersionState() == PurposeVersionState.REJECTED)
+                        .orElse(false)
+        );
     }
 
     @Override

@@ -11,6 +11,7 @@ import it.pagopa.interop.generated.openapi.clients.m2m.v3.model.PurposeSeed;
 import it.pagopa.interop.generated.openapi.clients.m2m.v3.model.PurposeVersion;
 import it.pagopa.interop.generated.openapi.clients.m2m.v3.model.PurposeFromTemplateSeed;
 import it.pagopa.interop.generated.openapi.clients.m2m.v3.model.PurposeVersionSeed;
+import it.pagopa.interop.generated.openapi.clients.m2m.v3.model.PurposeRejection;
 import it.pagopa.interop.generated.openapi.clients.m2m.v3.model.ReversePurposeDraftUpdateSeed;
 import it.pagopa.interop.generated.openapi.clients.m2m.v3.model.UpdateDraftPurposeRequest;
 import jakarta.annotation.Nonnull;
@@ -95,6 +96,16 @@ public class M2MPurposeRestClient extends RestClient {
                 () -> purposesApi.approvePurpose()
                         .purposeIdPath(purposeId)
                         .body(delegationRef)
+                        .execute(Function.identity()),
+                Purpose.class
+        );
+    }
+
+    public TestChain<Purpose> rejectPurpose(@Nonnull UUID purposeId, @Nonnull String rejectionReason) {
+        return execute(
+                () -> purposesApi.rejectPurpose()
+                        .purposeIdPath(purposeId)
+                        .body(new PurposeRejection().rejectionReason(rejectionReason))
                         .execute(Function.identity()),
                 Purpose.class
         );
