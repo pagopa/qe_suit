@@ -87,7 +87,8 @@ public class WebSendNotificationGateway implements SendNotificationGateway {
 
     /**
      * "Posizione debitoria" e, se un destinatario ha dei pagamenti, "Dettaglio posizione debitoria". Con più
-     * destinatari con pagamenti si caricherebbero gli stessi file di test più volte, che il portale non accetta.
+     * destinatari con pagamenti, o più pagamenti dello stesso tipo, si caricherebbero gli stessi file di test più volte,
+     * che il portale non accetta.
      */
     private void compilePayments(CreateNotificationPage page) {
         List<ResolvedRecipient> recipientsWithPayments = request.getRecipients().stream()
@@ -96,6 +97,13 @@ public class WebSendNotificationGateway implements SendNotificationGateway {
         if (recipientsWithPayments.size() > 1) {
             throw new UnsupportedOperationException("Più destinatari con pagamenti non sono supportati sul canale Web:"
                     + " il portale non accetta lo stesso file più di una volta");
+        }
+        for (ResolvedRecipient recipient : recipientsWithPayments) {
+            long paymentTypes = recipient.payments().stream().map(Object::getClass).distinct().count();
+            if (paymentTypes < recipient.payments().size()) {
+                throw new UnsupportedOperationException("Più pagamenti dello stesso tipo non sono supportati sul canale Web:"
+                        + " il portale non accetta lo stesso file più di una volta");
+            }
         }
         page.dettaglioPosizioneDebitoriaStep().selectPaymentModels(request.getRecipients());
         page.continueToNextStep();
