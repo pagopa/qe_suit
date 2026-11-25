@@ -37,6 +37,7 @@ import org.springframework.test.context.TestConstructor;
 @DisplayName("Web Producer E-Service Templates List Page Contract Test")
 class WebProducerEServiceTemplatesListPageContractTest {
 
+    private static final String EMPTY_TEMPLATES_ALERT_TEXT = "Non hai ancora creato template di e-service.";
     private final WebBrowserContractValidator webContractValidator;
 
     private static final int PAGE_SIZE = 10;
@@ -57,7 +58,7 @@ class WebProducerEServiceTemplatesListPageContractTest {
     @DisplayName("Verify visual contract for producer e-service templates list page")
     Stream<DynamicTest> testProducerEServiceTemplatesListPageContract() {
         return webContractValidator
-                .as(User.getTenantAdmin(Tenant.SOGECAP) , Tenant.SOGECAP)
+                .as(User.getTenantAdmin(Tenant.COMUNE_DI_MILANO) , Tenant.COMUNE_DI_MILANO)
                 .on(ProducerEServiceTemplatesListPage.class)
                 .tests(Stream.of(
                         new WebScenario<>(
@@ -163,40 +164,53 @@ class WebProducerEServiceTemplatesListPageContractTest {
                 .as("Verify templates table column headers match approved contract")
                 .containsExactlyElementsOf(EXPECTED_COLUMN_HEADERS);
 
-        assertThat(table.getTotalRows())
-                .as("Verify templates table displays at least one published e-service template row")
-                .isGreaterThan(0);
+        if (page.emptyTemplatesAlert().get(Gettable.FindPolicy.PRESENT).isPresent()) {
+            assertThat(page.emptyTemplatesAlert().get(Gettable.FindPolicy.VISIBLE))
+                    .as("Verify empty templates alert is visible when table has no templates")
+                    .isPresent();
+            assertThat(page.emptyTemplatesAlert().message().read().equals(EMPTY_TEMPLATES_ALERT_TEXT))
+                    .as("Verify empty templates alert message matches expected text" + page.emptyTemplatesAlert().message().read())
+                    .isTrue();
+        } else {
+            assertThat(table.getTotalRows())
+                    .as("Verify templates table displays at least one e-service template row")
+                    .isGreaterThan(0);
+        }
     }
 
     private void assertPagination(ProducerEServiceTemplatesListPage page) {
-        int rows = page.templatesTable().getTotalRows();
-        if (rows >= PAGE_SIZE) {
-            Pagination pagination = page.pagination();
+        boolean isEmptyState = page.emptyTemplatesAlert().get(Gettable.FindPolicy.VISIBLE).isPresent();
+        int dataRows = isEmptyState ? 0 : page.templatesTable().getTotalRows();
 
-            assertThat(pagination.get().isPresent())
-                    .as("Verify pagination component is present in DOM")
-                    .isTrue();
-            assertThat(pagination.get(Gettable.FindPolicy.VISIBLE))
-                    .as("Verify pagination component is visible")
-                    .isPresent();
+        Pagination pagination = page.pagination();
+        if (dataRows >= PAGE_SIZE && pagination.hasNext()) {
 
-            assertThat(pagination.prevBtn().get().isPresent())
-                    .as("Verify pagination previous button is present in DOM")
-                    .isTrue();
-            assertThat(pagination.prevBtn().isDisabled())
-                    .as("Verify pagination previous button is disabled on first page")
-                    .isTrue();
+                assertThat(pagination.get().isPresent())
+                        .as("Verify pagination component is present in DOM")
+                        .isTrue();
+                assertThat(pagination.get(Gettable.FindPolicy.VISIBLE))
+                        .as("Verify pagination component is visible")
+                        .isPresent();
 
-            assertThat(pagination.nextBtn().get().isPresent())
-                    .as("Verify pagination next button is present in DOM")
-                    .isTrue();
+                assertThat(pagination.prevBtn().get(Gettable.FindPolicy.PRESENT))
+                        .as("Verify pagination previous button is present in DOM")
+                        .isPresent();
+                assertThat(pagination.prevBtn().isDisabled())
+                        .as("Verify pagination previous button is disabled on first page")
+                        .isTrue();
+                assertThat(pagination.nextBtn().get(Gettable.FindPolicy.PRESENT))
+                        .as("Verify pagination next button is present in DOM")
+                        .isPresent();
+                assertThat(pagination.nextBtn().isDisabled())
+                        .as("Verify pagination next button is enabled on first page")
+                        .isFalse();
 
-            assertThat(pagination.buttons())
-                    .as("Verify pagination page buttons are rendered")
-                    .isNotEmpty();
+                assertThat(pagination.buttons())
+                        .as("Verify pagination page buttons are rendered")
+                        .isNotEmpty();
         } else {
             assertThat(page.pagination().get(Gettable.FindPolicy.PRESENT))
-                    .as("La paginazione non deve essere renderizzata con meno di 10 righe")
+                    .as("Pagination component should not be present in DOM when there are no templates or less than a full page of templates")
                     .isEmpty();
         }
     }

@@ -3,11 +3,7 @@ package it.pagopa.interop.web.eservice.infrastructure.page;
 import it.frontend.e2e.framework.annotation.location.web.Url;
 import it.frontend.e2e.framework.annotation.selector.XPath;
 import it.frontend.e2e.framework.web.domain.Page;
-import it.pagopa.infrastructure.suit.component.Button;
-import it.pagopa.infrastructure.suit.component.Label;
-import it.pagopa.infrastructure.suit.component.Pagination;
-import it.pagopa.infrastructure.suit.component.Table;
-import it.pagopa.infrastructure.suit.component.TextField;
+import it.pagopa.infrastructure.suit.component.*;
 import it.pagopa.interop.web.infrastructure.config.suit.component.Breadcrumbs;
 import it.pagopa.utils.async.PollingUtils;
 
@@ -35,6 +31,8 @@ public interface ProducerEServiceTemplatesListPage extends Page {
 
     @XPath(".//table")
     Table templatesTable();
+
+    Alert emptyTemplatesAlert();
 
     Pagination pagination();
 
