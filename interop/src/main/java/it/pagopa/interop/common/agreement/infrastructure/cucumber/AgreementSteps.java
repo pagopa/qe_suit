@@ -37,12 +37,6 @@ public class AgreementSteps {
     private final EServiceDescriptorUseCase eServiceDescriptorUseCase;
     private final EServiceRequestFactory eServiceRequestFactory;
 
-    /* DEV. NOTE 25/11/2026: memoria di contesto necessaria per rendere possibile l'attuazione
-     * dello step "il fruitore tenta di eliminare il documento già eliminato dalla {currentAgreement}".
-     * In controtendenza rispetto alle pratiche usate finora che evitavano di memorizzare
-     * informazioni come questa nelle classi di step o in contesti dedicati, ma non è stata
-     * trovata una strategia migliore con gli strumenti attualmente disponibili.
-     * Da definire come gestire casi come questo. */
     private Document deletedDocument;
 
     @When("l'erogatore accede ai dettagli della richiesta di fruizione ricevuta")
