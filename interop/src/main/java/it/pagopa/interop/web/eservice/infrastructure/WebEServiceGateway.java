@@ -216,6 +216,41 @@ public class WebEServiceGateway implements EServiceGateway {
     }
 
     @Override
+    public void submitDelegatedArchivingRequest(EServiceRef eServiceRef, GracePeriodDays gracePeriodDays) {
+        throw new UnsupportedOperationException("submitDelegatedArchivingRequest is not supported on the WEB channel");
+    }
+
+    @Override
+    public void attemptCancelDelegatedArchivingRequest(EServiceRef eServiceRef) {
+        throw new UnsupportedOperationException("attemptCancelDelegatedArchivingRequest is not supported on the WEB channel");
+    }
+
+    @Override
+    public void attemptEServiceDeletion(EServiceRef eServiceRef) {
+        throw new UnsupportedOperationException("attemptEServiceDeletion is not supported on the WEB channel");
+    }
+
+    @Override
+    public void attemptDelegationFlagsUpdate(EServiceRef eServiceRef) {
+        throw new UnsupportedOperationException("attemptDelegationFlagsUpdate is not supported on the WEB channel");
+    }
+
+    @Override
+    public void attemptSignalHubUpdate(EServiceRef eServiceRef) {
+        throw new UnsupportedOperationException("attemptSignalHubUpdate is not supported on the WEB channel");
+    }
+
+    @Override
+    public void attemptPersonalDataFlagUpdate(EServiceRef eServiceRef) {
+        throw new UnsupportedOperationException("attemptPersonalDataFlagUpdate is not supported on the WEB channel");
+    }
+
+    @Override
+    public void attemptInstanceUpgrade(EServiceRef eServiceRef) {
+        throw new UnsupportedOperationException("attemptInstanceUpgrade is not supported on the WEB channel");
+    }
+
+    @Override
     public void attemptDescriptionUpdate(EServiceRef eServiceRef, String description) {
         throw new UnsupportedOperationException("attemptDescriptionUpdate is not supported on the WEB channel");
     }

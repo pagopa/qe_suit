@@ -32,6 +32,11 @@ public class BffErrorMessageSteps {
         assertErrorMessage(messageId, currentChannel.getCurrentLanguage().getLanguage(), Map.of());
     }
 
+    @Then("il messaggio di errore corrisponde al caso {string} con i valori:")
+    public void assertErrorMessageWithValues(String messageId, DataTable table) {
+        assertErrorMessageWithValues(messageId, currentChannel.getCurrentLanguage().getLanguage(), table);
+    }
+
     @Then("il messaggio di errore corrisponde al caso {string} in lingua {string} con i valori:")
     public void assertErrorMessageWithValues(String messageId, String language, DataTable table) {
         assertErrorMessage(messageId, language, parsePlaceholderValues(table));

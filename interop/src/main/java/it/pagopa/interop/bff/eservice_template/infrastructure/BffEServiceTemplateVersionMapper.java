@@ -5,6 +5,7 @@ import it.pagopa.interop.common.attribute.domain.Attributes;
 import it.pagopa.interop.common.eservice_template.domain.*;
 import it.pagopa.interop.common.infrastructure.SharedMapper;
 import it.pagopa.interop.common.infrastructure.config.TestMapperConfig;
+import it.pagopa.interop.common.kernel.domain.Document;
 import it.pagopa.interop.common.kernel.domain.DocumentRef;
 import it.pagopa.interop.common.kernel.domain.EServiceTemplateRef;
 import it.pagopa.interop.common.kernel.domain.EServiceTemplateVersionRef;
@@ -26,6 +27,8 @@ public interface BffEServiceTemplateVersionMapper {
 
     DocumentRef toDocumentRef(EServiceDoc source);
 
+    Document toDocument(EServiceDoc source);
+
     @Mapping(target = "version", expression = "java(source.getVersion() == null ? null : String.valueOf(source.getVersion()))")
     @Mapping(target = "interfaceDocument", expression = "java(toInterface(source.getInterface(), source.getEserviceTemplate().getId(), source.getId()))")
     @Mapping(target = "createdAt", ignore = true)
@@ -33,6 +36,7 @@ public interface BffEServiceTemplateVersionMapper {
     @Mapping(target = "suspendedAt", ignore = true)
     @Mapping(target = "archivedAt", ignore = true)
     @Mapping(target = "docs", source = "docs")
+    @Mapping(target = "documents", source = "docs")
     @Mapping(target = "audience", expression = "java(new java.util.ArrayList<>())")
     @Mapping(target = "serverUrls", expression = "java(new java.util.ArrayList<>())")
     EServiceTemplateVersion toTemplateVersion(EServiceTemplateVersionDetails source);

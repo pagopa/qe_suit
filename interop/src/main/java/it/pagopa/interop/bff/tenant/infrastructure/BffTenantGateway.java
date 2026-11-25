@@ -215,6 +215,17 @@ public class BffTenantGateway implements TenantGateway {
     }
 
     @Override
+    public void attemptCertifiedDiscreteAttributeAssignment(
+            @NonNull TenantRef tenantRef, @NonNull AttributeRef attributeRef, int value
+    ) {
+        var command = bffCommand(
+                requestFactory.assignCertifiedDiscreteAttributeCommand(attributeRef, value),
+                BffAssignCertifiedDiscreteAttributeCommand.class
+        );
+        restClient.addCertifiedDiscreteAttribute(tenantRef.id(), command.getBffPayload()).withoutPolling();
+    }
+
+    @Override
     public void attemptContactEmailSaveWithHyperlinkInNotes(@NonNull TenantRef tenantRef) {
         restClient.addTenantMail(tenantRef.id(), requestFactory.contactEmailWithHyperlinkInNotes()).withoutPolling();
     }

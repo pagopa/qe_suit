@@ -45,6 +45,8 @@ public interface TenantGateway extends Plugin<Channel> {
 
     void attemptCertifiedAttributeAssignment(TenantRef tenantRef, AttributeRef attributeRef);
 
+    void attemptCertifiedDiscreteAttributeAssignment(TenantRef tenantRef, AttributeRef attributeRef, int value);
+
     void attemptContactEmailSaveWithHyperlinkInNotes(TenantRef tenantRef);
 
     void attemptVerifiedAttributeAssignment(

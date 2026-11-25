@@ -82,6 +82,18 @@ public class EServiceRiskAnalysisUseCase {
         eServiceRiskAnalysisGateway.attemptAddRiskAnalysis(eService.getRef(), form, null);
     }
 
+    public void attemptAddRiskAnalysisWithName(
+            Tenant tenant,
+            EService eService,
+            String name
+    ) {
+        if (name == null || name.isBlank()) {
+            throw new IllegalArgumentException("Risk analysis name must not be blank");
+        }
+        RiskAnalysisForm form = buildRiskAnalysisForm(tenant, true);
+        eServiceRiskAnalysisGateway.attemptAddRiskAnalysis(eService.getRef(), form, name);
+    }
+
     public void attemptRenameRiskAnalysis(
             Tenant tenant,
             EService eService,

@@ -20,6 +20,7 @@ public interface M2MEServiceTemplateVersionMapper {
     @Mapping(target = "createdAt", ignore = true)
     @Mapping(target = "archivedAt", ignore = true)
     @Mapping(target = "docs", expression = "java(new java.util.ArrayList<>())")
+    @Mapping(target = "documents", expression = "java(new java.util.ArrayList<>())")
     @Mapping(target = "audience", expression = "java(new java.util.ArrayList<>())")
     @Mapping(target = "serverUrls", expression = "java(new java.util.ArrayList<>())")
     EServiceTemplateVersion toTemplateVersion(it.pagopa.interop.generated.openapi.clients.m2m.v3.model.EServiceTemplateVersion source);

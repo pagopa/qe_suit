@@ -181,6 +181,124 @@ public class EServiceSteps {
         eServiceUseCase.attemptPartialNameUpdate(eService, name);
     }
 
+    @When("l'erogatore tenta di aggiornare parzialmente i dati del{eServiceByAlias} con il nome del{eServiceByAlias}")
+    public void attemptPartialNameUpdateWithAnotherEServiceName(EService eService, EService existing) {
+        eServiceUseCase.attemptPartialNameUpdate(eService, existing.getName());
+    }
+
+    @When("l'erogatore tenta di aggiornare parzialmente i dati dell'{currentEService} con il nome del {eServiceTemplate}")
+    public void attemptPartialNameUpdateWithTemplateName(EService eService, EServiceTemplate template) {
+        eServiceUseCase.attemptPartialNameUpdate(eService, template.getName());
+    }
+
+    @When("l'erogatore tenta di eliminare l'{currentEService} in bozza")
+    public void attemptDraftEServiceDeletion(EService eService) {
+        eServiceUseCase.attemptEServiceDeletion(eService);
+    }
+
+    @Given("una richiesta di archiviazione dell'intero {currentEService} inoltrata al delegante con {gracePeriodDays} giorni di preavviso e una motivazione valida")
+    public void submitDelegatedEntireEServiceArchivingRequest(EService eService, GracePeriodDays gracePeriodDays) {
+        eServiceUseCase.submitDelegatedArchivingRequest(eService, gracePeriodDays);
+    }
+
+    @When("il delegato tenta di annullare la richiesta di archiviazione dell'intero {currentEService}")
+    public void attemptCancelDelegatedEntireEServiceArchivingRequest(EService eService) {
+        eServiceUseCase.attemptCancelDelegatedArchivingRequest(eService);
+    }
+
+    @When("il delegato richiede al delegante l'archiviazione della versione {int} dell'{currentEService} con {gracePeriodDays} giorni di preavviso e una motivazione valida")
+    public void attemptDelegatedDescriptorArchivingRequest(
+            int version, EService eService, GracePeriodDays gracePeriodDays
+    ) {
+        descriptorUseCase.attemptDelegatedArchivingRequest(
+                eService, eService.getDescriptorOrThrow(version), gracePeriodDays
+        );
+    }
+
+    @Given("una richiesta di archiviazione della versione {int} dell'{currentEService} inoltrata al delegante con {gracePeriodDays} giorni di preavviso e una motivazione valida")
+    public void submitDelegatedDescriptorArchivingRequest(
+            int version, EService eService, GracePeriodDays gracePeriodDays
+    ) {
+        descriptorUseCase.submitDelegatedArchivingRequest(
+                eService, eService.getDescriptorOrThrow(version), gracePeriodDays
+        );
+    }
+
+    @When("il delegato tenta di annullare la richiesta di archiviazione della versione {int} dell'{currentEService}")
+    public void attemptCancelDelegatedDescriptorArchivingRequest(int version, EService eService) {
+        descriptorUseCase.attemptCancelDelegatedArchivingRequest(eService, eService.getDescriptorOrThrow(version));
+    }
+
+    @When("l'erogatore tenta di creare una nuova versione dell'{currentEService}")
+    public void attemptDescriptorCreation(EService eService) {
+        descriptorUseCase.attemptDescriptorCreation(eService);
+    }
+
+    @When("l'erogatore tenta di eliminare la versione {int} dell'{currentEService}")
+    public void attemptDraftDescriptorDeletion(int version, EService eService) {
+        descriptorUseCase.attemptDraftVersionDeletion(eService, eService.getDescriptorOrThrow(version));
+    }
+
+    @When("l'erogatore tenta di modificare la configurazione della versione {int} dell'{currentEService} con dati validi")
+    public void attemptDescriptorConfigurationUpdate(int version, EService eService) {
+        descriptorUseCase.attemptDescriptorConfigurationUpdate(eService, eService.getDescriptorOrThrow(version));
+    }
+
+    @When("l'erogatore tenta di modificare la configurazione della versione {int} del{eServiceByAlias} con dati validi")
+    public void attemptDescriptorConfigurationUpdateByAlias(int version, EService eService) {
+        descriptorUseCase.attemptDescriptorConfigurationUpdate(eService, eService.getDescriptorOrThrow(version));
+    }
+
+    @When("l'erogatore tenta di pubblicare la versione {int} dell'{currentEService}")
+    public void attemptDescriptorPublication(int version, EService eService) {
+        descriptorUseCase.attemptDescriptorPublication(eService, eService.getDescriptorOrThrow(version));
+    }
+
+    @When("l'erogatore tenta di sospendere la versione {int} dell'{currentEService}")
+    public void attemptDescriptorSuspension(int version, EService eService) {
+        descriptorUseCase.attemptDescriptorSuspension(eService, eService.getDescriptorOrThrow(version));
+    }
+
+    @When("l'erogatore tenta di riattivare la versione {int} dell'{currentEService}")
+    public void attemptDescriptorActivation(int version, EService eService) {
+        descriptorUseCase.attemptDescriptorActivation(eService, eService.getDescriptorOrThrow(version));
+    }
+
+    @When("l'erogatore tenta di modificare la modalità di approvazione delle richieste di fruizione della versione {int} dell'{currentEService} con dati validi")
+    public void attemptAgreementApprovalPolicyUpdate(int version, EService eService) {
+        descriptorUseCase.attemptAgreementApprovalPolicyUpdate(eService, eService.getDescriptorOrThrow(version));
+    }
+
+    @When("l'erogatore tenta di modificare le impostazioni di delega dell'{currentEService} con dati validi")
+    public void attemptDelegationFlagsUpdate(EService eService) {
+        eServiceUseCase.attemptDelegationFlagsUpdate(eService);
+    }
+
+    @When("l'erogatore tenta di modificare il nome dell'{currentEService} con un nome disponibile")
+    public void attemptAvailableNameUpdate(EService eService) {
+        eServiceUseCase.attemptNameUpdate(eService, randomAlphanumericName("eservice-name", 15));
+    }
+
+    @When("l'erogatore tenta di modificare l'adesione dell'{currentEService} a Signal Hub con dati validi")
+    public void attemptSignalHubUpdate(EService eService) {
+        eServiceUseCase.attemptSignalHubUpdate(eService);
+    }
+
+    @When("l'erogatore tenta di modificare gli attributi richiesti dalla versione {int} dell'{currentEService} con dati validi")
+    public void attemptDescriptorAttributesUpdate(int version, EService eService) {
+        descriptorUseCase.attemptAttributesUpdate(eService, eService.getDescriptorOrThrow(version));
+    }
+
+    @When("l'erogatore tenta di aggiornare l'{currentEService} alla nuova versione del template")
+    public void attemptInstanceUpgrade(EService eService) {
+        eServiceUseCase.attemptInstanceUpgrade(eService);
+    }
+
+    @When("l'erogatore tenta di modificare l'indicazione sul trattamento dei dati personali dell'{currentEService} con dati validi")
+    public void attemptPersonalDataFlagUpdate(EService eService) {
+        eServiceUseCase.attemptPersonalDataFlagUpdate(eService);
+    }
+
     @When("l'erogatore tenta di rifiutare la pubblicazione della versione {int} dell'{currentEService} con motivazione {string}")
     public void attemptDescriptorRejection(int version, EService eService, String reason) {
         approvalUseCase.attemptDescriptorRejection(eService, eService.getDescriptorOrThrow(version), reason);

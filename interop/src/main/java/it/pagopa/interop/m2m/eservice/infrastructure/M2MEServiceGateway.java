@@ -171,6 +171,41 @@ public class M2MEServiceGateway implements EServiceGateway {
     }
 
     @Override
+    public void submitDelegatedArchivingRequest(EServiceRef eServiceRef, GracePeriodDays gracePeriodDays) {
+        throw unsupportedOperation();
+    }
+
+    @Override
+    public void attemptCancelDelegatedArchivingRequest(EServiceRef eServiceRef) {
+        throw unsupportedOperation();
+    }
+
+    @Override
+    public void attemptEServiceDeletion(EServiceRef eServiceRef) {
+        throw unsupportedOperation();
+    }
+
+    @Override
+    public void attemptDelegationFlagsUpdate(EServiceRef eServiceRef) {
+        throw unsupportedOperation();
+    }
+
+    @Override
+    public void attemptSignalHubUpdate(EServiceRef eServiceRef) {
+        throw unsupportedOperation();
+    }
+
+    @Override
+    public void attemptPersonalDataFlagUpdate(EServiceRef eServiceRef) {
+        throw unsupportedOperation();
+    }
+
+    @Override
+    public void attemptInstanceUpgrade(EServiceRef eServiceRef) {
+        throw unsupportedOperation();
+    }
+
+    @Override
     public void attemptDescriptionUpdate(EServiceRef eServiceRef, String description) {
         throw unsupportedOperation();
     }

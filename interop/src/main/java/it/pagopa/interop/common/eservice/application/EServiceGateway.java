@@ -59,6 +59,20 @@ public interface EServiceGateway extends Plugin<Channel> {
 
     void attemptDelegatedArchivingRequest(EServiceRef eServiceRef, GracePeriodDays gracePeriodDays);
 
+    void submitDelegatedArchivingRequest(EServiceRef eServiceRef, GracePeriodDays gracePeriodDays);
+
+    void attemptCancelDelegatedArchivingRequest(EServiceRef eServiceRef);
+
+    void attemptEServiceDeletion(EServiceRef eServiceRef);
+
+    void attemptDelegationFlagsUpdate(EServiceRef eServiceRef);
+
+    void attemptSignalHubUpdate(EServiceRef eServiceRef);
+
+    void attemptPersonalDataFlagUpdate(EServiceRef eServiceRef);
+
+    void attemptInstanceUpgrade(EServiceRef eServiceRef);
+
     void attemptDescriptionUpdate(EServiceRef eServiceRef, String description);
 
     void attemptPartialNameUpdate(EServiceRef eServiceRef, String name);

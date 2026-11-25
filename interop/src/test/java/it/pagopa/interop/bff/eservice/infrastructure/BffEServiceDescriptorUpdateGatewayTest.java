@@ -55,7 +55,8 @@ class BffEServiceDescriptorUpdateGatewayTest {
         var interfaces = mock(BffEServiceDescriptorInterfaceGateway.class);
         var gateway = new BffEServiceDescriptorGateway(restClient, store, mapper, interfaces,
                 mock(BffEServiceDescriptorArchiveGateway.class),
-                new BffEServiceDescriptorUpdateGateway(restClient, instanceClient, interfaces, store));
+                new BffEServiceDescriptorUpdateGateway(restClient, instanceClient, interfaces, store),
+                new BffEServiceRequestFactory());
         var descriptor = EServiceDescriptor.builder().id(UUID.randomUUID())
                 .templateRef(templateInstance ? EServiceTemplateRef.of(UUID.randomUUID()) : null)
                 .attributes(Attributes.builder().build())

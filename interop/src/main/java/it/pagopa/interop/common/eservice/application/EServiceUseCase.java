@@ -121,6 +121,34 @@ public class EServiceUseCase {
         eServiceGateway.attemptDelegatedArchivingRequest(eService.getRef(), gracePeriodDays);
     }
 
+    public void submitDelegatedArchivingRequest(EService eService, GracePeriodDays gracePeriodDays) {
+        eServiceGateway.submitDelegatedArchivingRequest(eService.getRef(), gracePeriodDays);
+    }
+
+    public void attemptCancelDelegatedArchivingRequest(EService eService) {
+        eServiceGateway.attemptCancelDelegatedArchivingRequest(eService.getRef());
+    }
+
+    public void attemptEServiceDeletion(EService eService) {
+        eServiceGateway.attemptEServiceDeletion(eService.getRef());
+    }
+
+    public void attemptDelegationFlagsUpdate(EService eService) {
+        eServiceGateway.attemptDelegationFlagsUpdate(eService.getRef());
+    }
+
+    public void attemptSignalHubUpdate(EService eService) {
+        eServiceGateway.attemptSignalHubUpdate(eService.getRef());
+    }
+
+    public void attemptPersonalDataFlagUpdate(EService eService) {
+        eServiceGateway.attemptPersonalDataFlagUpdate(eService.getRef());
+    }
+
+    public void attemptInstanceUpgrade(EService eService) {
+        eServiceGateway.attemptInstanceUpgrade(eService.getRef());
+    }
+
     public void attemptDescriptionUpdate(EService eService, String description) {
         eServiceGateway.attemptDescriptionUpdate(eService.getRef(), description);
     }

@@ -72,4 +72,18 @@ public class EServiceRiskAnalysisSteps {
                 authSession.getTenant(), eService, source, target.getName()
         );
     }
+
+    @When("l'erogatore tenta di aggiungere all'e-service un'analisi del rischio con il nome di quella esistente")
+    public void attemptAddRiskAnalysisWithExistingName() {
+        // Usato negli scenari con id ERROR_046
+        EService eService = entityStore.getLastOrThrow(EService.class);
+        EServiceRiskAnalysis existing = entityStore.getLast(EServiceRiskAnalysis.class)
+                .orElseGet(() -> eServiceRiskAnalysisUseCase.getRiskAnalysis(eService));
+        if (existing == null || existing.getName() == null || existing.getName().isBlank()) {
+            throw new IllegalStateException("No existing risk analysis found for e-service " + eService.getId());
+        }
+        eServiceRiskAnalysisUseCase.attemptAddRiskAnalysisWithName(
+                authSession.getTenant(), eService, existing.getName()
+        );
+    }
 }

@@ -101,5 +101,39 @@ public interface EServiceDescriptorGateway extends Plugin<Channel> {
 
     void attemptDocumentRename(EServiceRef eServiceRef, EServiceDescriptorRef descriptorRef, Document document, String newName);
 
+    void attemptDocumentDeletion(EServiceRef eServiceRef, EServiceDescriptorRef descriptorRef, Document document);
+
     void attemptDescriptorCreation(EServiceRef eServiceRef);
+
+    void attemptDraftVersionDeletion(EServiceRef eServiceRef, EServiceDescriptorRef descriptorRef);
+
+    void submitDelegatedArchivingRequest(
+            EServiceRef eServiceRef, EServiceDescriptorRef descriptorRef, GracePeriodDays gracePeriodDays
+    );
+
+    void attemptDelegatedArchivingRequest(
+            EServiceRef eServiceRef, EServiceDescriptorRef descriptorRef, GracePeriodDays gracePeriodDays
+    );
+
+    void attemptCancelDelegatedArchivingRequest(EServiceRef eServiceRef, EServiceDescriptorRef descriptorRef);
+
+    void attemptDescriptorConfigurationUpdate(EService eService, EServiceDescriptor descriptor);
+
+    void attemptDescriptorPublication(EServiceRef eServiceRef, EServiceDescriptorRef descriptorRef);
+
+    void attemptDescriptorSuspension(EServiceRef eServiceRef, EServiceDescriptorRef descriptorRef);
+
+    void attemptDescriptorActivation(EServiceRef eServiceRef, EServiceDescriptorRef descriptorRef);
+
+    void attemptAgreementApprovalPolicyUpdate(EServiceRef eServiceRef, EServiceDescriptorRef descriptorRef);
+
+    void attemptAttributesUpdate(EServiceRef eServiceRef, EServiceDescriptorRef descriptorRef);
+
+    void attemptTemplateInstanceSOAPInterfaceConfiguration(
+            EServiceRef eServiceRef, EServiceDescriptorRef descriptorRef, List<SoapAddressConfiguration> addresses
+    );
+
+    void attemptTemplateInstanceRESTInterfaceConfiguration(
+            EServiceRef eServiceRef, EServiceDescriptorRef descriptorRef, RestInterfaceConfiguration configuration
+    );
 }

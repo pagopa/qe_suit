@@ -308,6 +308,46 @@ public class BffEServiceGateway implements EServiceGateway {
     }
 
     @Override
+    public void submitDelegatedArchivingRequest(EServiceRef eServiceRef, GracePeriodDays gracePeriodDays) {
+        restClient.submitDelegatedEServiceArchiving(eServiceRef.id(), requestFactory.archivingRequest(gracePeriodDays))
+                .withPolling(PollingStrategy.UNTIL_SUCCESS)
+                .get();
+    }
+
+    @Override
+    public void attemptCancelDelegatedArchivingRequest(EServiceRef eServiceRef) {
+        restClient.cancelDelegatedEServiceArchiving(eServiceRef.id()).withoutPolling();
+    }
+
+    @Override
+    public void attemptEServiceDeletion(EServiceRef eServiceRef) {
+        restClient.deleteEService(eServiceRef.id()).withoutPolling();
+    }
+
+    @Override
+    public void attemptDelegationFlagsUpdate(EServiceRef eServiceRef) {
+        restClient.updateEServiceDelegationFlags(eServiceRef.id(), requestFactory.delegationFlagsUpdateRequest())
+                .withoutPolling();
+    }
+
+    @Override
+    public void attemptSignalHubUpdate(EServiceRef eServiceRef) {
+        restClient.updateEServiceSignalHubFlag(eServiceRef.id(), requestFactory.signalHubUpdateRequest())
+                .withoutPolling();
+    }
+
+    @Override
+    public void attemptPersonalDataFlagUpdate(EServiceRef eServiceRef) {
+        restClient.updateEServicePersonalDataFlag(eServiceRef.id(), requestFactory.personalDataFlagUpdateRequest())
+                .withoutPolling();
+    }
+
+    @Override
+    public void attemptInstanceUpgrade(EServiceRef eServiceRef) {
+        restClient.upgradeEServiceInstance(eServiceRef.id()).withoutPolling();
+    }
+
+    @Override
     public void attemptDescriptionUpdate(EServiceRef eServiceRef, String description) {
         restClient.updateDescription(eServiceRef.id(), requestFactory.updateDescriptionRequest().description(description))
                 .withoutPolling();

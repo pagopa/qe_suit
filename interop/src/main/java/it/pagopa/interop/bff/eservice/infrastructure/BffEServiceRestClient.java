@@ -256,4 +256,99 @@ public class BffEServiceRestClient extends RestClient {
         return execute(() -> eservicesApi.patchUpdateEServiceById().eServiceIdPath(eserviceId)
                 .body(payload).execute(Function.identity()), CreatedResource.class);
     }
+
+    public TestChain<Void> deleteDocument(@Nonnull UUID eserviceId, @Nonnull UUID descriptorId, @Nonnull UUID documentId) {
+        return execute(() -> eservicesApi.deleteEServiceDocumentById()
+                .eServiceIdPath(eserviceId)
+                .descriptorIdPath(descriptorId)
+                .documentIdPath(documentId)
+                .execute(Function.identity()), Void.class);
+    }
+
+    public TestChain<Void> submitDelegatedDescriptorArchiving(
+            @Nonnull UUID eserviceId, @Nonnull UUID descriptorId, @Nonnull GracePeriodDaysSeed payload
+    ) {
+        return execute(() -> eservicesApi.submitDelegatedDescriptorArchiving()
+                .eServiceIdPath(eserviceId)
+                .descriptorIdPath(descriptorId)
+                .body(payload)
+                .execute(Function.identity()), Void.class);
+    }
+
+    public TestChain<Void> cancelDelegatedEServiceArchiving(@Nonnull UUID eserviceId) {
+        return execute(() -> eservicesApi.cancelDelegatedEServiceArchiving()
+                .eServiceIdPath(eserviceId)
+                .execute(Function.identity()), Void.class);
+    }
+
+    public TestChain<Void> cancelDelegatedDescriptorArchiving(@Nonnull UUID eserviceId, @Nonnull UUID descriptorId) {
+        return execute(() -> eservicesApi.cancelDelegatedDescriptorArchiving()
+                .eServiceIdPath(eserviceId)
+                .descriptorIdPath(descriptorId)
+                .execute(Function.identity()), Void.class);
+    }
+
+    public TestChain<Void> activateDescriptor(@Nonnull UUID eserviceId, @Nonnull UUID descriptorId) {
+        return execute(() -> eservicesApi.activateDescriptor()
+                .eServiceIdPath(eserviceId)
+                .descriptorIdPath(descriptorId)
+                .reqSpec(reqSpec -> reqSpec.setContentType("application/json"))
+                .execute(Function.identity()), Void.class);
+    }
+
+    public TestChain<CreatedResource> updateAgreementApprovalPolicy(
+            @Nonnull UUID eserviceId,
+            @Nonnull UUID descriptorId,
+            @Nonnull UpdateEServiceDescriptorAgreementApprovalPolicySeed payload
+    ) {
+        return execute(() -> eservicesApi.updateAgreementApprovalPolicy()
+                .eServiceIdPath(eserviceId)
+                .descriptorIdPath(descriptorId)
+                .body(payload)
+                .execute(Function.identity()), CreatedResource.class);
+    }
+
+    public TestChain<Void> updateDescriptorAttributes(
+            @Nonnull UUID eserviceId, @Nonnull UUID descriptorId, @Nonnull DescriptorAttributesSeed payload
+    ) {
+        return execute(() -> eservicesApi.updateDescriptorAttributes()
+                .eServiceIdPath(eserviceId)
+                .descriptorIdPath(descriptorId)
+                .body(payload)
+                .execute(Function.identity()), Void.class);
+    }
+
+    public TestChain<CreatedResource> updateEServiceDelegationFlags(
+            @Nonnull UUID eserviceId, @Nonnull EServiceDelegationFlagsUpdateSeed payload
+    ) {
+        return execute(() -> eservicesApi.updateEServiceDelegationFlags()
+                .eServiceIdPath(eserviceId)
+                .body(payload)
+                .execute(Function.identity()), CreatedResource.class);
+    }
+
+    public TestChain<Void> updateEServiceSignalHubFlag(
+            @Nonnull UUID eserviceId, @Nonnull EServiceSignalHubUpdateSeed payload
+    ) {
+        return execute(() -> eservicesApi.updateEServiceSignalHubFlag()
+                .eServiceIdPath(eserviceId)
+                .body(payload)
+                .execute(Function.identity()), Void.class);
+    }
+
+    public TestChain<Void> updateEServicePersonalDataFlag(
+            @Nonnull UUID eserviceId, @Nonnull EServicePersonalDataFlagUpdateSeed payload
+    ) {
+        return execute(() -> eservicesApi.updateEServicePersonalDataFlagAfterPublication()
+                .eServiceIdPath(eserviceId)
+                .body(payload)
+                .execute(Function.identity()), Void.class);
+    }
+
+    public TestChain<CreatedResource> upgradeEServiceInstance(@Nonnull UUID eserviceId) {
+        return execute(() -> eservicesApi.upgradeEServiceInstance()
+                .eServiceIdPath(eserviceId)
+                .reqSpec(reqSpec -> reqSpec.setContentType("application/json"))
+                .execute(Function.identity()), CreatedResource.class);
+    }
 }

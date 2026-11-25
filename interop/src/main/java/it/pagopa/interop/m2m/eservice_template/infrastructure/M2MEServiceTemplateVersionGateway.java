@@ -70,6 +70,16 @@ public class M2MEServiceTemplateVersionGateway implements EServiceTemplateVersio
     }
 
     @Override
+    public EServiceTemplateVersion addDocument(
+            EServiceTemplateRef templateRef,
+            EServiceTemplateVersionRef versionRef,
+            String fixturePath,
+            String documentName
+    ) {
+        throw new UnsupportedOperationException("Adding template documents is not supported on M2M V3");
+    }
+
+    @Override
     public void requestDocumentUpload(EServiceTemplateRef templateRef, EServiceTemplateVersionRef versionRef, String fixturePath) {
         throw new UnsupportedOperationException("Document upload is not supported on M2M V3");
     }
@@ -83,6 +93,25 @@ public class M2MEServiceTemplateVersionGateway implements EServiceTemplateVersio
             String documentName
     ) {
         throw new UnsupportedOperationException("Document upload is not supported on M2M V3");
+    }
+
+    @Override
+    public void attemptDocumentRename(
+            EServiceTemplateRef templateRef,
+            EServiceTemplateVersionRef versionRef,
+            UUID documentId,
+            String newName
+    ) {
+        throw new UnsupportedOperationException("Renaming template documents is not supported on M2M V3");
+    }
+
+    @Override
+    public void attemptDocumentDownload(
+            EServiceTemplateRef templateRef,
+            EServiceTemplateVersionRef versionRef,
+            UUID documentId
+    ) {
+        throw new UnsupportedOperationException("Downloading template documents by ID is not supported on M2M V3");
     }
 
     @Override

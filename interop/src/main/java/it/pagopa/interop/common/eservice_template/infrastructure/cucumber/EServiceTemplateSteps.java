@@ -23,6 +23,7 @@ import it.pagopa.interop.common.kernel.domain.Tenant;
 import it.pagopa.interop.common.kernel.domain.UserRole;
 import it.pagopa.utils.RandomUtils;
 import lombok.RequiredArgsConstructor;
+import it.pagopa.interop.common.eservice_template.infrastructure.cucumber.dto.EServiceTemplateDocumentConfiguration;
 import it.pagopa.interop.common.eservice_template.infrastructure.cucumber.dto.mapper.EServiceTemplateConfigurationMapper;
 
 import java.io.IOException;
@@ -174,6 +175,33 @@ public class EServiceTemplateSteps {
         templateVersionUseCase.attemptFileUpload(
                 template, template.getLastDraftVersion(), filePath, kind, documentName
         );
+    }
+
+    @Given("i seguenti documenti PDF allegati alla versione del template:")
+    public void attachPdfDocumentsToTemplateVersion(List<EServiceTemplateDocumentConfiguration> configurations) {
+        if (configurations == null || configurations.isEmpty()) {
+            throw new IllegalArgumentException("At least one document configuration is required");
+        }
+        EServiceTemplate template = entities.getLastOrThrow(EServiceTemplate.class);
+        var version = template.getLastDraftVersion();
+        for (EServiceTemplateDocumentConfiguration configuration : configurations) {
+            version = templateVersionUseCase.addDocument(
+                    template, version, configuration.getFixture(), configuration.getName()
+            );
+            template = entities.getById(template.getId(), EServiceTemplate.class).orElse(template);
+        }
+    }
+
+    @When("l'erogatore tenta di rinominare il documento {string} della versione del template in {string}")
+    public void attemptTemplateDocumentRename(String documentName, String newName) {
+        EServiceTemplate template = entities.getLastOrThrow(EServiceTemplate.class);
+        templateVersionUseCase.attemptDocumentRename(template, template.getLastDraftVersion(), documentName, newName);
+    }
+
+    @When("l'erogatore tenta di scaricare un documento assente dalla versione del template")
+    public void attemptMissingTemplateDocumentDownload() {
+        EServiceTemplate template = entities.getLastOrThrow(EServiceTemplate.class);
+        templateVersionUseCase.attemptMissingDocumentDownload(template, template.getLatestVersion());
     }
 
     private static DocumentKind parseDocumentKind(String documentType) {

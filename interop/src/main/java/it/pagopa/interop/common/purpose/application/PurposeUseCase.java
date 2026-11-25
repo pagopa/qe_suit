@@ -203,7 +203,11 @@ public class PurposeUseCase {
     }
 
     public void attemptRiskAnalysisSigning(Purpose purpose) {
-        SignRiskAnalysisCommand command = purposeCommandFactory.signRiskAnalysisCommand(resolveMetadataVersion(purpose));
+        attemptRiskAnalysisSigning(purpose, resolveMetadataVersion(purpose));
+    }
+
+    public void attemptRiskAnalysisSigning(Purpose purpose, int metadataVersionToSign) {
+        SignRiskAnalysisCommand command = purposeCommandFactory.signRiskAnalysisCommand(metadataVersionToSign);
         purposeGateway.attemptRiskAnalysisSigning(purpose.getRef(), command);
     }
 

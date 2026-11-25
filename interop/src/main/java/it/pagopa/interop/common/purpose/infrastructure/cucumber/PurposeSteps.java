@@ -47,6 +47,7 @@ public class PurposeSteps {
     private final EServiceRiskAnalysisUseCase eServiceRiskAnalysisUseCase;
     private final AuthSession authSession;
     private Purpose purposeReference;
+    private Integer readRiskAnalysisMetadataVersion;
 
     @Given("i dati della finalità allo stato attuale appuntati come riferimento")
     public void savePurposeReference() {
@@ -518,6 +519,57 @@ public class PurposeSteps {
     @When("il valutatore tenta di firmare l'analisi del rischio della {currentPurpose}")
     public void attemptRiskAnalysisSigning(Purpose purpose) {
         purposeUseCase.attemptRiskAnalysisSigning(purpose);
+    }
+
+    @Given("i dati dell'analisi del rischio letti dal valutatore")
+    public void reviewerReadsRiskAnalysisData() {
+        Purpose purpose = entityStore.getLastOrThrow(Purpose.class);
+        Purpose refreshed = purposeUseCase.getPurpose(purpose);
+        if (refreshed.getMetadataVersion() == null) {
+            throw new IllegalStateException(
+                    "Missing metadataVersion (x-metadata-version header) for purpose " + refreshed.getId()
+            );
+        }
+        readRiskAnalysisMetadataVersion = refreshed.getMetadataVersion();
+    }
+
+    @Given("l'analisi del rischio aggiornata dopo la lettura del valutatore")
+    public void riskAnalysisUpdatedAfterReviewerRead() {
+        if (readRiskAnalysisMetadataVersion == null) {
+            throw new IllegalStateException("Nessuna versione metadata letta dal valutatore prima dell'aggiornamento");
+        }
+        Purpose purpose = entityStore.getLastOrThrow(Purpose.class);
+        Tenant consumer = Tenant.fromOrganizationId(purpose.getConsumerId());
+        var previousActor = authSession.getActor();
+        var previousTenant = authSession.getTenant();
+        Purpose updated;
+        try {
+            authSession.set(User.getTenantAdmin(consumer), consumer);
+            String updatedDescription = (purpose.getDescription() != null ? purpose.getDescription() : "Descrizione")
+                    + " aggiornata";
+            updated = purposeUseCase.updatePurposeMetadata(
+                    purpose, purpose.getTitle(), updatedDescription, null, null, null
+            );
+        } finally {
+            authSession.set(previousActor, previousTenant);
+        }
+        if (updated.getMetadataVersion() == null
+                || updated.getMetadataVersion() <= readRiskAnalysisMetadataVersion) {
+            throw new IllegalStateException(
+                    "Expected metadataVersion > " + readRiskAnalysisMetadataVersion
+                            + " after update for purpose " + purpose.getId()
+                            + ", but was " + updated.getMetadataVersion()
+            );
+        }
+    }
+
+    @When("il valutatore tenta di firmare l'analisi del rischio con i dati letti prima dell'aggiornamento")
+    public void attemptRiskAnalysisSigningWithStaleMetadataVersion() {
+        if (readRiskAnalysisMetadataVersion == null) {
+            throw new IllegalStateException("Nessuna versione metadata letta dal valutatore prima dell'aggiornamento");
+        }
+        Purpose purpose = entityStore.getLastOrThrow(Purpose.class);
+        purposeUseCase.attemptRiskAnalysisSigning(purpose, readRiskAnalysisMetadataVersion);
     }
 
     @When("il valutatore tenta di rifiutare l'analisi del rischio della {currentPurpose} con la motivazione {string}")

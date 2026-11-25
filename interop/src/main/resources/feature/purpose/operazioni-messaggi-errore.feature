@@ -159,6 +159,7 @@ Feature: Messaggi di errore durante la gestione delle finalità e la valutazione
 
   # NON REPLICABILE A FRONTEND
   # Endpoint: POST /purposes/:purposeId/riskAnalysis/sign
+  @err_msg_undefined_exec
   Scenario: [ERROR_027] - Impossibilità di firmare un'analisi del rischio aggiornata dopo la lettura
   Data un'analisi del rischio modificata dopo che il valutatore ne ha letto una versione precedente
   Quando il valutatore tenta di firmare usando i dati della versione letta
@@ -169,11 +170,8 @@ Feature: Messaggi di errore durante la gestione delle finalità e la valutazione
     # Setup e binding parametrico mancanti per il workflow valutatore.
     Given un'analisi del rischio della finalità in stato "in attesa di valutazione" assegnata al valutatore di PagoPA
     And un reviewer appartenente al fruitore PagoPA
-    # Binding di lettura mancante; conservare la versione metadata effettiva prima dell'aggiornamento.
     And i dati dell'analisi del rischio letti dal valutatore
-    # Binding di setup mancante; aggiornare l'analisi senza sostituire i dati letti dal valutatore.
     And l'analisi del rischio aggiornata dopo la lettura del valutatore
-    # Operazione BFF e binding negativo mancanti; usare la versione metadata precedente con gli altri dati validi.
     When il valutatore tenta di firmare l'analisi del rischio con i dati letti prima dell'aggiornamento
     Then il messaggio di errore corrisponde al caso "PURPOSE_PURPOSE_METADATA_VERSION_MISMATCH"
 

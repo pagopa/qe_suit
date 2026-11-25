@@ -15,6 +15,7 @@ import it.pagopa.interop.common.kernel.domain.Channel;
 import it.pagopa.interop.common.kernel.domain.DocumentKind;
 import it.pagopa.interop.common.kernel.domain.EServiceTemplateRef;
 import it.pagopa.interop.common.kernel.domain.EServiceTemplateVersionRef;
+import it.pagopa.interop.generated.openapi.clients.bff.model.UpdateEServiceTemplateVersionDocumentSeed;
 import it.pagopa.utils.FileUtils;
 import it.pagopa.utils.async.PollingUtils;
 import lombok.RequiredArgsConstructor;
@@ -127,6 +128,31 @@ public class BffEServiceTemplateVersionGateway implements EServiceTemplateVersio
     }
 
     @Override
+    public EServiceTemplateVersion addDocument(
+            EServiceTemplateRef templateRef,
+            EServiceTemplateVersionRef versionRef,
+            String fixturePath,
+            String documentName
+    ) {
+        File document = resolveTemplateFixtureFile(fixturePath);
+        var created = restClient.createEServiceTemplateDocument(
+                        templateRef.id(),
+                        versionRef.versionId(),
+                        DocumentKind.DOCUMENT.name(),
+                        documentName,
+                        document
+                )
+                .withPolling(PollingStrategy.UNTIL_SUCCESS)
+                .get();
+
+        return PollingUtils.pollUntil(
+                () -> getEServiceTemplateVersion(templateRef, versionRef),
+                current -> current.getDocs().stream().anyMatch(doc -> created.getId().equals(doc.id())),
+                "EService template document was not visible after upload"
+        );
+    }
+
+    @Override
     public void requestDocumentUpload(EServiceTemplateRef templateRef, EServiceTemplateVersionRef versionRef, String fixturePath) {
         File document = FileUtils.loadClasspathResourceAsTempFile(fixturePath);
         restClient.createEServiceTemplateDocument(templateRef.id(), versionRef.versionId(),
@@ -149,6 +175,34 @@ public class BffEServiceTemplateVersionGateway implements EServiceTemplateVersio
                 kind.name(),
                 documentName,
                 document
+        ).withoutPolling();
+    }
+
+    @Override
+    public void attemptDocumentRename(
+            EServiceTemplateRef templateRef,
+            EServiceTemplateVersionRef versionRef,
+            UUID documentId,
+            String newName
+    ) {
+        restClient.updateEServiceTemplateDocument(
+                templateRef.id(),
+                versionRef.versionId(),
+                documentId,
+                new UpdateEServiceTemplateVersionDocumentSeed().prettyName(newName)
+        ).withoutPolling();
+    }
+
+    @Override
+    public void attemptDocumentDownload(
+            EServiceTemplateRef templateRef,
+            EServiceTemplateVersionRef versionRef,
+            UUID documentId
+    ) {
+        restClient.getEServiceTemplateDocumentById(
+                templateRef.id(),
+                versionRef.versionId(),
+                documentId
         ).withoutPolling();
     }
 

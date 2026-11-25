@@ -244,4 +244,73 @@ public class EServiceDescriptorUseCase {
     public void attemptDescriptorCreation(EService eService) {
         eServiceDescriptorGateway.attemptDescriptorCreation(eService.getRef());
     }
+
+    public void attemptDraftVersionDeletion(EService eService, EServiceDescriptor descriptor) {
+        eServiceDescriptorGateway.attemptDraftVersionDeletion(eService.getRef(), descriptor.getRef());
+    }
+
+    public void submitDelegatedArchivingRequest(
+            EService eService, EServiceDescriptor descriptor, GracePeriodDays gracePeriodDays
+    ) {
+        eServiceDescriptorGateway.submitDelegatedArchivingRequest(
+                eService.getRef(), descriptor.getRef(), gracePeriodDays
+        );
+    }
+
+    public void attemptDelegatedArchivingRequest(
+            EService eService, EServiceDescriptor descriptor, GracePeriodDays gracePeriodDays
+    ) {
+        eServiceDescriptorGateway.attemptDelegatedArchivingRequest(
+                eService.getRef(), descriptor.getRef(), gracePeriodDays
+        );
+    }
+
+    public void attemptCancelDelegatedArchivingRequest(EService eService, EServiceDescriptor descriptor) {
+        eServiceDescriptorGateway.attemptCancelDelegatedArchivingRequest(eService.getRef(), descriptor.getRef());
+    }
+
+    public void attemptDescriptorConfigurationUpdate(EService eService, EServiceDescriptor descriptor) {
+        eServiceDescriptorGateway.attemptDescriptorConfigurationUpdate(eService, descriptor);
+    }
+
+    public void attemptDescriptorPublication(EService eService, EServiceDescriptor descriptor) {
+        eServiceDescriptorGateway.attemptDescriptorPublication(eService.getRef(), descriptor.getRef());
+    }
+
+    public void attemptDescriptorSuspension(EService eService, EServiceDescriptor descriptor) {
+        eServiceDescriptorGateway.attemptDescriptorSuspension(eService.getRef(), descriptor.getRef());
+    }
+
+    public void attemptDescriptorActivation(EService eService, EServiceDescriptor descriptor) {
+        eServiceDescriptorGateway.attemptDescriptorActivation(eService.getRef(), descriptor.getRef());
+    }
+
+    public void attemptAgreementApprovalPolicyUpdate(EService eService, EServiceDescriptor descriptor) {
+        eServiceDescriptorGateway.attemptAgreementApprovalPolicyUpdate(eService.getRef(), descriptor.getRef());
+    }
+
+    public void attemptAttributesUpdate(EService eService, EServiceDescriptor descriptor) {
+        eServiceDescriptorGateway.attemptAttributesUpdate(eService.getRef(), descriptor.getRef());
+    }
+
+    public void attemptTemplateInstanceSOAPInterfaceConfiguration(
+            EService eService, EServiceDescriptor descriptor, List<SoapAddressConfiguration> addresses
+    ) {
+        eServiceDescriptorGateway.attemptTemplateInstanceSOAPInterfaceConfiguration(
+                eService.getRef(), descriptor.getRef(), List.copyOf(addresses)
+        );
+    }
+
+    public void attemptTemplateInstanceRESTInterfaceConfiguration(EService eService, EServiceDescriptor descriptor) {
+        RestInterfaceConfiguration validConfig = new RestInterfaceConfiguration(
+                List.of("https://erogatore.example/api"),
+                "Erogatore",
+                "support@erogatore.example",
+                "https://erogatore.example",
+                "https://erogatore.example/terms"
+        );
+        eServiceDescriptorGateway.attemptTemplateInstanceRESTInterfaceConfiguration(
+                eService.getRef(), descriptor.getRef(), validConfig
+        );
+    }
 }

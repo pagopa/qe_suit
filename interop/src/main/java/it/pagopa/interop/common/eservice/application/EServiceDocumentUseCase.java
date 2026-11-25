@@ -52,4 +52,15 @@ public class EServiceDocumentUseCase {
         }
         gateway.attemptDocumentRename(service.getRef(), descriptor.getRef(), matches.get(0), newName);
     }
+
+    public void attemptDocumentDeletion(EService service, EServiceDescriptor descriptor, String documentName) {
+        var matches = descriptor.getDocs().stream()
+                .filter(document -> documentName.equals(document.getPrettyName()))
+                .toList();
+        if (matches.size() != 1) {
+            throw new IllegalStateException("Expected exactly one document named '" + documentName
+                    + "' in descriptor " + descriptor.getId() + ", found " + matches.size());
+        }
+        gateway.attemptDocumentDeletion(service.getRef(), descriptor.getRef(), matches.get(0));
+    }
 }

@@ -121,4 +121,34 @@ public class EServiceTemplateInstanceSteps {
     public void attemptInstanceLabelUpdate(EService instance, String instanceLabel) {
         instanceUseCase.attemptInstanceLabelUpdate(instance, instanceLabel);
     }
+
+    @Given("un'istanza REST in bozza derivata da un template con una versione OpenAPI non supportata")
+    public void draftRestInstanceFromTemplateWithUnsupportedOpenApiVersion() {
+        throw new IllegalStateException(
+                "Prerequisito ambiente mancante per ERROR_079: il caricamento BFF rifiuta già specifiche OpenAPI "
+                        + "non supportate sul template; occorre una fixture QA preesistente isolata."
+        );
+    }
+
+    @When("l'erogatore tenta di configurare l'interfaccia SOAP della versione {int} dell'{currentEService} con indirizzi validi")
+    public void attemptConfigureSoapInterfaceWithValidAddresses(int version, EService instance) {
+        List<SoapAddressConfiguration> addresses = entities.getLast(EServiceTemplate.class)
+                .map(EServiceTemplate::getLastPublishedVersion)
+                .map(v -> v.getInterfaceDocument())
+                .filter(doc -> doc != null && doc.hasDownloadedContent())
+                .map(doc -> doc.soapAddressesAt("https://erogatore.example/soap"))
+                .orElseGet(() -> List.of(
+                        new SoapAddressConfiguration("HelloService", "HelloPort", "https://erogatore.example/soap")
+                ));
+        descriptorUseCase.attemptTemplateInstanceSOAPInterfaceConfiguration(
+                instance, instance.getDescriptorOrThrow(version), addresses
+        );
+    }
+
+    @When("l'erogatore tenta di configurare l'interfaccia REST della versione {int} dell'{currentEService} con dati validi")
+    public void attemptConfigureRestInterfaceWithValidData(int version, EService instance) {
+        descriptorUseCase.attemptTemplateInstanceRESTInterfaceConfiguration(
+                instance, instance.getDescriptorOrThrow(version)
+        );
+    }
 }

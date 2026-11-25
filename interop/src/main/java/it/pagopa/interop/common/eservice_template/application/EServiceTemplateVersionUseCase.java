@@ -6,11 +6,14 @@ import it.pagopa.interop.common.eservice_template.domain.EServiceTemplate;
 import it.pagopa.interop.common.eservice_template.domain.EServiceTemplateInterface;
 import it.pagopa.interop.common.eservice_template.domain.EServiceTemplateVersion;
 import it.pagopa.interop.common.eservice_template.domain.EServiceTemplateVersionState;
+import it.pagopa.interop.common.kernel.domain.Document;
 import it.pagopa.interop.common.kernel.domain.DocumentKind;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
 import java.util.Objects;
+import java.util.UUID;
 import java.util.function.Consumer;
 
 import static it.pagopa.interop.common.eservice.domain.EServiceTechnology.REST;
@@ -169,5 +172,51 @@ public class EServiceTemplateVersionUseCase {
             throw new IllegalArgumentException("Template document fixture path, kind, and name must not be blank");
         }
         eServiceTemplateVersionGateway.attemptFileUpload(template.getRef(), version.getRef(), path, kind, name);
+    }
+
+    public EServiceTemplateVersion addDocument(
+            EServiceTemplate template,
+            EServiceTemplateVersion version,
+            String path,
+            String name
+    ) {
+        if (path == null || path.isBlank() || name == null || name.isBlank()) {
+            throw new IllegalArgumentException("Template document fixture path and name must not be blank");
+        }
+        return eServiceTemplateVersionGateway.addDocument(template.getRef(), version.getRef(), path, name);
+    }
+
+    public void attemptDocumentRename(
+            EServiceTemplate template,
+            EServiceTemplateVersion version,
+            String documentName,
+            String newName
+    ) {
+        List<Document> docs = version.getDocuments() != null ? version.getDocuments() : List.of();
+        List<Document> matches = docs.stream()
+                .filter(document -> documentName.equals(document.getPrettyName()))
+                .toList();
+        if (matches.size() != 1) {
+            throw new IllegalStateException("Expected exactly one document named '" + documentName
+                    + "' in template version " + version.getId() + ", found " + matches.size());
+        }
+        eServiceTemplateVersionGateway.attemptDocumentRename(
+                template.getRef(), version.getRef(), matches.get(0).getId(), newName
+        );
+    }
+
+    public void attemptMissingDocumentDownload(EServiceTemplate template, EServiceTemplateVersion version) {
+        UUID missingDocumentId;
+        do {
+            missingDocumentId = UUID.randomUUID();
+        } while (isPresentInVersion(version, missingDocumentId));
+        eServiceTemplateVersionGateway.attemptDocumentDownload(template.getRef(), version.getRef(), missingDocumentId);
+    }
+
+    private static boolean isPresentInVersion(EServiceTemplateVersion version, UUID documentId) {
+        if (version.getInterfaceDocument() != null && documentId.equals(version.getInterfaceDocument().getId())) {
+            return true;
+        }
+        return version.getDocs() != null && version.getDocs().stream().anyMatch(doc -> documentId.equals(doc.id()));
     }
 }

@@ -39,6 +39,7 @@ Feature: Messaggi di errore durante la gestione dei dati e degli attributi dell'
 
   # NON REPLICABILE A FRONTEND
   # Endpoint: POST /tenants/:tenantId/attributes/certifiedDiscrete
+  @err_msg_undefined_exec
   Scenario: [ERROR_014] - Impossibilità di assegnare un attributo certificato discreto già posseduto dall'ente
   Dato un attributo certificato discreto già assegnato all'ente con un valore ammesso
   Quando il certificatore tenta di assegnare nuovamente l'attributo
@@ -48,9 +49,7 @@ Feature: Messaggi di errore durante la gestione dei dati e degli attributi dell'
     Given i seguenti attributi discreti creati da un admin del Comune di Milano:
       | alias  |
       | DISC-1 |
-    # Binding di setup mancante; riusare assignCertifiedDiscreteAttribute con un valore numerico ammesso.
     And l'attributo certificato discreto "DISC-1" già assegnato all'ente PagoPA con un valore ammesso
-    # Tentativo discreto ancora da implementare con un valore ammesso; non usare l'assegnazione certificata ordinaria.
     When il certificatore tenta di assegnare nuovamente l'attributo "DISC-1" all'ente PagoPA
     Then il messaggio di errore corrisponde al caso "TENANT_CERTIFIED_ATTRIBUTE_ALREADY_ASSIGNED__POST_TENANTS_TENANT_ID_ATTRIBUTES_CERTIFIED_DISCRETE"
 

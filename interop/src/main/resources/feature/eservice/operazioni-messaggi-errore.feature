@@ -50,6 +50,7 @@ Feature: Messaggi di errore durante la gestione degli e-service
     Then il messaggio di errore corrisponde al caso "CATALOG_ESERVICE_TEMPLATE_NAME_CONFLICT__POST_ESERVICES"
 
   # Endpoint: POST /templates/:templateId/eservices
+  @err_msg_undefined_exec
   Scenario: [ERROR_039] - Rifiuto della creazione di un'istanza con una parola identificativa già usata
   Dato un template pubblicato e un'istanza dell'erogatore con una parola identificativa
   Quando l'erogatore tenta di creare un'altra istanza con la stessa parola identificativa
@@ -62,10 +63,11 @@ Feature: Messaggi di errore durante la gestione degli e-service
       | alias | template | suffisso  |
       | ES-1  | T-1      | Duplicato |
     When l'erogatore tenta di istanziare il template con la parola identificativa già usata in precedenza
-    Then il messaggio di errore corrisponde al caso "CATALOG_E_SERVICE_NAME_DUPLICATE_FOR_PRODUCER__POST_TEMPLATES_TEMPLATE_ID_ESERVICES" in lingua  con i valori:
+    Then il messaggio di errore corrisponde al caso "CATALOG_E_SERVICE_NAME_DUPLICATE_FOR_PRODUCER__POST_TEMPLATES_TEMPLATE_ID_ESERVICES" con i valori:
       | identifyingWord | Duplicato |
 
   # Endpoint: POST /templates/eservices/:eServiceId
+  @err_msg_undefined_exec
   Scenario: [ERROR_040] - Rifiuto della modifica di un'istanza con una parola identificativa già usata
   Dato un template pubblicato, un'istanza esistente e un'altra istanza in bozza
   Quando l'erogatore tenta di assegnare alla bozza la parola identificativa dell'istanza esistente
@@ -79,7 +81,7 @@ Feature: Messaggi di errore durante la gestione degli e-service
       | ES-1  | T-1      | Duplicato |
     And l'erogatore istanzia un nuovo e-service dal template
     When l'erogatore tenta di aggiornare i dati dell'e-service appena istanziato con la parola identificativa "Duplicato"
-    Then il messaggio di errore corrisponde al caso "CATALOG_E_SERVICE_NAME_DUPLICATE_FOR_PRODUCER__POST_TEMPLATES_ESERVICES_E_SERVICE_ID" in lingua  con i valori:
+    Then il messaggio di errore corrisponde al caso "CATALOG_E_SERVICE_NAME_DUPLICATE_FOR_PRODUCER__POST_TEMPLATES_ESERVICES_E_SERVICE_ID" con i valori:
       | identifyingWord | Duplicato |
 
   # Endpoint: POST /eservices/:eServiceId/scheduleArchive
@@ -155,6 +157,7 @@ Feature: Messaggi di errore durante la gestione degli e-service
     Then il messaggio di errore corrisponde al caso "CATALOG_DOCUMENT_PRETTY_NAME_DUPLICATE__POST_ESERVICES_E_SERVICE_ID_DESCRIPTORS_DESCRIPTOR_ID_DOCUMENTS_DOCUMENT_ID_UPDATE"
 
   # Endpoint: POST /eservices/:eServiceId/riskAnalysis
+  @err_msg_undefined_exec
   Scenario: [ERROR_046] - Rifiuto dell'aggiunta di un'analisi del rischio con un nome già usato
   Dato un e-service pubblicato in ricezione con un'analisi del rischio
   Quando l'erogatore tenta di aggiungere un'altra analisi con lo stesso nome
@@ -215,6 +218,7 @@ Feature: Messaggi di errore durante la gestione degli e-service
     Then il messaggio di errore corrisponde al caso "CATALOG_ESERVICE_TEMPLATE_NAME_CONFLICT__POST_ESERVICES_E_SERVICE_ID_NAME_UPDATE"
 
   # Endpoint: POST /templates/eservices/:eServiceId/instanceLabel/update
+  @err_msg_undefined_exec
   Scenario: [ERROR_050] - Rifiuto dell'aggiornamento della sola parola identificativa con un valore già usato
   Date due istanze pubblicate dello stesso template con parole identificative distinte
   Quando l'erogatore tenta di assegnare a un'istanza la parola identificativa dell'altra
@@ -228,7 +232,7 @@ Feature: Messaggi di errore durante la gestione degli e-service
       | ES-1  | T-1      | Duplicato  |
       | ES-2  | T-1      | Modificare |
     When l'erogatore tenta di modificare la sola parola identificativa dell'e-service creato da template "ES-2" in "Duplicato"
-    Then il messaggio di errore corrisponde al caso "CATALOG_E_SERVICE_NAME_DUPLICATE_FOR_PRODUCER__POST_TEMPLATES_ESERVICES_E_SERVICE_ID_INSTANCE_LABEL_UPDATE" in lingua  con i valori:
+    Then il messaggio di errore corrisponde al caso "CATALOG_E_SERVICE_NAME_DUPLICATE_FOR_PRODUCER__POST_TEMPLATES_ESERVICES_E_SERVICE_ID_INSTANCE_LABEL_UPDATE" con i valori:
       | identifyingWord | Duplicato |
 
   # NON REPLICABILE A FRONTEND
@@ -250,6 +254,7 @@ Feature: Messaggi di errore durante la gestione degli e-service
 
   # NON REPLICABILE A FRONTEND
   # Endpoint: DELETE /eservices/:eServiceId
+  @err_msg_undefined_exec
   Scenario: [ERROR_052] - Impossibilità di eliminare un e-service in bozza dopo la revoca della delega
   Dato un e-service in bozza la cui delega in erogazione è stata revocata
   Quando l'ex delegato tenta di eliminare l'e-service
@@ -282,6 +287,7 @@ Feature: Messaggi di errore durante la gestione degli e-service
 
   # NON REPLICABILE A FRONTEND
   # Endpoint: DELETE /eservices/:eServiceId/submitDelegatedArchiving
+  @err_msg_undefined_exec
   Scenario: [ERROR_054] - Impossibilità per un ente diverso dal delegato di annullare l'archiviazione dell'e-service
   Dato un e-service delegato con una richiesta di archiviazione dell'intero e-service in attesa di valutazione
   Quando un amministratore che non appartiene al delegato tenta di annullare la richiesta
@@ -300,6 +306,7 @@ Feature: Messaggi di errore durante la gestione degli e-service
 
   # NON REPLICABILE A FRONTEND
   # Endpoint: POST /eservices/:eServiceId/descriptors/:descriptorId/submitDelegatedArchiving
+  @err_msg_undefined_exec
   Scenario: [ERROR_055] - Impossibilità per un ente diverso dal delegato di richiedere l'archiviazione di una versione
   Dato un e-service pubblicato con una delega in erogazione attiva verso un altro ente
   Quando un amministratore che non appartiene al delegato richiede l'archiviazione della versione
@@ -316,6 +323,7 @@ Feature: Messaggi di errore durante la gestione degli e-service
 
   # NON REPLICABILE A FRONTEND
   # Endpoint: DELETE /eservices/:eServiceId/descriptors/:descriptorId/submitDelegatedArchiving
+  @err_msg_undefined_exec
   Scenario: [ERROR_056] - Impossibilità per un ente diverso dal delegato di annullare l'archiviazione di una versione
   Dato un e-service delegato con una richiesta di archiviazione della versione in attesa di valutazione
   Quando un amministratore che non appartiene al delegato tenta di annullare la richiesta
@@ -349,6 +357,7 @@ Feature: Messaggi di errore durante la gestione degli e-service
 
   # NON REPLICABILE A FRONTEND
   # Endpoint: DELETE /eservices/:eServiceId/descriptors/:descriptorId/documents/:documentId
+  @err_msg_undefined_exec
   Scenario: [ERROR_058] - Impossibilità di eliminare un documento dopo la revoca della delega
   Dato un e-service con una versione in bozza e un documento allegato la cui delega in erogazione è stata revocata
   Quando l'ex delegato tenta di eliminare il documento
@@ -367,6 +376,7 @@ Feature: Messaggi di errore durante la gestione degli e-service
 
   # NON REPLICABILE A FRONTEND
   # Endpoint: POST /eservices/:eServiceId/descriptors/:descriptorId/documents/:documentId/update
+  @err_msg_undefined_exec
   Scenario: [ERROR_059] - Impossibilità di rinominare un documento dopo la revoca della delega
   Dato un e-service con una versione in bozza e un documento allegato la cui delega in erogazione è stata revocata
   Quando l'ex delegato tenta di rinominare il documento
@@ -380,11 +390,12 @@ Feature: Messaggi di errore durante la gestione degli e-service
       | Allegato A | assets/origin-interface.yaml |
     And l'e-service "ES-1" delegato in erogazione dal Comune di Milano al Comune di Pozzallo con delega revocata
     And un admin appartenente al delegato Comune di Pozzallo
-    When l'erogatore rinomina il documento "Allegato A" della versione dell'e-service in "Allegato B"
+    When l'erogatore tenta di rinominare il documento "Allegato A" della versione 1 dell'e-service "ES-1" in "Allegato B"
     Then il messaggio di errore corrisponde al caso "CATALOG_OPERATION_FORBIDDEN__POST_ESERVICES_E_SERVICE_ID_DESCRIPTORS_DESCRIPTOR_ID_DOCUMENTS_DOCUMENT_ID_UPDATE"
 
   # NON REPLICABILE A FRONTEND
   # Endpoint: POST /eservices/:eServiceId/descriptors
+  @err_msg_undefined_exec
   Scenario: [ERROR_060] - Impossibilità di creare una versione dopo la revoca della delega
   Dato un e-service pubblicato la cui delega in erogazione è stata revocata
   Quando l'ex delegato tenta di creare una nuova versione
@@ -401,6 +412,7 @@ Feature: Messaggi di errore durante la gestione degli e-service
 
   # NON REPLICABILE A FRONTEND
   # Endpoint: DELETE /eservices/:eServiceId/descriptors/:descriptorId
+  @err_msg_undefined_exec
   Scenario: [ERROR_061] - Impossibilità di eliminare una versione in bozza dopo la revoca della delega
   Dato un e-service con una versione in bozza la cui delega in erogazione è stata revocata
   Quando l'ex delegato tenta di eliminare la versione
@@ -416,6 +428,7 @@ Feature: Messaggi di errore durante la gestione degli e-service
 
   # NON REPLICABILE A FRONTEND
   # Endpoint: POST /templates/eservices/:eServiceId/descriptors/:descriptorId
+  @err_msg_undefined_exec
   Scenario: [ERROR_062] - Impossibilità di modificare la versione in bozza di un'istanza dopo la revoca della delega
   Data un'istanza di template con una versione in bozza la cui delega in erogazione è stata revocata
   Quando l'ex delegato tenta di modificare la configurazione della versione
@@ -434,6 +447,7 @@ Feature: Messaggi di errore durante la gestione degli e-service
 
   # NON REPLICABILE A FRONTEND
   # Endpoint: POST /eservices/:eServiceId/descriptors/:descriptorId/publish
+  @err_msg_undefined_exec
   Scenario: [ERROR_063] - Impossibilità di pubblicare una versione dopo la revoca della delega
   Dato un e-service con una versione in bozza pronta per la pubblicazione e una delega in erogazione revocata
   Quando l'ex delegato tenta di pubblicare la versione
@@ -451,6 +465,7 @@ Feature: Messaggi di errore durante la gestione degli e-service
 
   # NON REPLICABILE A FRONTEND
   # Endpoint: POST /eservices/:eServiceId/descriptors/:descriptorId/suspend
+  @err_msg_undefined_exec
   Scenario: [ERROR_064] - Impossibilità di sospendere una versione dopo la revoca della delega
   Dato un e-service con una versione pubblicata la cui delega in erogazione è stata revocata
   Quando l'ex delegato tenta di sospendere la versione
@@ -467,6 +482,7 @@ Feature: Messaggi di errore durante la gestione degli e-service
 
   # NON REPLICABILE A FRONTEND
   # Endpoint: POST /eservices/:eServiceId/descriptors/:descriptorId/activate
+  @err_msg_undefined_exec
   Scenario: [ERROR_065] - Impossibilità di riattivare una versione dopo la revoca della delega
   Dato un e-service con una versione sospesa la cui delega in erogazione è stata revocata
   Quando l'ex delegato tenta di riattivare la versione
@@ -483,6 +499,7 @@ Feature: Messaggi di errore durante la gestione degli e-service
 
   # NON REPLICABILE A FRONTEND
   # Endpoint: POST /eservices/:eServiceId/descriptors/:descriptorId/update
+  @err_msg_undefined_exec
   Scenario: [ERROR_066] - Impossibilità di modificare la configurazione di una versione dopo la revoca della delega
   Dato un e-service con una versione in bozza la cui delega in erogazione è stata revocata
   Quando l'ex delegato tenta di modificare la configurazione della versione
@@ -499,6 +516,7 @@ Feature: Messaggi di errore durante la gestione degli e-service
 
   # NON REPLICABILE A FRONTEND
   # Endpoint: POST /eservices/:eServiceId/descriptors/:descriptorId/agreementApprovalPolicy/update
+  @err_msg_undefined_exec
   Scenario: [ERROR_067] - Impossibilità di modificare l'approvazione delle fruizioni dopo la revoca della delega
   Dato un e-service con una versione pubblicata la cui delega in erogazione è stata revocata
   Quando l'ex delegato tenta di modificare la modalità di approvazione delle richieste di fruizione
@@ -529,6 +547,7 @@ Feature: Messaggi di errore durante la gestione degli e-service
 
   # NON REPLICABILE A FRONTEND
   # Endpoint: POST /eservices/:eServiceId/delegationFlags/update
+  @err_msg_undefined_exec
   Scenario: [ERROR_069] - Impossibilità di modificare le impostazioni di delega dopo la revoca della delega
   Dato un e-service pubblicato la cui delega in erogazione è stata revocata
   Quando l'ex delegato tenta di modificare le impostazioni di delega dell'e-service
@@ -544,6 +563,7 @@ Feature: Messaggi di errore durante la gestione degli e-service
 
   # NON REPLICABILE A FRONTEND
   # Endpoint: POST /eservices/:eServiceId/name/update
+  @err_msg_undefined_exec
   Scenario: [ERROR_070] - Impossibilità di modificare il nome di un e-service dopo la revoca della delega
   Dato un e-service pubblicato la cui delega in erogazione è stata revocata
   Quando l'ex delegato tenta di assegnare all'e-service un nome disponibile
@@ -559,6 +579,7 @@ Feature: Messaggi di errore durante la gestione degli e-service
 
   # NON REPLICABILE A FRONTEND
   # Endpoint: POST /eservices/:eServiceId/signalhub/update
+  @err_msg_undefined_exec
   Scenario: [ERROR_071] - Impossibilità di modificare l'adesione a Signal Hub dopo la revoca della delega
   Dato un e-service pubblicato la cui delega in erogazione è stata revocata
   Quando l'ex delegato tenta di modificare l'adesione dell'e-service a Signal Hub
@@ -574,6 +595,7 @@ Feature: Messaggi di errore durante la gestione degli e-service
 
   # NON REPLICABILE A FRONTEND
   # Endpoint: POST /eservices/:eServiceId/descriptors/:descriptorId/attributes/update
+  @err_msg_undefined_exec
   Scenario: [ERROR_072] - Impossibilità di modificare gli attributi richiesti dopo la revoca della delega
   Dato un e-service con una versione pubblicata la cui delega in erogazione è stata revocata
   Quando l'ex delegato tenta di modificare gli attributi richiesti dalla versione
@@ -589,6 +611,7 @@ Feature: Messaggi di errore durante la gestione degli e-service
 
   # NON REPLICABILE A FRONTEND
   # Endpoint: POST /templates/eservices/:eServiceId/upgrade
+  @err_msg_undefined_exec
   Scenario: [ERROR_073] - Impossibilità di aggiornare un'istanza al nuovo template dopo la revoca della delega
   Data un'istanza pubblicata con una nuova versione del template disponibile e una delega in erogazione revocata
   Quando l'ex delegato tenta di aggiornare l'istanza alla nuova versione del template
@@ -608,6 +631,7 @@ Feature: Messaggi di errore durante la gestione degli e-service
 
   # NON REPLICABILE A FRONTEND
   # Endpoint: POST /templates/eservices/:eServiceId/descriptors/:descriptorId/interface/soap
+  @err_msg_undefined_exec
   Scenario: [ERROR_074] - Impossibilità di configurare l'interfaccia SOAP di un'istanza dopo la revoca della delega
   Data un'istanza SOAP in bozza la cui delega in erogazione è stata revocata
   Quando l'ex delegato tenta di configurare l'interfaccia con indirizzi validi
@@ -626,6 +650,7 @@ Feature: Messaggi di errore durante la gestione degli e-service
 
   # NON REPLICABILE A FRONTEND
   # Endpoint: POST /templates/eservices/:eServiceId/descriptors/:descriptorId/interface/rest
+  @err_msg_undefined_exec
   Scenario: [ERROR_075] - Impossibilità di configurare l'interfaccia REST di un'istanza dopo la revoca della delega
   Data un'istanza REST in bozza la cui delega in erogazione è stata revocata
   Quando l'ex delegato tenta di configurare l'interfaccia con dati validi
@@ -644,6 +669,7 @@ Feature: Messaggi di errore durante la gestione degli e-service
 
   # NON REPLICABILE A FRONTEND
   # Endpoint: POST /templates/eservices/:eServiceId/descriptors/:descriptorId/update
+  @err_msg_undefined_exec
   Scenario: [ERROR_076] - Impossibilità di aggiornare la versione pubblicata di un'istanza dopo la revoca della delega
   Data un'istanza di template pubblicata la cui delega in erogazione è stata revocata
   Quando l'ex delegato tenta di modificare i dati aggiornabili della versione
@@ -663,6 +689,7 @@ Feature: Messaggi di errore durante la gestione degli e-service
 
   # NON REPLICABILE A FRONTEND
   # Endpoint: POST /eservices/:eServiceId/personalDataFlag
+  @err_msg_undefined_exec
   Scenario: [ERROR_077] - Impossibilità di modificare l'indicazione sui dati personali dopo la revoca della delega
   Dato un e-service pubblicato la cui delega in erogazione è stata revocata
   Quando l'ex delegato tenta di modificare l'indicazione sul trattamento dei dati personali
@@ -696,6 +723,8 @@ Feature: Messaggi di errore durante la gestione degli e-service
 
   # NON REPLICABILE A FRONTEND
   # Endpoint: POST /templates/eservices/:eServiceId/descriptors/:descriptorId/interface/rest
+  @err_msg_undefined_exec
+  @wait_for_qa
   Scenario: [ERROR_079] - Rifiuto della configurazione REST di un'istanza con una versione OpenAPI non supportata
   Data un'istanza in bozza derivata da un template con una versione OpenAPI non supportata
   Quando l'erogatore tenta di configurare l'interfaccia REST dell'istanza
@@ -705,7 +734,6 @@ Feature: Messaggi di errore durante la gestione degli e-service
     # Richiede un dato preesistente isolato con template pubblicato e interfaccia non supportata.
     # Non simulare il prerequisito cambiando solo la richiesta REST dell'istanza: essa contiene dati di configurazione, non un file.
     Given un'istanza REST in bozza derivata da un template con una versione OpenAPI non supportata
-    # Binding BFF negativo mancante; riusare addEServiceTemplateInstanceInterfaceRest.
     When l'erogatore tenta di configurare l'interfaccia REST della versione 1 dell'e-service con dati validi
     Then il messaggio di errore corrisponde al caso "CATALOG_OPENAPI_VERSION_NOT_RECOGNIZED__POST_TEMPLATES_ESERVICES_E_SERVICE_ID_DESCRIPTORS_DESCRIPTOR_ID_INTERFACE_REST"
 
@@ -826,6 +854,7 @@ Feature: Messaggi di errore durante la gestione degli e-service
 
   # NON REPLICABILE A FRONTEND
   # Endpoint: PATCH /eservices/:eServiceId
+  @err_msg_undefined_exec
   Scenario: [ERROR_090] - Rifiuto dell'aggiornamento parziale con il nome di un altro e-service dell'erogatore
   Dati due e-service in bozza appartenenti allo stesso erogatore
   Quando l'erogatore tenta di aggiornare parzialmente un e-service usando il nome dell'altro
@@ -840,6 +869,7 @@ Feature: Messaggi di errore durante la gestione degli e-service
 
   # NON REPLICABILE A FRONTEND
   # Endpoint: PATCH /eservices/:eServiceId
+  @err_msg_undefined_exec
   Scenario: [ERROR_091] - Rifiuto dell'aggiornamento parziale di un e-service con il nome di un template
   Dati un template pubblicato e un e-service in bozza
   Quando l'erogatore tenta di aggiornare parzialmente l'e-service usando il nome del template

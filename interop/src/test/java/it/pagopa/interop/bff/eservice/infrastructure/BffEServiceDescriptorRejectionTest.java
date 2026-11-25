@@ -46,7 +46,8 @@ class BffEServiceDescriptorRejectionTest {
                 new TestChainFactory(mock(LastApiResponseStore.class), entities), client);
         var descriptors = spy(new BffEServiceDescriptorGateway(mock(BffEServiceRestClient.class), entities,
                 mock(BffEServiceDescriptorMapper.class), mock(BffEServiceDescriptorInterfaceGateway.class),
-                mock(BffEServiceDescriptorArchiveGateway.class), mock(BffEServiceDescriptorUpdateGateway.class)));
+                mock(BffEServiceDescriptorArchiveGateway.class), mock(BffEServiceDescriptorUpdateGateway.class),
+                new BffEServiceRequestFactory()));
         var gateway = new BffEServiceDescriptorApprovalGateway(restClient, descriptors);
         var pending = EServiceDescriptor.builder().id(descriptorRef.id()).state(WAITING_FOR_APPROVAL).build();
         var draft = pending.toBuilder().state(DRAFT).build();

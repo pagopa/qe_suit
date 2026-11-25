@@ -69,11 +69,18 @@ public class TenantUseCase {
     }
 
     public void attemptCertifiedAttributeAssignment(TenantRef tenantRef, Attribute attribute) {
-        if (attribute.getKind() != AttributeKind.CERTIFIED) {
-            throw new IllegalArgumentException("Certified attribute assignment attempt requires kind CERTIFIED, but was "
-                    + attribute.getKind());
+        if (attribute.getKind() == AttributeKind.CERTIFIED) {
+            tenantGateway.attemptCertifiedAttributeAssignment(tenantRef, attribute.getRef());
+            return;
         }
-        tenantGateway.attemptCertifiedAttributeAssignment(tenantRef, attribute.getRef());
+        if (attribute.getKind() == AttributeKind.CERTIFIED_DISCRETE) {
+            tenantGateway.attemptCertifiedDiscreteAttributeAssignment(tenantRef, attribute.getRef(), 1);
+            return;
+        }
+        throw new IllegalArgumentException(
+                "Certified attribute assignment attempt requires kind CERTIFIED or CERTIFIED_DISCRETE, but was "
+                        + attribute.getKind()
+        );
     }
 
     public void attemptContactEmailSaveWithHyperlinkInNotes(TenantRef tenantRef) {

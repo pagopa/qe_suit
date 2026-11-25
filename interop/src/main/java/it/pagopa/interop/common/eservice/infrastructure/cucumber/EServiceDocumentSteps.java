@@ -47,6 +47,11 @@ public class EServiceDocumentSteps {
         useCase.attemptDocumentRename(service, service.getDescriptorOrThrow(selection.getVersion()), documentName, newName);
     }
 
+    @When("l'erogatore tenta di eliminare il documento {string} della versione dell'{currentEService}")
+    public void attemptDocumentDeletion(String documentName, EService service) {
+        useCase.attemptDocumentDeletion(service, service.getLatestDescriptor(), documentName);
+    }
+
     @When("l'erogatore carica il file {string} come {string} sulla versione dell'e-service con il nome {string}")
     public void uploadFileToEServiceVersion(String filePath, String documentType, String documentName) {
         // Usato negli scenari con id ERROR_181, ERROR_182, ERROR_183, ERROR_185, ERROR_186, ERROR_187

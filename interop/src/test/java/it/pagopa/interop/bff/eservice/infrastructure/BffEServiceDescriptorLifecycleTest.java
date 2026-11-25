@@ -28,7 +28,8 @@ class BffEServiceDescriptorLifecycleTest {
     private final BffEServiceDescriptorGateway gateway = spy(new BffEServiceDescriptorGateway(
             restClient, store, mock(BffEServiceDescriptorMapper.class),
             interfaceGateway, mock(BffEServiceDescriptorArchiveGateway.class),
-            new BffEServiceDescriptorUpdateGateway(restClient, instanceClient, interfaceGateway, store)
+            new BffEServiceDescriptorUpdateGateway(restClient, instanceClient, interfaceGateway, store),
+            new BffEServiceRequestFactory()
     ));
     private final EServiceRef serviceRef = EServiceRef.of(UUID.randomUUID());
     private final EServiceDescriptorRef descriptorRef = EServiceDescriptorRef.of(UUID.randomUUID());

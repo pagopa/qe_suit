@@ -306,7 +306,80 @@ public class M2MEServiceDescriptorGateway implements EServiceDescriptorGateway {
     }
 
     @Override
+    public void attemptDocumentDeletion(EServiceRef eServiceRef, EServiceDescriptorRef descriptorRef, Document document) {
+        throw new UnsupportedOperationException("Deleting descriptor documents is not supported on M2M V3");
+    }
+
+    @Override
     public void attemptDescriptorCreation(EServiceRef eServiceRef) {
         throw new UnsupportedOperationException("Creating an e-service descriptor is not supported on M2M V3");
+    }
+
+    @Override
+    public void attemptDraftVersionDeletion(EServiceRef eServiceRef, EServiceDescriptorRef descriptorRef) {
+        throw new UnsupportedOperationException("Deleting draft descriptors is not supported on M2M V3");
+    }
+
+    @Override
+    public void submitDelegatedArchivingRequest(
+            EServiceRef eServiceRef, EServiceDescriptorRef descriptorRef, GracePeriodDays gracePeriodDays
+    ) {
+        throw new UnsupportedOperationException("Submitting delegated descriptor archiving is not supported on M2M V3");
+    }
+
+    @Override
+    public void attemptDelegatedArchivingRequest(
+            EServiceRef eServiceRef, EServiceDescriptorRef descriptorRef, GracePeriodDays gracePeriodDays
+    ) {
+        throw new UnsupportedOperationException("Submitting delegated descriptor archiving is not supported on M2M V3");
+    }
+
+    @Override
+    public void attemptCancelDelegatedArchivingRequest(EServiceRef eServiceRef, EServiceDescriptorRef descriptorRef) {
+        throw new UnsupportedOperationException("Cancelling delegated descriptor archiving is not supported on M2M V3");
+    }
+
+    @Override
+    public void attemptDescriptorConfigurationUpdate(EService eService, EServiceDescriptor descriptor) {
+        throw new UnsupportedOperationException("Descriptor configuration update attempts are not supported on M2M V3");
+    }
+
+    @Override
+    public void attemptDescriptorPublication(EServiceRef eServiceRef, EServiceDescriptorRef descriptorRef) {
+        throw new UnsupportedOperationException("Descriptor publication attempts are not supported on M2M V3");
+    }
+
+    @Override
+    public void attemptDescriptorSuspension(EServiceRef eServiceRef, EServiceDescriptorRef descriptorRef) {
+        throw new UnsupportedOperationException("Descriptor suspension attempts are not supported on M2M V3");
+    }
+
+    @Override
+    public void attemptDescriptorActivation(EServiceRef eServiceRef, EServiceDescriptorRef descriptorRef) {
+        throw new UnsupportedOperationException("Descriptor activation attempts are not supported on M2M V3");
+    }
+
+    @Override
+    public void attemptAgreementApprovalPolicyUpdate(EServiceRef eServiceRef, EServiceDescriptorRef descriptorRef) {
+        throw new UnsupportedOperationException("Agreement approval policy update attempts are not supported on M2M V3");
+    }
+
+    @Override
+    public void attemptAttributesUpdate(EServiceRef eServiceRef, EServiceDescriptorRef descriptorRef) {
+        throw new UnsupportedOperationException("Descriptor attributes update attempts are not supported on M2M V3");
+    }
+
+    @Override
+    public void attemptTemplateInstanceSOAPInterfaceConfiguration(
+            EServiceRef eServiceRef, EServiceDescriptorRef descriptorRef, List<SoapAddressConfiguration> addresses
+    ) {
+        throw new UnsupportedOperationException("Template instance SOAP interface configuration attempts are not supported on M2M V3");
+    }
+
+    @Override
+    public void attemptTemplateInstanceRESTInterfaceConfiguration(
+            EServiceRef eServiceRef, EServiceDescriptorRef descriptorRef, RestInterfaceConfiguration configuration
+    ) {
+        throw new UnsupportedOperationException("Template instance REST interface configuration attempts are not supported on M2M V3");
     }
 }

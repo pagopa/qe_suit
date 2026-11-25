@@ -81,4 +81,17 @@ public class AttributeSteps {
         Agreement agreement = entityStore.getLastOrThrow(Agreement.class);
         tenantUseCase.assignVerifiedAttribute(TenantRef.of(tenant.getOrganizationId()), attribute.getRef(), agreement.getRef());
     }
+
+    @Given("l'attributo certificato discreto {string} già assegnato all'ente {tenant} con un valore ammesso")
+    public void assignCertifiedDiscreteAttributeWithAllowedValue(String alias, Tenant tenant) {
+        Attribute attribute = entityStore.getByAliasOrThrow(alias, Attribute.class);
+        if (attribute.getKind() != AttributeKind.CERTIFIED_DISCRETE) {
+            throw new IllegalArgumentException(
+                    "Discrete certified attribute setup requires kind CERTIFIED_DISCRETE, but was " + attribute.getKind()
+            );
+        }
+        tenantUseCase.assignCertifiedDiscreteAttribute(
+                TenantRef.of(tenant.getOrganizationId()), attribute.getRef(), 1
+        );
+    }
 }

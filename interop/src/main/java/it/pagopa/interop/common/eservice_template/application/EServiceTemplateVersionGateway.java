@@ -11,6 +11,7 @@ import it.pagopa.interop.common.kernel.domain.EServiceTemplateVersionRef;
 import org.springframework.plugin.core.Plugin;
 
 import java.util.Optional;
+import java.util.UUID;
 
 public interface EServiceTemplateVersionGateway extends Plugin<Channel> {
     void deleteDraftVersion(EServiceTemplateRef templateRef, EServiceTemplateVersionRef versionRef);
@@ -25,6 +26,13 @@ public interface EServiceTemplateVersionGateway extends Plugin<Channel> {
 
     EServiceTemplateVersion uploadInterface(EServiceTemplateRef templateRef, EServiceTemplateVersionRef versionRef, String fixturePath);
 
+    EServiceTemplateVersion addDocument(
+            EServiceTemplateRef templateRef,
+            EServiceTemplateVersionRef versionRef,
+            String fixturePath,
+            String documentName
+    );
+
     void requestDocumentUpload(EServiceTemplateRef templateRef, EServiceTemplateVersionRef versionRef, String fixturePath);
 
     void attemptFileUpload(
@@ -33,6 +41,19 @@ public interface EServiceTemplateVersionGateway extends Plugin<Channel> {
             String fixturePath,
             DocumentKind kind,
             String documentName
+    );
+
+    void attemptDocumentRename(
+            EServiceTemplateRef templateRef,
+            EServiceTemplateVersionRef versionRef,
+            UUID documentId,
+            String newName
+    );
+
+    void attemptDocumentDownload(
+            EServiceTemplateRef templateRef,
+            EServiceTemplateVersionRef versionRef,
+            UUID documentId
     );
 
     void shouldFailToUploadInterface(

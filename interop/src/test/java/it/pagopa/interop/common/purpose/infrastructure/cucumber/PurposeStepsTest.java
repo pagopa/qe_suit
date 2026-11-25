@@ -541,4 +541,39 @@ class PurposeStepsTest {
         verifyNoMoreInteractions(useCase);
         verifyNoInteractions(interopJourney, userSession, currentChannel);
     }
+
+    @Test
+    void signsRiskAnalysisWithStaleMetadataVersionReadBeforeConcurrentUpdate() {
+        User reviewer = User.getTenantUser(Tenant.PAGO_PA, UserRole.REVIEWER);
+        Purpose initial = purpose.toBuilder()
+                .id(UUID.randomUUID())
+                .consumerId(Tenant.PAGO_PA.getOrganizationId())
+                .title("Finalita")
+                .description("Descrizione iniziale")
+                .metadataVersion(3)
+                .build();
+        Purpose afterUpdate = initial.toBuilder()
+                .description("Descrizione iniziale aggiornata")
+                .metadataVersion(4)
+                .build();
+        when(entities.getLastOrThrow(Purpose.class)).thenReturn(initial, initial, afterUpdate);
+        when(useCase.getPurpose(initial)).thenReturn(initial);
+        when(userSession.getActor()).thenReturn(reviewer);
+        when(userSession.getTenant()).thenReturn(Tenant.PAGO_PA);
+        when(useCase.updatePurposeMetadata(
+                initial, "Finalita", "Descrizione iniziale aggiornata", null, null, null
+        )).thenReturn(afterUpdate);
+
+        steps.reviewerReadsRiskAnalysisData();
+        steps.riskAnalysisUpdatedAfterReviewerRead();
+        steps.attemptRiskAnalysisSigningWithStaleMetadataVersion();
+
+        var order = inOrder(userSession, useCase);
+        order.verify(useCase).getPurpose(initial);
+        order.verify(userSession).set(User.getTenantAdmin(Tenant.PAGO_PA), Tenant.PAGO_PA);
+        order.verify(useCase).updatePurposeMetadata(
+                initial, "Finalita", "Descrizione iniziale aggiornata", null, null, null);
+        order.verify(userSession).set(reviewer, Tenant.PAGO_PA);
+        order.verify(useCase).attemptRiskAnalysisSigning(afterUpdate, 3);
+    }
 }

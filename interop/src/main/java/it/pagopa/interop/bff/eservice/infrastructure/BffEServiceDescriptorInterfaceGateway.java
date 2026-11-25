@@ -203,6 +203,26 @@ public class BffEServiceDescriptorInterfaceGateway {
                 requestFactory.documentRenameRequest(newName)).withoutPolling();
     }
 
+    public void attemptDocumentDeletion(EServiceRef serviceRef, EServiceDescriptorRef descriptorRef, UUID documentId) {
+        restClient.deleteDocument(serviceRef.id(), descriptorRef.id(), documentId).withoutPolling();
+    }
+
+    public void attemptConfigureSOAP(
+            EServiceRef serviceRef, EServiceDescriptorRef descriptorRef, List<SoapAddressConfiguration> addresses
+    ) {
+        restClient.addEServiceTemplateInstanceInterfaceSoap(
+                serviceRef.id(), descriptorRef.id(), BffEServiceInterfacePayloadFactory.soapPayload(addresses)
+        ).withoutPolling();
+    }
+
+    public void attemptConfigureREST(
+            EServiceRef serviceRef, EServiceDescriptorRef descriptorRef, RestInterfaceConfiguration configuration
+    ) {
+        restClient.addEServiceTemplateInstanceInterfaceRest(
+                serviceRef.id(), descriptorRef.id(), BffEServiceInterfacePayloadFactory.restPayload(configuration)
+        ).withoutPolling();
+    }
+
     private static File resolveDocumentFixtureFile(String fixturePath) {
         ClassLoader classLoader = Thread.currentThread().getContextClassLoader();
         if (classLoader == null) {
