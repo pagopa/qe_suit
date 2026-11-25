@@ -9,7 +9,9 @@ import it.pagopa.interop.generated.openapi.clients.bff.model.CreatedResource;
 import it.pagopa.interop.generated.openapi.clients.bff.model.LinkableResourceRequest;
 import it.pagopa.interop.generated.openapi.clients.bff.model.LinkableResources;
 import it.pagopa.interop.generated.openapi.clients.bff.model.LinkedResource;
+import it.pagopa.interop.generated.openapi.clients.bff.model.PatchUpdatePurposeTemplateSeed;
 import it.pagopa.interop.generated.openapi.clients.bff.model.PurposeTemplateSeed;
+import it.pagopa.interop.generated.openapi.clients.bff.model.PurposeTemplate;
 import it.pagopa.interop.generated.openapi.clients.bff.model.PurposeTemplateWithCompactCreator;
 import jakarta.annotation.Nonnull;
 import org.springframework.stereotype.Component;
@@ -54,6 +56,17 @@ public class BffPurposeTemplateRestClient extends RestClient {
         );
     }
 
+    public TestChain<PurposeTemplate> updatePurposeTemplate(
+            @Nonnull UUID purposeTemplateId, @Nonnull PatchUpdatePurposeTemplateSeed payload) {
+        return execute(
+                () -> purposeTemplatesApi.patchUpdatePurposeTemplate()
+                        .purposeTemplateIdPath(purposeTemplateId)
+                        .body(payload)
+                        .execute(Function.identity()),
+                PurposeTemplate.class
+        );
+    }
+
     public TestChain<Void> publishPurposeTemplate(@Nonnull UUID purposeTemplateId) {
         return execute(
                 () -> purposeTemplatesApi.publishPurposeTemplate()
@@ -74,6 +87,16 @@ public class BffPurposeTemplateRestClient extends RestClient {
         );
     }
 
+    public TestChain<Void> archivePurposeTemplate(@Nonnull UUID purposeTemplateId) {
+        return execute(
+                () -> purposeTemplatesApi.archivePurposeTemplate()
+                        .purposeTemplateIdPath(purposeTemplateId)
+                        .reqSpec(reqSpec -> reqSpec.setContentType("application/x-www-form-urlencoded; charset=UTF-8"))
+                        .execute(Function.identity()),
+                Void.class
+        );
+    }
+
     public TestChain<LinkedResource> linkResource(@Nonnull UUID purposeTemplateId, @Nonnull LinkableResourceRequest payload) {
         return execute(
                 () -> purposeTemplatesApi.linkResourceToPurposeTemplate()
@@ -84,4 +107,3 @@ public class BffPurposeTemplateRestClient extends RestClient {
         );
     }
 }
-

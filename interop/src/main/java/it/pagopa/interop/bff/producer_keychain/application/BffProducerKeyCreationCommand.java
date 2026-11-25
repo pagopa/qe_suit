@@ -10,6 +10,7 @@ import lombok.Getter;
 @Getter
 public class BffProducerKeyCreationCommand implements ProducerKeyCreationCommand {
     private final KeySeed keySeed = new KeySeed();
+    private Key key;
 
     @Override
     public BffProducerKeyCreationCommand name(String name) {
@@ -19,6 +20,7 @@ public class BffProducerKeyCreationCommand implements ProducerKeyCreationCommand
 
     @Override
     public BffProducerKeyCreationCommand key(Key key) {
+        this.key = key;
         keySeed.setKey(JwtUtils.encodeDelimitedPublicKeyBase64(key.pair().getPublic()));
         return this;
     }

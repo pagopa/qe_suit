@@ -1,5 +1,6 @@
 package it.pagopa.interop.bff.eservice.infrastructure;
 
+import it.pagopa.application.context.EntityStore;
 import it.pagopa.infrastructure.template.action.strategy.PollingStrategy;
 import it.pagopa.interop.common.eservice.application.EServiceRiskAnalysisGateway;
 import it.pagopa.interop.common.kernel.domain.Channel;
@@ -21,6 +22,7 @@ public class BffEServiceRiskAnalysisGateway implements EServiceRiskAnalysisGatew
 
     private final BffEServiceRestClient restClient;
     private final BffEServiceRiskAnalysisMapper mapper;
+    private final EntityStore entityStore;
 
     /**
      * Recupera la prima {@link EServiceRiskAnalysis} associata all'e-service.
@@ -34,13 +36,17 @@ public class BffEServiceRiskAnalysisGateway implements EServiceRiskAnalysisGatew
      */
     @Override
     public EServiceRiskAnalysis getRiskAnalysis(EServiceRef eServiceRef) {
-        return restClient.readEService(eServiceRef.id())
+        EServiceRiskAnalysis riskAnalysis = restClient.readEService(eServiceRef.id())
                 .withPolling(PollingStrategy.UNTIL_SUCCESS)
                 .map(details -> details.getRiskAnalysis().stream()
                         .findFirst()
                         .map(mapper::toDomain)
                         .orElse(null))
                 .get();
+        if (riskAnalysis != null) {
+            entityStore.upsert(riskAnalysis);
+        }
+        return riskAnalysis;
     }
 
     @Override
@@ -55,7 +61,7 @@ public class BffEServiceRiskAnalysisGateway implements EServiceRiskAnalysisGatew
                 .withPolling(PollingStrategy.UNTIL_SUCCESS)
                 .get();
 
-        return PollingUtils.pollUntil(
+        EServiceRiskAnalysis riskAnalysis = PollingUtils.pollUntil(
                 () -> restClient.readEService(eServiceRef.id())
                         .withPolling(PollingStrategy.UNTIL_SUCCESS)
                         .map(details -> details.getRiskAnalysis().stream()
@@ -65,6 +71,8 @@ public class BffEServiceRiskAnalysisGateway implements EServiceRiskAnalysisGatew
                         .get(),
                 java.util.Optional::isPresent
         ).orElseThrow();
+        entityStore.upsert(riskAnalysis);
+        return riskAnalysis;
     }
 
 
@@ -73,4 +81,3 @@ public class BffEServiceRiskAnalysisGateway implements EServiceRiskAnalysisGatew
         return delimiter == Channel.BFF;
     }
 }
-

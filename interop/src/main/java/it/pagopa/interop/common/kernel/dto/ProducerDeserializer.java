@@ -1,4 +1,4 @@
-package it.pagopa.interop.common.infrastructure.cucumber.dto;
+package it.pagopa.interop.common.kernel.dto;
 
 import com.fasterxml.jackson.core.JsonParser;
 import com.fasterxml.jackson.databind.DeserializationContext;
