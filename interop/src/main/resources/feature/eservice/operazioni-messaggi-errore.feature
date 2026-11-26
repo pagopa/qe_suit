@@ -159,14 +159,16 @@ Feature: Messaggi di errore durante la gestione degli e-service
   # Endpoint: POST /eservices/:eServiceId/riskAnalysis
   @err_msg_undefined_exec
   Scenario: [ERROR_046] - Rifiuto dell'aggiunta di un'analisi del rischio con un nome già usato
-  Dato un e-service pubblicato in ricezione con un'analisi del rischio
+  Dato un e-service in bozza in ricezione con un'analisi del rischio
   Quando l'erogatore tenta di aggiungere un'altra analisi con lo stesso nome
   Allora il sistema rifiuta l'aggiunta e segnala che il nome dell'analisi è già in uso.
 
-    Given i seguenti e-service pubblicati:
+    Given i seguenti e-service in bozza:
       | alias | erogatore        | modalità  |
       | ES-1  | Comune di Milano | ricezione |
-    # Binding BFF negativo mancante; riusare addRiskAnalysis con il nome dell'analisi esistente.
+    And le seguenti analisi del rischio complete associate all'e-service:
+      | alias | nome      |
+      | AR-1  | Analisi A |
     When l'erogatore tenta di aggiungere all'e-service un'analisi del rischio con il nome di quella esistente
     Then il messaggio di errore corrisponde al caso "CATALOG_RISK_ANALYSIS_DUPLICATED__POST_ESERVICES_E_SERVICE_ID_RISK_ANALYSIS"
 
