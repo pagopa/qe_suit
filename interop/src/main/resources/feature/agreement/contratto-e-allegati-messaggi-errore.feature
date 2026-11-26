@@ -50,7 +50,5 @@ Feature: Messaggi di errore durante il download del documento firmato e il caric
     And la versione 1 dell'e-service "ES-1" del Comune di Milano pubblicata
     And l'e-service "ES-1" del Comune di Milano sottoscritto da PagoPA con una richiesta di fruizione bozza
     And un admin appartenente al fruitore PagoPA
-    # Fixture da predisporre: PDF con tipo ammesso e contenuto non valido.
-    # Operazione BFF e binding mancanti per il caricamento degli allegati alla richiesta.
     When il fruitore tenta di allegare la richiesta di fruizione un file con formato non valido
     Then il messaggio di errore corrisponde al caso "AGREEMENT_INVALID_FILE_UPLOAD_ERROR"
