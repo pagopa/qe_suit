@@ -14,6 +14,7 @@ import java.util.UUID;
 @Jacksonized
 public class LegalNotificationDomain implements Identifiable {
     String iun;
+    String paProtocolNumber;
     String senderTaxId;
     String senderDenomination;
     String subject;
