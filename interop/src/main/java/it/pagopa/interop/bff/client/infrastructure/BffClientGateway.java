@@ -275,6 +275,15 @@ public class BffClientGateway implements ClientGateway {
 
     @Override
     public void attemptKeyRegistration(Client client, KeyRegistrationMaterial material, String name) {
+        if (material == KeyRegistrationMaterial.REGISTERED_PUBLIC_KEY) {
+            // Temporary diagnostic delay to check for conflicts with the setup writes.
+            try {
+                Thread.sleep(2000L);
+            } catch (InterruptedException exception) {
+                Thread.currentThread().interrupt();
+                throw new IllegalStateException("Interrupted before duplicate client key registration", exception);
+            }
+        }
         restClient.addKey(client.getId(), keyRequests.registrationRequest(material, name, client.getKeys()))
                 .withoutPolling();
     }
