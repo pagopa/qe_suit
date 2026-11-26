@@ -7809,10 +7809,34 @@ ko:
     	at org.assertj.core.api.SoftAssertionsProvider.assertSoftly(SoftAssertionsProvider.java:122)
     	at org.assertj.core.api.SoftAssertions.assertSoftly(SoftAssertions.java:165)
     	at it.pagopa.interop.suite.contract.WebPurposeTemplateContractTest.assertLandedOnCreatedTemplate(WebPurposeTemplateContractTest.java:74)
-  procedure: 'Analisi del log, riesecuzione in locale ed esecuzione manuale con verifica XPath coinvolto.'
-  result: 'In questo caso vengono effettuate due run : una con caso che tratta dati personali e un altro che non tratta dati personali, scelta che non influisce sulla presenza o meno dello switch in pagina. Uno dei due test termina correttamente (individuando quindi correttamente lo switch) mentre il caso restante non lo trova. Facendo una ulteriore prova manuale sulla pagina per ciascuno dei due casi testati, in modalità sviluppatore se si cerca quel XPath indicato per lo switch, questo trova correttamente il componente grafico. Si conclude che questo errore può essere legato ad un mancato caricamento del componente in tempi brevi o comunque accettabili.'
+  procedure: |
+    Analizzare il log NRT dello scenario con trattamento dati personali
+    disabilitato, ricostruendo la navigazione e le verifiche successive
+    alla conferma della creazione.
+
+    Confrontare il KO con le esecuzioni precedenti e con la riesecuzione
+    locale. Esaminare i controlli di caricamento della pagina, lo stato
+    iniziale dello switch e la verifica della presenza del campo motivazione.
+
+  result: |
+    Nella NRT il test non ha individuato titolo, descrizione e switch della
+    gratuità. La prima verifica dello stato dello switch è terminata con
+    NoSuchElementException, prima del click previsto per disattivarlo.
+
+    In una precedente NRT, dopo la conferma il test leggeva ancora il titolo
+    del catalogo anziché raggiungere il form. Per il KO attuale, però, il log
+    non riporta il titolo o l'URL effettivi: non è possibile confermare che
+    sia rimasto sul catalogo anche in questa esecuzione.
+
+    L'analisi ha evidenziato che il controllo di caricamento accetta un h1
+    non vuoto, senza verificare che appartenesse alla pagina attesa. Inoltre,
+    il raggiungimento del form dipende dal flusso di creazione via WEB,
+    introducendo passaggi estranei alle verifiche dei componenti.
+
+    Queste osservazioni da sole non portano automaticamente ad una causa del KO, 
+    ma suggeriscono che il test non sia sufficientemente robusto.
   link_prod_bug: ''
-  link_suite_bug: ''
+  link_suite_bug: https://pagopa.atlassian.net/browse/QA-19830
 - id_test: WebEServiceThresholdContractTest::shouldValidateThresholdFields::soglia per fruitore con valore decimale
     (virgola)
   error_log: |
