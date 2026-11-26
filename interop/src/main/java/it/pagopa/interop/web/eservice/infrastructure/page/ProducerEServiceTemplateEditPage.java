@@ -2,7 +2,6 @@ package it.pagopa.interop.web.eservice.infrastructure.page;
 
 import it.frontend.e2e.framework.annotation.location.web.Url;
 import it.frontend.e2e.framework.annotation.selector.XPath;
-import it.frontend.e2e.framework.web.domain.Component;
 import it.frontend.e2e.framework.web.domain.Page;
 import it.pagopa.infrastructure.suit.component.*;
 import it.pagopa.interop.web.eservice.infrastructure.page.component.template_eservice_stepper.AdditionalInfoStep;
