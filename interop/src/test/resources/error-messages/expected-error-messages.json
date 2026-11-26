@@ -201,7 +201,6 @@
         "en": "You cannot reactivate this service request because its e-service version is being archived or has been archived. Refresh the page to see its current status."
       }
     },
-
     {
       "id": "ATTRIBUTE_REGISTRY_ATTRIBUTE_DUPLICATE__POST_CERTIFIED_ATTRIBUTES",
       "process": "Attribute Registry Process",
@@ -272,7 +271,6 @@
         "en": "You can't include a link in the attribute name or description. Remove the link and try again."
       }
     },
-
     {
       "id": "AUTHORIZATION_USER_NOT_ALLOWED_TO_DELETE_CLIENT_KEY",
       "process": "Authorization Process",
@@ -483,7 +481,6 @@
         "en": "You entered an unsupported key type. Enter an RSA public key in PEM format."
       }
     },
-
     {
       "id": "BFF_CONTRACT_EXCEPTION",
       "process": "BFF Process",
@@ -1304,7 +1301,6 @@
         "en": "You can’t upgrade this e-service: your delegation for producing this e-service is no longer active. Go back to your e-services to see which ones you can manage."
       }
     },
-
     {
       "id": "DELEGATION_INCORRECT_STATE__DELETE_CONSUMERS_DELEGATIONS_DELEGATION_ID",
       "process": "Delegation Process",
@@ -1385,7 +1381,6 @@
         "en": "You can't reject the delegation because the reason contains a link. Remove the link and try again."
       }
     },
-
     {
       "id": "ESERVICE_TEMPLATE_ESERVICE_TEMPLATE_DOCUMENT_NOT_FOUND",
       "process": "EService Template Process",
@@ -1556,7 +1551,6 @@
         "en": "You can't include a link in the document name. Remove the link and try again."
       }
     },
-
     {
       "id": "PURPOSE_DUPLICATED_PURPOSE_TITLE__PATCH_PURPOSE_TEMPLATES_PURPOSE_TEMPLATE_ID_PURPOSES_PURPOSE_ID",
       "process": "Purpose Process",
@@ -1747,7 +1741,6 @@
         "en": "This risk analysis has already been rejected by another reviewer. Refresh the page to see the rejected risk analysis."
       }
     },
-
     {
       "id": "PURPOSE_TEMPLATE_UNAUTHORIZED_ERROR",
       "process": "Purpose Template Process",
@@ -1848,7 +1841,6 @@
         "en": "You can't include a link in the annotations. Remove the link and try again."
       }
     },
-
     {
       "id": "TENANT_CERTIFIED_ATTRIBUTE_ALREADY_ASSIGNED__POST_TENANTS_TENANT_ID_ATTRIBUTES_CERTIFIED",
       "process": "Tenant Process",
@@ -1886,7 +1878,7 @@
       "bffEndpoint": "POST /tenants/:tenantId/attributes/verified/:attributeId",
       "copy": {
         "it": "La data di scadenza deve essere successiva a oggi. Seleziona una data futura.",
-        "en": "The expiration date must be later than today. Select a future date.\n"
+        "en": "The expiration date must be later than today. Select a future date."
       }
     },
     {
