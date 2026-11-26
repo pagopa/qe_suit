@@ -321,6 +321,7 @@ Feature: Messaggi di errore durante la gestione delle richieste di fruizione
     # cloneAgreement ammette solo REJECTED; il setup deve inviare la bozza e farla rifiutare dall'erogatore.
     # Non devono esistere altre richieste in corso per PagoPA e lo stesso e-service.
     And una richiesta di fruizione rifiutata per l'e-service, creata da PagoPA
+    And un admin appartenente all'erogatore Comune di Milano
     And l'attributo certificato "CERT-1" revocato a PagoPA
     And un admin appartenente al fruitore PagoPA
     When il fruitore tenta di duplicare la richiesta di fruizione
