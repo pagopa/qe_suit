@@ -6741,11 +6741,21 @@ at WebConsumerPurposeDetailsPageContractTest.lambda$contractScenarios$1(WebConsu
 
 **RESULT**
 
-In questo caso vengono effettuate due run : una con caso che tratta dati personali e un altro che non tratta dati personali, scelta che non influisce sulla presenza o meno dello switch in pagina. Uno dei due test termina correttamente (individuando quindi correttamente lo switch) mentre il caso restante non lo trova. Facendo una ulteriore prova manuale sulla pagina per ciascuno dei due casi testati, in modalità sviluppatore se si cerca quel XPath indicato per lo switch, questo trova correttamente il componente grafico. Si conclude che questo errore può essere legato ad un mancato caricamento del componente in tempi brevi o comunque accettabili.
+Nella NRT il test non ha individuato titolo, descrizione e switch della gratuità. La prima verifica dello stato dello switch è terminata con NoSuchElementException, prima del click previsto per disattivarlo.
+
+In una precedente NRT, dopo la conferma il test leggeva ancora il titolo del catalogo anziché raggiungere il form. Per il KO attuale, però, il log non riporta il titolo o l'URL effettivi: non è possibile confermare che sia rimasto sul catalogo anche in questa esecuzione.
+
+L'analisi ha evidenziato che il controllo di caricamento accetta un h1 non vuoto, senza verificare che appartenesse alla pagina attesa. Inoltre, il raggiungimento del form dipende dal flusso di creazione via WEB, introducendo passaggi estranei alle verifiche dei componenti.
+
+Queste osservazioni da sole non portano automaticamente ad una causa del KO, ma suggeriscono che il test non sia sufficientemente robusto.
 
 **PROCEDURE**
 
-Analisi del log, riesecuzione in locale ed esecuzione manuale con verifica XPath coinvolto.
+Analizzare il log NRT dello scenario con trattamento dati personali disabilitato, ricostruendo la navigazione e le verifiche successive alla conferma della creazione.
+
+Confrontare il KO con le esecuzioni precedenti e con la riesecuzione locale. Esaminare i controlli di caricamento della pagina, lo stato iniziale dello switch e la verifica della presenza del campo motivazione.
+
+**LINK SUITE BUG:** https://pagopa.atlassian.net/browse/QA-19830
 
 **ERROR LOG**
 
@@ -6773,11 +6783,19 @@ java.util.NoSuchElementException: Impossibile verificare lo stato checked: l'ele
 
 **RESULT**
 
-Esecuzione del test terminata con successo. Problema temporaneo.
+Il test avvia la navigazione verso la pagina di creazione dell'e-service, ma fallisce nel controllo iniziale del titolo h1: il valore atteso è "Crea e-service", mentre il testo letto risulta vuoto.
+
+Il test termina prima della compilazione dei dati e dell'inserimento della soglia. Il KO non permette quindi di valutare la gestione del decimale con virgola. Anche gli altri tre scenari sulle soglie falliscono nello stesso punto e con lo stesso errore.
+
+L'attuale assertLoaded() confronta immediatamente il titolo letto con quello atteso. Un caricamento non ancora completato è una possibile causa, ma non è dimostrata dai log. È stata individuata un'attività di miglioramento della sincronizzazione del controllo; la causa del KO resta da confermare ma è ipotizzabile come un rallentamento temporaneo del caricamento della pagina dovuto all'esecuzione parallela dei test.
 
 **PROCEDURE**
 
-Analisi del log, riesecuzione in locale.
+Analizzare il log dello scenario e confrontare lo stack trace con EServiceCreatePage.assertLoaded() e con la sequenza del test.
+
+Verificare se il fallimento avviene prima o dopo l'inserimento della soglia e confrontare l'esito con gli altri scenari della stessa factory.
+
+**LINK SUITE BUG:** https://pagopa.atlassian.net/browse/QA-19831
 
 **ERROR LOG**
 
@@ -6816,11 +6834,19 @@ java.lang.AssertionError: Expected Crea e-service found
 
 **RESULT**
 
-Esecuzione del test terminata con successo. Problema temporaneo.
+Il test avvia la navigazione verso la pagina di creazione dell'e-service, ma fallisce nel controllo iniziale del titolo h1: il valore atteso è "Crea e-service", mentre il testo letto risulta vuoto.
+
+Il test termina prima della compilazione dei dati e dell'inserimento della soglia. Il KO non permette quindi di valutare la gestione del decimale con virgola. Anche gli altri tre scenari sulle soglie falliscono nello stesso punto e con lo stesso errore.
+
+L'attuale assertLoaded() confronta immediatamente il titolo letto con quello atteso. Un caricamento non ancora completato è una possibile causa, ma non è dimostrata dai log. È stata individuata un'attività di miglioramento della sincronizzazione del controllo; la causa del KO resta da confermare ma è ipotizzabile come un rallentamento temporaneo del caricamento della pagina dovuto all'esecuzione parallela dei test.
 
 **PROCEDURE**
 
-Analisi del log, riesecuzione in locale.
+Analizzare il log dello scenario e confrontare lo stack trace con EServiceCreatePage.assertLoaded() e con la sequenza del test.
+
+Verificare se il fallimento avviene prima o dopo l'inserimento della soglia e confrontare l'esito con gli altri scenari della stessa factory.
+
+**LINK SUITE BUG:** https://pagopa.atlassian.net/browse/QA-19831
 
 **ERROR LOG**
 
@@ -6859,11 +6885,19 @@ java.lang.AssertionError: Expected Crea e-service found
 
 **RESULT**
 
-Esecuzione del test terminata con successo. Problema temporaneo.
+Il test avvia la navigazione verso la pagina di creazione dell'e-service, ma fallisce nel controllo iniziale del titolo h1: il valore atteso è "Crea e-service", mentre il testo letto risulta vuoto.
+
+Il test termina prima della compilazione dei dati e dell'inserimento della soglia. Il KO non permette quindi di valutare la gestione del decimale con virgola. Anche gli altri tre scenari sulle soglie falliscono nello stesso punto e con lo stesso errore.
+
+L'attuale assertLoaded() confronta immediatamente il titolo letto con quello atteso. Un caricamento non ancora completato è una possibile causa, ma non è dimostrata dai log. È stata individuata un'attività di miglioramento della sincronizzazione del controllo; la causa del KO resta da confermare ma è ipotizzabile come un rallentamento temporaneo del caricamento della pagina dovuto all'esecuzione parallela dei test.
 
 **PROCEDURE**
 
-Analisi del log, riesecuzione in locale.
+Analizzare il log dello scenario e confrontare lo stack trace con EServiceCreatePage.assertLoaded() e con la sequenza del test.
+
+Verificare se il fallimento avviene prima o dopo l'inserimento della soglia e confrontare l'esito con gli altri scenari della stessa factory.
+
+**LINK SUITE BUG:** https://pagopa.atlassian.net/browse/QA-19831
 
 **ERROR LOG**
 
@@ -6902,11 +6936,19 @@ java.lang.AssertionError: Expected Crea e-service found
 
 **RESULT**
 
-Esecuzione del test terminata con successo. Problema temporaneo.
+Il test avvia la navigazione verso la pagina di creazione dell'e-service, ma fallisce nel controllo iniziale del titolo h1: il valore atteso è "Crea e-service", mentre il testo letto risulta vuoto.
+
+Il test termina prima della compilazione dei dati e dell'inserimento della soglia. Il KO non permette quindi di valutare la gestione del decimale con virgola. Anche gli altri tre scenari sulle soglie falliscono nello stesso punto e con lo stesso errore.
+
+L'attuale assertLoaded() confronta immediatamente il titolo letto con quello atteso. Un caricamento non ancora completato è una possibile causa, ma non è dimostrata dai log. È stata individuata un'attività di miglioramento della sincronizzazione del controllo; la causa del KO resta da confermare ma è ipotizzabile come un rallentamento temporaneo del caricamento della pagina dovuto all'esecuzione parallela dei test.
 
 **PROCEDURE**
 
-Analisi del log, riesecuzione in locale.
+Analizzare il log dello scenario e confrontare lo stack trace con EServiceCreatePage.assertLoaded() e con la sequenza del test.
+
+Verificare se il fallimento avviene prima o dopo l'inserimento della soglia e confrontare l'esito con gli altri scenari della stessa factory.
+
+**LINK SUITE BUG:** https://pagopa.atlassian.net/browse/QA-19831
 
 **ERROR LOG**
 
