@@ -7864,10 +7864,31 @@ ko:
     	at java.base/java.util.concurrent.ForkJoinPool.scan(ForkJoinPool.java:1655)
     	at java.base/java.util.concurrent.ForkJoinPool.runWorker(ForkJoinPool.java:1622)
     	at java.base/java.util.concurrent.ForkJoinWorkerThread.run(ForkJoinWorkerThread.java:165)
-  procedure: 'Analisi del log, riesecuzione in locale.'
-  result: 'Esecuzione del test terminata con successo. Problema temporaneo.'
+  procedure: |
+    Analizzare il log dello scenario e confrontare lo stack trace con
+    EServiceCreatePage.assertLoaded() e con la sequenza del test.
+
+    Verificare se il fallimento avviene prima o dopo l'inserimento della
+    soglia e confrontare l'esito con gli altri scenari della stessa factory.
+
+  result: |
+    Il test avvia la navigazione verso la pagina di creazione dell'e-service,
+    ma fallisce nel controllo iniziale del titolo h1: il valore atteso è
+    "Crea e-service", mentre il testo letto risulta vuoto.
+
+    Il test termina prima della compilazione dei dati e dell'inserimento della
+    soglia. Il KO non permette quindi di valutare la gestione del decimale
+    con virgola. Anche gli altri tre scenari sulle soglie falliscono nello
+    stesso punto e con lo stesso errore.
+
+    L'attuale assertLoaded() confronta immediatamente il titolo letto con
+    quello atteso. Un caricamento non ancora completato è una possibile causa,
+    ma non è dimostrata dai log. È stata individuata un'attività di
+    miglioramento della sincronizzazione del controllo; la causa del KO
+    resta da confermare ma è ipotizzabile come un rallentamento temporaneo del caricamento della
+    pagina dovuto all'esecuzione parallela dei test.
   link_prod_bug: ''
-  link_suite_bug: ''
+  link_suite_bug: https://pagopa.atlassian.net/browse/QA-19831
 - id_test: WebEServiceThresholdContractTest::shouldValidateThresholdFields::soglia totale con valore decimale (virgola)
   error_log: |
     java.lang.AssertionError: Expected Crea e-service found 
@@ -7894,10 +7915,31 @@ ko:
     	at java.base/java.util.concurrent.ForkJoinPool.scan(ForkJoinPool.java:1655)
     	at java.base/java.util.concurrent.ForkJoinPool.runWorker(ForkJoinPool.java:1622)
     	at java.base/java.util.concurrent.ForkJoinWorkerThread.run(ForkJoinWorkerThread.java:165)
-  procedure: 'Analisi del log, riesecuzione in locale.'
-  result: 'Esecuzione del test terminata con successo. Problema temporaneo.'
+  procedure: |
+    Analizzare il log dello scenario e confrontare lo stack trace con
+    EServiceCreatePage.assertLoaded() e con la sequenza del test.
+
+    Verificare se il fallimento avviene prima o dopo l'inserimento della
+    soglia e confrontare l'esito con gli altri scenari della stessa factory.
+
+  result: |
+    Il test avvia la navigazione verso la pagina di creazione dell'e-service,
+    ma fallisce nel controllo iniziale del titolo h1: il valore atteso è
+    "Crea e-service", mentre il testo letto risulta vuoto.
+
+    Il test termina prima della compilazione dei dati e dell'inserimento della
+    soglia. Il KO non permette quindi di valutare la gestione del decimale
+    con virgola. Anche gli altri tre scenari sulle soglie falliscono nello
+    stesso punto e con lo stesso errore.
+
+    L'attuale assertLoaded() confronta immediatamente il titolo letto con
+    quello atteso. Un caricamento non ancora completato è una possibile causa,
+    ma non è dimostrata dai log. È stata individuata un'attività di
+    miglioramento della sincronizzazione del controllo; la causa del KO
+    resta da confermare ma è ipotizzabile come un rallentamento temporaneo del caricamento della
+    pagina dovuto all'esecuzione parallela dei test.
   link_prod_bug: ''
-  link_suite_bug: ''
+  link_suite_bug: https://pagopa.atlassian.net/browse/QA-19831
 - id_test: WebEServiceThresholdContractTest::shouldValidateThresholdFields::soglia per fruitore con valore decimale
     (punto)
   error_log: |
@@ -7925,10 +7967,31 @@ ko:
     	at java.base/java.util.concurrent.ForkJoinPool.scan(ForkJoinPool.java:1655)
     	at java.base/java.util.concurrent.ForkJoinPool.runWorker(ForkJoinPool.java:1622)
     	at java.base/java.util.concurrent.ForkJoinWorkerThread.run(ForkJoinWorkerThread.java:165)
-  procedure: 'Analisi del log, riesecuzione in locale.'
-  result: 'Esecuzione del test terminata con successo. Problema temporaneo.'
+  procedure: |
+    Analizzare il log dello scenario e confrontare lo stack trace con
+    EServiceCreatePage.assertLoaded() e con la sequenza del test.
+
+    Verificare se il fallimento avviene prima o dopo l'inserimento della
+    soglia e confrontare l'esito con gli altri scenari della stessa factory.
+
+  result: |
+    Il test avvia la navigazione verso la pagina di creazione dell'e-service,
+    ma fallisce nel controllo iniziale del titolo h1: il valore atteso è
+    "Crea e-service", mentre il testo letto risulta vuoto.
+
+    Il test termina prima della compilazione dei dati e dell'inserimento della
+    soglia. Il KO non permette quindi di valutare la gestione del decimale
+    con virgola. Anche gli altri tre scenari sulle soglie falliscono nello
+    stesso punto e con lo stesso errore.
+
+    L'attuale assertLoaded() confronta immediatamente il titolo letto con
+    quello atteso. Un caricamento non ancora completato è una possibile causa,
+    ma non è dimostrata dai log. È stata individuata un'attività di
+    miglioramento della sincronizzazione del controllo; la causa del KO
+    resta da confermare ma è ipotizzabile come un rallentamento temporaneo del caricamento della
+    pagina dovuto all'esecuzione parallela dei test.
   link_prod_bug: ''
-  link_suite_bug: ''
+  link_suite_bug: https://pagopa.atlassian.net/browse/QA-19831
 - id_test: WebEServiceThresholdContractTest::shouldValidateThresholdFields::soglia totale con valore decimale (punto)
   error_log: |
     java.lang.AssertionError: Expected Crea e-service found 
@@ -7955,7 +8018,28 @@ ko:
     	at java.base/java.util.concurrent.ForkJoinPool.scan(ForkJoinPool.java:1655)
     	at java.base/java.util.concurrent.ForkJoinPool.runWorker(ForkJoinPool.java:1622)
     	at java.base/java.util.concurrent.ForkJoinWorkerThread.run(ForkJoinWorkerThread.java:165)
-  procedure: 'Analisi del log, riesecuzione in locale.'
-  result: 'Esecuzione del test terminata con successo. Problema temporaneo.'
+  procedure: |
+    Analizzare il log dello scenario e confrontare lo stack trace con
+    EServiceCreatePage.assertLoaded() e con la sequenza del test.
+
+    Verificare se il fallimento avviene prima o dopo l'inserimento della
+    soglia e confrontare l'esito con gli altri scenari della stessa factory.
+
+  result: |
+    Il test avvia la navigazione verso la pagina di creazione dell'e-service,
+    ma fallisce nel controllo iniziale del titolo h1: il valore atteso è
+    "Crea e-service", mentre il testo letto risulta vuoto.
+
+    Il test termina prima della compilazione dei dati e dell'inserimento della
+    soglia. Il KO non permette quindi di valutare la gestione del decimale
+    con virgola. Anche gli altri tre scenari sulle soglie falliscono nello
+    stesso punto e con lo stesso errore.
+
+    L'attuale assertLoaded() confronta immediatamente il titolo letto con
+    quello atteso. Un caricamento non ancora completato è una possibile causa,
+    ma non è dimostrata dai log. È stata individuata un'attività di
+    miglioramento della sincronizzazione del controllo; la causa del KO
+    resta da confermare ma è ipotizzabile come un rallentamento temporaneo del caricamento della
+    pagina dovuto all'esecuzione parallela dei test.
   link_prod_bug: ''
-  link_suite_bug: ''
+  link_suite_bug: https://pagopa.atlassian.net/browse/QA-19831
