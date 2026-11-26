@@ -553,6 +553,19 @@ class QALearningMatcher:
         # one fully learned group plus one identical singleton is still unsafe.
         if len(compatible) > 1:
             tickets = tuple(sorted({g.ticket for g, _ in compatible}))
+            if len(tickets) == 1:
+                # Multiple unlinked QA groups sharing a ticket are not enough
+                # to authorize KNOWN, but should still yield a reviewable
+                # proposal with a historical analysis. Groups are loaded
+                # newest-first; preserve that ordering when choosing evidence.
+                candidate = compatible[0][0]
+                groups_info = ', '.join(g.group_id for g, _ in compatible)
+                return Decision('proposed', candidate.ticket, candidate.group_id,
+                                (Reason('MULTIPLE_QA_GROUPS_SAME_TICKET',
+                                        groups_info, candidate.ticket,
+                                        'Piu gruppi QA compatibili con lo stesso ticket: '
+                                        'confermare la proposta prima di apprendere la variante'),),
+                                tickets)
             detail = ('Il log è compatibile con più identità di difetto storiche, '
                       'inclusi eventuali gruppi con una sola occorrenza. '
                       'Verificare la causa prima di assegnare il ticket.')
