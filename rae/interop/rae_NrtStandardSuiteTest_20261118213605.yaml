@@ -1,7 +1,7 @@
 rae:
   release: ''
   scope: NIGHTLY
-  issue_jira: 'https://github.com/pagopa/qe_suit/pull/231'
+  issue_jira: 'https://pagopa.atlassian.net/browse/QA-19821'
   data_ora: '2026-11-18T21:09:12Z'
   durata: 00:26:18
   numero_ko: 114
