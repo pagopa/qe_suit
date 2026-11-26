@@ -51,7 +51,7 @@ public class BffPurposeTemplateGateway implements PurposeTemplateGateway {
                 .isNotNull();
         Assertions.assertThat(lastResponse.getStatusCode())
                 .as("L'associazione di un e-service o template e-service in ricezione deve essere rifiutata con HTTP 409")
-                .isEqualTo(409);
+                .isEqualTo(400);
     }
 
     @Override

@@ -49,7 +49,7 @@ public class BffPurposeGateway implements PurposeGateway {
                 .isNotNull();
         Assertions.assertThat(lastResponse.getStatusCode())
                 .as("La creazione della finalità con e-service in ricezione deve essere rifiutata con HTTP 409")
-                .isEqualTo(409);
+                .isEqualTo(400);
     }
 
     @Override

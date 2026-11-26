@@ -43,16 +43,6 @@ public class ScenarioParameterTypes {
         return entityStore.getLastOrThrow(PurposeTemplate.class);
     }
 
-    @ParameterType("in bozza|pubblicato|sospeso")
-    public PurposeTemplateState purposeTemplateState(String state) {
-        return switch (state) {
-            case "in bozza" -> PurposeTemplateState.DRAFT;
-            case "pubblicato" -> PurposeTemplateState.PUBLISHED;
-            case "sospeso" -> PurposeTemplateState.SUSPENDED;
-            default -> throw new IllegalArgumentException("Unsupported PurposeTemplateState: " + state);
-        };
-    }
-
     @ParameterType("client assertion|client assertion creata")
     public ClientAssertion currentClientAssertion(String token) {
         return entityStore.getLastOrThrow(ClientAssertion.class);
