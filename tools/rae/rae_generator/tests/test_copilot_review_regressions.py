@@ -137,6 +137,65 @@ def test_same_ticket_confirmed_lineage_still_known():
     assert candidate['link_prod_bug'] == TICKET
 
 
+def test_whitespace_ticket_in_conflicting_lineage_is_not_approved():
+    older = row('18', 'X')
+    newer = row('23', 'X', matching={
+        'status': 'confirmed',
+        'source_rae': older['_source_file'],
+        'source_id_test': TEST,
+    })
+    newer['link_prod_bug'] = '   '
+    newer['link_suite_bug'] = 'https://example.org/QA-456'
+    status, candidate, reasons = classify([newer, older], 'X')
+    assert status == 'proposed', reasons
+    assert candidate is None
+    assert any(r.code == 'HISTORICAL_DEFECT_CONFLICT' for r in reasons)
+
+
+def test_whitespace_only_ticket_cannot_count_as_second_qa_approval():
+    older = row('18', 'X')
+    newer = row('23', 'X', matching={
+        'status': 'confirmed',
+        'source_rae': older['_source_file'],
+        'source_id_test': TEST,
+    })
+    newer['link_prod_bug'] = '   '
+    status, candidate, reasons = classify([newer, older], 'X')
+    assert status == 'proposed', reasons
+    assert candidate is not None
+    assert candidate['_source_file'] == older['_source_file']
+
+
+def test_blank_product_ticket_does_not_hide_valid_suite_ticket():
+    only = row('23', 'X')
+    only['link_prod_bug'] = '   '
+    only['link_suite_bug'] = TICKET
+    status, candidate, reasons = classify([only], 'X')
+    assert status == 'proposed', reasons
+    assert candidate is not None
+    assert candidate['link_prod_bug'] == ''
+    assert candidate['link_suite_bug'] == TICKET
+
+
+def test_split_lineage_keeps_global_newest_first_group_order():
+    older = row('18', 'X')
+    independent = row('23', 'Z')
+    linked_newer = row('25', 'Y', matching={
+        'status': 'confirmed',
+        'source_rae': older['_source_file'],
+        'source_id_test': TEST,
+    })
+    linked_newer['link_prod_bug'] = 'https://example.org/QA-456'
+
+    engine, candidates = build_learning([linked_newer, independent, older])
+    expected = [linked_newer['_source_file'], independent['_source_file'],
+                older['_source_file']]
+    actual = [group_id.split('|')[0]
+              for _, _, group_id in engine.groups]
+    assert actual == expected
+    assert len(candidates) == 3
+
+
 def test_same_ticket_reason_has_dedicated_qa_rendering():
     evidence = snapshot([Reason('MULTIPLE_QA_GROUPS_SAME_TICKET',
                                 'group A, group B', TICKET,
