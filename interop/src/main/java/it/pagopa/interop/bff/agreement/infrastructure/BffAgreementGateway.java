@@ -281,8 +281,8 @@ public class BffAgreementGateway implements AgreementGateway {
 
     @Override
     public void attemptInvalidFormatConsumerDocumentUpload(Agreement agreement) {
-        var document = FileUtils.loadClasspathResourceAsTempFile("assets/agreement/esempio.csv");
-        restClient.addConsumerDocument(agreement.getId(), "openapi3-riferimenti.json", "Allegato di test", document)
+        var document = FileUtils.loadClasspathResourceAsTempFile("assets/pdf-con-contenuto-non-valido.pdf");
+        restClient.addConsumerDocument(agreement.getId(), "pdf-con-contenuto-non-valido.pdf", "Allegato di test", document)
                 .withoutPolling();
     }
 

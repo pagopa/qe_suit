@@ -97,9 +97,10 @@ Feature: Messaggi di errore durante la gestione delle richieste di fruizione
     Given i seguenti e-service pubblicati:
       | alias | erogatore        |
       | ES-1  | Comune di Milano |
+    And l'e-service "ES-1" del Comune di Milano sottoscritto dal Comune di Pozzallo con una richiesta di fruizione archiviata
     And l'e-service "ES-1" del Comune di Milano sottoscritto da PagoPA con una richiesta di fruizione sospesa
     And la versione 2 dell'e-service "ES-1" del Comune di Milano pubblicata
-    And un admin appartenente al fruitore PagoPA
+    And un admin appartenente al fruitore Comune di Pozzallo
     When il fruitore tenta di riattivare la richiesta di fruizione
     Then il messaggio di errore corrisponde al caso "AGREEMENT_DESCRIPTOR_NOT_IN_EXPECTED_STATE__POST_AGREEMENTS_AGREEMENT_ID_UNSUSPEND"
 
