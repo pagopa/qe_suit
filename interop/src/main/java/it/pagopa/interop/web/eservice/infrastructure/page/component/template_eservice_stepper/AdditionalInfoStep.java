@@ -1,6 +1,7 @@
 package it.pagopa.interop.web.eservice.infrastructure.page.component.template_eservice_stepper;
 
 import it.frontend.e2e.framework.annotation.selector.XPath;
+import it.frontend.e2e.framework.core.capability.core.Uploadable;
 import it.frontend.e2e.framework.web.domain.Component;
 import it.pagopa.infrastructure.suit.component.*;
 
@@ -52,7 +53,7 @@ public interface AdditionalInfoStep extends Component {
         Button uploadFileButton();
 
         @XPath(".//div[@data-testid='fileInput']//input[@type='file']")
-        TextField fileInput();
+        Uploadable fileInput();
 
         @XPath(".//span[contains(@class, 'MuiFormHelperText-root') and contains(normalize-space(), 'Puoi caricare solo file con estensione')]")
         Label allowedExtensionsHelperText();
