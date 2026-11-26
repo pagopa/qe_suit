@@ -78,6 +78,27 @@ def test_discarded_same_id_different_log_cannot_merge_retained_row():
     assert status != 'known'
 
 
+def test_auto_match_replacing_legacy_approval_does_not_resurrect_it():
+    legacy = row('23', 'X')
+    replacement = row('23', 'Y', matching={'status': 'auto_matched'})
+    older = row('18', 'X')
+    status, candidate, reasons = classify([legacy, replacement, older], 'X')
+    assert status == 'proposed', reasons
+    assert candidate is not None
+    assert candidate['_source_file'] == older['_source_file']
+
+
+def test_unconfirmed_proposal_replacing_legacy_approval_does_not_resurrect_it():
+    legacy = row('23', 'X')
+    replacement = row('23', 'Y', matching={
+        'status': 'pending_confirmation', 'proposed_digest': '0' * 64})
+    older = row('18', 'X')
+    status, candidate, reasons = classify([legacy, replacement, older], 'X')
+    assert status == 'proposed', reasons
+    assert candidate is not None
+    assert candidate['_source_file'] == older['_source_file']
+
+
 def test_same_ticket_reason_has_dedicated_qa_rendering():
     evidence = snapshot([Reason('MULTIPLE_QA_GROUPS_SAME_TICKET',
                                 'group A, group B', TICKET,

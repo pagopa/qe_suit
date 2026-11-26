@@ -29,7 +29,11 @@ def build_learning(history, ignore_rules=None):
         matching = row.get('matching')
         return (not matching or is_qa_confirmed(row, approved_history=True))
 
-    indexed = {_key(row): row for row in history if eligible(row)}
+    # Resolve duplicate keys first (last-row-wins), then filter QA eligibility.
+    # A later generated row must not resurrect an overwritten legacy approval.
+    retained = {_key(row): row for row in history
+                if row.get('id_test') and row.get('error_log')}
+    indexed = {key: row for key, row in retained.items() if eligible(row)}
     parent = {k: k for k in indexed}
 
     def root(k):
