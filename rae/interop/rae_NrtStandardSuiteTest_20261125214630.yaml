@@ -1347,15 +1347,6 @@ ko:
     source_id_test: '[PRIVATE_CATALOG_ORDERING_PAGINATION_2] Ordinamenti richiesti esplicitamente [Given=BFF,When=BFF,Then=BFF]
       [Examples: (senza nome) | Example #4 | line: 54]'
     proposed_digest: c1498a955a4098602039ed282c129dcb4f81a39ffab9b95232898e81957e1d25
-    review_evidence:
-    - code: MULTIPLE_QA_GROUPS_SAME_TICKET
-      historical_value: 'rae_NrtStandardSuiteTest_20261123214209.yaml|[private_catalog_ordering_pagination_2] ordinamenti
-        richiesti esplicitamente [given=bff,when=bff,then=bff] [examples: (senza nome) | example #4 | line: 54],
-        rae_NrtStandardSuiteTest_20261118213605.yaml|[private_catalog_ordering_pagination_2] ordinamenti richiesti
-        esplicitamente [given=bff,when=bff,then=bff] [examples: (senza nome) | example #4 | line: 54], rae_NrtStandardSuiteTest_20261117213615.yaml|[private_catalog_ordering_pagination_2]
-        ordinamenti richiesti esplicitamente [given=bff,when=bff,then=bff] [examples: (senza nome) | example #4
-        | line: 54]'
-      current_value: https://pagopa.atlassian.net/browse/PIN-11313
 - id_test: '[ESERVICE_ARCHIVING_GRACE_PERIOD_1.1] - Impossibilità di archiviare un e-service prima di una sua versione
     [Given=BFF,When=WEB,Then=WEB]'
   error_log: |
