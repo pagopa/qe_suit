@@ -1,0 +1,9 @@
+# Approvare le modifiche con review QA: influiscono sui match futuri.
+# Le regole si applicano SOLO ai nomi dei metodi nei frame Java 'at ...'.
+# Testo diagnostico, nomi dei metodi e numeri di riga NON sono ignorati.
+version: 1
+rules:
+  - id: java-generated-proxy-ordinal
+    scope: stack_method
+    pattern: '(?<=\$Proxy)[0-9]+(?=\.)'
+    replacement: '<PROXY_ORDINAL>'

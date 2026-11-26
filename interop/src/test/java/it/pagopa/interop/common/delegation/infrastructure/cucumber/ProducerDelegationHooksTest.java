@@ -8,8 +8,9 @@ import it.pagopa.interop.common.delegation.application.DelegationUseCase;
 import it.pagopa.interop.common.delegation.domain.ProducerDelegation;
 import it.pagopa.interop.common.delegation.domain.ProducerDelegationState;
 import it.pagopa.interop.common.eservice.infrastructure.cucumber.EServiceHooks;
-import it.pagopa.interop.common.kernel.context.CurrentUserSession;
+import it.pagopa.interop.common.kernel.context.AuthSession;
 import it.pagopa.interop.common.kernel.domain.Channel;
+import it.pagopa.interop.common.kernel.domain.InteropActor;
 import it.pagopa.interop.common.kernel.domain.Tenant;
 import it.pagopa.interop.common.kernel.domain.User;
 import org.junit.jupiter.api.BeforeEach;
@@ -24,7 +25,7 @@ class ProducerDelegationHooksTest {
 
     private final CucumberEntityStore store = new CucumberEntityStore();
     private final DelegationUseCase useCase = mock(DelegationUseCase.class);
-    private final CurrentUserSession session = mock(CurrentUserSession.class);
+    private final AuthSession session = mock(AuthSession.class);
     private final CurrentChannel<Channel> channel = mock(CurrentChannel.class);
     private final ProducerDelegationHooks hooks = new ProducerDelegationHooks(store, useCase, session, channel);
     private final Tenant delegator = Tenant.COMUNE_DI_MILANO;
@@ -34,7 +35,7 @@ class ProducerDelegationHooksTest {
 
     @BeforeEach
     void setUpSession() {
-        when(session.getUser()).thenReturn(originalUser);
+        when(session.getActor()).thenReturn(originalUser);
         when(session.getTenant()).thenReturn(originalTenant);
         when(channel.getCurrentChannel()).thenReturn(Channel.WEB_BROWSER);
     }
@@ -70,8 +71,8 @@ class ProducerDelegationHooksTest {
         order.verify(session).set(User.getTenantAdmin(delegator), delegator);
         order.verify(useCase).revokeProducerDelegation(created.getRef());
         order.verify(useCase).waitForProducerDelegationState(created.getRef(), ProducerDelegationState.REVOKED);
-        order.verify(session).set(originalUser, originalTenant);
         order.verify(channel).setCurrentChannel(Channel.WEB_BROWSER);
+        order.verify(session).set(originalUser, originalTenant);
         verify(useCase, never()).rejectProducerDelegation(any());
     }
 
@@ -147,7 +148,7 @@ class ProducerDelegationHooksTest {
         hooks.cleanUpProducerDelegations();
 
         verifyNoInteractions(useCase);
-        verify(session, never()).set(any(), any());
+        verify(session, never()).set((InteropActor) any(), any());
         verify(channel, never()).setCurrentChannel(any());
     }
 
@@ -159,8 +160,8 @@ class ProducerDelegationHooksTest {
                 .getAnnotation(After.class);
         After eserviceAfter = EServiceHooks.class.getMethod("cleanUpEServices").getAnnotation(After.class);
 
-        assertThat(before.value()).isEqualTo("@private-catalog");
-        assertThat(after.value()).isEqualTo("@private-catalog");
+        assertThat(before.value()).isEqualTo("@private-catalog or @clean-up");
+        assertThat(after.value()).isEqualTo("@private-catalog or @clean-up");
         assertThat(after.order()).isGreaterThan(eserviceAfter.order());
     }
 

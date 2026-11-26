@@ -21,12 +21,13 @@ public class EServiceTemplatePublicationSteps {
     private final EServiceTemplateConfigurationMapper mapper;
     private final EntityStore entities;
 
+
     @Given("i seguenti template (di )e-service pubblicati:")
     public void publishTemplates(List<EServiceTemplatePublicationConfiguration> configurations) {
         for (var configuration : configurations) {
             var command = factory.defaultCreationEServiceTemplateCommand();
             mapper.apply(configuration, command);
-            journey.withProducer(configuration.getProducer(), UserRole.ADMIN)
+            journey.withProducer(configuration.getProducer())
                     .createEServiceTemplate(command, EServiceTemplateVersionState.PUBLISHED);
             entities.upsert(configuration.getAlias(), entities.getLastOrThrow(EServiceTemplate.class));
         }
@@ -39,7 +40,10 @@ public class EServiceTemplatePublicationSteps {
             var template = entities.getByAliasOrThrow(configuration.getTemplate(), EServiceTemplate.class);
             var command = factory.defaultCreationEServiceTemplateInstanceCommand();
             mapper.apply(configuration, command);
-            journey.withProducer(Tenant.fromOrganizationId(template.getCreatorId()), UserRole.ADMIN)
+            var tenant = configuration.getProducer() != null
+                    ? configuration.getProducer()
+                    : Tenant.fromOrganizationId(template.getCreatorId());
+            journey.withProducer(tenant)
                     .createPublishedEServiceTemplateInstance(template, command, configuration.getAlias());
         }
     }

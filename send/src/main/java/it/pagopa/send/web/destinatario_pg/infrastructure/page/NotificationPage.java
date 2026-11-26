@@ -22,7 +22,7 @@ import org.assertj.core.api.Assertions;
 @Url("${url.notifiche.persona-giuridica.notifiche}")
 public interface NotificationPage extends RecipientNotificationsPage {
 
-    // il titolo contiene il nome dell'impresa, per esempio "In arrivo per Le Epistolae srl"
+    // il titolo contiene il nome dell'impresa: "In arrivo per <impresa>"
     String TITLE_PREFIX = "In arrivo per ";
 
     @XPath("//footer[contains(@class, 'MuiBox-root')]")

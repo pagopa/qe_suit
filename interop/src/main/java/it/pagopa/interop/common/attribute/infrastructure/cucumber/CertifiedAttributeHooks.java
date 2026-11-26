@@ -2,7 +2,7 @@ package it.pagopa.interop.common.attribute.infrastructure.cucumber;
 
 import io.cucumber.java.After;
 import it.pagopa.infrastructure.channel.CurrentChannel;
-import it.pagopa.interop.common.kernel.context.CurrentUserSession;
+import it.pagopa.interop.common.kernel.context.AuthSession;
 import it.pagopa.interop.common.kernel.domain.Channel;
 import it.pagopa.interop.common.kernel.domain.Tenant;
 import it.pagopa.interop.common.kernel.domain.User;
@@ -15,18 +15,18 @@ import lombok.extern.slf4j.Slf4j;
 public class CertifiedAttributeHooks {
     private final CertifiedAttributeFixtures fixtures;
     private final TenantUseCase tenantUseCase;
-    private final CurrentUserSession currentUserSession;
+    private final AuthSession authSession;
     private final CurrentChannel<Channel> currentChannel;
 
-    @After(value = "@private-catalog", order = 80)
+    @After(value = "@private-catalog or @clean-up", order = 80)
     public void revokeScenarioAssignments() {
         var assignments = fixtures.assignments();
         if (assignments.isEmpty()) {
             return;
         }
 
-        var previousUser = currentUserSession.getUser();
-        var previousTenant = currentUserSession.getTenant();
+        var previousUser = authSession.getActor();
+        var previousTenant = authSession.getTenant();
         var previousChannel = currentChannel.getCurrentChannel();
         var cleanupFailure = new IllegalStateException("Cleanup degli attributi certificati non completato");
         try {
@@ -34,7 +34,7 @@ public class CertifiedAttributeHooks {
             for (var assignment : assignments) {
                 try {
                     Tenant issuer = Tenant.fromOrganizationId(assignment.issuer().id());
-                    currentUserSession.set(User.getTenantAdmin(issuer), issuer);
+                    authSession.set(User.getTenantAdmin(issuer), issuer);
                     tenantUseCase.revokeCertifiedAttribute(assignment.tenant(), assignment.attribute());
                 } catch (RuntimeException | AssertionError exception) {
                     log.error("Errore durante la revoca dell'attributo {} dal tenant {}",
@@ -45,16 +45,19 @@ public class CertifiedAttributeHooks {
         } catch (RuntimeException | AssertionError exception) {
             cleanupFailure.addSuppressed(exception);
         } finally {
+            boolean channelRestored = false;
             try {
-                currentUserSession.set(previousUser, previousTenant);
+                currentChannel.setCurrentChannel(previousChannel);
+                channelRestored = true;
             } catch (RuntimeException | AssertionError exception) {
                 cleanupFailure.addSuppressed(exception);
-            } finally {
-                try {
-                    currentChannel.setCurrentChannel(previousChannel);
-                } catch (RuntimeException | AssertionError exception) {
-                    cleanupFailure.addSuppressed(exception);
+            }
+            try {
+                if (channelRestored) {
+                    authSession.set(previousUser, previousTenant);
                 }
+            } catch (RuntimeException | AssertionError exception) {
+                cleanupFailure.addSuppressed(exception);
             }
         }
         if (cleanupFailure.getSuppressed().length > 0) {

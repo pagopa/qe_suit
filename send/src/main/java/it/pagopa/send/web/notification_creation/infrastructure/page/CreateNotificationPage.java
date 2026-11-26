@@ -6,15 +6,17 @@ import it.frontend.e2e.framework.core.capability.core.Clickable;
 import it.frontend.e2e.framework.web.capability.core.Readable;
 import it.frontend.e2e.framework.web.domain.Page;
 import it.pagopa.infrastructure.suit.component.Button;
+import it.pagopa.send.common.legal_notification.domain.LegalNotificationCreationRequest;
 import it.pagopa.send.web.infrastructure.page.component.ErrorSnackbar;
 import it.pagopa.send.web.login.infrastructure.page.component.OneTrustBanner;
 import it.pagopa.send.web.mittente.infrastructure.page.DashboardPage;
 import it.pagopa.send.web.notification_creation.application.NotificationData;
-import it.pagopa.send.web.notification_creation.infrastructure.page.component.DestinatariStep;
-import it.pagopa.send.web.notification_creation.infrastructure.page.component.DettaglioPosizioneDebitoriaStep;
-import it.pagopa.send.web.notification_creation.infrastructure.page.component.DocumentazioneStep;
+import it.pagopa.send.web.notification_creation.infrastructure.page.component.RecipientsStep;
+import it.pagopa.send.web.notification_creation.infrastructure.page.component.DebtPositionStep;
+import it.pagopa.send.web.notification_creation.infrastructure.page.component.AttachmentsStep;
 import it.pagopa.send.web.notification_creation.infrastructure.page.component.ExitDialog;
-import it.pagopa.send.web.notification_creation.infrastructure.page.component.InformazioniPreliminariStep;
+import it.pagopa.send.web.notification_creation.infrastructure.page.component.PreliminaryInformationStep;
+import it.pagopa.send.web.notification_creation.infrastructure.page.component.RecipientForm;
 import it.pagopa.utils.async.PollingUtils;
 import org.assertj.core.api.Assertions;
 
@@ -45,16 +47,16 @@ public interface CreateNotificationPage extends Page, CreateNotificationForm {
     Optional<OneTrustBanner> oneTrustBanner();
 
     @XPath("//*[@id=\"root\"]/div[1]/div/main/div/div/div/form")
-    InformazioniPreliminariStep informazioniPreliminariStep();
+    PreliminaryInformationStep preliminaryInformationStep();
 
     @XPath("//*[@id=\"root\"]/div[1]/div/main/div/div/div/form")
-    DestinatariStep destinatariStep();
+    RecipientsStep recipientsStep();
 
     @XPath("//*[@id=\"root\"]/div[1]/div/main/div/div/div/form")
-    DettaglioPosizioneDebitoriaStep dettaglioPosizioneDebitoriaStep();
+    DebtPositionStep debtPositionStep();
 
     @XPath("//*[@id=\"root\"]/div[1]/div/main/div/div/div/form")
-    DocumentazioneStep documentazioneStep();
+    AttachmentsStep attachmentsStep();
 
     // intestazione e passi del wizard
 
@@ -98,13 +100,13 @@ public interface CreateNotificationPage extends Page, CreateNotificationForm {
     // i passi dopo il primo si raggiungono compilando i precedenti con dati validi: la notifica parte solo con "Invia"
 
     default void goToRecipientsStep(NotificationData data) {
-        compileInformazioniPreliminari(data);
+        fillPreliminaryInformation(data);
         continueToNextStep();
     }
 
     default void goToDebtPositionStep(NotificationData data) {
         goToRecipientsStep(data);
-        compileDestinatari(data);
+        fillRecipients(data);
         continueToNextStep();
     }
 
@@ -130,6 +132,8 @@ public interface CreateNotificationPage extends Page, CreateNotificationForm {
      * del portale.
      */
     default void continueToNextStep() {
+        // anche il banner dei cookie può comparire a metà della procedura e coprire il pulsante
+        oneTrustBanner().ifPresent(OneTrustBanner::acceptIfShown);
         errorSnackbar().ifPresent(ErrorSnackbar::closeIfShown);
         continueButton().click();
     }
@@ -143,19 +147,29 @@ public interface CreateNotificationPage extends Page, CreateNotificationForm {
         });
     }
 
-    default void compileInformazioniPreliminari(NotificationData data) {
-       informazioniPreliminariStep().fillFields(data);
+    default void fillPreliminaryInformation(NotificationData data) {
+       preliminaryInformationStep().fillFields(data);
     }
 
-    default void compileDestinatari(NotificationData data) {
-        destinatariStep().fillFields(data);
+    default void fillPreliminaryInformation(LegalNotificationCreationRequest request) {
+        // il banner dei cookie può comparire dopo il caricamento della pagina e coprire i campi
+        oneTrustBanner().ifPresent(OneTrustBanner::acceptIfShown);
+        preliminaryInformationStep().fillFields(request);
     }
 
-    default void compileDettaglioPosizioneDebitoria(NotificationData data) {
-        dettaglioPosizioneDebitoriaStep().fillFields(data);
+    default void fillRecipient(RecipientForm recipient) {
+        recipientsStep().nextEmptyRecipientBox().fillFields(recipient);
     }
 
-    default void compileDocumentazione(NotificationData data) {
-        documentazioneStep().fillFields(data);
+    default void fillRecipients(NotificationData data) {
+        recipientsStep().fillFields(data);
+    }
+
+    default void fillDebtPosition(NotificationData data) {
+        debtPositionStep().fillFields(data);
+    }
+
+    default void fillAttachments(NotificationData data) {
+        attachmentsStep().fillFields(data);
     }
 }

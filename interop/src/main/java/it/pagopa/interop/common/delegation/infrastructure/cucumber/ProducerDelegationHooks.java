@@ -7,7 +7,7 @@ import it.pagopa.infrastructure.channel.CurrentChannel;
 import it.pagopa.interop.common.delegation.application.DelegationUseCase;
 import it.pagopa.interop.common.delegation.domain.ProducerDelegation;
 import it.pagopa.interop.common.delegation.domain.ProducerDelegationState;
-import it.pagopa.interop.common.kernel.context.CurrentUserSession;
+import it.pagopa.interop.common.kernel.context.AuthSession;
 import it.pagopa.interop.common.kernel.domain.Channel;
 import it.pagopa.interop.common.kernel.domain.Tenant;
 import it.pagopa.interop.common.kernel.domain.User;
@@ -24,19 +24,19 @@ public class ProducerDelegationHooks {
 
     private final EntityStore entityStore;
     private final DelegationUseCase delegationUseCase;
-    private final CurrentUserSession currentUserSession;
+    private final AuthSession authSession;
     private final CurrentChannel<Channel> currentChannel;
 
     private Set<UUID> preexistingDelegationIds;
 
-    @Before(value = "@private-catalog", order = Integer.MIN_VALUE + 1)
+    @Before(value = "@private-catalog or @clean-up", order = Integer.MIN_VALUE + 1)
     public void snapshotProducerDelegations() {
         preexistingDelegationIds = entityStore.getAll(ProducerDelegation.class).stream()
                 .map(ProducerDelegation::getId)
                 .collect(Collectors.toSet());
     }
 
-    @After(value = "@private-catalog", order = 110)
+    @After(value = "@private-catalog or @clean-up", order = 110)
     public void cleanUpProducerDelegations() {
         // Without a successful boundary snapshot, resource ownership cannot be established.
         if (preexistingDelegationIds == null) {
@@ -48,8 +48,8 @@ public class ProducerDelegationHooks {
         if (delegations.isEmpty()) {
             return;
         }
-        var previousUser = currentUserSession.getUser();
-        var previousTenant = currentUserSession.getTenant();
+        var previousUser = authSession.getActor();
+        var previousTenant = authSession.getTenant();
         var previousChannel = currentChannel.getCurrentChannel();
         var cleanupFailure = new IllegalStateException("Cleanup delle deleghe di erogazione non completato");
         try {
@@ -63,8 +63,8 @@ public class ProducerDelegationHooks {
                 }
             }
         } finally {
-            currentUserSession.set(previousUser, previousTenant);
             currentChannel.setCurrentChannel(previousChannel);
+            authSession.set(previousUser, previousTenant);
         }
         if (cleanupFailure.getSuppressed().length > 0) {
             throw cleanupFailure;
@@ -96,6 +96,6 @@ public class ProducerDelegationHooks {
 
     private void actAs(UUID tenantId) {
         Tenant tenant = Tenant.fromOrganizationId(tenantId);
-        currentUserSession.set(User.getTenantAdmin(tenant), tenant);
+        authSession.set(User.getTenantAdmin(tenant), tenant);
     }
 }

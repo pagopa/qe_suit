@@ -47,6 +47,7 @@ public class BffEServiceTemplateMappingService {
         return mapped.toBuilder()
                 .versions(mergedVersions)
                 .riskAnalyses(riskAnalyses)
+                .instances(existingTemplate == null ? List.of() : existingTemplate.getInstances())
                 .build();
     }
 

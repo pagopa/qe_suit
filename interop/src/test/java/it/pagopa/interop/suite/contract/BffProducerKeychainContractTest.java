@@ -3,6 +3,7 @@ package it.pagopa.interop.suite.contract;
 import io.restassured.response.Response;
 import it.pagopa.infrastructure.fuzzing.FuzzScenario;
 import it.pagopa.interop.TestBootApp;
+import it.pagopa.interop.common.infrastructure.config.JunitEnvironmentProfiles;
 import it.pagopa.interop.bff.infrastructure.config.BffApiContractConfig;
 import it.pagopa.interop.bff.producer_keychain.infrastructure.BffProducerKeychainRequestFactory;
 import it.pagopa.interop.common.infrastructure.config.JunitContextConfig;
@@ -16,7 +17,9 @@ import it.pagopa.interop.common.producer_keychain.domain.ProducerKeychain;
 import it.pagopa.interop.generated.openapi.clients.bff.ApiClient;
 import org.junit.jupiter.api.DynamicTest;
 import org.junit.jupiter.api.TestFactory;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.TestConstructor;
 
 import java.util.List;
@@ -27,6 +30,7 @@ import java.util.stream.Stream;
 import static it.pagopa.interop.bff.infrastructure.config.BffApiContractConfig.DEFAULT_SUCCESS_STATUS_CODE;
 import static org.hamcrest.Matchers.is;
 
+@ActiveProfiles(resolver = JunitEnvironmentProfiles.class)
 @SpringBootTest(classes = {TestBootApp.class, JunitContextConfig.class, BffApiContractConfig.class})
 @TestConstructor(autowireMode = TestConstructor.AutowireMode.ALL)
 public class BffProducerKeychainContractTest {
@@ -38,7 +42,7 @@ public class BffProducerKeychainContractTest {
     private final ProducerKeychainFactory commandFactory;
 
     public BffProducerKeychainContractTest(ApiClient apiClient,
-                                           InteropHttpContractValidator httpContractValidator,
+                                           @Qualifier("bffInteropHttpContractValidator") InteropHttpContractValidator httpContractValidator,
                                            InteropJourney interopJourney,
                                            BffProducerKeychainRequestFactory requestFactory,
                                            ProducerKeychainFactory commandFactory) {
@@ -88,4 +92,3 @@ public class BffProducerKeychainContractTest {
         response.then().statusCode(is(DEFAULT_SUCCESS_STATUS_CODE));
     }
 }
-

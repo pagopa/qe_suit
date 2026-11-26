@@ -3,9 +3,10 @@ package it.pagopa.interop.common.journey.infrastructure;
 import it.pagopa.application.context.EntityStore;
 import it.pagopa.interop.common.eservice.application.*;
 import it.pagopa.interop.common.eservice.application.command.EServiceCreationCommand;
+import it.pagopa.interop.common.eservice.application.command.EServiceUpdateCommand;
 import it.pagopa.interop.common.eservice.domain.EService;
 import it.pagopa.interop.common.eservice.domain.EServiceDescriptor;
-import it.pagopa.interop.common.kernel.context.CurrentUserSession;
+import it.pagopa.interop.common.kernel.context.AuthSession;
 import it.pagopa.interop.common.kernel.domain.Tenant;
 import org.junit.jupiter.api.Test;
 
@@ -23,7 +24,7 @@ class EServiceJourneyLifecycleTest {
     private final EServiceDescriptorLifecycleUseCase lifecycle = mock(EServiceDescriptorLifecycleUseCase.class);
     private final EntityStore store = mock(EntityStore.class);
     private final EServiceRequestFactory requestFactory = mock(EServiceRequestFactory.class);
-    private final CurrentUserSession session = mock(CurrentUserSession.class);
+    private final AuthSession session = mock(AuthSession.class);
     private final EServiceDescriptor draft = EServiceDescriptor.builder()
             .id(UUID.randomUUID()).version("1").state(DRAFT).build();
     private final EService eService = EService.builder().id(UUID.randomUUID())
@@ -32,7 +33,7 @@ class EServiceJourneyLifecycleTest {
     @Test
     void serviceJourneyCallsLifecycleDirectlyAndStoresItsResult() {
         var journey = new EServiceJourneyImpl(services, descriptors, lifecycle, store,
-                mock(EServiceRiskAnalysisUseCase.class), mock(CurrentUserSession.class),
+                mock(EServiceRiskAnalysisUseCase.class), mock(AuthSession.class),
                 mock(EServiceRequestFactory.class));
         var command = mock(EServiceCreationCommand.class);
         var suspended = draft.toBuilder().state(SUSPENDED).build();
@@ -118,5 +119,26 @@ class EServiceJourneyLifecycleTest {
                 .hasMessageContaining("active producer delegation");
 
         verifyNoInteractions(services, lifecycle);
+    }
+
+    @Test
+    void configuresDefaultCommandBeforeTryingToUpdateTheService() {
+        var journey = new EServiceJourneyImpl(services, descriptors, lifecycle, store,
+                mock(EServiceRiskAnalysisUseCase.class), session, requestFactory);
+        var command = mock(EServiceUpdateCommand.class);
+        when(requestFactory.defaultUpdateEServiceCommand()).thenReturn(command);
+        when(command.name("updated name")).thenReturn(command);
+        when(store.getLastOrThrow(EService.class)).thenReturn(eService);
+
+        assertThat(journey.tryUpdateEServiceMetadata(updateCommand -> updateCommand.name("updated name")))
+                .isSameAs(journey);
+
+        var order = inOrder(requestFactory, command, store, services);
+        order.verify(requestFactory).defaultUpdateEServiceCommand();
+        order.verify(command).name("updated name");
+        order.verify(command).getAlias();
+        order.verify(store).getLastOrThrow(EService.class);
+        order.verify(services).tryUpdateEServiceMetadata(eService, command);
+        verify(services, never()).updateEServiceMetadata(any(), any());
     }
 }

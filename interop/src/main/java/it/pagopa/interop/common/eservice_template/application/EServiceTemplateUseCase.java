@@ -2,6 +2,7 @@ package it.pagopa.interop.common.eservice_template.application;
 
 import it.pagopa.interop.common.eservice_template.application.command.*;
 import it.pagopa.interop.common.eservice_template.domain.EServiceTemplate;
+import it.pagopa.interop.common.eservice_template.domain.EServiceTemplateUpdateFailureReason;
 import it.pagopa.interop.common.kernel.domain.EServiceRiskAnalysis;
 import it.pagopa.interop.common.kernel.domain.TenantKind;
 import lombok.RequiredArgsConstructor;
@@ -31,7 +32,7 @@ public class EServiceTemplateUseCase {
     }
 
     public EServiceTemplate updateEServiceTemplate(EServiceTemplate eServiceTemplate, Consumer<UpdateEServiceTemplateCommand> config) {
-        UpdateEServiceTemplateCommand updateCommand = requestFactory.defaultUpdateEServiceTemplateCommand();
+        UpdateEServiceTemplateCommand updateCommand = requestFactory.defaultUpdateEServiceTemplateCommand(false);
         config.accept(updateCommand);
 
         return updateEServiceTemplate(eServiceTemplate, updateCommand);
@@ -39,6 +40,18 @@ public class EServiceTemplateUseCase {
 
     public EServiceTemplate updateEServiceTemplate(EServiceTemplate eServiceTemplate, UpdateEServiceTemplateCommand command) {
         return eServiceTemplateGateway.updateEServiceTemplate(eServiceTemplate.getRef(), command);
+    }
+
+    public EServiceTemplate updateEServiceTemplateMetadata(EServiceTemplate eServiceTemplate, UpdateEServiceTemplateCommand command) {
+        return eServiceTemplateGateway.updateEServiceTemplateMetadata(eServiceTemplate.getRef(), command);
+    }
+
+    public EServiceTemplate tryUpdateEServiceTemplateMetadata(EServiceTemplate eServiceTemplate, UpdateEServiceTemplateCommand command) {
+        return eServiceTemplateGateway.tryUpdateEServiceTemplateMetadata(eServiceTemplate.getRef(), command);
+    }
+
+    public void shouldFailToUpdateEServiceTemplateMetadata(EServiceTemplateUpdateFailureReason reason) {
+        eServiceTemplateGateway.shouldFailToUpdateEServiceTemplateMetadata(reason);
     }
 
     public EServiceTemplate updateTemplateName(EServiceTemplate eServiceTemplate, Consumer<UpdateEServiceTemplateNameCommand> config) {

@@ -1,0 +1,172 @@
+name: "[RAE] Validate YAML and generate Markdown"
+
+on:
+  pull_request:
+    branches: [develop]
+    types: [opened, synchronize, reopened, ready_for_review]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: rae-${{ github.event.pull_request.number || github.run_id }}
+  cancel-in-progress: true
+
+jobs:
+  rae-validate:
+    name: rae-validate
+    runs-on: ubuntu-22.04
+
+    steps:
+      - name: Check RAE PR eligibility
+        id: eligibility
+        env:
+          PR_HEAD: ${{ github.event.pull_request.head.ref }}
+          PR_BASE: ${{ github.event.pull_request.base.ref }}
+          PR_REPO: ${{ github.event.pull_request.head.repo.full_name }}
+          THIS_REPO: ${{ github.repository }}
+        run: |
+          set -euo pipefail
+
+          if [[ ( "$PR_HEAD" == rae/*/rae_* || "$PR_HEAD" == rae/rae_* || "$PR_HEAD" == feature/rae_* ) \
+                && "$PR_BASE" == develop \
+                && "$PR_REPO" == "$THIS_REPO" ]]; then
+            echo 'eligible=true' >> "$GITHUB_OUTPUT"
+          else
+            echo 'eligible=false' >> "$GITHUB_OUTPUT"
+            echo 'Not a same-repository RAE PR. Skipping RAE-specific validation.'
+          fi
+
+      - name: Checkout trusted generator from develop
+        if: steps.eligibility.outputs.eligible == 'true'
+        uses: actions/checkout@v4
+        with:
+          ref: ${{ github.event.pull_request.base.sha }}
+          path: trusted
+          persist-credentials: false
+
+      - name: Checkout PR head (data only, not executable code)
+        if: steps.eligibility.outputs.eligible == 'true'
+        uses: actions/checkout@v4
+        with:
+          ref: ${{ github.event.pull_request.head.sha }}
+          path: rae_pr
+          persist-credentials: false
+          fetch-depth: 0
+
+      - name: Install Python
+        if: steps.eligibility.outputs.eligible == 'true'
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+
+      - name: Install dependencies
+        if: steps.eligibility.outputs.eligible == 'true'
+        run: |
+          python -m pip install \
+            -r trusted/tools/rae/rae_generator/requirements.txt
+
+      - name: Validate, render, and check Markdown
+        if: steps.eligibility.outputs.eligible == 'true'
+        working-directory: rae_pr
+        env:
+          RAE_HEAD_REF: ${{ github.event.pull_request.head.ref }}
+          RAE_JIRA_HOSTS: pagopa.atlassian.net  # Canonical Jira tenant; syntax and host, not ticket existence
+        run: |
+          set -euo pipefail
+
+          # New branches: rae/<namespace>/rae_<suite>_<timestamp>
+          # Legacy in-flight branches still use rae/rae_* or feature/rae_*.
+          # Never infer a namespace from YAML contents or PR-controlled paths.
+          if [[ "$RAE_HEAD_REF" =~ ^rae/([A-Za-z0-9][A-Za-z0-9_.-]*)/(rae_[A-Za-z0-9_.-]+_[0-9]{14})$ ]]; then
+            NAMESPACE="${BASH_REMATCH[1]}"
+            NAME="${BASH_REMATCH[2]}"
+            [[ "$NAMESPACE" != "." && "$NAMESPACE" != ".." ]] || exit 1
+            YAML="rae/${NAMESPACE}/${NAME}.yaml"
+          elif [[ "$RAE_HEAD_REF" =~ ^(rae|feature)/(rae_[A-Za-z0-9_.-]+_[0-9]{14})$ ]]; then
+            NAME="${BASH_REMATCH[2]}"
+            YAML="rae/${NAME}.yaml"
+          else
+            echo "Invalid RAE branch name: $RAE_HEAD_REF"
+            exit 1
+          fi
+
+          test -f "$YAML" || {
+            echo "Missing $YAML"
+            exit 1
+          }
+
+          # Retrieve the originally generated proposal from immutable Git history.
+          # GitHub Actions MUST NOT rewrite pending_confirmation in the YAML.
+          FIRST_COMMIT="$(git log --diff-filter=A --format=%H --reverse -- "$YAML" | head -1)"
+          if [[ -n "$FIRST_COMMIT" ]] && git show "$FIRST_COMMIT:$YAML" > /tmp/rae_original.yaml; then
+            # Require an actual non-automation YAML commit after generation.
+            # A bot-only push cannot certify that QA reviewed the proposal.
+            if git log --format='%ae' "${FIRST_COMMIT}..HEAD" -- "$YAML" \
+                | grep -Eiv '(^$|\[bot\]|noreply\.github\.com|rae-automation)' >/dev/null; then
+              QA_ARGS=(--qa-reviewed --original-yaml /tmp/rae_original.yaml)
+            else
+              QA_ARGS=()
+            fi
+          else
+            QA_ARGS=()
+          fi
+
+          PYTHONPATH="$GITHUB_WORKSPACE/trusted/tools/rae/rae_generator" \
+            python -m rae_generator finalize "$YAML" --write "${QA_ARGS[@]}"
+
+          PYTHONPATH="$GITHUB_WORKSPACE/trusted/tools/rae/rae_generator" \
+            python -m rae_generator check "$YAML" "${QA_ARGS[@]}"
+
+          echo "rae_yaml=$YAML" >> "$GITHUB_ENV"
+          echo "rae_md=${YAML%.yaml}.md" >> "$GITHUB_ENV"
+
+      - name: Commit Markdown to PR branch if changed
+        if: steps.eligibility.outputs.eligible == 'true'
+        working-directory: rae_pr
+        env:
+          # Fine-grained PAT with Contents RW.
+          # GITHUB_TOKEN pushes do not trigger PR checks.
+          RAE_AUTOMATION_TOKEN: ${{ secrets.RAE_AUTOMATION_TOKEN }}
+          HEAD_REF: ${{ github.event.pull_request.head.ref }}
+        run: |
+          set -euo pipefail
+
+          # Skip if Markdown is already tracked and unchanged.
+          if git diff --quiet -- "$rae_md" \
+             && [[ -f "$rae_md" ]] \
+             && [[ -z "$(git ls-files --others --exclude-standard -- "$rae_md")" ]]; then
+            echo 'Markdown is unchanged.'
+            exit 0
+          fi
+
+          test -n "$RAE_AUTOMATION_TOKEN" || {
+            echo 'Missing RAE_AUTOMATION_TOKEN.'
+            exit 1
+          }
+
+          # Verify the PR branch has not changed since checkout.
+          git fetch \
+            "https://x-access-token:${RAE_AUTOMATION_TOKEN}@github.com/${GITHUB_REPOSITORY}.git" \
+            "+refs/heads/${HEAD_REF}:refs/remotes/rae-upstream/head" \
+            >/dev/null 2>&1
+
+          test "$(git rev-parse HEAD)" = \
+               "$(git rev-parse refs/remotes/rae-upstream/head)" || {
+            echo 'A newer QA push exists; refusing to overwrite.'
+            exit 1
+          }
+
+          git config user.name 'rae-automation[bot]'
+          git config user.email 'rae-automation@users.noreply.github.com'
+
+          git add -- "$rae_md"
+
+          git commit -m \
+            "docs(rae): [QA-18253] render Markdown from validated YAML"
+
+          # Disable command tracing; do not print credentials.
+          git -c credential.helper= push \
+            "https://x-access-token:${RAE_AUTOMATION_TOKEN}@github.com/${GITHUB_REPOSITORY}.git" \
+            "HEAD:refs/heads/${HEAD_REF}"

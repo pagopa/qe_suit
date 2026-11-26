@@ -8,8 +8,11 @@ import it.pagopa.interop.common.risk_analysis.application.RiskAnalysisDataFactor
 import it.pagopa.interop.common.risk_analysis.application.RiskAnalysisGateway;
 import it.pagopa.interop.common.risk_analysis.domain.RiskAnalysisForm;
 import it.pagopa.interop.common.risk_analysis.domain.RiskAnalysisFormConfig;
+import it.pagopa.utils.async.PollingUtils;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+
+import java.util.Objects;
 
 @Service
 @RequiredArgsConstructor
@@ -21,6 +24,77 @@ public class PurposeTemplateUseCase {
 
     public void shouldFailLinkToReceiveEService() {
         purposeTemplateGateway.shouldFailLinkToReceiveEService();
+    }
+
+    public PurposeTemplate getPurposeTemplate(PurposeTemplate purposeTemplate) {
+        return purposeTemplateGateway.getPurposeTemplate(purposeTemplate.getId());
+    }
+
+    public PurposeTemplate updateMetadata(
+            PurposeTemplate purposeTemplate,
+            String name,
+            String description,
+            String targetDescription,
+            Boolean purposeIsFreeOfCharge,
+            Integer purposeDailyCalls,
+            Boolean handlesPersonalData) {
+        purposeTemplateGateway.updateMetadata(
+                purposeTemplate,
+                name,
+                description,
+                targetDescription,
+                purposeIsFreeOfCharge,
+                purposeDailyCalls,
+                handlesPersonalData);
+
+        return PollingUtils.pollUntil(
+                () -> getPurposeTemplate(purposeTemplate),
+                refreshed -> Objects.equals(name, refreshed.getTitle())
+                        && Objects.equals(description, refreshed.getDescription())
+                        && Objects.equals(targetDescription, refreshed.getTargetDescription())
+                        && (purposeIsFreeOfCharge == null
+                                || Objects.equals(purposeIsFreeOfCharge, refreshed.getPurposeIsFreeOfCharge()))
+                        && (purposeDailyCalls == null
+                                || Objects.equals(purposeDailyCalls, refreshed.getPurposeDailyCalls()))
+                        && (handlesPersonalData == null
+                                || Objects.equals(handlesPersonalData, refreshed.getHandlesPersonalData())),
+                "Purpose template " + purposeTemplate.getId()
+                        + " metadata did not reach the requested values"
+        );
+    }
+
+    public void tryToUpdateMetadata(
+            PurposeTemplate purposeTemplate,
+            String name,
+            String description,
+            String targetDescription,
+            Boolean purposeIsFreeOfCharge,
+            Integer purposeDailyCalls,
+            Boolean handlesPersonalData) {
+        purposeTemplateGateway.tryToUpdateMetadata(
+                purposeTemplate,
+                name,
+                description,
+                targetDescription,
+                purposeIsFreeOfCharge,
+                purposeDailyCalls,
+                handlesPersonalData);
+    }
+
+    public void shouldFailToUpdateMetadataAsMalformed() {
+        purposeTemplateGateway.shouldFailToUpdateMetadataAsMalformed();
+    }
+
+    public void shouldFailToUpdateMetadataAsForbidden() {
+        purposeTemplateGateway.shouldFailToUpdateMetadataAsForbidden();
+    }
+
+    public void shouldFailToUpdateMetadataAsNotFound() {
+        purposeTemplateGateway.shouldFailToUpdateMetadataAsNotFound();
+    }
+
+    public void shouldFailToUpdateMetadataAsConflict() {
+        purposeTemplateGateway.shouldFailToUpdateMetadataAsConflict();
     }
 
     /**
@@ -43,6 +117,10 @@ public class PurposeTemplateUseCase {
 
     public PurposeTemplate suspendPurposeTemplate(PurposeTemplate purposeTemplate) {
         return purposeTemplateGateway.suspendPurposeTemplate(purposeTemplate);
+    }
+
+    public PurposeTemplate archivePurposeTemplate(PurposeTemplate purposeTemplate) {
+        return purposeTemplateGateway.archivePurposeTemplate(purposeTemplate);
     }
 
     public PurposeTemplate linkEService(PurposeTemplate purposeTemplate, EService eService) {

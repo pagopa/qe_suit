@@ -7,7 +7,7 @@ import it.pagopa.application.context.TestContext;
 import it.pagopa.infrastructure.http.restassured.HttpLoggingFilter;
 import it.pagopa.infrastructure.http.restassured.TestPolicyFilterResolver;
 import it.pagopa.interop.bff.infrastructure.security.bearer.BearerAuthProvider;
-import it.pagopa.interop.common.kernel.context.CurrentUserSession;
+import it.pagopa.interop.common.kernel.context.AuthSession;
 import it.pagopa.interop.common.kernel.domain.Tenant;
 import it.pagopa.interop.common.kernel.domain.User;
 import org.junit.jupiter.api.Test;
@@ -56,16 +56,16 @@ class BffRequestSpecFactoryTest {
     private static BuiltSpec buildSpecFor(TestKind testKind, Filter contractFilter, Filter flowFilter) {
         BearerAuthProvider bearerAuthProvider = mock(BearerAuthProvider.class);
         ObjectProvider<TestContext> testContextProvider = mock(ObjectProvider.class);
-        ObjectProvider<CurrentUserSession> currentUserSessionProvider = mock(ObjectProvider.class);
+        ObjectProvider<AuthSession> currentUserSessionProvider = mock(ObjectProvider.class);
         TestContext testContext = mock(TestContext.class);
-        CurrentUserSession currentUserSession = mock(CurrentUserSession.class);
+        AuthSession authSession = mock(AuthSession.class);
         TestPolicyFilterResolver resolver = new TestPolicyFilterResolver(contractFilter, flowFilter);
 
         when(testContextProvider.getObject()).thenReturn(testContext);
-        when(currentUserSessionProvider.getObject()).thenReturn(currentUserSession);
+        when(currentUserSessionProvider.getObject()).thenReturn(authSession);
         when(testContext.getCurrentTestKind()).thenReturn(testKind);
-        when(currentUserSession.getUser()).thenReturn(User.S_MATTIA);
-        when(currentUserSession.getTenant()).thenReturn(Tenant.COMUNE_DI_MILANO);
+        when(authSession.getActor()).thenReturn(User.S_MATTIA);
+        when(authSession.getTenant()).thenReturn(Tenant.COMUNE_DI_MILANO);
         when(bearerAuthProvider.getToken(User.S_MATTIA, Tenant.COMUNE_DI_MILANO)).thenReturn("test-token");
 
         BffRequestSpecFactory factory = new BffRequestSpecFactory(

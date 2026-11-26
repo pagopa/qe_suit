@@ -38,7 +38,7 @@ public class WebNotificationPGContractTest {
     private final UserProvider userProvider;
 
     /**
-     * Titolo "In arrivo per &lt;impresa&gt;": con Francesco Petrarca, "In arrivo per Le Epistolae srl".
+     * Titolo "In arrivo per &lt;impresa&gt;", con il nome dell'impresa destinataria.
      */
     @TestFactory
     Stream<DynamicTest> shouldShowNotificationListTexts() {

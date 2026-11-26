@@ -6,6 +6,7 @@ import it.pagopa.send.suite.authorization.bff.BffOwnerPgAuthorizationContractTes
 import it.pagopa.send.suite.authorization.bff.BffPtAuthorizationContractTest;
 import it.pagopa.send.suite.authorization.bff.BffRecipientAuthorizationContractTest;
 import it.pagopa.send.suite.authorization.bff.BffSenderPaAuthorizationContractTest;
+import it.pagopa.send.suite.authorization.bff.BffZendeskAuthAuthorizationContractTest;
 import org.junit.platform.suite.api.ConfigurationParameter;
 import org.junit.platform.suite.api.ConfigurationParameters;
 import org.junit.platform.suite.api.IncludeEngines;
@@ -20,7 +21,8 @@ import org.junit.platform.suite.api.Suite;
         BffRecipientAuthorizationContractTest.class,
         BffSenderPaAuthorizationContractTest.class,
         BffCommonAuthorizationContractTest.class,
-        BffPtAuthorizationContractTest.class
+        BffPtAuthorizationContractTest.class,
+        BffZendeskAuthAuthorizationContractTest.class
 })
 @ConfigurationParameters({
         @ConfigurationParameter(

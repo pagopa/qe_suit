@@ -16,7 +16,7 @@ public class NotificationSteps {
     @Given("il fruitore {tenant} è abilitato alle notifiche in-app")
     public void enableNotifications(Tenant tenant) {
         journey
-                .withConsumer(tenant, UserRole.ADMIN)
+                .withConsumer(tenant)
                 .enableNotificationsFor(tenant);
     }
 

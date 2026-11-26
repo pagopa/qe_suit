@@ -11,7 +11,7 @@ import static it.pagopa.interop.common.kernel.domain.UserRole.*;
 
 @Getter
 @RequiredArgsConstructor
-public enum User {
+public enum User implements InteropActor {
     S_MATTIA(ADMIN, UUID.fromString("5d717b97-5308-49a5-8682-187663278f24"), "s.mattia", "test", new Tenant[]{COMUNE_DI_MILANO, COMUNE_DI_POZZALLO, COMUNE_DI_COMUN_NUOVO, PAGO_PA, KYMA}),
     E_ZANARDI(API, UUID.fromString("e3f51f86-3814-4f7f-96f6-552e086bae8d"), "e.zanardi", "test", new Tenant[]{COMUNE_DI_MILANO, COMUNE_DI_POZZALLO, COMUNE_DI_COMUN_NUOVO}),
     TIMOTEO_PINTO(API_SECURITY, UUID.fromString("e0477bcc-3baf-4755-aa31-375c051acb44"), "timoteo.pinto", "test", new Tenant[]{COMUNE_DI_MILANO, COMUNE_DI_POZZALLO, COMUNE_DI_COMUN_NUOVO}),
@@ -42,5 +42,10 @@ public enum User {
                 .filter(user -> Arrays.asList(user.getTenants()).contains(tenant))
                 .findFirst()
                 .orElseThrow(() -> new IllegalArgumentException(String.format("No user found in tenant %s for role %s", tenant.name(), role.name())));
+    }
+
+    @Override
+    public UUID getId() {
+        return userId;
     }
 }

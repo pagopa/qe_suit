@@ -9,6 +9,7 @@ import it.pagopa.infrastructure.suit.component.Chip;
 import it.pagopa.interop.web.eservice.infrastructure.page.component.AgreementDetailsAttributesSection;
 import it.pagopa.interop.web.eservice.infrastructure.page.component.AgreementDetailsGeneralInfoSection;
 import it.pagopa.interop.web.infrastructure.config.suit.component.Breadcrumbs;
+import it.pagopa.utils.async.PollingUtils;
 import org.assertj.core.api.Assertions;
 
 @Url("${interop.web.base-url}/erogazione/richieste/${agreementId}")
@@ -42,9 +43,11 @@ public interface ProducerAgreementDetailsPage extends Page {
 
     @Override
     default void assertLoaded() {
-        Assertions.assertThat(breadcrumbs().getPath())
-                .as("Breadcrumbs")
-                .isEqualTo("Erogazione/Richieste ricevute/Gestisci richiesta");
-        pageTitle().readAndAssert("Gestisci richiesta di fruizione");
+        PollingUtils.pollUntil(
+                () -> breadcrumbs().getPath().equals("Erogazione/Richieste ricevute/Gestisci richiesta")
+                        && pageTitle().read().equals("Gestisci richiesta di fruizione"),
+                isLoaded -> isLoaded,
+                "ProducerAgreementDetailsPage not loaded"
+        );
     }
 }
