@@ -59,7 +59,7 @@ public class EServiceTemplateInstanceSteps {
     @When("l'erogatore tenta di istanziare il {eServiceTemplate} e inserisce un link nella parola identificativa")
     public void attemptToCreateTemplateInstanceWithLinkInLabel(EServiceTemplate template) {
         instanceUseCase.shouldFailToCreateEServiceInstance(template,
-                command -> command.instanceLabel("https://example.com"),
+                command -> command.instanceLabel("www.inps.it"),
                 EServiceTemplateInstanceCreationFailureReason.HYPERLINK_DETECTED);
     }
 
