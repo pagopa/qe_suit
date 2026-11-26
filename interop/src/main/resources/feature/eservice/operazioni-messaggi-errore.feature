@@ -77,8 +77,8 @@ Feature: Messaggi di errore durante la gestione degli e-service
       | alias | erogatore        | nome                | tecnologia |
       | T-1   | Comune di Milano | Template di origine | REST       |
     And le seguenti istanze di template e-service pubblicate:
-      | alias | template | suffisso  |
-      | ES-1  | T-1      | Duplicato |
+      | alias | template | suffisso (letterale) |
+      | ES-1  | T-1      | Duplicato            |
     And l'erogatore istanzia un nuovo e-service dal template
     When l'erogatore tenta di aggiornare i dati dell'e-service appena istanziato con la parola identificativa "Duplicato"
     Then il messaggio di errore corrisponde al caso "CATALOG_E_SERVICE_NAME_DUPLICATE_FOR_PRODUCER__POST_TEMPLATES_ESERVICES_E_SERVICE_ID" con i valori:
@@ -230,9 +230,9 @@ Feature: Messaggi di errore durante la gestione degli e-service
       | alias | erogatore        | nome                | tecnologia |
       | T-1   | Comune di Milano | Template di origine | REST       |
     And le seguenti istanze di template e-service pubblicate:
-      | alias | template | suffisso   |
-      | ES-1  | T-1      | Duplicato  |
-      | ES-2  | T-1      | Modificare |
+      | alias | template | suffisso (letterale) |
+      | ES-1  | T-1      | Duplicato            |
+      | ES-2  | T-1      | Modificare           |
     When l'erogatore tenta di modificare la sola parola identificativa dell'e-service creato da template "ES-2" in "Duplicato"
     Then il messaggio di errore corrisponde al caso "CATALOG_E_SERVICE_NAME_DUPLICATE_FOR_PRODUCER__POST_TEMPLATES_ESERVICES_E_SERVICE_ID_INSTANCE_LABEL_UPDATE" con i valori:
       | identifyingWord | Duplicato |
