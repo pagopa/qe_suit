@@ -4,6 +4,7 @@ import it.frontend.e2e.framework.annotation.selector.XPath;
 import it.frontend.e2e.framework.web.domain.Component;
 import it.pagopa.infrastructure.suit.component.*;
 
+@XPath(".//form")
 public interface AdditionalInfoStep extends Component {
 
     VersionDescriptionCard versionDescriptionCard();
@@ -11,6 +12,12 @@ public interface AdditionalInfoStep extends Component {
     DocumentationCard documentationCard();
 
     RequestManagementCard requestManagementCard();
+
+    @XPath(".//button[@type='button' and normalize-space()='Indietro' and .//*[@data-testid='ArrowBackIcon']]")
+    Button previousStepButton();
+
+    @XPath(".//button[@type='submit' and normalize-space()='Vai al riepilogo' and .//*[@data-testid='ArrowForwardIcon']]")
+    Button goToSummaryButton();
 
     @XPath(".//div[contains(@class, 'MuiPaper-root') and .//h2[normalize-space()='Descrizione della versione']]")
     interface VersionDescriptionCard extends Card {
@@ -57,7 +64,6 @@ public interface AdditionalInfoStep extends Component {
         @XPath(".//h2[contains(@class, 'MuiTypography-root') and normalize-space()='Gestione richieste']")
         Label cardTitle();
 
-        @XPath(".//input[@name='agreementApprovalPolicy']")
         Switch agreementApprovalPolicySwitch();
 
         @XPath(".//span[@id='agreementApprovalPolicy-label']")

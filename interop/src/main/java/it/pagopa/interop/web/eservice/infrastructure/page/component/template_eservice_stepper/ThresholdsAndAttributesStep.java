@@ -22,7 +22,6 @@ public interface ThresholdsAndAttributesStep extends Component {
         @XPath(".//h2[contains(@class, 'MuiTypography-root') and normalize-space()='Soglie di chiamate API']")
         Label apiCallThresholdCardTitle();
 
-        @XPath(".//input[@name='thresholdsSection']")
         Switch apiCallThresholdSwitch();
 
         @XPath(".//span[@id='thresholdsSection-label']")
