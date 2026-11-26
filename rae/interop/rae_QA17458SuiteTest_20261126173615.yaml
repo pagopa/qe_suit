@@ -1,0 +1,60 @@
+rae:
+  release: ''
+  scope: NIGHTLY
+  issue_jira: ''
+  data_ora: '2026-11-26T17:34:25Z'
+  durata: 00:01:27
+  numero_ko: 2
+  run: https://github.com/pagopa/qe_suit/actions/runs/45868683283/attempts/1
+  suite: QA17458SuiteTest
+  environment: qa
+  executor: Vincenzo-Massaro
+  source_branch: feature/QA-17458-link-eservice-receive
+ko_know: []
+ko:
+- id_test: '[PURPOSE_TEMPLATE_RECEIVE_ESERVICE_1.2] Impossibilità di associare un e-service template in modalità
+    di ricezione ad un template di finalità [Given=BFF,When=BFF,Then=BFF]'
+  error_log: |
+    org.opentest4j.AssertionFailedError: [L'associazione di un e-service o template e-service in ricezione deve essere rifiutata con HTTP 409] 
+    expected: 400
+     but was: 200
+    	at it.pagopa.interop.bff.purpose_template.infrastructure.BffPurposeTemplateGateway.shouldFailLinkToReceiveEService(BffPurposeTemplateGateway.java:54)
+    	at java.base/jdk.internal.reflect.NativeMethodAccessorImpl.invoke0(Native Method)
+    	at java.base/jdk.internal.reflect.NativeMethodAccessorImpl.invoke(NativeMethodAccessorImpl.java:77)
+    	at java.base/jdk.internal.reflect.DelegatingMethodAccessorImpl.invoke(DelegatingMethodAccessorImpl.java:43)
+    	at java.base/java.lang.reflect.Method.invoke(Method.java:569)
+    	at it.pagopa.infrastructure.channel.ChannelRouter.invoke(ChannelRouter.java:43)
+    	at it.pagopa.interop.common.infrastructure.ChannelRoutingInterceptor.invoke(ChannelRoutingInterceptor.java:40)
+    	at org.springframework.aop.framework.ReflectiveMethodInvocation.proceed(ReflectiveMethodInvocation.java:179)
+    	at org.springframework.aop.framework.JdkDynamicAopProxy.invoke(JdkDynamicAopProxy.java:222)
+    	at jdk.proxy2/jdk.proxy2.$Proxy172.shouldFailLinkToReceiveEService(Unknown Source)
+    	at it.pagopa.interop.common.purpose_template.application.PurposeTemplateUseCase.shouldFailLinkToReceiveEService(PurposeTemplateUseCase.java:26)
+    	at it.pagopa.interop.common.purpose_template.infrastructure.cucumber.PurposeTemplateSteps.assertEServiceTemplateLinkDenied(PurposeTemplateSteps.java:298)
+    	at ✽.l'associazione del template e-service al template di finalità è negata(classpath:feature-expanded/purpose-template/purpose-template-eservice.feature:32)
+  procedure: ''
+  result: ''
+  link_prod_bug: ''
+  link_suite_bug: ''
+- id_test: '[PURPOSE_RECEIVE_ESERVICE_1.4] Impossibilità di associare un e-service in modalità di ricezione a una
+    propria finalità [Given=BFF,When=BFF,Then=BFF]'
+  error_log: |
+    org.opentest4j.AssertionFailedError: [La creazione della finalità con e-service in ricezione deve essere rifiutata con HTTP 409] 
+    expected: 400
+     but was: 200
+    	at it.pagopa.interop.bff.purpose.infrastructure.BffPurposeGateway.shouldFailLinkToReceiveEService(BffPurposeGateway.java:52)
+    	at java.base/jdk.internal.reflect.NativeMethodAccessorImpl.invoke0(Native Method)
+    	at java.base/jdk.internal.reflect.NativeMethodAccessorImpl.invoke(NativeMethodAccessorImpl.java:77)
+    	at java.base/jdk.internal.reflect.DelegatingMethodAccessorImpl.invoke(DelegatingMethodAccessorImpl.java:43)
+    	at java.base/java.lang.reflect.Method.invoke(Method.java:569)
+    	at it.pagopa.infrastructure.channel.ChannelRouter.invoke(ChannelRouter.java:43)
+    	at it.pagopa.interop.common.infrastructure.ChannelRoutingInterceptor.invoke(ChannelRoutingInterceptor.java:40)
+    	at org.springframework.aop.framework.ReflectiveMethodInvocation.proceed(ReflectiveMethodInvocation.java:179)
+    	at org.springframework.aop.framework.JdkDynamicAopProxy.invoke(JdkDynamicAopProxy.java:222)
+    	at jdk.proxy2/jdk.proxy2.$Proxy171.shouldFailLinkToReceiveEService(Unknown Source)
+    	at it.pagopa.interop.common.purpose.application.PurposeUseCase.shouldFailLinkToReceiveEService(PurposeUseCase.java:24)
+    	at it.pagopa.interop.common.purpose.infrastructure.cucumber.PurposeSteps.assertPurposeCreationDenied(PurposeSteps.java:373)
+    	at ✽.la creazione della finalità è negata(classpath:feature-expanded/purpose/purpose-eservice.feature:19)
+  procedure: ''
+  result: ''
+  link_prod_bug: ''
+  link_suite_bug: ''
