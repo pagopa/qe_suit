@@ -1,0 +1,106 @@
+rae:
+  release: ''
+  scope: NIGHTLY
+  issue_jira: ''
+  data_ora: '2026-11-26T20:40:27Z'
+  durata: 00:02:37
+  numero_ko: 4
+  run: https://github.com/pagopa/qe_suit/actions/runs/45892603401/attempts/1
+  suite: EServiceSoapInterfaceSuiteTest
+  environment: qa
+  executor: giuseppe-veldorale
+  source_branch: feature/PIN-10024-runner
+ko_know: []
+ko:
+- id_test: '[ESERVICE_TEMPLATE_INTERFACE_6] Rifiuto di valori non ammessi come indirizzi SOAP [Given=BFF,When=BFF,Then=BFF]
+    [Examples: markup-e-virgolette | Example #1]'
+  error_log: |
+    java.lang.AssertionError: Expected status code 409 but was 200
+    	at it.pagopa.infrastructure.template.action.ResponseFinalizer.assertStatusCode(ResponseFinalizer.java:46)
+    	at it.pagopa.interop.bff.eservice.infrastructure.BffEServiceDescriptorInterfaceGateway.shouldFailToConfigureSOAP(BffEServiceDescriptorInterfaceGateway.java:70)
+    	at it.pagopa.interop.bff.eservice.infrastructure.BffEServiceDescriptorGateway.shouldFailToConfigureSOAPInterface(BffEServiceDescriptorGateway.java:168)
+    	at java.base/jdk.internal.reflect.NativeMethodAccessorImpl.invoke0(Native Method)
+    	at java.base/jdk.internal.reflect.NativeMethodAccessorImpl.invoke(NativeMethodAccessorImpl.java:77)
+    	at java.base/jdk.internal.reflect.DelegatingMethodAccessorImpl.invoke(DelegatingMethodAccessorImpl.java:43)
+    	at java.base/java.lang.reflect.Method.invoke(Method.java:569)
+    	at it.pagopa.infrastructure.channel.ChannelRouter.invoke(ChannelRouter.java:43)
+    	at it.pagopa.interop.common.infrastructure.ChannelRoutingInterceptor.invoke(ChannelRoutingInterceptor.java:40)
+    	at org.springframework.aop.framework.ReflectiveMethodInvocation.proceed(ReflectiveMethodInvocation.java:179)
+    	at org.springframework.aop.framework.JdkDynamicAopProxy.invoke(JdkDynamicAopProxy.java:222)
+    	at jdk.proxy2/jdk.proxy2.$Proxy160.shouldFailToConfigureSOAPInterface(Unknown Source)
+    	at it.pagopa.interop.common.eservice.application.EServiceDescriptorUseCase.shouldFailToConfigureSOAPInterface(EServiceDescriptorUseCase.java:173)
+    	at it.pagopa.interop.common.eservice_template.infrastructure.cucumber.EServiceTemplateInstanceSteps.rejectSoapInterface(EServiceTemplateInstanceSteps.java:73)
+    	at ✽.l'erogatore tenta di configurare l'interfaccia SOAP del descrittore dell'e-service appena istanziato ottenendo un rifiuto per "URL non ammesso" con i seguenti indirizzi:(classpath:feature-expanded/eservice-template/eservice-template-instance-interface.feature:140)
+  procedure: ''
+  result: ''
+  link_prod_bug: ''
+  link_suite_bug: ''
+- id_test: '[ESERVICE_TEMPLATE_INTERFACE_6] Rifiuto di valori non ammessi come indirizzi SOAP [Given=BFF,When=BFF,Then=BFF]
+    [Examples: markup-e-virgolette | Example #2]'
+  error_log: |
+    java.lang.AssertionError: Expected status code 409 but was 200
+    	at it.pagopa.infrastructure.template.action.ResponseFinalizer.assertStatusCode(ResponseFinalizer.java:46)
+    	at it.pagopa.interop.bff.eservice.infrastructure.BffEServiceDescriptorInterfaceGateway.shouldFailToConfigureSOAP(BffEServiceDescriptorInterfaceGateway.java:70)
+    	at it.pagopa.interop.bff.eservice.infrastructure.BffEServiceDescriptorGateway.shouldFailToConfigureSOAPInterface(BffEServiceDescriptorGateway.java:168)
+    	at java.base/jdk.internal.reflect.NativeMethodAccessorImpl.invoke0(Native Method)
+    	at java.base/jdk.internal.reflect.NativeMethodAccessorImpl.invoke(NativeMethodAccessorImpl.java:77)
+    	at java.base/jdk.internal.reflect.DelegatingMethodAccessorImpl.invoke(DelegatingMethodAccessorImpl.java:43)
+    	at java.base/java.lang.reflect.Method.invoke(Method.java:569)
+    	at it.pagopa.infrastructure.channel.ChannelRouter.invoke(ChannelRouter.java:43)
+    	at it.pagopa.interop.common.infrastructure.ChannelRoutingInterceptor.invoke(ChannelRoutingInterceptor.java:40)
+    	at org.springframework.aop.framework.ReflectiveMethodInvocation.proceed(ReflectiveMethodInvocation.java:179)
+    	at org.springframework.aop.framework.JdkDynamicAopProxy.invoke(JdkDynamicAopProxy.java:222)
+    	at jdk.proxy2/jdk.proxy2.$Proxy160.shouldFailToConfigureSOAPInterface(Unknown Source)
+    	at it.pagopa.interop.common.eservice.application.EServiceDescriptorUseCase.shouldFailToConfigureSOAPInterface(EServiceDescriptorUseCase.java:173)
+    	at it.pagopa.interop.common.eservice_template.infrastructure.cucumber.EServiceTemplateInstanceSteps.rejectSoapInterface(EServiceTemplateInstanceSteps.java:73)
+    	at ✽.l'erogatore tenta di configurare l'interfaccia SOAP del descrittore dell'e-service appena istanziato ottenendo un rifiuto per "URL non ammesso" con i seguenti indirizzi:(classpath:feature-expanded/eservice-template/eservice-template-instance-interface.feature:140)
+  procedure: ''
+  result: ''
+  link_prod_bug: ''
+  link_suite_bug: ''
+- id_test: '[ESERVICE_TEMPLATE_INTERFACE_6] Rifiuto di valori non ammessi come indirizzi SOAP [Given=BFF,When=BFF,Then=BFF]
+    [Examples: markup-e-virgolette | Example #3]'
+  error_log: |
+    java.lang.AssertionError: Expected status code 409 but was 200
+    	at it.pagopa.infrastructure.template.action.ResponseFinalizer.assertStatusCode(ResponseFinalizer.java:46)
+    	at it.pagopa.interop.bff.eservice.infrastructure.BffEServiceDescriptorInterfaceGateway.shouldFailToConfigureSOAP(BffEServiceDescriptorInterfaceGateway.java:70)
+    	at it.pagopa.interop.bff.eservice.infrastructure.BffEServiceDescriptorGateway.shouldFailToConfigureSOAPInterface(BffEServiceDescriptorGateway.java:168)
+    	at java.base/jdk.internal.reflect.NativeMethodAccessorImpl.invoke0(Native Method)
+    	at java.base/jdk.internal.reflect.NativeMethodAccessorImpl.invoke(NativeMethodAccessorImpl.java:77)
+    	at java.base/jdk.internal.reflect.DelegatingMethodAccessorImpl.invoke(DelegatingMethodAccessorImpl.java:43)
+    	at java.base/java.lang.reflect.Method.invoke(Method.java:569)
+    	at it.pagopa.infrastructure.channel.ChannelRouter.invoke(ChannelRouter.java:43)
+    	at it.pagopa.interop.common.infrastructure.ChannelRoutingInterceptor.invoke(ChannelRoutingInterceptor.java:40)
+    	at org.springframework.aop.framework.ReflectiveMethodInvocation.proceed(ReflectiveMethodInvocation.java:179)
+    	at org.springframework.aop.framework.JdkDynamicAopProxy.invoke(JdkDynamicAopProxy.java:222)
+    	at jdk.proxy2/jdk.proxy2.$Proxy160.shouldFailToConfigureSOAPInterface(Unknown Source)
+    	at it.pagopa.interop.common.eservice.application.EServiceDescriptorUseCase.shouldFailToConfigureSOAPInterface(EServiceDescriptorUseCase.java:173)
+    	at it.pagopa.interop.common.eservice_template.infrastructure.cucumber.EServiceTemplateInstanceSteps.rejectSoapInterface(EServiceTemplateInstanceSteps.java:73)
+    	at ✽.l'erogatore tenta di configurare l'interfaccia SOAP del descrittore dell'e-service appena istanziato ottenendo un rifiuto per "URL non ammesso" con i seguenti indirizzi:(classpath:feature-expanded/eservice-template/eservice-template-instance-interface.feature:140)
+  procedure: ''
+  result: ''
+  link_prod_bug: ''
+  link_suite_bug: ''
+- id_test: '[ESERVICE_TEMPLATE_INTERFACE_6] Rifiuto di valori non ammessi come indirizzi SOAP [Given=BFF,When=BFF,Then=BFF]
+    [Examples: markup-e-virgolette | Example #4]'
+  error_log: |
+    java.lang.AssertionError: Expected status code 409 but was 200
+    	at it.pagopa.infrastructure.template.action.ResponseFinalizer.assertStatusCode(ResponseFinalizer.java:46)
+    	at it.pagopa.interop.bff.eservice.infrastructure.BffEServiceDescriptorInterfaceGateway.shouldFailToConfigureSOAP(BffEServiceDescriptorInterfaceGateway.java:70)
+    	at it.pagopa.interop.bff.eservice.infrastructure.BffEServiceDescriptorGateway.shouldFailToConfigureSOAPInterface(BffEServiceDescriptorGateway.java:168)
+    	at java.base/jdk.internal.reflect.NativeMethodAccessorImpl.invoke0(Native Method)
+    	at java.base/jdk.internal.reflect.NativeMethodAccessorImpl.invoke(NativeMethodAccessorImpl.java:77)
+    	at java.base/jdk.internal.reflect.DelegatingMethodAccessorImpl.invoke(DelegatingMethodAccessorImpl.java:43)
+    	at java.base/java.lang.reflect.Method.invoke(Method.java:569)
+    	at it.pagopa.infrastructure.channel.ChannelRouter.invoke(ChannelRouter.java:43)
+    	at it.pagopa.interop.common.infrastructure.ChannelRoutingInterceptor.invoke(ChannelRoutingInterceptor.java:40)
+    	at org.springframework.aop.framework.ReflectiveMethodInvocation.proceed(ReflectiveMethodInvocation.java:179)
+    	at org.springframework.aop.framework.JdkDynamicAopProxy.invoke(JdkDynamicAopProxy.java:222)
+    	at jdk.proxy2/jdk.proxy2.$Proxy160.shouldFailToConfigureSOAPInterface(Unknown Source)
+    	at it.pagopa.interop.common.eservice.application.EServiceDescriptorUseCase.shouldFailToConfigureSOAPInterface(EServiceDescriptorUseCase.java:173)
+    	at it.pagopa.interop.common.eservice_template.infrastructure.cucumber.EServiceTemplateInstanceSteps.rejectSoapInterface(EServiceTemplateInstanceSteps.java:73)
+    	at ✽.l'erogatore tenta di configurare l'interfaccia SOAP del descrittore dell'e-service appena istanziato ottenendo un rifiuto per "URL non ammesso" con i seguenti indirizzi:(classpath:feature-expanded/eservice-template/eservice-template-instance-interface.feature:140)
+  procedure: ''
+  result: ''
+  link_prod_bug: ''
+  link_suite_bug: ''
