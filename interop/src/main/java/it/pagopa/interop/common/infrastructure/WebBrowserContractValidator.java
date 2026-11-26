@@ -2,7 +2,7 @@ package it.pagopa.interop.common.infrastructure;
 
 import it.pagopa.infrastructure.contract.browser.WebContractStages;
 import it.pagopa.infrastructure.contract.browser.WebContractValidator;
-import it.pagopa.interop.common.kernel.context.CurrentUserSession;
+import it.pagopa.interop.common.kernel.context.AuthSession;
 import it.pagopa.interop.common.kernel.domain.Tenant;
 import it.pagopa.interop.common.kernel.domain.User;
 
@@ -11,14 +11,14 @@ import java.util.Objects;
 public class WebBrowserContractValidator {
 
     private final WebContractValidator delegate;
-    private final CurrentUserSession currentUserSession;
+    private final AuthSession authSession;
 
     public WebBrowserContractValidator(
             WebContractValidator delegate,
-            CurrentUserSession currentUserSession
+            AuthSession authSession
     ) {
         this.delegate = Objects.requireNonNull(delegate);
-        this.currentUserSession = Objects.requireNonNull(currentUserSession);
+        this.authSession = Objects.requireNonNull(authSession);
     }
 
     public WebContractStages.UserStage as(User user, Tenant tenant) {
@@ -26,7 +26,7 @@ public class WebBrowserContractValidator {
         Objects.requireNonNull(tenant);
 
         return delegate.withContext(
-                () -> currentUserSession.set(user, tenant)
+                () -> authSession.set(user, tenant)
         );
     }
 }

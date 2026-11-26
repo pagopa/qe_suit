@@ -27,7 +27,18 @@ public interface ClientGateway extends Plugin<Channel> {
         return addUsersToClient(client, List.of(user));
     }
 
+    /**
+     * Returns the refreshed client only after the requested purpose association is visible.
+     */
     Client addPurpose(Client client, Purpose purpose);
+
+    Client updateMetadata(Client client, String name, String description);
+
+    void tryToUpdateMetadata(Client client, String name, String description);
+
+    void shouldFailToUpdateMetadataAsForbidden();
+
+    void shouldFailToUpdateMetadataAsMalformed();
 
     Client setAdmin(Client client, UserRef admin);
 }

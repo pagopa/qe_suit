@@ -32,12 +32,12 @@ public class AuthRestClient extends RestClient {
             @Nullable String dPoPProof) {
 
         return execute(
-                () -> authApi.createToken()
+                () -> {
+                    var operation = authApi.createToken()
                         .clientIdForm(clientId)
                         .clientAssertionForm(clientAssertion)
                         .clientAssertionTypeForm("urn:ietf:params:oauth:client-assertion-type:jwt-bearer")
                         .grantTypeForm("client_credentials")
-                        .dpoPHeader(dPoPProof)
                         .reqSpec(reqSpec -> reqSpec.setConfig(
                                 RestAssuredConfig.config()
                                         .encoderConfig(
@@ -47,8 +47,12 @@ public class AuthRestClient extends RestClient {
                                                                 "application/x-www-form-urlencoded"
                                                         )
                                         )
-                        ))
-                        .execute(Function.identity()),
+                        ));
+                    if (dPoPProof != null) {
+                        operation.dpoPHeader(dPoPProof);
+                    }
+                    return operation.execute(Function.identity());
+                },
                 ClientCredentialsResponse.class
         );
     }

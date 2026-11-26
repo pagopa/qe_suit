@@ -22,7 +22,8 @@ public class CucumberCurrentUserSession implements CurrentUserSession {
         return currentUser != null;
     }
 
-    public void reset() {
+    @Override
+    public void clear() {
         this.currentUser = null;
     }
 }

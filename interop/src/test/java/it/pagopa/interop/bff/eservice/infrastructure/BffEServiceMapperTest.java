@@ -40,6 +40,8 @@ class BffEServiceMapperTest {
 
         EService mapped = mapper.toEServicePreservingDescriptors(source, existingEService);
 
+        assertEquals("updated-eservice", mapped.getName());
+        assertEquals(List.of(existingDescriptor), mapped.getDescriptors());
         assertDoesNotThrow(() -> mapped.upsertDescriptor(
                 EServiceDescriptor.builder()
                         .id(UUID.randomUUID())

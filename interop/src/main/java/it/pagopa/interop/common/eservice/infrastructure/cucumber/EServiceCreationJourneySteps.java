@@ -57,9 +57,9 @@ public class EServiceCreationJourneySteps {
     @Given("un EService/eservice creato da/dal {tenant} con una richiesta di fruizione e una finalità associate da/dal {tenant}")
     public void createEServiceAndLinkAgreementAndPurpose(Tenant producer, Tenant consumer) {
         interopJourney
-                .withProducer(producer, UserRole.ADMIN)
+                .withProducer(producer)
                 .createEService(EServiceDescriptorState.PUBLISHED)
-                .withConsumer(consumer, UserRole.ADMIN)
+                .withConsumer(consumer)
                 .linkAgreement(AgreementState.ACTIVE)
                 .createPurpose(PurposeVersionState.ACTIVE);
     }
@@ -67,9 +67,9 @@ public class EServiceCreationJourneySteps {
     @Given("un EService/eservice creato da/dal {tenant} con una richiesta di fruizione in stato ACTIVE e una finalità in stato {purposeState} associate da/dal {tenant}")
     public void createEServiceAndLinkAgreementAndPurpose(Tenant producer, PurposeVersionState purposeState, Tenant consumer) {
         interopJourney
-                .withProducer(producer, UserRole.ADMIN)
+                .withProducer(producer)
                 .createEService(EServiceDescriptorState.PUBLISHED)
-                .withConsumer(consumer, UserRole.ADMIN)
+                .withConsumer(consumer)
                 .linkAgreement(AgreementState.ACTIVE)
                 .createPurpose(purposeState);
     }
@@ -77,9 +77,9 @@ public class EServiceCreationJourneySteps {
     @Given("un EService/eservice creato da/dal {tenant} con una richiesta di fruizione associata da/dal {tenant}")
     public void createEServiceAndLinkAgreement(Tenant producer, Tenant consumer) {
         interopJourney
-                .withProducer(producer, UserRole.ADMIN)
+                .withProducer(producer)
                 .createEService(EServiceDescriptorState.PUBLISHED)
-                .withConsumer(consumer, UserRole.ADMIN)
+                .withConsumer(consumer)
                 .linkAgreement(AgreementState.ACTIVE);
     }
 
@@ -87,13 +87,13 @@ public class EServiceCreationJourneySteps {
     public void createEServiceAndLinkAgreementInPending(Tenant producer, Tenant consumer) {
         EServiceCreationCommand creationCommand = eServiceDescriptorUseCase.getDefaultEServiceCreationCommand(false);
         interopJourney
-                .withProducer(producer, UserRole.ADMIN)
+                .withProducer(producer)
                 .createEService(creationCommand, EServiceDescriptorState.DRAFT)
                 .updateDescriptor(
                         command -> command.agreementApprovalPolicy(AgreementApprovalPolicy.MANUAL),
                         EServiceDescriptorState.PUBLISHED
                 )
-                .withConsumer(consumer, UserRole.ADMIN)
+                .withConsumer(consumer)
                 .linkAgreement(AgreementState.PENDING);
     }
 
@@ -101,11 +101,11 @@ public class EServiceCreationJourneySteps {
     @Given("un EService/eservice creato da/dal {tenant} con una versione divenuta DEPRECATED/deprecata dopo la fruizione di/del {tenant}")
     public void createDeprecatedEServiceDescriptor(Tenant producer, Tenant consumer) {
         interopJourney
-                .withProducer(producer, UserRole.ADMIN)
+                .withProducer(producer)
                 .createEService(EServiceDescriptorState.PUBLISHED)
-                .withConsumer(consumer, UserRole.ADMIN)
+                .withConsumer(consumer)
                 .linkAgreement(AgreementState.ACTIVE)
-                .withProducer(producer, UserRole.ADMIN)
+                .withProducer(producer)
                 .addDescriptor(EServiceDescriptorState.PUBLISHED)
                 .waitUntilEService(eservice -> eservice.getDescriptors().get(0).getState() == EServiceDescriptorState.DEPRECATED);
     }
@@ -113,11 +113,11 @@ public class EServiceCreationJourneySteps {
     @Given("un EService creato dal {tenant} con una versione divenuta deprecata dopo la fruizione di {tenant} ed EService in archiviazione")
     public void createDeprecatedAndArchivedEserviceDescriptor(Tenant producer, Tenant consumer) {
         interopJourney
-                .withProducer(producer, UserRole.ADMIN)
+                .withProducer(producer)
                 .createEService(EServiceDescriptorState.PUBLISHED)
-                .withConsumer(consumer, UserRole.ADMIN)
+                .withConsumer(consumer)
                 .linkAgreement(AgreementState.ACTIVE)
-                .withProducer(producer, UserRole.ADMIN)
+                .withProducer(producer)
                 .addDescriptor(EServiceDescriptorState.PUBLISHED)
                 .waitUntilEService(eservice -> eservice.getDescriptors().get(0).getState() == EServiceDescriptorState.DEPRECATED)
                 .archiveEService(GracePeriodDays.NUMBER_60);
@@ -130,7 +130,7 @@ public class EServiceCreationJourneySteps {
         Map<String, Integer> thresholdsMap = defaultThresholds.asMap(String.class, Integer.class);
 
         interopJourney
-                .withProducer(producer, UserRole.ADMIN)
+                .withProducer(producer)
                 .createCertifiedAttribute()
                 .createEService(EServiceDescriptorState.DRAFT)
                 .updateDescriptorWithContextAttributes(
@@ -145,12 +145,31 @@ public class EServiceCreationJourneySteps {
                 );
     }
 
+    @Given("un e-service in stato {eServiceDescriptorState}, creato dal {tenant}, con soglie base:")
+    public void createEServiceWithBaseThresholds(
+            EServiceDescriptorState state,
+            Tenant producer,
+            DataTable baseThresholds
+    ) {
+        Map<String, Integer> thresholdsMap = baseThresholds.asMap(String.class, Integer.class);
+
+        interopJourney
+                .withProducer(producer)
+                .createEService(EServiceDescriptorState.DRAFT)
+                .updateDescriptor(
+                        command -> command
+                                .dailyCallsPerConsumer(thresholdsMap.get("consumerThreshold"))
+                                .dailyCallsTotal(thresholdsMap.get("totalThreshold")),
+                        state
+                );
+    }
+
     @Given("una nuova versione dell'e-service in {eServiceDescriptorState}, creata dal {tenant}, con un attributo certificato e una soglia personalizzata per fruitore pari a {int}")
     public void createNewInstanceDraftEService(EServiceDescriptorState state, Tenant producer, int customThreshold, DataTable defaultThresholds) {
         Map<String, Integer> thresholdsMap = defaultThresholds.asMap(String.class, Integer.class);
 
         interopJourney
-                .withProducer(producer, UserRole.ADMIN)
+                .withProducer(producer)
                 .createCertifiedAttribute()
                 .createEService(EServiceDescriptorState.DRAFT)
                 .updateDescriptorWithContextAttributes(

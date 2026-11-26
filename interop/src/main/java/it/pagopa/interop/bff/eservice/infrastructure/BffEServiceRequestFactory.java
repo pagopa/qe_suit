@@ -1,14 +1,8 @@
 package it.pagopa.interop.bff.eservice.infrastructure;
 
-import it.pagopa.interop.bff.eservice.application.BffEServiceCreationCommand;
-import it.pagopa.interop.bff.eservice.application.BffEServiceTemplateInstanceUpdateDescriptorCommand;
-import it.pagopa.interop.bff.eservice.application.BffSearchEServiceCatalogCommand;
-import it.pagopa.interop.bff.eservice.application.BffUpdateEServiceDescriptorCommand;
+import it.pagopa.interop.bff.eservice.application.*;
 import it.pagopa.interop.common.eservice.application.EServiceRequestFactory;
-import it.pagopa.interop.common.eservice.application.command.EServiceCreationCommand;
-import it.pagopa.interop.common.eservice.application.command.EServiceTemplateInstanceUpdateDescriptorCommand;
-import it.pagopa.interop.common.eservice.application.command.SearchEServiceCatalogCommand;
-import it.pagopa.interop.common.eservice.application.command.UpdateEServiceDescriptorCommand;
+import it.pagopa.interop.common.eservice.application.command.*;
 import it.pagopa.interop.common.kernel.domain.ApiInterface;
 import it.pagopa.interop.common.kernel.domain.Channel;
 import it.pagopa.interop.generated.openapi.clients.bff.model.*;
@@ -92,6 +86,11 @@ public class BffEServiceRequestFactory implements EServiceRequestFactory {
     @Override
     public EServiceCreationCommand defaultCreationEServiceCommand() {
         return BffEServiceCreationCommand.from(defaultEServiceSeed());
+    }
+
+    @Override
+    public EServiceUpdateCommand defaultUpdateEServiceCommand() {
+        return BffEServiceUpdateCommand.from(defaultPatchUpdateEServiceSeed());
     }
 
     @Override
@@ -210,6 +209,10 @@ public class BffEServiceRequestFactory implements EServiceRequestFactory {
                 .set(field(EServiceSeed::getAsyncExchange), false)
                 .set(field(EServiceSeed::getIsSignalHubEnabled), false)
                 .create();
+    }
+
+    private PatchUpdateEServiceSeed defaultPatchUpdateEServiceSeed() {
+        return new PatchUpdateEServiceSeed();
     }
 
     @Override

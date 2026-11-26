@@ -165,6 +165,7 @@ jobs:
       JAVA_TEST_SUITE: ${{ inputs.javaTestSuite || 'NrtStandardSuiteTest' }}
       ENVIRONMENT: ${{ inputs.environment || 'qa' }}
       BRANCH_NAME: ${{ inputs.branchName || github.ref_name }}
+      RAE_NAMESPACE: interop
       GH_TOKEN: ${{ secrets.RAE_AUTOMATION_TOKEN || github.token }}
     steps:
       - name: Checkout RAE Generator source
@@ -188,7 +189,7 @@ jobs:
           python-version: '3.12'
 
       - name: Install RAE Python dependencies
-        run: python -m pip install -r generator-source/tools/rae-generator/requirements.txt
+        run: python -m pip install -r generator-source/tools/rae/rae_generator/requirements.txt
 
       - name: Download test reports
         uses: actions/download-artifact@v4
@@ -209,9 +210,10 @@ jobs:
           git checkout -B rae-generator-base origin/develop
           RUNNER="$JAVA_TEST_SUITE"
           [[ "$RUNNER" =~ ^[A-Za-z0-9_.-]+$ ]] || { echo 'Unsafe runner name'; exit 1; }
+          [[ "$RAE_NAMESPACE" =~ ^[A-Za-z0-9][A-Za-z0-9_.-]*$ ]] && [[ "$RAE_NAMESPACE" != "." ]] && [[ "$RAE_NAMESPACE" != ".." ]] || { echo 'Unsafe RAE namespace'; exit 1; }
           for i in $(seq 1 5); do
             TIMESTAMP=$(date -u +%Y%m%d%H%M%S)
-            BRANCH="rae/rae_${RUNNER}_${TIMESTAMP}"
+            BRANCH="rae/${RAE_NAMESPACE}/rae_${RUNNER}_${TIMESTAMP}"
             if ! git ls-remote --exit-code --heads origin "$BRANCH" >/dev/null; then break; fi
             sleep 1
           done
@@ -219,10 +221,11 @@ jobs:
             echo 'Could not allocate unique RAE branch'; exit 1
           fi
           git checkout -b "$BRANCH"
-          YAML="rae/rae_${RUNNER}_${TIMESTAMP}.yaml"
-          PYTHONPATH=../generator-source/tools/rae-generator python -m rae_generator generate \
+          YAML="rae/${RAE_NAMESPACE}/rae_${RUNNER}_${TIMESTAMP}.yaml"
+          PYTHONPATH=../generator-source/tools/rae/rae_generator python -m rae_generator generate \
             --reports /tmp/rae-test-artifacts \
             --history rae \
+            --namespace "$RAE_NAMESPACE" \
             --suite "$RUNNER" \
             --environment "$ENVIRONMENT" \
             --executor "$GITHUB_ACTOR_NAME" \

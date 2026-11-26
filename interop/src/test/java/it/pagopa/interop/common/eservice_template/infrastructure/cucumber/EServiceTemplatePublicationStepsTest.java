@@ -12,14 +12,19 @@ import it.pagopa.interop.common.eservice_template.domain.EServiceTemplateVersion
 import it.pagopa.interop.common.eservice_template.infrastructure.cucumber.dto.EServiceTemplateInstanceConfiguration;
 import it.pagopa.interop.common.eservice_template.infrastructure.cucumber.dto.EServiceTemplatePublicationConfiguration;
 import it.pagopa.interop.common.eservice_template.infrastructure.cucumber.dto.mapper.EServiceTemplateConfigurationMapper;
+import it.pagopa.interop.common.eservice_template.infrastructure.cucumber.dto.mapper.EServiceTemplateConfigurationMapperImpl;
+import it.pagopa.interop.common.infrastructure.SharedMapper;
+import it.pagopa.interop.common.kernel.dto.ConfigurableText;
+import it.pagopa.interop.common.kernel.dto.TextGenerationMode;
 import it.pagopa.interop.common.journey.application.InteropJourney;
 import it.pagopa.interop.common.kernel.domain.Tenant;
-import it.pagopa.interop.common.kernel.domain.UserRole;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.mapstruct.factory.Mappers;
 import org.mockito.ArgumentCaptor;
 import io.cucumber.cucumberexpressions.ExpressionFactory;
 import io.cucumber.cucumberexpressions.ParameterTypeRegistry;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.test.context.junit.jupiter.SpringJUnitConfig;
 
 import java.util.Arrays;
 import java.util.List;
@@ -29,17 +34,26 @@ import java.util.UUID;
 import static org.assertj.core.api.Assertions.*;
 import static org.mockito.Mockito.*;
 
+@SpringJUnitConfig(classes = {
+        EServiceTemplateConfigurationMapperImpl.class,
+        SharedMapper.class
+})
 class EServiceTemplatePublicationStepsTest {
     private final InteropJourney journey = mock(InteropJourney.class, RETURNS_SELF);
     private final InMemoryEntityStore entities = new InMemoryEntityStore();
-    private final EServiceTemplatePublicationSteps steps = new EServiceTemplatePublicationSteps(
-            journey, new BffEServiceTemplateRequestFactory(),
-            Mappers.getMapper(EServiceTemplateConfigurationMapper.class), entities);
+    @Autowired
+    private EServiceTemplateConfigurationMapper mapper;
+    private EServiceTemplatePublicationSteps steps;
+
+    @BeforeEach
+    void setUp() {
+        steps = new EServiceTemplatePublicationSteps(journey, new BffEServiceTemplateRequestFactory(), mapper, entities);
+    }
 
     @Test
     void aliasesAreRegisteredAndCreatorIsExplicitForEveryTemplate() {
-        var first = configuration("TPL-1", "Template Stampo Alfa", Tenant.COMUNE_DI_MILANO);
-        var second = configuration("TPL-2", "Template Stampo Beta", Tenant.SOGECAP);
+        var first = configuration("TPL-1", new ConfigurableText("Template Stampo Alfa", TextGenerationMode.RANDOM), Tenant.COMUNE_DI_MILANO);
+        var second = configuration("TPL-2", new ConfigurableText("Template Stampo Beta", TextGenerationMode.RANDOM), Tenant.SOGECAP);
         when(journey.createEServiceTemplate(any(EServiceTemplateCreationCommand.class),
                 eq(EServiceTemplateVersionState.PUBLISHED))).thenAnswer(invocation -> {
             var command = (BffEServiceTemplateCreationCommand) invocation.getArgument(0);
@@ -53,9 +67,9 @@ class EServiceTemplatePublicationStepsTest {
         assertThat(entities.getByAliasOrThrow("TPL-1", EServiceTemplate.class).getName()).contains("Template Stampo Alfa");
         assertThat(entities.getByAliasOrThrow("TPL-2", EServiceTemplate.class).getName()).contains("Template Stampo Beta");
         var order = inOrder(journey);
-        order.verify(journey).withProducer(Tenant.COMUNE_DI_MILANO, UserRole.ADMIN);
+        order.verify(journey).withProducer(Tenant.COMUNE_DI_MILANO);
         order.verify(journey).createEServiceTemplate(any(EServiceTemplateCreationCommand.class), eq(EServiceTemplateVersionState.PUBLISHED));
-        order.verify(journey).withProducer(Tenant.SOGECAP, UserRole.ADMIN);
+        order.verify(journey).withProducer(Tenant.SOGECAP);
         order.verify(journey).createEServiceTemplate(any(EServiceTemplateCreationCommand.class), eq(EServiceTemplateVersionState.PUBLISHED));
     }
 
@@ -67,13 +81,13 @@ class EServiceTemplatePublicationStepsTest {
         var configuration = new EServiceTemplateInstanceConfiguration();
         configuration.setAlias("ES-1");
         configuration.setTemplate("TPL-1");
-        configuration.setInstanceLabel("eservice-1");
+        configuration.setInstanceLabel(new ConfigurableText("eservice-1", TextGenerationMode.EXACT));
 
         steps.publishInstances(List.of(configuration));
 
         var command = ArgumentCaptor.forClass(EServiceTemplateInstanceCreationCommand.class);
         var order = inOrder(journey);
-        order.verify(journey).withProducer(Tenant.COMUNE_DI_MILANO, UserRole.ADMIN);
+        order.verify(journey).withProducer(Tenant.COMUNE_DI_MILANO);
         order.verify(journey).createPublishedEServiceTemplateInstance(eq(template), command.capture(), eq("ES-1"));
         assertThat(((BffEServiceTemplateInstanceCreationCommand) command.getValue()).getBffPayload().getInstanceLabel())
                 .contains("eservice-1");
@@ -106,7 +120,7 @@ class EServiceTemplatePublicationStepsTest {
                 .containsExactly("le seguenti istanze di template pubblicate:", "le seguenti istanze di template e-service pubblicate:");
     }
 
-    private static EServiceTemplatePublicationConfiguration configuration(String alias, String name, Tenant creator) {
+    private static EServiceTemplatePublicationConfiguration configuration(String alias, ConfigurableText name, Tenant creator) {
         var configuration = new EServiceTemplatePublicationConfiguration();
         configuration.setAlias(alias);
         configuration.setName(name);

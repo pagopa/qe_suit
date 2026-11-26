@@ -7,7 +7,7 @@ import it.pagopa.infrastructure.http.restassured.contract.ContractValidationFilt
 import it.pagopa.infrastructure.http.restassured.flow.FlowValidationFilterFactory;
 
 import it.pagopa.interop.generated.openapi.clients.m2m.v3.ApiClient;
-import it.pagopa.interop.m2m.v3.infrastructure.security.M2Mv3AuthenticatedRequestFactory;
+import it.pagopa.interop.m2m.v3.infrastructure.auth.M2Mv3AuthenticatedRequestFactory;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;

@@ -26,17 +26,13 @@
         <rest-assured.version>6.0.1</rest-assured.version>
         <swagger-request-validator.version>2.46.1</swagger-request-validator.version>
         <auth.openapi.url>
-            https://raw.githubusercontent.com/pagopa/interop-be-monorepo/refs/tags/2.24.0-RC3/packages/api-clients/open-api/authorizationServerApi.yml
+            https://raw.githubusercontent.com/pagopa/interop-be-monorepo/refs/tags/2.25.0-RC1/packages/api-clients/open-api/authorizationServerApi.yml
         </auth.openapi.url>
-
-        <!-- TODO 11/2026: in assenza di una specifica rilasciata è stato usato questo commit
-            specifico per permettere lo sviluppo di QA-19033. Sostituire con puntamento
-            a 2.25 una volta rilasciata.  -->
         <bff.openapi.url>
-            https://raw.githubusercontent.com/pagopa/interop-be-monorepo/6625c5a5eb4193666920c3f415dca67182835a87/packages/api-clients/open-api/bffApi.yml
+            https://raw.githubusercontent.com/pagopa/interop-be-monorepo/refs/tags/2.25.0-RC1/packages/api-clients/open-api/bffApi.yml
         </bff.openapi.url>
         <m2m.v3.openapi.url>
-            https://raw.githubusercontent.com/pagopa/interop-be-monorepo/refs/tags/2.24.0-RC3/packages/api-clients/open-api/m2mGatewayApiV3.yml
+            https://raw.githubusercontent.com/pagopa/interop-be-monorepo/refs/tags/2.25.0-RC1/packages/api-clients/open-api/m2mGatewayApiV3.yml
         </m2m.v3.openapi.url>
         <!-- FuzzingProfile shared by runtime contract tests and PST generation (pst:generate) -->
         <pst.fuzzingProfile>it.pagopa.interop.common.infrastructure.contract.InteropFuzzingProfile</pst.fuzzingProfile>

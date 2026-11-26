@@ -1,5 +1,6 @@
 package it.pagopa.send.bff.legal_notification.infrastructure;
 
+import it.pagopa.send.common.legal_notification.domain.LegalNotificationCreationCommand;
 import it.pagopa.application.context.EntityStore;
 import it.pagopa.infrastructure.template.action.strategy.PollingStrategy;
 import it.pagopa.send.bff.delivery.infrastructure.BffDeliveryRestClient;
@@ -45,8 +46,10 @@ public class BffLegalNotificationGateway implements LegalNotificationGateway {
     private final LegalNotificationCreationRequest request;
 
     @Override
-    public void prepareNotification(Map<String, String> data) {
-        requestFactory.applyPreliminaryData(request, data);
+    public void prepareNotification(LegalNotificationCreationCommand command) {
+        requestFactory.applyPreliminaryData(request, command);
+        requestFactory.applyDocument(request);
+        command.getRecipients().forEach(this::addRecipient);
     }
 
     @Override
