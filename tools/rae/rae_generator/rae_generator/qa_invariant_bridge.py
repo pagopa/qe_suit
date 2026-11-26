@@ -20,7 +20,16 @@ def _key(row):
 
 
 def build_learning(history, ignore_rules=None):
-    indexed = {_key(row): row for row in history if row.get('id_test') and row.get('error_log')}
+    # A historical proposal is QA evidence only after the confirmation policy
+    # explicitly approves it. Auto-matches must never train or veto QA groups.
+    # Legacy manual analyses without matching metadata remain eligible.
+    def eligible(row):
+        if not row.get('id_test') or not row.get('error_log'):
+            return False
+        matching = row.get('matching')
+        return (not matching or is_qa_confirmed(row, approved_history=True))
+
+    indexed = {_key(row): row for row in history if eligible(row)}
     parent = {k: k for k in indexed}
 
     def root(k):
@@ -29,7 +38,7 @@ def build_learning(history, ignore_rules=None):
             k = parent[k]
         return k
 
-    for row in history:
+    for row in indexed.values():
         if not is_qa_confirmed(row, approved_history=True):
             continue
         matching = row.get('matching') or {}
@@ -47,15 +56,8 @@ def build_learning(history, ignore_rules=None):
     # and the *same ticket identity* are equivalent evidence, not competing
     # defect groups. Never merge unconfirmed proposals or bot auto-matches.
     identical = {}
-    for row in history:
+    for row in indexed.values():
         key = _key(row)
-        if key not in indexed:
-            continue
-        matching = row.get('matching') or {}
-        if (matching.get('status') == 'auto_matched'
-                or (matching.get('status') == 'pending_confirmation'
-                    and not is_qa_confirmed(row, approved_history=True))):
-            continue
         ticket = (str(row.get('link_prod_bug') or ''),
                   str(row.get('link_suite_bug') or ''))
         if ticket == ('', ''):
