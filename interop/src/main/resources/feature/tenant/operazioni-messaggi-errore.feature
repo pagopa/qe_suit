@@ -35,7 +35,8 @@ Feature: Messaggi di errore durante la gestione dei dati e degli attributi dell'
       | alias  |
       | CERT-1 |
     When il certificatore tenta di assegnare nuovamente l'attributo "CERT-1" all'ente PagoPA
-    Then il messaggio di errore corrisponde al caso "TENANT_CERTIFIED_ATTRIBUTE_ALREADY_ASSIGNED__POST_TENANTS_TENANT_ID_ATTRIBUTES_CERTIFIED"
+    Then il messaggio di errore corrisponde al caso "TENANT_CERTIFIED_ATTRIBUTE_ALREADY_ASSIGNED__POST_TENANTS_TENANT_ID_ATTRIBUTES_CERTIFIED" con i valori:
+      | attributeName | CERT-1 |
 
   # NON REPLICABILE A FRONTEND
   # Endpoint: POST /tenants/:tenantId/attributes/certifiedDiscrete

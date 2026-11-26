@@ -102,9 +102,9 @@ Feature: Messaggi di errore durante la gestione delle deleghe in erogazione e in
   Quando il delegante tenta di revocare nuovamente la delega
   Allora il sistema rifiuta la revoca e segnala che lo stato della delega non consente l'operazione.
 
-    Given l'e-service è delegato in fruizione da PagoPA al Comune di Pozzallo con una delega in stato ACTIVE
-    And la delega in fruizione viene revocata da PagoPA
-    And un admin appartenente al fruitore PagoPA
+    Given l'e-service è delegato in fruizione da Comune di Milano al Comune di Pozzallo con una delega in stato ACTIVE
+    And la delega in fruizione viene revocata da Comune di Milano
+    And un admin appartenente al fruitore Comune di Milano
     When l'utente tenta di revocare la delega in fruizione
     Then il messaggio di errore corrisponde al caso "DELEGATION_INCORRECT_STATE__DELETE_CONSUMERS_DELEGATIONS_DELEGATION_ID"
 
@@ -128,7 +128,7 @@ Feature: Messaggi di errore durante la gestione delle deleghe in erogazione e in
   Quando il delegato tenta di rifiutare la delega inserendo un collegamento nella motivazione
   Allora il sistema rifiuta l'operazione e invita il delegato a rimuovere il collegamento dalla motivazione.
 
-    Given l'e-service è delegato in fruizione da PagoPA al Comune di Pozzallo con una delega in stato WAITING_FOR_APPROVAL
+    Given l'e-service è delegato in fruizione da Comune di Milano al Comune di Pozzallo con una delega in stato WAITING_FOR_APPROVAL
     And un admin appartenente al delegato Comune di Pozzallo
     When l'utente tenta di rifiutare la delega in fruizione inserendo la motivazione "Rifiuto https://example.org"
     Then il messaggio di errore corrisponde al caso "DELEGATION_HYPERLINK_DETECTION_ERROR__POST_CONSUMERS_DELEGATIONS_DELEGATION_ID_REJECT"

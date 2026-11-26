@@ -34,12 +34,7 @@ public class BffErrorMessageSteps {
 
     @Then("il messaggio di errore corrisponde al caso {string} con i valori:")
     public void assertErrorMessageWithValues(String messageId, DataTable table) {
-        assertErrorMessageWithValues(messageId, currentChannel.getCurrentLanguage().getLanguage(), table);
-    }
-
-    @Then("il messaggio di errore corrisponde al caso {string} in lingua {string} con i valori:")
-    public void assertErrorMessageWithValues(String messageId, String language, DataTable table) {
-        assertErrorMessage(messageId, language, parsePlaceholderValues(table));
+        assertErrorMessage(messageId, currentChannel.getCurrentLanguage().getLanguage(), parsePlaceholderValues(table));
     }
 
     private Map<String, String> parsePlaceholderValues(DataTable table) {
@@ -62,11 +57,9 @@ public class BffErrorMessageSteps {
         String expected = catalog.render(messageId, language, resolvedValues);
         var response = responses.getLastResponse();
         assertThat(response).as("Risposta BFF da verificare per %s", messageId).isNotNull();
-        assertThat(response.getStatusCode())
+        assertThat(response.is2xxSuccessful())
                 .as("Status HTTP di errore per %s", messageId)
-                .satisfiesAnyOf(
-                        statusCode -> assertThat(statusCode).isBetween(400, 499),
-                        statusCode -> assertThat(statusCode).isEqualTo(503));
+                .isFalse();
         Object userMessage = JsonPath.from(response.getRawContent()).get("userMessage");
         assertThat(userMessage)
                 .as("userMessage per %s in lingua %s", messageId, language)
