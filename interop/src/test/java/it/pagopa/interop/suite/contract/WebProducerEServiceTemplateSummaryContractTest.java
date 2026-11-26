@@ -92,7 +92,7 @@ public class WebProducerEServiceTemplateSummaryContractTest {
                                 page -> {
                                 },
                                 page -> {
-                                    assertHeaderAndBreadcrumbs(page, template);
+                                    assertHeaderAndBreadcrumbs(page);
                                     assertSummaryCards(page);
                                     assertFooterActions(page);
                                     assertGeneralInfoTemplateEServiceCard(page);
@@ -103,7 +103,7 @@ public class WebProducerEServiceTemplateSummaryContractTest {
                 ));
     }
 
-    private void assertHeaderAndBreadcrumbs(ProducerEServiceTemplateSummaryPage page, EServiceTemplate template) {
+    private void assertHeaderAndBreadcrumbs(ProducerEServiceTemplateSummaryPage page) {
         // ES-SUMM-01 - Verify that the button "Torna agli e-service" is enabled
         assertThat(page.backToTemplatesButton().isDisabled())
                 .as("Torna ai template abilitato").isFalse();
@@ -261,10 +261,6 @@ public class WebProducerEServiceTemplateSummaryContractTest {
     private void assertField(EServiceSummaryCard.Field field, String expectedLabel) {
         field.label().readAndAssert(expectedLabel);
         assertNotBlank(field.value().read(), expectedLabel);
-    }
-
-    private static String yesNo(boolean value) {
-        return value ? "Sì" : "No";
     }
 
     private static void assertNotBlank(String value, String description) {
