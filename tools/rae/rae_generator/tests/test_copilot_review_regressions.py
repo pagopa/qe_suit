@@ -99,6 +99,44 @@ def test_unconfirmed_proposal_replacing_legacy_approval_does_not_resurrect_it():
     assert candidate['_source_file'] == older['_source_file']
 
 
+def test_conflicting_confirmed_lineage_cannot_fall_back_to_known():
+    # Two approved occurrences linked by source_rae have identical logs,
+    # but different tickets. The QA bridge must veto Drain3 auto-known.
+    from rae_generator.progressive import ProgressiveMatcher
+
+    older = row('18', 'X')
+    newer = row('23', 'X', matching={
+        'status': 'confirmed',
+        'source_rae': older['_source_file'],
+        'source_id_test': TEST,
+    })
+    newer['link_prod_bug'] = 'https://example.org/QA-456'
+
+    matcher = ProgressiveMatcher([newer, older])
+    status, candidate = matcher.classify(TEST, log('X'), suite=SUITE)
+    assert status == 'proposed'
+    assert candidate is None
+    assert any(reason.code in ('HISTORICAL_DEFECT_CONFLICT',
+                               'AMBIGUOUS_QA_GROUPS')
+               for reason in matcher.last_review_reasons)
+
+
+def test_same_ticket_confirmed_lineage_still_known():
+    from rae_generator.progressive import ProgressiveMatcher
+
+    older = row('18', 'X')
+    newer = row('23', 'X', matching={
+        'status': 'confirmed',
+        'source_rae': older['_source_file'],
+        'source_id_test': TEST,
+    })
+    matcher = ProgressiveMatcher([newer, older])
+    status, candidate = matcher.classify(TEST, log('X'), suite=SUITE)
+    assert status == 'known'
+    assert candidate is not None
+    assert candidate['link_prod_bug'] == TICKET
+
+
 def test_same_ticket_reason_has_dedicated_qa_rendering():
     evidence = snapshot([Reason('MULTIPLE_QA_GROUPS_SAME_TICKET',
                                 'group A, group B', TICKET,

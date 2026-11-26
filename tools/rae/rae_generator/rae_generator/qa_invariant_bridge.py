@@ -98,6 +98,27 @@ def build_learning(history, ignore_rules=None):
                    for r in rows}
         tickets.discard(('', ''))
         if len(tickets) != 1:
+            # Never hide conflicting QA evidence from the authoritative gate.
+            # Dropping the whole group would let ProgressiveMatcher fall back
+            # to Drain3 signatures, which do not validate ticket identity.
+            # Preserve each approved, ticketed occurrence as a singleton QA
+            # group: a conflict remains visible and cannot authorize KNOWN.
+            for row in rows:
+                prod = str(row.get('link_prod_bug') or '')
+                suite_bug = str(row.get('link_suite_bug') or '')
+                ticket = prod or suite_bug
+                if not ticket:
+                    continue
+                source_key = _key(row)
+                group_id = '|'.join(source_key)
+                suite = str(row.get('_source_suite', ''))
+                test = str(row['id_test'])
+                error = str(row['error_log'])
+                engine.approve(Approval(
+                    Observation(suite, test,
+                                ignore_rules.normalize(error) if ignore_rules else error),
+                    ticket, group_id, 'approved-history', group_id))
+                candidates[(suite, test, group_id)] = row
             continue
         prod, suite_bug = next(iter(tickets))
         ticket = prod or suite_bug
