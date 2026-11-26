@@ -112,7 +112,9 @@ public class BffAgreementRestClient extends RestClient {
 
     public TestChain<CreatedResource> cloneAgreement(@Nonnull UUID agreementId) {
         return execute(
-                () -> agreementsApi.cloneAgreement().agreementIdPath(agreementId).execute(Function.identity()),
+                () -> agreementsApi.cloneAgreement().agreementIdPath(agreementId)
+                        .reqSpec(reqSpec -> reqSpec.setContentType("application/json"))
+                        .execute(Function.identity()),
                 CreatedResource.class
         );
     }

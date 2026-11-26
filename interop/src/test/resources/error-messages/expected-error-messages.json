@@ -127,7 +127,7 @@
       "error": "agreementAlreadyExists",
       "bffEndpoint": "POST /agreements/:agreementId/clone",
       "copy": {
-        "it": "Non puoi duplicare questa richiesta di fruizione perché per questo e-service esiste già una richiesta in corso o attiva. ",
+        "it": "Non puoi duplicare questa richiesta di fruizione perché per questo e-service esiste già una richiesta in corso o attiva.",
         "en": "You cannot duplicate the service request because another request for this e-service is already in progress or active."
       }
     },
