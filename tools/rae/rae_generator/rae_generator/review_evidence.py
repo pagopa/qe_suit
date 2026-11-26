@@ -51,6 +51,8 @@ def _text_for(code: str) -> str:
         return 'Evidenze QA insufficienti'
     if code in ('HISTORICAL_DEFECT_CONFLICT', 'AMBIGUOUS_DEFECT', 'AMBIGUOUS_QA_GROUPS'):
         return 'Più analisi storiche compatibili'
+    if code == 'MULTIPLE_QA_GROUPS_SAME_TICKET':
+        return 'Più gruppi QA compatibili con lo stesso ticket'
     if code in ('STACK_SHAPE_CHANGED', 'STACK_METHOD_CHANGED', 'STACK_SOURCE_CHANGED'):
         return 'Struttura diagnostica differente'
     if code == 'LINE_NUMBER_UNSEEN':
@@ -109,6 +111,12 @@ def render_warning(matching: dict) -> list[str]:
         if code in ('HISTORICAL_DEFECT_CONFLICT', 'AMBIGUOUS_DEFECT', 'AMBIGUOUS_QA_GROUPS'):
             lines.append('<p>Il log è compatibile con più difetti storici. '
                          'La scelta richiede una verifica QA.</p>')
+        elif code == 'MULTIPLE_QA_GROUPS_SAME_TICKET':
+            lines.append('<p>Più gruppi QA storici compatibili condividono lo stesso ticket. '
+                         'L’analisi più recente è proposta, non confermata automaticamente. '
+                         'Verificare la causa e confermare l’equivalenza prima dell’apprendimento.</p>')
+            if row.get('current_value'):
+                lines.append('<p>Ticket comune: ' + _inline(row['current_value']) + '</p>')
         else:
             old = row.get('historical_value', '')
             current = row.get('current_value', '')

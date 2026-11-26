@@ -20,7 +20,28 @@ def _key(row):
 
 
 def build_learning(history, ignore_rules=None):
-    indexed = {_key(row): row for row in history if row.get('id_test') and row.get('error_log')}
+    # A historical proposal is QA evidence only after the confirmation policy
+    # explicitly approves it. Auto-matches must never train or veto QA groups.
+    # Legacy manual analyses without matching metadata remain eligible.
+    def eligible(row):
+        if not row.get('id_test') or not row.get('error_log'):
+            return False
+        matching = row.get('matching')
+        return (not matching or is_qa_confirmed(row, approved_history=True))
+
+    # Resolve duplicate keys first (last-row-wins), then filter QA eligibility.
+    # A later generated row must not resurrect an overwritten legacy approval.
+    retained = {_key(row): row for row in history
+                if row.get('id_test') and row.get('error_log')}
+    # Normalize historical ticket fields without mutating the original rows.
+    # Whitespace-only URLs are not tickets, and a blank product URL must not
+    # override a valid suite ticket when a candidate is copied to a new RAE.
+    indexed = {
+        key: {**row,
+              'link_prod_bug': str(row.get('link_prod_bug') or '').strip(),
+              'link_suite_bug': str(row.get('link_suite_bug') or '').strip()}
+        for key, row in retained.items() if eligible(row)
+    }
     parent = {k: k for k in indexed}
 
     def root(k):
@@ -29,8 +50,12 @@ def build_learning(history, ignore_rules=None):
             k = parent[k]
         return k
 
-    for row in history:
-        if not is_qa_confirmed(row, approved_history=True):
+    for row in indexed.values():
+        # The digest attests the original QA analysis, not the normalized
+        # ticket fields used for matching. Trimming before rechecking a
+        # pending confirmation would invalidate an otherwise approved link.
+        original = retained[_key(row)]
+        if not is_qa_confirmed(original, approved_history=True):
             continue
         matching = row.get('matching') or {}
         source = (str(matching.get('source_rae', '')),
@@ -47,15 +72,8 @@ def build_learning(history, ignore_rules=None):
     # and the *same ticket identity* are equivalent evidence, not competing
     # defect groups. Never merge unconfirmed proposals or bot auto-matches.
     identical = {}
-    for row in history:
+    for row in indexed.values():
         key = _key(row)
-        if key not in indexed:
-            continue
-        matching = row.get('matching') or {}
-        if (matching.get('status') == 'auto_matched'
-                or (matching.get('status') == 'pending_confirmation'
-                    and not is_qa_confirmed(row, approved_history=True))):
-            continue
         ticket = (str(row.get('link_prod_bug') or ''),
                   str(row.get('link_suite_bug') or ''))
         if ticket == ('', ''):
@@ -79,21 +97,29 @@ def build_learning(history, ignore_rules=None):
     for k, row in indexed.items():
         groups[root(k)].append(row)
 
+    # Prepare all ticketed QA groups before registering them. Splitting a
+    # conflicting lineage produces singletons, which must be interleaved with
+    # unrelated groups in the original newest-first history order.
+    position = {key: i for i, key in enumerate(indexed)}
+    ordered_groups = []
+    for k, rows in groups.items():
+        ticketed = [r for r in rows
+                    if r['link_prod_bug'] or r['link_suite_bug']]
+        tickets = {(r['link_prod_bug'], r['link_suite_bug']) for r in ticketed}
+        if len(tickets) > 1:
+            # Keep conflicting approved tickets visible to the QA veto rather
+            # than dropping the group and allowing a Drain3 fallback to KNOWN.
+            ordered_groups.extend((_key(r), [r]) for r in ticketed)
+        elif ticketed:
+            # Unticketed entries cannot become independent QA approvals.
+            ordered_groups.append((k, ticketed))
+    ordered_groups.sort(key=lambda group: min(position[_key(r)] for r in group[1]))
+
     engine = QALearningMatcher()
     candidates = {}
-    for k, rows in groups.items():
-        # A singleton historical group is NOT enough evidence for `known`,
-        # but it MUST remain visible to veto an incompatible auto-match.
-        # In particular, an identical log with a different QA defect identity
-        # is a conflict even when it has only one historical occurrence.
-        # Historical entries are newest-first. Each group must carry one
-        # consistent ticket identity; conflicting tickets require QA review.
-        tickets = {(str(r.get('link_prod_bug') or ''), str(r.get('link_suite_bug') or ''))
-                   for r in rows}
-        tickets.discard(('', ''))
-        if len(tickets) != 1:
-            continue
-        prod, suite_bug = next(iter(tickets))
+    for k, rows in ordered_groups:
+        prod = rows[0]['link_prod_bug']
+        suite_bug = rows[0]['link_suite_bug']
         ticket = prod or suite_bug
         suite = str(rows[0].get('_source_suite', ''))
         test = str(rows[0]['id_test'])
@@ -106,8 +132,7 @@ def build_learning(history, ignore_rules=None):
             except ValueError:
                 break
         else:
-            candidates[(suite, test, group_id)] = next(
-                r for r in rows if r.get('link_prod_bug') or r.get('link_suite_bug'))
+            candidates[(suite, test, group_id)] = rows[0]
     return engine, candidates
 
 
