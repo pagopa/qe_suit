@@ -69,7 +69,7 @@ public class AgreementSteps {
 
     @Given("una richiesta di fruizione (in ){agreementState} verso l'{currentEService} da parte di/del {tenant}")
     public void createAgreement(AgreementState agreementState, EService eService, Tenant consumer) {
-        currentUserSession.set(User.getTenantAdmin(consumer), consumer);
+        authSession.set(consumer);
         agreementUseCase.createAgreement(eService, eService.getActiveDescriptor(), agreementState, null);
     }
 

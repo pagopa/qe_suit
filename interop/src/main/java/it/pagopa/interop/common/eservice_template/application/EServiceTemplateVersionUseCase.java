@@ -9,7 +9,7 @@ import it.pagopa.interop.common.eservice_template.domain.EServiceTemplate;
 import it.pagopa.interop.common.eservice_template.domain.EServiceTemplateInterface;
 import it.pagopa.interop.common.eservice_template.domain.EServiceTemplateVersion;
 import it.pagopa.interop.common.eservice_template.domain.EServiceTemplateVersionState;
-import it.pagopa.interop.common.kernel.context.CurrentUserSession;
+import it.pagopa.interop.common.kernel.context.AuthSession;
 import it.pagopa.interop.common.kernel.domain.EServiceRiskAnalysis;
 import it.pagopa.interop.common.kernel.domain.Tenant;
 import lombok.RequiredArgsConstructor;
@@ -32,7 +32,7 @@ public class EServiceTemplateVersionUseCase {
     private final EServiceTemplateUseCase eServiceTemplateUseCase;
     private final EServiceRiskAnalysisUseCase eServiceRiskAnalysisUseCase;
 
-    private final CurrentUserSession currentUserSession;
+    private final AuthSession authSession;
 
     public void retireVersions(EServiceTemplate template) {
         for (var version : template.getVersions()) {
@@ -87,7 +87,7 @@ public class EServiceTemplateVersionUseCase {
             eServiceTemplate.getMode()
         )) {
             Tenant tenant = command.tenant() == null
-                    ? currentUserSession.getTenant()
+                    ? authSession.getTenant()
                     : command.tenant();
             EServiceRiskAnalysis eServiceRiskAnalysis = command.eServiceRiskAnalysis() == null
                     ? eServiceRiskAnalysisUseCase.buildRiskAnalysis(tenant, true)

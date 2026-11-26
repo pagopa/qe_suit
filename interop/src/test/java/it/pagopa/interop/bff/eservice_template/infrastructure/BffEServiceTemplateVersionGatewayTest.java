@@ -116,7 +116,8 @@ class BffEServiceTemplateVersionGatewayTest {
                 versionGateway,
                 store,
                 mappingService,
-                Mappers.getMapper(BffEServiceRiskAnalysisMapper.class)
+                Mappers.getMapper(BffEServiceRiskAnalysisMapper.class),
+                mock(LastApiResponseStore.class)
         );
 
         UUID templateId = UUID.randomUUID();

@@ -10,7 +10,7 @@ import it.pagopa.interop.common.eservice.domain.EServiceTechnology;
 import it.pagopa.interop.common.eservice_template.application.*;
 import it.pagopa.interop.common.eservice_template.application.command.PrepareEServiceTemplateForPublishingCommand;
 import it.pagopa.interop.common.eservice_template.domain.*;
-import it.pagopa.interop.common.kernel.context.CurrentUserSession;
+import it.pagopa.interop.common.kernel.context.AuthSession;
 import it.pagopa.interop.common.kernel.domain.EServiceRiskAnalysis;
 import it.pagopa.interop.common.kernel.domain.Tenant;
 import org.junit.jupiter.api.Test;
@@ -28,7 +28,7 @@ class EServiceTemplateJourneyTest {
     private final EServiceTemplateVersionGateway gateway = mock(EServiceTemplateVersionGateway.class);
     private final BffEServiceTemplateRequestFactory factory = new BffEServiceTemplateRequestFactory();
     private final EServiceRiskAnalysisUseCase riskAnalysisUseCase = mock(EServiceRiskAnalysisUseCase.class);
-    private final CurrentUserSession currentUserSession = mock(CurrentUserSession.class);
+    private final AuthSession currentUserSession = mock(AuthSession.class);
     private final EServiceTemplateVersionUseCase versions = new EServiceTemplateVersionUseCase(
             gateway, factory, templates, riskAnalysisUseCase, currentUserSession);
     private final InMemoryEntityStore store = new InMemoryEntityStore();

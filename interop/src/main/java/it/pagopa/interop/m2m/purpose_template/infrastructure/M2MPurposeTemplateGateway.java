@@ -70,6 +70,11 @@ public class M2MPurposeTemplateGateway implements PurposeTemplateGateway {
     }
 
     @Override
+    public void shouldFailLinkToReceiveEService() {
+        throw unsupportedOperation();
+    }
+
+    @Override
     public PurposeTemplate getPurposeTemplate(UUID purposeTemplateId) {
         return restClient.getPurposeTemplate(purposeTemplateId)
                 .withPolling(PollingStrategy.UNTIL_SUCCESS)
@@ -164,6 +169,18 @@ public class M2MPurposeTemplateGateway implements PurposeTemplateGateway {
 
     @Override
     public PurposeTemplate linkEService(PurposeTemplate purposeTemplate, EServiceRef eServiceRef) {
+        throw unsupportedOperation();
+    }
+
+    @Override
+    public PurposeTemplate tryLinkEService(PurposeTemplate purposeTemplate,
+        EServiceRef eServiceRef) {
+        throw unsupportedOperation();
+    }
+
+    @Override
+    public PurposeTemplate tryLinkEServiceTemplate(PurposeTemplate purposeTemplate,
+        EServiceTemplateRef eServiceTemplateRef) {
         throw unsupportedOperation();
     }
 
