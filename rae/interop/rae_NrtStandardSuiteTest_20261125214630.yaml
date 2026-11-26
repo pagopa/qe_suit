@@ -1316,10 +1316,46 @@ ko:
     	at it.pagopa.interop.common.eservice.application.EServiceCatalogPaginationUseCase.shouldContainInRelativeOrder(EServiceCatalogPaginationUseCase.java:82)
     	at it.pagopa.interop.common.eservice.infrastructure.cucumber.EServiceCatalogAssertionSteps.shouldContainEServicesInRelativeOrder(EServiceCatalogAssertionSteps.java:63)
     	at ✽.tra i risultati della ricerca, considerando tutte le pagine, i seguenti e-service compaiono in quest'ordine relativo:(classpath:feature-expanded/catalog/private-catalog-ordering-pagination.feature:43)
-  procedure: ''
-  result: ''
-  link_prod_bug: ''
+  procedure: |
+    Rieseguire in locale PRIVATE_CATALOG_ORDERING_PAGINATION_2 per
+    l'esempio in KO, con un breakpoint all'inizio dell'hook After, prima che
+    il teardown archivi o elimini gli e-service. Con l'esecuzione in pausa,
+    consultare i log della riesecuzione e risalire ai nomi dei tre e-service
+    a partire dagli ID riportati nell'asserzione. Confrontare il loro ordine
+    relativo con quello atteso per il criterio selezionato. Mantenere
+    l'esecuzione in pausa e ripetere da frontend la ricerca del Gherkin nel
+    catalogo autenticato come PagoPA. Cercare «Sorte», filtrare per
+    erogatore «Comune di Milano» e selezionare lo stesso ordinamento
+    dell'esempio in KO. Scorrere tutte le pagine e verificare l'ordine
+    relativo dei tre e-service identificati nei log. Ripetere la ricerca con
+    gli stessi dati, filtri e ordinamento per verificare se la sequenza
+    resta stabile.
+  result: |
+    Nel KO analizzato sono presenti tutti e tre gli e-service attesi, ma il
+    loro ordine relativo è diverso da quello previsto. La ri-esecuzione ha
+    restituito una sequenza diversa da quella del KO iniziale. In QA il
+    disallineamento è stato osservato per tutti e quattro i criteri
+    espliciti di ordinamento per nome e data di creazione, sia crescente sia
+    decrescente. L'ordine relativo deve rispettare il criterio selezionato
+    sull'insieme dei risultati paginati e restare stabile a parità di dati,
+    filtri e criterio. La causa tecnica resta da accertare.
+  link_prod_bug: https://pagopa.atlassian.net/browse/PIN-11313
   link_suite_bug: ''
+  matching:
+    status: pending_confirmation
+    source_rae: rae_NrtStandardSuiteTest_20261123214209.yaml
+    source_id_test: '[PRIVATE_CATALOG_ORDERING_PAGINATION_2] Ordinamenti richiesti esplicitamente [Given=BFF,When=BFF,Then=BFF]
+      [Examples: (senza nome) | Example #4 | line: 54]'
+    proposed_digest: c1498a955a4098602039ed282c129dcb4f81a39ffab9b95232898e81957e1d25
+    review_evidence:
+    - code: MULTIPLE_QA_GROUPS_SAME_TICKET
+      historical_value: 'rae_NrtStandardSuiteTest_20261123214209.yaml|[private_catalog_ordering_pagination_2] ordinamenti
+        richiesti esplicitamente [given=bff,when=bff,then=bff] [examples: (senza nome) | example #4 | line: 54],
+        rae_NrtStandardSuiteTest_20261118213605.yaml|[private_catalog_ordering_pagination_2] ordinamenti richiesti
+        esplicitamente [given=bff,when=bff,then=bff] [examples: (senza nome) | example #4 | line: 54], rae_NrtStandardSuiteTest_20261117213615.yaml|[private_catalog_ordering_pagination_2]
+        ordinamenti richiesti esplicitamente [given=bff,when=bff,then=bff] [examples: (senza nome) | example #4
+        | line: 54]'
+      current_value: https://pagopa.atlassian.net/browse/PIN-11313
 - id_test: '[ESERVICE_ARCHIVING_GRACE_PERIOD_1.1] - Impossibilità di archiviare un e-service prima di una sua versione
     [Given=BFF,When=WEB,Then=WEB]'
   error_log: |
