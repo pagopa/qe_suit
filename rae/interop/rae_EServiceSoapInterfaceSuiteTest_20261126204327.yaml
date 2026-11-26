@@ -1,7 +1,7 @@
 rae:
-  release: ''
-  scope: NIGHTLY
-  issue_jira: ''
+  release: '[INTEROP]-2.25-RC1'
+  scope: PROMO
+  issue_jira: https://pagopa.atlassian.net/browse/QA-19832
   data_ora: '2026-11-26T20:40:27Z'
   durata: 00:02:37
   numero_ko: 4
@@ -31,9 +31,21 @@ ko:
     	at it.pagopa.interop.common.eservice.application.EServiceDescriptorUseCase.shouldFailToConfigureSOAPInterface(EServiceDescriptorUseCase.java:173)
     	at it.pagopa.interop.common.eservice_template.infrastructure.cucumber.EServiceTemplateInstanceSteps.rejectSoapInterface(EServiceTemplateInstanceSteps.java:73)
     	at ✽.l'erogatore tenta di configurare l'interfaccia SOAP del descrittore dell'e-service appena istanziato ottenendo un rifiuto per "URL non ammesso" con i seguenti indirizzi:(classpath:feature-expanded/eservice-template/eservice-template-instance-interface.feature:140)
-  procedure: ''
-  result: ''
-  link_prod_bug: ''
+  procedure: |
+    Confrontare i valori inviati nel campo
+    serverUrls e le risposte del BFF con il rifiuto atteso dalla feature.
+
+    Verificare dallo stack trace se il test raggiunge anche i controlli
+    sull'interfaccia del descrittore e su quella del template.
+
+  result: |
+    Dopo la creazione di un e-service da template SOAP pubblicato,
+    il BFF ha ricevuto indirizzi contenenti markup o virgolette.
+
+    Per tutti e quattro gli esempi la richiesta di configurazione ha ricevuto
+    HTTP 200 con l'ID del descrittore, anziché il rifiuto atteso. La run
+    riportava un'attesa di HTTP 409.
+  link_prod_bug: https://pagopa.atlassian.net/browse/PIN-11710
   link_suite_bug: ''
 - id_test: '[ESERVICE_TEMPLATE_INTERFACE_6] Rifiuto di valori non ammessi come indirizzi SOAP [Given=BFF,When=BFF,Then=BFF]
     [Examples: markup-e-virgolette | Example #2]'
@@ -54,9 +66,21 @@ ko:
     	at it.pagopa.interop.common.eservice.application.EServiceDescriptorUseCase.shouldFailToConfigureSOAPInterface(EServiceDescriptorUseCase.java:173)
     	at it.pagopa.interop.common.eservice_template.infrastructure.cucumber.EServiceTemplateInstanceSteps.rejectSoapInterface(EServiceTemplateInstanceSteps.java:73)
     	at ✽.l'erogatore tenta di configurare l'interfaccia SOAP del descrittore dell'e-service appena istanziato ottenendo un rifiuto per "URL non ammesso" con i seguenti indirizzi:(classpath:feature-expanded/eservice-template/eservice-template-instance-interface.feature:140)
-  procedure: ''
-  result: ''
-  link_prod_bug: ''
+  procedure: |
+    Confrontare i valori inviati nel campo
+    serverUrls e le risposte del BFF con il rifiuto atteso dalla feature.
+
+    Verificare dallo stack trace se il test raggiunge anche i controlli
+    sull'interfaccia del descrittore e su quella del template.
+
+  result: |
+    Dopo la creazione di un e-service da template SOAP pubblicato,
+    il BFF ha ricevuto indirizzi contenenti markup o virgolette.
+
+    Per tutti e quattro gli esempi la richiesta di configurazione ha ricevuto
+    HTTP 200 con l'ID del descrittore, anziché il rifiuto atteso. La run
+    riportava un'attesa di HTTP 409.
+  link_prod_bug: https://pagopa.atlassian.net/browse/PIN-11710
   link_suite_bug: ''
 - id_test: '[ESERVICE_TEMPLATE_INTERFACE_6] Rifiuto di valori non ammessi come indirizzi SOAP [Given=BFF,When=BFF,Then=BFF]
     [Examples: markup-e-virgolette | Example #3]'
@@ -77,9 +101,21 @@ ko:
     	at it.pagopa.interop.common.eservice.application.EServiceDescriptorUseCase.shouldFailToConfigureSOAPInterface(EServiceDescriptorUseCase.java:173)
     	at it.pagopa.interop.common.eservice_template.infrastructure.cucumber.EServiceTemplateInstanceSteps.rejectSoapInterface(EServiceTemplateInstanceSteps.java:73)
     	at ✽.l'erogatore tenta di configurare l'interfaccia SOAP del descrittore dell'e-service appena istanziato ottenendo un rifiuto per "URL non ammesso" con i seguenti indirizzi:(classpath:feature-expanded/eservice-template/eservice-template-instance-interface.feature:140)
-  procedure: ''
-  result: ''
-  link_prod_bug: ''
+  procedure: |
+    Confrontare i valori inviati nel campo
+    serverUrls e le risposte del BFF con il rifiuto atteso dalla feature.
+
+    Verificare dallo stack trace se il test raggiunge anche i controlli
+    sull'interfaccia del descrittore e su quella del template.
+
+  result: |
+    Dopo la creazione di un e-service da template SOAP pubblicato,
+    il BFF ha ricevuto indirizzi contenenti markup o virgolette.
+
+    Per tutti e quattro gli esempi la richiesta di configurazione ha ricevuto
+    HTTP 200 con l'ID del descrittore, anziché il rifiuto atteso. La run
+    riportava un'attesa di HTTP 409.
+  link_prod_bug: https://pagopa.atlassian.net/browse/PIN-11710
   link_suite_bug: ''
 - id_test: '[ESERVICE_TEMPLATE_INTERFACE_6] Rifiuto di valori non ammessi come indirizzi SOAP [Given=BFF,When=BFF,Then=BFF]
     [Examples: markup-e-virgolette | Example #4]'
@@ -100,7 +136,19 @@ ko:
     	at it.pagopa.interop.common.eservice.application.EServiceDescriptorUseCase.shouldFailToConfigureSOAPInterface(EServiceDescriptorUseCase.java:173)
     	at it.pagopa.interop.common.eservice_template.infrastructure.cucumber.EServiceTemplateInstanceSteps.rejectSoapInterface(EServiceTemplateInstanceSteps.java:73)
     	at ✽.l'erogatore tenta di configurare l'interfaccia SOAP del descrittore dell'e-service appena istanziato ottenendo un rifiuto per "URL non ammesso" con i seguenti indirizzi:(classpath:feature-expanded/eservice-template/eservice-template-instance-interface.feature:140)
-  procedure: ''
-  result: ''
-  link_prod_bug: ''
+  procedure: |
+    Confrontare i valori inviati nel campo
+    serverUrls e le risposte del BFF con il rifiuto atteso dalla feature.
+
+    Verificare dallo stack trace se il test raggiunge anche i controlli
+    sull'interfaccia del descrittore e su quella del template.
+
+  result: |
+    Dopo la creazione di un e-service da template SOAP pubblicato,
+    il BFF ha ricevuto indirizzi contenenti markup o virgolette.
+
+    Per tutti e quattro gli esempi la richiesta di configurazione ha ricevuto
+    HTTP 200 con l'ID del descrittore, anziché il rifiuto atteso. La run
+    riportava un'attesa di HTTP 409.
+  link_prod_bug: https://pagopa.atlassian.net/browse/PIN-11710
   link_suite_bug: ''
