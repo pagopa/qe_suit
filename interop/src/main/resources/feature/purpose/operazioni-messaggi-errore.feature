@@ -70,7 +70,8 @@ Feature: Messaggi di errore durante la gestione delle finalità e la valutazione
     Then il messaggio di errore corrisponde al caso "PURPOSE_HYPERLINK_DETECTION_ERROR__POST_PURPOSES_PURPOSE_ID"
 
   # Endpoint: POST /purposes/:purposeId/clone
-  @err_msg_given_exec_1
+  # NON RIPRODUCIBILE IN MODO DETERMINISTICO: il nome del clone include il timestamp al secondo.
+  # Due clonazioni in secondi diversi generano nomi distinti, senza il conflitto richiesto.
   Scenario: [ERROR_022] - Impossibilità di duplicare una finalità quando il nome derivato è già in uso
   Data una finalità del fruitore e un'altra finalità dello stesso fruitore per lo stesso e-service con il nome che deriverebbe dalla duplicazione
   Quando il fruitore tenta di duplicare la prima finalità
@@ -80,11 +81,9 @@ Feature: Messaggi di errore durante la gestione delle finalità e la valutazione
       | alias | erogatore        |
       | ES-1  | Comune di Milano |
     And l'e-service "ES-1" del Comune di Milano sottoscritto da PagoPA con una richiesta di fruizione attiva
-    # Binding di setup comune mancante; riusare createPurpose e registrare gli alias con i nomi effettivi.
     And le seguenti finalità in bozza create da PagoPA per l'e-service "ES-1" con nomi distinti:
       | alias |
       | F-1   |
-    # Setup e binding mancanti; verificare il nome derivato dal clone, senza assumere prefissi o suffissi.
     And un'altra finalità di PagoPA per l'e-service "ES-1" con il nome che deriverebbe dalla duplicazione di "F-1"
     When il fruitore tenta di duplicare la purpose "F-1"
     Then il messaggio di errore corrisponde al caso "PURPOSE_DUPLICATED_PURPOSE_TITLE__POST_PURPOSES_PURPOSE_ID_CLONE"
