@@ -48,6 +48,7 @@ public class BffLegalNotificationGateway implements LegalNotificationGateway {
     @Override
     public void prepareNotification(LegalNotificationCreationCommand command) {
         requestFactory.applyPreliminaryData(request, command);
+        requestFactory.applyDocument(request);
         command.getRecipients().forEach(this::addRecipient);
     }
 
