@@ -12,7 +12,7 @@ import it.pagopa.interop.common.kernel.domain.User;
 import it.pagopa.interop.common.kernel.domain.UserRole;
 import it.pagopa.interop.common.purpose_template.domain.PurposeTemplate;
 import it.pagopa.interop.common.purpose_template.domain.PurposeTemplateState;
-import it.pagopa.interop.web.eservice.infrastructure.page.ConsumerPurposeCreatePage;
+import it.pagopa.interop.web.eservice.infrastructure.page.ConsumerPurposeCreateWithTemplatePage;
 import it.pagopa.interop.web.infrastructure.config.WebJUnitSuitConfig;
 import lombok.RequiredArgsConstructor;
 import org.junit.jupiter.api.DynamicTest;
@@ -31,7 +31,7 @@ import static org.assertj.core.api.SoftAssertions.assertSoftly;
 )
 @TestConstructor(autowireMode = TestConstructor.AutowireMode.ALL)
 @RequiredArgsConstructor
-public class WebConsumerPurposeCreatePageContractTest {
+public class WebConsumerPurposeCreateWithTemplatePagePageContractTest {
 
     private final WebBrowserContractValidator webContractValidator;
     private final InteropJourney interopJourney;
@@ -53,11 +53,11 @@ public class WebConsumerPurposeCreatePageContractTest {
                         User.getTenantAdmin(Tenant.COMUNE_DI_MILANO),
                         Tenant.COMUNE_DI_MILANO
                 )
-                .on(ConsumerPurposeCreatePage.class, purposeTemplate.getId().toString())
+                .on(ConsumerPurposeCreateWithTemplatePage.class, purposeTemplate.getId().toString())
                 .tests(contractScenarios());
     }
 
-    private Stream<WebScenario<ConsumerPurposeCreatePage>> contractScenarios() {
+    private Stream<WebScenario<ConsumerPurposeCreateWithTemplatePage>> contractScenarios() {
         return Stream.of(
                 new WebScenario<>(
                         "Consumer purpose create page shows the expected content",
@@ -122,7 +122,7 @@ public class WebConsumerPurposeCreatePageContractTest {
                                     softly.assertThat(page.purposeTemplateSection().purposeTemplateLabel().read())
                                             .as("Purpose template input label")
                                             .startsWith("Template per la compilazione agevolata della finalità");
-                                    softly.assertThat(page.purposeTemplateSection().purposeTemplateInput().read())
+                                    softly.assertThat(page.purposeTemplateSection().purposeTemplateInput().label().read())
                                             .as("Purpose template input value")
                                             .isNotBlank();
                                     softly.assertThat(page.purposeTemplateSection().acknowledgeResponsibilityLabel().read())

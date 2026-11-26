@@ -1,27 +1,20 @@
-package it.pagopa.interop.web.eservice.infrastructure.page;
+package it.pagopa.interop.web.eservice.infrastructure.page.component.consumer_purpose_base;
 
-import it.frontend.e2e.framework.annotation.location.web.Url;
 import it.frontend.e2e.framework.annotation.selector.XPath;
-import it.frontend.e2e.framework.web.capability.core.Readable;
-import it.frontend.e2e.framework.web.domain.Page;
 import it.pagopa.infrastructure.suit.component.Button;
 import it.pagopa.infrastructure.suit.component.Label;
 import it.pagopa.interop.web.eservice.infrastructure.page.component.PurposePreliminaryInformationSection;
 import it.pagopa.interop.web.eservice.infrastructure.page.component.PurposeTemplateSection;
 import it.pagopa.interop.web.infrastructure.config.suit.component.Breadcrumbs;
-import org.assertj.core.api.Assertions;
 
-
-@Url("${interop.web.base-url}/fruizione/finalita/${purposeId}/crea")
-public interface ConsumerPurposeCreatePage extends Page {
-
+public interface ConsumerPurposeCreateBase {
     Breadcrumbs breadcrumbs();
 
     @XPath(".//a[contains(.,'Torna alle finalità')]")
     Button backToPurposesButton();
 
     @XPath(".//h1")
-    Readable<String> pageTitle();
+    it.frontend.e2e.framework.web.capability.core.Readable<String> pageTitle();
 
     @XPath(".//p[normalize-space()='*Campi obbligatori']")
     Label mandatoryFieldsLabel();
@@ -35,11 +28,4 @@ public interface ConsumerPurposeCreatePage extends Page {
     @XPath(".//button[normalize-space()='Crea bozza']")
     Button createDraftButton();
 
-    @Override
-    default void assertLoaded() {
-        Assertions.assertThat(breadcrumbs().items().stream().map(Readable::read).toList())
-                .as("Breadcrumbs")
-                .containsExactly("Fruizione", "Finalità inoltrate", "Crea finalità da template");
-        pageTitle().readAndAssert("Crea finalità");
-    }
 }
