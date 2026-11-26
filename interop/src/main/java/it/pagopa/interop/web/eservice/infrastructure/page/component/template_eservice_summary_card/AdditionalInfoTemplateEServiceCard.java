@@ -13,7 +13,7 @@ public interface AdditionalInfoTemplateEServiceCard extends EServiceSummaryCard 
     @XPath(".//p[contains(@class, 'MuiTypography-body2') and normalize-space()='Documentazione']")
     Label documentationLabel();
 
-    @XPath(".//div[2]//div[contains(@class, 'MuiTypography-body2')] | ./div[2]/p[contains(@class, 'MuiTypography-body2')]")
+    @XPath(".//p[contains(@class, 'MuiTypography-body2') and normalize-space()='Documentazione']/ancestor::div[contains(@class, 'MuiStack-root')][1]/div[contains(@class, 'MuiBox-root')][2]//*[(self::div or self::p) and contains(@class, 'MuiTypography-body2')][not(.//*[contains(@class, 'MuiTypography-body2')])]")
     Label documentationValue();
 
     @XPath(".//div[contains(@class,'MuiStack-root')][./div/p[normalize-space(.)='Hai suggerito di approvare manualmente le richieste di fruizione?']]")
