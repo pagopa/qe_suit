@@ -7818,8 +7818,8 @@ ko:
     	at org.assertj.core.api.SoftAssertionsProvider.assertSoftly(SoftAssertionsProvider.java:122)
     	at org.assertj.core.api.SoftAssertions.assertSoftly(SoftAssertions.java:165)
     	at it.pagopa.interop.suite.contract.WebPurposeTemplateContractTest.assertLandedOnCreatedTemplate(WebPurposeTemplateContractTest.java:74)
-  procedure: ''
-  result: ''
+  procedure: 'Analisi del log, riesecuzione in locale ed esecuzione manuale con verifica XPath coinvolto.'
+  result: 'In questo caso vengono effettuate due run : una con caso che tratta dati personali e un altro che non tratta dati personali, scelta che non influisce sulla presenza o meno dello switch in pagina. Uno dei due test termina correttamente (individuando quindi correttamente lo switch) mentre il caso restante non lo trova. Facendo una ulteriore prova manuale sulla pagina per ciascuno dei due casi testati, in modalità sviluppatore se si cerca quel XPath indicato per lo switch, questo trova correttamente il componente grafico. Si conclude che questo errore può essere legato ad un mancato caricamento del componente in tempi brevi o comunque accettabili.'
   link_prod_bug: ''
   link_suite_bug: ''
 - id_test: WebEServiceThresholdContractTest::shouldValidateThresholdFields::soglia per fruitore con valore decimale
@@ -7849,8 +7849,8 @@ ko:
     	at java.base/java.util.concurrent.ForkJoinPool.scan(ForkJoinPool.java:1655)
     	at java.base/java.util.concurrent.ForkJoinPool.runWorker(ForkJoinPool.java:1622)
     	at java.base/java.util.concurrent.ForkJoinWorkerThread.run(ForkJoinWorkerThread.java:165)
-  procedure: ''
-  result: ''
+  procedure: 'Analisi del log, riesecuzione in locale.'
+  result: 'Esecuzione del test terminata con successo. Problema temporaneo.'
   link_prod_bug: ''
   link_suite_bug: ''
 - id_test: WebEServiceThresholdContractTest::shouldValidateThresholdFields::soglia totale con valore decimale (virgola)
@@ -7879,8 +7879,8 @@ ko:
     	at java.base/java.util.concurrent.ForkJoinPool.scan(ForkJoinPool.java:1655)
     	at java.base/java.util.concurrent.ForkJoinPool.runWorker(ForkJoinPool.java:1622)
     	at java.base/java.util.concurrent.ForkJoinWorkerThread.run(ForkJoinWorkerThread.java:165)
-  procedure: ''
-  result: ''
+  procedure: 'Analisi del log, riesecuzione in locale.'
+  result: 'Esecuzione del test terminata con successo. Problema temporaneo.'
   link_prod_bug: ''
   link_suite_bug: ''
 - id_test: WebEServiceThresholdContractTest::shouldValidateThresholdFields::soglia per fruitore con valore decimale
@@ -7910,8 +7910,8 @@ ko:
     	at java.base/java.util.concurrent.ForkJoinPool.scan(ForkJoinPool.java:1655)
     	at java.base/java.util.concurrent.ForkJoinPool.runWorker(ForkJoinPool.java:1622)
     	at java.base/java.util.concurrent.ForkJoinWorkerThread.run(ForkJoinWorkerThread.java:165)
-  procedure: ''
-  result: ''
+  procedure: 'Analisi del log, riesecuzione in locale.'
+  result: 'Esecuzione del test terminata con successo. Problema temporaneo.'
   link_prod_bug: ''
   link_suite_bug: ''
 - id_test: WebEServiceThresholdContractTest::shouldValidateThresholdFields::soglia totale con valore decimale (punto)
@@ -7940,7 +7940,7 @@ ko:
     	at java.base/java.util.concurrent.ForkJoinPool.scan(ForkJoinPool.java:1655)
     	at java.base/java.util.concurrent.ForkJoinPool.runWorker(ForkJoinPool.java:1622)
     	at java.base/java.util.concurrent.ForkJoinWorkerThread.run(ForkJoinWorkerThread.java:165)
-  procedure: ''
-  result: ''
+  procedure: 'Analisi del log, riesecuzione in locale.'
+  result: 'Esecuzione del test terminata con successo. Problema temporaneo.'
   link_prod_bug: ''
   link_suite_bug: ''
