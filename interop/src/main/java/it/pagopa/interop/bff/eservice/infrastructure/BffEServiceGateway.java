@@ -138,7 +138,7 @@ public class BffEServiceGateway implements EServiceGateway {
         var payload = requestFactory.archivingRequest(gracePeriodDays);
 
         restClient.scheduleArchiveEservice(eServiceRef.id(), payload)
-                .withPolling(PollingStrategy.UNTIL_SUCCESS)
+                .withoutPolling()
                 .get();
     }
 
