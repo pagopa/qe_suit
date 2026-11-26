@@ -196,6 +196,47 @@ def test_split_lineage_keeps_global_newest_first_group_order():
     assert len(candidates) == 3
 
 
+def test_approved_pending_with_padded_ticket_keeps_confirmed_lineage():
+    # A QA-approved pending entry has a digest over its *original* analysis.
+    # Trimming its ticket for grouping must not invalidate that approval.
+    from rae_generator.qa_confirmation import analysis_digest
+    from rae_generator.progressive import ProgressiveMatcher
+
+    older = row('18', 'X')
+    newer = row('23', 'X', matching={
+        'status': 'pending_confirmation',
+        'source_rae': older['_source_file'],
+        'source_id_test': TEST,
+    })
+    newer['error_log'] = log('X').replace('Example.java:21', 'Example.java:22')
+    newer['link_prod_bug'] = TICKET + '  '
+    newer['matching']['proposed_digest'] = analysis_digest(newer)
+
+    matcher = ProgressiveMatcher([newer, older])
+    status, candidate = matcher.classify(TEST, log('X'), suite=SUITE)
+    assert status == 'known', matcher.last_review_reasons
+    assert candidate is not None
+    assert candidate['link_prod_bug'] == TICKET
+
+
+def test_unconfirmed_pending_with_padded_ticket_still_cannot_train():
+    from rae_generator.progressive import ProgressiveMatcher
+
+    older = row('18', 'X')
+    newer = row('23', 'X', matching={
+        'status': 'pending_confirmation',
+        'source_rae': older['_source_file'],
+        'source_id_test': TEST,
+        'proposed_digest': '0' * 64,
+    })
+    newer['error_log'] = log('X').replace('Example.java:21', 'Example.java:22')
+    newer['link_prod_bug'] = TICKET + '  '
+
+    matcher = ProgressiveMatcher([newer, older])
+    status, _ = matcher.classify(TEST, log('X'), suite=SUITE)
+    assert status != 'known'
+
+
 def test_same_ticket_reason_has_dedicated_qa_rendering():
     evidence = snapshot([Reason('MULTIPLE_QA_GROUPS_SAME_TICKET',
                                 'group A, group B', TICKET,

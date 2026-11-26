@@ -51,7 +51,11 @@ def build_learning(history, ignore_rules=None):
         return k
 
     for row in indexed.values():
-        if not is_qa_confirmed(row, approved_history=True):
+        # The digest attests the original QA analysis, not the normalized
+        # ticket fields used for matching. Trimming before rechecking a
+        # pending confirmation would invalidate an otherwise approved link.
+        original = retained[_key(row)]
+        if not is_qa_confirmed(original, approved_history=True):
             continue
         matching = row.get('matching') or {}
         source = (str(matching.get('source_rae', '')),
