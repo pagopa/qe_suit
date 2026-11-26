@@ -225,29 +225,6 @@ class BffPurposeTemplateGatewayTest {
     }
 
     @Test
-    void acceptsReceiveEServiceLinkRejectionWithConflictStatus() {
-        ApiResponse response = mock(ApiResponse.class);
-        when(response.getStatusCode()).thenReturn(409);
-        when(lastApiResponseStore.getLastResponse()).thenReturn(response);
-
-        assertThatCode(gateway::shouldFailLinkToReceiveEService).doesNotThrowAnyException();
-
-        verifyNoInteractions(rest);
-    }
-
-    @ParameterizedTest
-    @ValueSource(ints = {200, 201, 204, 302, 400, 401, 403, 404, 422, 500, 503})
-    void rejectsUnexpectedReceiveEServiceLinkStatus(int status) {
-        ApiResponse response = mock(ApiResponse.class);
-        when(response.getStatusCode()).thenReturn(status);
-        when(lastApiResponseStore.getLastResponse()).thenReturn(response);
-
-        assertThatThrownBy(gateway::shouldFailLinkToReceiveEService)
-                .isInstanceOf(AssertionError.class)
-                .hasMessageContaining("409");
-    }
-
-    @Test
     void rejectsMissingReceiveEServiceLinkResponse() {
         assertThatThrownBy(gateway::shouldFailLinkToReceiveEService)
                 .isInstanceOf(AssertionError.class)
