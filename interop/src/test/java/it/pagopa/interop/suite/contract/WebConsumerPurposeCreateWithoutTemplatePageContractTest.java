@@ -41,7 +41,7 @@ public class WebConsumerPurposeCreateWithoutTemplatePageContractTest {
      */
     @TestFactory
     Stream<DynamicTest> consumerPurposeCreatePageContract() {
-        PurposeTemplate purposeTemplate = interopJourney
+        interopJourney
                 .withProducer(Tenant.PAGO_PA, UserRole.ADMIN)
                 .createEService(EServiceDescriptorState.PUBLISHED)
                 .withConsumer(Tenant.COMUNE_DI_MILANO, UserRole.ADMIN)
