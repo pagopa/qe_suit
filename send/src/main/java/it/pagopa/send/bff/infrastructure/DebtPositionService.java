@@ -17,6 +17,8 @@ import java.util.function.Function;
 public class DebtPositionService {
 
     private static final DateTimeFormatter DATE_FORMAT = DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ss.SSS'Z'");
+    static final String IUV_SEGREGATION_CODE = "47";
+    static final String IUV_SUFFIX = "44";
 
     private final DebtPositionsApiApi debtPositionsApiApi;
 
@@ -63,8 +65,12 @@ public class DebtPositionService {
      * IUV di 17 cifre: il noticeCode pagoPA è lungo 18 cifre, cioè la cifra ausiliaria "3" aggiunta dal chiamante
      * seguita dallo IUV. Con uno IUV di 13 cifre il noticeCode era di 14 e il BFF rifiutava la creazione della
      * notifica con 400 PN_INVALID_BODY ("is too short (length: 14, required minimum: 18)").
+     * <p>
+     * Le prime due cifre sono il codice di segregazione {@value #IUV_SEGREGATION_CODE} della stazione dell'ente di
+     * test sul nodo pagoPA: con uno IUV casuale la posizione esiste su GPD ma Checkout non trova l'avviso (404).
+     * Formato allineato a pn-b2b-client: segregazione, 13 cifre casuali, suffisso {@value #IUV_SUFFIX}.
      */
     private String generateRandomIuv() {
-        return RandomNumericGenerator.generate(17);
+        return IUV_SEGREGATION_CODE + RandomNumericGenerator.generate(13) + IUV_SUFFIX;
     }
 }
