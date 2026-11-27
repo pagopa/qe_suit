@@ -3,6 +3,7 @@ package it.pagopa.interop.common.eservice_template.infrastructure.cucumber;
 import it.pagopa.infrastructure.channel.CurrentChannel;
 import it.pagopa.infrastructure.context.InMemoryEntityStore;
 import it.pagopa.interop.bff.eservice_template.infrastructure.BffEServiceTemplateRequestFactory;
+import it.pagopa.interop.common.eservice.application.EServiceRiskAnalysisUseCase;
 import it.pagopa.interop.common.eservice_template.application.*;
 import it.pagopa.interop.common.eservice_template.application.command.UpdateEServiceTemplateCommand;
 import it.pagopa.interop.common.eservice_template.domain.*;
@@ -21,9 +22,9 @@ class EServiceTemplateHooksTest {
     private final EServiceTemplateUseCase templates = mock(EServiceTemplateUseCase.class);
     private final EServiceTemplateRequestFactory factory = mock(EServiceTemplateRequestFactory.class);
     private final EServiceTemplateVersionGateway gateway = mock(EServiceTemplateVersionGateway.class);
-    private final EServiceTemplateVersionUseCase versions = new EServiceTemplateVersionUseCase(
-            gateway, new BffEServiceTemplateRequestFactory());
     private final AuthSession session = mock(AuthSession.class);
+    private final EServiceTemplateVersionUseCase versions = new EServiceTemplateVersionUseCase(
+            gateway, new BffEServiceTemplateRequestFactory(), templates, mock(EServiceRiskAnalysisUseCase.class), session);
     @SuppressWarnings("unchecked")
     private final CurrentChannel<Channel> channel = mock(CurrentChannel.class);
     private final EServiceTemplateHooks hook = new EServiceTemplateHooks(entities, templates, factory, versions, session, channel);

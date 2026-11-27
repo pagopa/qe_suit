@@ -157,8 +157,8 @@ public interface BffEServiceTemplateMapper {
                 .collect(Collectors.toCollection(ArrayList::new));
     }
 
-    default List<EServiceRiskAnalysis> resolveRiskAnalyses(EServiceTemplateVersionDetails source, EServiceTemplate existing) {
-        var riskAnalyses = source.getEserviceTemplate().getRiskAnalysis();
+    default List<EServiceRiskAnalysis> resolveRiskAnalyses(EServiceTemplateDetails source, EServiceTemplate existing) {
+        var riskAnalyses = source == null ? null : source.getRiskAnalysis();
 
         if (riskAnalyses == null) {
             return existing != null && existing.getRiskAnalyses() != null
@@ -187,5 +187,9 @@ public interface BffEServiceTemplateMapper {
                         .build()
                 )
                 .collect(Collectors.toCollection(ArrayList::new));
+    }
+
+    default List<EServiceRiskAnalysis> resolveRiskAnalyses(EServiceTemplateVersionDetails source, EServiceTemplate existing) {
+        return resolveRiskAnalyses(source == null ? null : source.getEserviceTemplate(), existing);
     }
 }

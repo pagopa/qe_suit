@@ -5,5 +5,6 @@ package it.pagopa.interop.common.eservice.domain;
  */
 public enum EServiceTemplateSOAPInterfaceFailureReason {
     URL_COUNT_MISMATCH,
-    URL_NOT_ALLOWED
+    URL_NOT_ALLOWED,
+    INVALID_INTERFACE_DATA
 }
