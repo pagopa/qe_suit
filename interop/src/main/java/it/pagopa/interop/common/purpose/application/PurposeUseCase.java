@@ -20,6 +20,10 @@ public class PurposeUseCase {
     private final PurposeGateway purposeGateway;
     private final PurposeCommandFactory purposeCommandFactory;
 
+    public void shouldFailLinkToReceiveEService() {
+        purposeGateway.shouldFailLinkToReceiveEService();
+    }
+
     public Purpose getPurpose(Purpose purpose) {
         return purposeGateway.getPurpose(purpose.getRef());
     }
@@ -147,5 +151,16 @@ public class PurposeUseCase {
 
     public Purpose archivePurpose(Purpose purpose, PurposeVersion purposeVersion) {
         return purposeGateway.archivePurpose(purpose.getRef(), purposeVersion.getRef());
+    }
+
+    // Proposta di refactor: https://pagopa.atlassian.net/browse/QA-19158
+    public Purpose tryCreatePurpose(EService eService) {
+        PurposeCreateCommand command = purposeCommandFactory.validFullPopulatedCreateCommand(eService.getRef());
+        return purposeGateway.tryCreatePurpose(command);
+    }
+
+    // Proposta di refactor: https://pagopa.atlassian.net/browse/QA-19158
+    public Purpose tryCreatePurposeFromTemplate(PurposeTemplate purposeTemplate, EService eService) {
+        return purposeGateway.tryCreatePurposeFromTemplate(purposeTemplate.getRef(), eService.getRef());
     }
 }

@@ -103,6 +103,11 @@ public class M2MPurposeGateway implements PurposeGateway {
     }
 
     @Override
+    public void shouldFailLinkToReceiveEService() {
+        throw unsupportedOperation();
+    }
+
+    @Override
     public Purpose getPurpose(PurposeRef purposeRef) {
         return restClient.getPurpose(purposeRef.id())
                 .withPolling(PollingStrategy.UNTIL_SUCCESS)
@@ -221,11 +226,22 @@ public class M2MPurposeGateway implements PurposeGateway {
     }
 
     @Override
+    public Purpose tryCreatePurpose(PurposeCreateCommand createCommand) {
+        throw unsupportedOperation();
+    }
+
+    @Override
+    public Purpose tryCreatePurposeFromTemplate(PurposeTemplateRef purposeTemplateRef,
+        EServiceRef eServiceRef) {
+        throw unsupportedOperation();
+    }
+
+    @Override
     public boolean supports(@NonNull Channel channel) {
         return channel == Channel.M2M_V3;
     }
 
     private static UnsupportedOperationException unsupportedOperation() {
-        return new UnsupportedOperationException("This purpose operation is not supported on M2M v3");
+        return new UnsupportedOperationException("This purpose operation is not actually supported on M2M v3");
     }
 }

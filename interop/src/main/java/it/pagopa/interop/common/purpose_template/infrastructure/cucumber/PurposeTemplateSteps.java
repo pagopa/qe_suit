@@ -6,7 +6,10 @@ import io.cucumber.java.en.Given;
 import io.cucumber.java.en.Then;
 import io.cucumber.java.en.When;
 import it.pagopa.application.context.EntityStore;
+import it.pagopa.interop.common.eservice.domain.EService;
+import it.pagopa.interop.common.eservice_template.domain.EServiceTemplate;
 import it.pagopa.interop.common.journey.application.InteropJourney;
+import it.pagopa.interop.common.kernel.context.AuthSession;
 import it.pagopa.interop.common.kernel.domain.Tenant;
 import it.pagopa.interop.common.kernel.domain.TenantKind;
 import it.pagopa.interop.common.kernel.domain.UserRole;
@@ -26,8 +29,9 @@ import static org.assertj.core.api.Assertions.assertThat;
 public class PurposeTemplateSteps {
 
     private final EntityStore entityStore;
-    private final InteropJourney journey;
+    private final InteropJourney interopJourney;
     private final PurposeTemplateUseCase purposeTemplateUseCase;
+    private final AuthSession authSession;
     private PurposeTemplate purposeTemplateReference;
 
     @Given("i dati del template finalità allo stato attuale appuntati come riferimento")
@@ -95,6 +99,28 @@ public class PurposeTemplateSteps {
                 .isEqualTo(purposeTemplateReference);
     }
 
+    @Given("un template di finalità {purposeTemplateState} creato da {tenant}")
+    public void createPurposeTemplate(PurposeTemplateState state, Tenant creator) {
+        interopJourney.withProducer(creator, UserRole.ADMIN)
+                .createPurposeTemplate(creator, state);
+    }
+
+    @When("{tenant} tenta di associare al proprio template di finalità l'e-service creato")
+    public void tryLinkEServiceToPurposeTemplate(Tenant tenant) {
+        authSession.set(UserRole.ADMIN, tenant);
+        PurposeTemplate purposeTemplate = entityStore.getLastOrThrow(PurposeTemplate.class);
+        EService eService = entityStore.getLastOrThrow(EService.class);
+        purposeTemplateUseCase.tryLinkEService(purposeTemplate, eService);
+    }
+
+    @When("{tenant} tenta di associare al proprio template di finalità il template e-service creato")
+    public void tryLinkEServiceTemplateToPurposeTemplate(Tenant tenant) {
+        authSession.set(UserRole.ADMIN, tenant);
+        PurposeTemplate purposeTemplate = entityStore.getLastOrThrow(PurposeTemplate.class);
+        EServiceTemplate eServiceTemplate = entityStore.getLastOrThrow(EServiceTemplate.class);
+        purposeTemplateUseCase.tryLinkEServiceTemplate(purposeTemplate, eServiceTemplate);
+    }
+
     @Given("un template finalità creato da/dal {tenant} e pubblicato")
     public void createPurposeTemplate(Tenant creator) {
         createPurposeTemplate(creator, PurposeTemplateState.PUBLISHED);
@@ -102,7 +128,7 @@ public class PurposeTemplateSteps {
 
     @Given("un template finalità creato da/dal {tenant} in stato {purposeTemplateState}")
     public void createPurposeTemplate(Tenant creator, PurposeTemplateState state) {
-        journey.withProducer(creator, UserRole.ADMIN)
+        interopJourney.withProducer(creator, UserRole.ADMIN)
                 .createPurposeTemplate(Tenant.fromTenantType(TenantKind.PA), state);
     }
 
@@ -112,9 +138,9 @@ public class PurposeTemplateSteps {
         MetadataUpdate metadata = readMetadataUpdate(purposeTemplate, dataTable);
 
         if (role == UserRole.ADMIN) {
-            journey.withConsumer(creator);
+            interopJourney.withConsumer(creator);
         } else {
-            journey.withConsumer(creator, role);
+            interopJourney.withConsumer(creator, role);
         }
         purposeTemplateUseCase.updateMetadata(
                 purposeTemplate,
@@ -132,9 +158,9 @@ public class PurposeTemplateSteps {
         MetadataUpdate metadata = readMetadataUpdate(purposeTemplate, dataTable);
 
         if (role == UserRole.ADMIN) {
-            journey.withConsumer(creator);
+            interopJourney.withConsumer(creator);
         } else {
-            journey.withConsumer(creator, role);
+            interopJourney.withConsumer(creator, role);
         }
         purposeTemplateUseCase.tryToUpdateMetadata(
                 purposeTemplate,
@@ -260,5 +286,15 @@ public class PurposeTemplateSteps {
             this.fieldNames = fieldNames;
             this.label = label;
         }
+    }
+
+    @Then("l'associazione dell'e-service al template di finalità è negata")
+    public void assertEServiceLinkDenied() {
+        purposeTemplateUseCase.shouldFailLinkToReceiveEService();
+    }
+
+    @Then("l'associazione del template e-service al template di finalità è negata")
+    public void assertEServiceTemplateLinkDenied() {
+        purposeTemplateUseCase.shouldFailLinkToReceiveEService();
     }
 }

@@ -2,6 +2,7 @@ package it.pagopa.send.common.legal_notification.infrastructure.factory;
 
 import java.util.Optional;
 import it.pagopa.send.common.user.domain.User;
+import it.pagopa.send.common.user.domain.UserType;
 import it.pagopa.send.common.legal_notification.domain.DocumentRef;
 import it.pagopa.send.common.legal_notification.domain.FeePolicy;
 import it.pagopa.send.common.legal_notification.domain.LegalNotificationCreationRequest;
@@ -59,9 +60,9 @@ public class LegalNotificationRequestFactory {
 
     /**
      * Prepara una nuova notifica: compila i campi base (indipendenti dal mittente e dai destinatari) con i
-     * default statici del template, sovrascritti dai soli campi valorizzati nel command, e svuota i destinatari,
-     * che altrimenti
-     * resterebbero dalla notifica precedente quando la richiesta è condivisa (es. tra i contract test).
+     * default statici del template, sovrascritti dai soli campi valorizzati nel command, e svuota destinatari e
+     * documento, che altrimenti resterebbero dalla notifica precedente quando la richiesta è condivisa (es. tra i
+     * contract test); il documento si carica a parte con {@link #applyDocument}.
      */
     public void applyPreliminaryData(LegalNotificationCreationRequest request, LegalNotificationCreationCommand command) {
         NotificationDefaults defaults = defaultsLoader.load();
@@ -70,7 +71,7 @@ public class LegalNotificationRequestFactory {
                 .paProtocolNumber(generateParProtocolNumber())
                 .subject(defaults.subject())
                 .abstractText(defaults.abstractText())
-                .document(buildAttachment())
+                .document(null)
                 .feePolicy(FeePolicy.valueOf(defaults.notificationFeePolicy()))
                 .physicalCommunication(PhysicalCommunicationType.valueOf(defaults.physicalCommunicationType()))
                 .taxonomyCode(defaults.taxonomyCode())
@@ -89,6 +90,14 @@ public class LegalNotificationRequestFactory {
     }
 
     /**
+     * Carica il documento della notifica con il preload del BFF: serve solo al canale che invia la request via API
+     * (sul portale il documento si carica dalla procedura guidata).
+     */
+    public void applyDocument(LegalNotificationCreationRequest request) {
+        request.document(buildAttachment());
+    }
+
+    /**
      * Risolve un destinatario (identità, indirizzo/domicilio già decisi da {@link RecipientSpec},
      * pagamenti con posizione debitoria e allegato reali) pronto per essere aggiunto alla request
      * in preparazione.
@@ -96,7 +105,9 @@ public class LegalNotificationRequestFactory {
     public ResolvedRecipient resolveRecipient(RecipientSpec spec) {
         User recipient = spec.recipient();
         String taxId = spec.taxIdOverride() != null ? spec.taxIdOverride() : recipient.getTaxId();
-        String denomination = spec.denominationOverride() != null ? spec.denominationOverride() : recipient.getName();
+        // per una persona giuridica la denominazione è la ragione sociale, come nel portale
+        String denomination = spec.denominationOverride() != null ? spec.denominationOverride()
+                : recipient.getType() == UserType.PG ? recipient.getOrganization() : recipient.getName();
 
         List<ResolvedPayment> resolvedPayments = spec.payments().stream()
                 .map(payment -> buildPaymentItem(payment, denomination, taxId))
