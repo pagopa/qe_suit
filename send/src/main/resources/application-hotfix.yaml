@@ -158,3 +158,9 @@ delivery:
   informal:
     api:
       base-url: https://api.hotfix.notifichedigitali.it/informal
+
+radd:
+  api:
+    base-url: https://api.radd.hotfix.notifichedigitali.it
+  jwt:
+    raddista-1: ${pn.external.bearer-token-radd-1.pagopa}

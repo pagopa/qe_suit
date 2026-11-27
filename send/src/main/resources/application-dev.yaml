@@ -180,3 +180,9 @@ combo:
       pg: ${COMBO_IUN_MESSAMORA_PG:HWUJ-TGYU-MEXW-202609-D-A}
       flow-io-fail-analog: ${COMBO_IUN_MESSAMORA_PF:EXVA-TVPL-QPVJ-202609-Q-A}
       flow-io-ok-analog: ${COMBO_IUN_MESSAMORA_PF_ANALOG:TEUE-ZDGY-VETY-202609-Q-A}
+
+radd:
+  api:
+    base-url: https://api.radd.dev.notifichedigitali.it
+  jwt:
+    raddista-1: ${pn.external.bearer-token-radd-1.pagopa}

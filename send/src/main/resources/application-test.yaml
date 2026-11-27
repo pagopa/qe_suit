@@ -205,3 +205,9 @@ combo:
       flow-io-fail-analog: ${COMBO_IUN_MESSAMORA_PF:NPZE-HEAE-PKWJ-202608-V-A}
       flow-io-ok-analog: ${COMBO_IUN_MESSAMORA_PF_ANALOG:VGAK-PKJE-DGYR-202609-R-A}
       viewed: ${COMBO_IUN_MESSAMORA_VIEWED:MRGH-DEJL-VYEA-202609-M-A}
+
+radd:
+  api:
+    base-url: https://api.radd.test.notifichedigitali.it
+  jwt:
+    raddista-1: ${pn.external.bearer-token-radd-1.pagopa}
