@@ -8,7 +8,7 @@ import it.pagopa.interop.common.infrastructure.WebBrowserContractValidator;
 import it.pagopa.interop.common.infrastructure.config.JunitContextConfig;
 import it.pagopa.interop.common.kernel.domain.Tenant;
 import it.pagopa.interop.common.kernel.domain.User;
-import it.pagopa.interop.web.eservice.infrastructure.page.ConsumerPurposesListPage;
+import it.pagopa.interop.web.purpose.infrastructure.page.ConsumerPurposesListPage;
 import it.pagopa.interop.web.infrastructure.config.WebJUnitSuitConfig;
 import it.pagopa.utils.async.PollingUtils;
 import lombok.RequiredArgsConstructor;

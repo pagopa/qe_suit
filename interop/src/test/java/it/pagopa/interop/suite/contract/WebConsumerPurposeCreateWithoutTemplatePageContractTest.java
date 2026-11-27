@@ -12,7 +12,7 @@ import it.pagopa.interop.common.kernel.domain.User;
 import it.pagopa.interop.common.kernel.domain.UserRole;
 import it.pagopa.interop.common.purpose_template.domain.PurposeTemplate;
 import it.pagopa.interop.common.purpose_template.domain.PurposeTemplateState;
-import it.pagopa.interop.web.eservice.infrastructure.page.ConsumerPurposeCreateWithoutTemplatePage;
+import it.pagopa.interop.web.purpose_template.infrastructure.page.ConsumerPurposeCreateWithoutTemplatePage;
 import it.pagopa.interop.web.infrastructure.config.WebJUnitSuitConfig;
 import lombok.RequiredArgsConstructor;
 import org.junit.jupiter.api.DynamicTest;

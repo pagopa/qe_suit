@@ -1,9 +1,9 @@
-package it.pagopa.interop.web.eservice.infrastructure.page;
+package it.pagopa.interop.web.purpose.infrastructure.page;
 
 import it.frontend.e2e.framework.annotation.location.web.Url;
 import it.frontend.e2e.framework.web.capability.core.Readable;
 import it.frontend.e2e.framework.web.domain.Page;
-import it.pagopa.interop.web.eservice.infrastructure.page.component.consumer_purpose_base.ConsumerPurposeCreateBase;
+import it.pagopa.interop.web.purpose.infrastructure.page.component.consumer_purpose_base.ConsumerPurposeCreateBase;
 import org.assertj.core.api.Assertions;
 
 

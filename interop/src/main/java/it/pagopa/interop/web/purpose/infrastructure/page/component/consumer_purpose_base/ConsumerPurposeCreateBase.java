@@ -1,4 +1,4 @@
-package it.pagopa.interop.web.eservice.infrastructure.page.component.consumer_purpose_base;
+package it.pagopa.interop.web.purpose.infrastructure.page.component.consumer_purpose_base;
 
 import it.frontend.e2e.framework.annotation.selector.XPath;
 import it.pagopa.infrastructure.suit.component.Button;
