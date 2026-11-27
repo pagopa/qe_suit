@@ -8,9 +8,6 @@ import it.pagopa.infrastructure.suit.component.Switch;
 import it.pagopa.infrastructure.suit.component.TextField;
 import it.pagopa.utils.async.PollingUtils;
 
-import java.time.Duration;
-import java.util.Optional;
-
 @Url("${interop.web.purpose-template}/${templateId}/modifica")
 public interface PurposeTemplateCreationPage extends Page {
 
@@ -27,13 +24,13 @@ public interface PurposeTemplateCreationPage extends Page {
     Switch freeOfChargeSwitch();
 
     @XPath("//*[@id='purposeFreeOfChargeReason']")
-    Optional<TextField> freeOfChargeExplanationField();
+    TextField freeOfChargeExplanationField();
 
     @Override
     default void assertLoaded() {
         PollingUtils.pollUntil(
                 () -> pageTitle().read(),
-                title -> !title.isBlank(),
+                title -> title.equals("Crea template finalità"),
                 "Purpose Template Creation Page is not loaded yet."
         );
     }

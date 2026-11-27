@@ -2,7 +2,6 @@ package it.pagopa.interop.web.eservice.infrastructure.suit.page;
 
 import it.frontend.e2e.framework.annotation.location.web.Url;
 import it.frontend.e2e.framework.annotation.selector.XPath;
-import it.frontend.e2e.framework.web.capability.core.Gettable;
 import it.frontend.e2e.framework.web.domain.Page;
 import it.pagopa.infrastructure.suit.component.Button;
 import it.pagopa.infrastructure.suit.component.Label;
@@ -12,8 +11,7 @@ import it.pagopa.interop.web.eservice.infrastructure.suit.component.general_data
 import it.pagopa.interop.web.eservice.infrastructure.suit.component.technical_specs_form.TechnicalSpecsForm;
 import it.pagopa.interop.web.eservice.infrastructure.suit.component.threshold_attribute_form.ThresholdAndAttributeForm;
 import it.pagopa.interop.web.infrastructure.config.suit.component.Breadcrumbs;
-
-import static org.assertj.core.api.Assertions.assertThat;
+import it.pagopa.utils.async.PollingUtils;
 
 
 @Url("${interop.web.base-url}/erogazione/e-service/crea/")
@@ -41,8 +39,10 @@ public interface EServiceCreatePage extends Page {
 
     @Override
     default void assertLoaded() {
-        title().readAndAssert("Crea e-service");
-        assertThat(upsertStepper().get(Gettable.FindPolicy.PRESENT))
-                .as("The e-service creation stepper must be present").isPresent();
+        PollingUtils.pollUntil(
+                () -> title().read().equals("Crea e-service") && upsertStepper().exists(),
+                isLoaded -> isLoaded,
+                "EServiceCreatePage not loaded"
+        );
     }
 }
