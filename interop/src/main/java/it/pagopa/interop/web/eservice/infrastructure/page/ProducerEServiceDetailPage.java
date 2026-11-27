@@ -12,6 +12,7 @@ import it.pagopa.infrastructure.suit.component.Drawer;
 import it.pagopa.infrastructure.suit.component.Snackbar;
 import it.pagopa.interop.web.eservice.infrastructure.page.component.EServiceArchivingDialog;
 import it.pagopa.interop.web.infrastructure.config.suit.component.Breadcrumbs;
+import it.pagopa.utils.async.PollingUtils;
 import org.assertj.core.api.Assertions;
 
 @Url("${interop.web.producer-e-service-list}/${eserviceId}/${descriptorId}")
@@ -81,8 +82,13 @@ public interface ProducerEServiceDetailPage extends Page {
         Assertions.assertThat(breadcrumbs().items().stream().map(Readable::read).toList())
                 .as("Breadcrumbs")
                 .containsExactly("Erogazione", "I miei e-service", "Visualizza e-service");
-        pageTitle().readAndAssert(name -> Assertions.assertThat(name)
-                .as("Page title is not blank")
-                .isNotBlank());
+        PollingUtils.pollUntil(
+                () -> {
+                    String name = pageTitle().read();
+                    return name != null && !name.isBlank();
+                },
+                Boolean::booleanValue,
+                "Producer e-service detail page title did not load within the expected time"
+        );
     }
 }
