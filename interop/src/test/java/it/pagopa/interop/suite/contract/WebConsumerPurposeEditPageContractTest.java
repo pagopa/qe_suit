@@ -24,6 +24,7 @@ import java.util.List;
 import java.util.Optional;
 import java.util.stream.Stream;
 
+import it.pagopa.interop.web.purpose.infrastructure.page.purpose_edit_steps.GeneralInfoStep;
 import lombok.RequiredArgsConstructor;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.DynamicTest;
@@ -182,7 +183,7 @@ class WebConsumerPurposeEditPageContractTest {
     }
 
     private void assertGeneralInfoCard(ConsumerPurposeEditPage page) {
-        ConsumerPurposeEditPage.GeneralInfoCard card = page.generalInfoCard();
+        GeneralInfoStep.GeneralInfoCard card = page.generalInfoStep().generalInfoCard();
 
         assertThat(card.get().isPresent())
                 .as("General info card section must be present in DOM")
@@ -240,7 +241,7 @@ class WebConsumerPurposeEditPageContractTest {
 
 
     private void assertApiCallsEstimateCard(ConsumerPurposeEditPage page) {
-        ConsumerPurposeEditPage.ApiCallsEstimateCard card = page.apiCallsEstimateCard();
+        GeneralInfoStep.ApiCallsEstimateCard card = page.generalInfoStep().apiCallsEstimateCard();
 
         assertThat(card.get().isPresent())
                 .as("API calls estimate card section must be present in DOM")
@@ -257,7 +258,7 @@ class WebConsumerPurposeEditPageContractTest {
                 .isTrue();
         card.dailyCallsInput().helperText().readAndAssert(DAILY_CALLS_HELPER);
 
-        ConsumerPurposeEditPage.AvailableCallsAlert alert = card.availableCallsAlert();
+        GeneralInfoStep.AvailableCallsAlert alert = card.availableCallsAlert();
         assertThat(alert.get(Gettable.FindPolicy.VISIBLE).isPresent())
                 .as("Available daily API calls alert must be present in DOM")
                 .isTrue();
