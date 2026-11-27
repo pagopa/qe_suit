@@ -1,0 +1,14 @@
+rae:
+  release: ''
+  scope: NIGHTLY
+  issue_jira: ''
+  data_ora: '2026-11-27T15:35:52Z'
+  durata: 00:03:37
+  numero_ko: 0
+  run: https://github.com/pagopa/qe_suit/actions/runs/46026149669/attempts/1
+  suite: QA18290SuiteTest
+  environment: qa
+  executor: 99niccoloCacace
+  source_branch: fix/QA-18260-enable-delegator-eservice-duplication
+ko_know: []
+ko: []
