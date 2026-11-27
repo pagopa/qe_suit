@@ -13,7 +13,7 @@ import it.pagopa.interop.common.kernel.domain.ApiInterface;
 import it.pagopa.interop.common.kernel.domain.Tenant;
 import it.pagopa.interop.common.kernel.domain.User;
 import it.pagopa.interop.common.kernel.domain.UserRole;
-import it.pagopa.interop.web.eservice.infrastructure.page.EServiceDraftEditPage;
+import it.pagopa.interop.web.eservice.infrastructure.page.EServiceEditPage;
 import it.pagopa.interop.web.eservice.infrastructure.page.ProducerEServiceDetailPage;
 import it.pagopa.interop.web.eservice.infrastructure.page.ProducerEServiceListPage;
 import it.pagopa.interop.web.eservice.infrastructure.suit.page.EServiceCatalogPage;
@@ -110,7 +110,7 @@ public class WebEServiceContractTest {
         return webContractValidator
                 .as(User.getTenantAdmin(tenant), tenant)
                 .on(
-                        EServiceDraftEditPage.class,
+                        EServiceEditPage.class,
                         eService.getId().toString(),
                         eService.getLastDraftDescriptor().getId().toString()
                 )
@@ -139,7 +139,7 @@ public class WebEServiceContractTest {
         return webContractValidator
                 .as(User.getTenantAdmin(tenant), tenant)
                 .on(
-                        EServiceDraftEditPage.class,
+                        EServiceEditPage.class,
                         eService.getId().toString(),
                         eService.getLastDraftDescriptor().getId().toString()
                 )
@@ -169,7 +169,7 @@ public class WebEServiceContractTest {
         return webContractValidator
                 .as(User.getTenantAdmin(tenant), tenant)
                 .on(
-                        EServiceDraftEditPage.class,
+                        EServiceEditPage.class,
                         eService.getId().toString(),
                         eService.getLastDraftDescriptor().getId().toString()
                 )
