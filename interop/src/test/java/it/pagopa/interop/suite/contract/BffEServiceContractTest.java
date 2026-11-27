@@ -7,6 +7,7 @@ import it.pagopa.infrastructure.fuzzing.FuzzScenario;
 import it.pagopa.infrastructure.contract.http.TargetExpression;
 import it.pagopa.interop.TestBootApp;
 import it.pagopa.interop.common.infrastructure.config.JunitEnvironmentProfiles;
+import it.pagopa.interop.bff.eservice.infrastructure.BffCompactCatalogEServicesQueryParams;
 import it.pagopa.interop.bff.eservice.infrastructure.BffEServiceRequestFactory;
 import it.pagopa.interop.bff.infrastructure.config.BffApiContractConfig;
 import it.pagopa.interop.bff.infrastructure.config.BffRestApiClientConfig;
@@ -319,10 +320,8 @@ public class BffEServiceContractTest {
         return response -> response.then().statusCode(is(400));
     }
 
-    /* FIXME 17/11/2026: versione che si conclude con tutti i test in OK. La si tiene
-    *   per permettere il paragone con la versione senza override, posta sotto, al termine
-    *   del quale verrà formulata la versione definitiva. */
-    /*@TestFactory
+    @Tag("private-compact-catalog")
+    @TestFactory
     Stream<DynamicTest> getCompactCatalogEServices() {
         return httpContractValidator
                 .as(Tenant.COMUNE_DI_MILANO, UserRole.ADMIN)
@@ -330,25 +329,32 @@ public class BffEServiceContractTest {
                 .queryParams(requestFactory::compactCatalogRequest)
                 .targets(
                         FuzzScenario.REMOVED,
-                        response -> response.then().statusCode(is(DEFAULT_SUCCESS_STATUS_CODE)),
+                        expectSuccess(),
                         List.of(
                                 BffCompactCatalogEServicesQueryParams::getQ,
+                                BffCompactCatalogEServicesQueryParams::getMode,
                                 BffCompactCatalogEServicesQueryParams::getStates,
                                 BffCompactCatalogEServicesQueryParams::getAgreementStates,
-                                BffCompactCatalogEServicesQueryParams::getMode,
-                                BffCompactCatalogEServicesQueryParams::getIsConsumerDelegable,
                                 BffCompactCatalogEServicesQueryParams::getPersonalData,
-                                p -> p.getStates().get(0),
-                                p -> p.getAgreementStates().get(0)
+                                BffCompactCatalogEServicesQueryParams::getIsConsumerDelegable
                         )
                 )
                 .targets(
-                        FuzzScenario.REPLACED_WITH_EMPTY_STRING,
-                        response -> response.then().statusCode(is(DEFAULT_SUCCESS_STATUS_CODE)),
                         List.of(
-                                p -> p.getStates().get(0),
-                                p -> p.getAgreementStates().get(0)
-                        )
+                                FuzzScenario.REPLACED_WITH_NULL,
+                                FuzzScenario.REPLACED_WITH_EMPTY_STRING,
+                                FuzzScenario.REPLACED_WITH_BLANK_STRING,
+                                FuzzScenario.REPLACED_WITH_WRONG_TYPE_NUMBER
+                        ),
+                        expectSuccess(),
+                        List.of(BffCompactCatalogEServicesQueryParams::getQ)
+                )
+                .targets(
+                        FuzzScenario.REPLACED_WITH_EMPTY_STRING,
+                        expectSuccess(),
+                        List.of(
+                            p -> p.getStates().get(0),
+                            p -> p.getAgreementStates().get(0))
                 )
                 .targets(
                         FuzzScenario.REPLACED_WITH_LONG_STRING,
@@ -356,42 +362,12 @@ public class BffEServiceContractTest {
                         List.of(BffCompactCatalogEServicesQueryParams::getQ)
                 )
                 .targets(
-                        FuzzScenario.REPLACED_WITH_ZERO,
-                        response -> response.then().statusCode(is(DEFAULT_SUCCESS_STATUS_CODE)),
+                        List.of(FuzzScenario.REPLACED_WITH_ZERO, FuzzScenario.REPLACED_WITH_MAX_VALUE),
+                        expectSuccess(),
                         List.of(BffCompactCatalogEServicesQueryParams::getOffset)
-                )
-                .targets(
-                        FuzzScenario.REPLACED_WITH_MAX_VALUE,
-                        response -> response.then().statusCode(is(DEFAULT_SUCCESS_STATUS_CODE)),
-                        List.of(BffCompactCatalogEServicesQueryParams::getOffset)
-                )
-                .targets(
-                        List.of(
-                                FuzzScenario.REPLACED_WITH_NULL,
-                                FuzzScenario.REPLACED_WITH_EMPTY_STRING,
-                                FuzzScenario.REPLACED_WITH_BLANK_STRING,
-                                FuzzScenario.REPLACED_WITH_URL_INJECTION,
-                                FuzzScenario.REPLACED_WITH_SQL_INJECTION,
-                                FuzzScenario.REPLACED_WITH_WRONG_TYPE_NUMBER
-                        ),
-                        response -> response.then().statusCode(is(DEFAULT_SUCCESS_STATUS_CODE)),
-                        List.of(BffCompactCatalogEServicesQueryParams::getQ)
                 )
                 .tests();
-    }*/
-
-    /* FIXME 17/11/2026: versione non definitiva, gli effettivi override verranno scritti
-        al termine del paragone con gli esiti della versione di sopra. */
-    @Tag("private-compact-catalog")
-    @TestFactory
-    Stream<DynamicTest> getCompactCatalogEServices() {
-        return httpContractValidator
-            .as(Tenant.COMUNE_DI_MILANO, UserRole.ADMIN)
-            .apiCall(() -> apiClient.eservices().getCompactCatalogEServices())
-            .queryParams(requestFactory::compactCatalogRequest)
-            .tests();
     }
-
 
     private UUID createEServiceId(EServiceDescriptorState descriptorState) {
         return createEService(descriptorState).getId();
