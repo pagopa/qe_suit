@@ -30,6 +30,16 @@ public class BffEServiceRestClient extends RestClient {
         return execute(() -> eservicesApi.createEService().body(payload).execute(Function.identity()), CreatedEServiceDescriptor.class);
     }
 
+    public TestChain<CreatedResource> updateEServiceMetadata(@Nonnull UUID eServiceId, @Nonnull PatchUpdateEServiceSeed payload) {
+        return execute(
+                () -> eservicesApi.patchUpdateEServiceById()
+                        .eServiceIdPath(eServiceId)
+                        .body(payload)
+                        .execute(Function.identity()),
+                CreatedResource.class
+        );
+    }
+
     public TestChain<CreatedEServiceDescriptor> createEServiceInstanceFromTemplate(@Nonnull UUID templateId, @Nonnull InstanceEServiceSeed payload) {
         return execute(
                 () -> eservicesApi.createEServiceInstanceFromTemplate().templateIdPath(templateId).body(payload).execute(Function.identity()),
@@ -92,6 +102,16 @@ public class BffEServiceRestClient extends RestClient {
                         .reqSpec(reqSpec -> reqSpec.setContentType("application/json"))
                         .execute(Function.identity()),
                 Void.class
+        );
+    }
+
+    public TestChain<CreatedEServiceDescriptor> cloneEService(@Nonnull UUID eserviceId, @Nonnull UUID descriptorId) {
+        return execute(
+                () -> eservicesApi.cloneEServiceByDescriptor()
+                        .eServiceIdPath(eserviceId)
+                        .descriptorIdPath(descriptorId)
+                        .execute(Function.identity()),
+                CreatedEServiceDescriptor.class
         );
     }
 

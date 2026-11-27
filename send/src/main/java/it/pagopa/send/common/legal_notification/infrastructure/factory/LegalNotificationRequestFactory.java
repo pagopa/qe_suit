@@ -1,6 +1,8 @@
 package it.pagopa.send.common.legal_notification.infrastructure.factory;
 
+import java.util.Optional;
 import it.pagopa.send.common.user.domain.User;
+import it.pagopa.send.common.user.domain.UserType;
 import it.pagopa.send.common.legal_notification.domain.DocumentRef;
 import it.pagopa.send.common.legal_notification.domain.FeePolicy;
 import it.pagopa.send.common.legal_notification.domain.LegalNotificationCreationRequest;
@@ -10,7 +12,7 @@ import it.pagopa.send.common.legal_notification.domain.ResolvedF24Payment;
 import it.pagopa.send.common.legal_notification.domain.ResolvedPagoPaPayment;
 import it.pagopa.send.common.legal_notification.domain.ResolvedPayment;
 import it.pagopa.send.common.legal_notification.domain.ResolvedRecipient;
-import it.pagopa.send.common.legal_notification.infrastructure.factory.RequestOverrideApplier;
+import it.pagopa.send.common.legal_notification.domain.LegalNotificationCreationCommand;
 import it.pagopa.send.common.legal_notification.domain.F24PaymentSpec;
 import it.pagopa.send.common.legal_notification.domain.NotificationDefaults;
 import it.pagopa.send.common.legal_notification.domain.PagoPaPaymentSpec;
@@ -24,9 +26,7 @@ import it.pagopa.send.common.infrastructure.RandomNumericGenerator;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
 
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 import java.util.UUID;
 
 /**
@@ -51,6 +51,7 @@ public class LegalNotificationRequestFactory {
     // "77777777777" è il creditore di test condiviso usato in pn-b2b-client (PAYMENT_CREDITOR_TAX_ID).
     private static final String PAGOPA_TEST_CREDITOR_TAX_ID = "77777777777";
     private static final String ATTACHMENT_CONTENT_TYPE = "application/pdf";
+    private static final String F24_METADATA_CONTENT_TYPE = "application/json";
 
     private final NotificationDefaultsLoader defaultsLoader;
     private final DebtPositionService debtPositionService;
@@ -59,18 +60,18 @@ public class LegalNotificationRequestFactory {
 
     /**
      * Prepara una nuova notifica: compila i campi base (indipendenti dal mittente e dai destinatari) con i
-     * default statici del template, sovrascritti puntualmente dalle chiavi riconosciute da
-     * {@link RequestOverrideApplier} presenti in {@code data}, e svuota i destinatari, che altrimenti
-     * resterebbero dalla notifica precedente quando la richiesta è condivisa (es. tra i contract test).
+     * default statici del template, sovrascritti dai soli campi valorizzati nel command, e svuota destinatari e
+     * documento, che altrimenti resterebbero dalla notifica precedente quando la richiesta è condivisa (es. tra i
+     * contract test); il documento si carica a parte con {@link #applyDocument}.
      */
-    public void applyPreliminaryData(LegalNotificationCreationRequest request, Map<String, String> data) {
+    public void applyPreliminaryData(LegalNotificationCreationRequest request, LegalNotificationCreationCommand command) {
         NotificationDefaults defaults = defaultsLoader.load();
 
         request.clearRecipients()
                 .paProtocolNumber(generateParProtocolNumber())
                 .subject(defaults.subject())
                 .abstractText(defaults.abstractText())
-                .document(buildAttachment())
+                .document(null)
                 .feePolicy(FeePolicy.valueOf(defaults.notificationFeePolicy()))
                 .physicalCommunication(PhysicalCommunicationType.valueOf(defaults.physicalCommunicationType()))
                 .taxonomyCode(defaults.taxonomyCode())
@@ -83,7 +84,17 @@ public class LegalNotificationRequestFactory {
                 .amount(null)
                 .paymentExpirationDate(null);
 
-        RequestOverrideApplier.apply(request, new HashMap<>(data));
+        Optional.ofNullable(command.getSubject()).ifPresent(request::subject);
+        Optional.ofNullable(command.getPhysicalCommunication()).ifPresent(request::physicalCommunication);
+        Optional.ofNullable(command.getFeePolicy()).ifPresent(request::feePolicy);
+    }
+
+    /**
+     * Carica il documento della notifica con il preload del BFF: serve solo al canale che invia la request via API
+     * (sul portale il documento si carica dalla procedura guidata).
+     */
+    public void applyDocument(LegalNotificationCreationRequest request) {
+        request.document(buildAttachment());
     }
 
     /**
@@ -94,7 +105,9 @@ public class LegalNotificationRequestFactory {
     public ResolvedRecipient resolveRecipient(RecipientSpec spec) {
         User recipient = spec.recipient();
         String taxId = spec.taxIdOverride() != null ? spec.taxIdOverride() : recipient.getTaxId();
-        String denomination = spec.denominationOverride() != null ? spec.denominationOverride() : recipient.getName();
+        // per una persona giuridica la denominazione è la ragione sociale, come nel portale
+        String denomination = spec.denominationOverride() != null ? spec.denominationOverride()
+                : recipient.getType() == UserType.PG ? recipient.getOrganization() : recipient.getName();
 
         List<ResolvedPayment> resolvedPayments = spec.payments().stream()
                 .map(payment -> buildPaymentItem(payment, denomination, taxId))
@@ -138,11 +151,15 @@ public class LegalNotificationRequestFactory {
     }
 
     private ResolvedF24Payment buildF24Payment(F24PaymentSpec spec) {
-        return new ResolvedF24Payment(spec.title(), buildAttachment());
+        return new ResolvedF24Payment(spec.title(),
+                toDocumentRef(documentPreloadService.preloadF24Metadata("f24-" + UUID.randomUUID()), F24_METADATA_CONTENT_TYPE));
     }
 
     private DocumentRef buildAttachment() {
-        PreloadedDocument document = documentPreloadService.preloadTestPdf("doc-" + UUID.randomUUID());
-        return new DocumentRef(document.key(), document.versionToken(), document.sha256(), ATTACHMENT_CONTENT_TYPE);
+        return toDocumentRef(documentPreloadService.preloadTestPdf("doc-" + UUID.randomUUID()), ATTACHMENT_CONTENT_TYPE);
+    }
+
+    private static DocumentRef toDocumentRef(PreloadedDocument document, String contentType) {
+        return new DocumentRef(document.key(), document.versionToken(), document.sha256(), contentType);
     }
 }

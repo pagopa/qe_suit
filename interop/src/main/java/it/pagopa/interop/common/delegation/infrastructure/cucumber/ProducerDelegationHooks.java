@@ -29,14 +29,14 @@ public class ProducerDelegationHooks {
 
     private Set<UUID> preexistingDelegationIds;
 
-    @Before(value = "@private-catalog", order = Integer.MIN_VALUE + 1)
+    @Before(value = "@private-catalog or @clean-up", order = Integer.MIN_VALUE + 1)
     public void snapshotProducerDelegations() {
         preexistingDelegationIds = entityStore.getAll(ProducerDelegation.class).stream()
                 .map(ProducerDelegation::getId)
                 .collect(Collectors.toSet());
     }
 
-    @After(value = "@private-catalog", order = 110)
+    @After(value = "@private-catalog or @clean-up", order = 110)
     public void cleanUpProducerDelegations() {
         // Without a successful boundary snapshot, resource ownership cannot be established.
         if (preexistingDelegationIds == null) {

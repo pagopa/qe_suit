@@ -34,17 +34,15 @@ users:
       - party-role: MANAGER
         role: pg-admin
   Impresa_2:
-    username: FrancescoPetrarca
-    password: ${pn.external.password.francescopetrarca:}
-    organization: "Le Epistolae srl"
-    # codice fiscale non numerico: l'impresa non può ricevere notifiche nuove
-    tax-id: LELPTR04A01C352E
-    organization-id: e2486126-4394-4300-a25d-b6d879fa1717
-    uid: d5a8a380-910d-49dc-9fb8-84700c64410f
-    denomination: Francesco Petrarca
-    family-name: Petrarca
-    personal-tax-id: PTRFNC04A01C352E
-    email: FrancescoPetrarca@secretum.it
+    username: LucioAnneoSeneca
+    password: ${pn.external.password.lucioanneoseneca:}
+    organization: "LuAnSe SpA"
+    tax-id: "20517490320"
+    organization-id: b05de777-80c6-4549-a054-d8dfda139c62
+    uid: a7b0191f-fd1c-48ea-b2eb-d12f9f1ba50e
+    denomination: Lucio Anneo
+    family-name: Seneca
+    personal-tax-id: SNCLNN00A01H501S
     roles:
       - party-role: MANAGER
         role: pg-admin

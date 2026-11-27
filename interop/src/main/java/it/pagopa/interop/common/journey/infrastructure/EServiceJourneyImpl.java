@@ -6,15 +6,17 @@ import it.pagopa.interop.common.eservice.application.EServiceDescriptorUseCase;
 import it.pagopa.interop.common.eservice.application.EServiceRequestFactory;
 import it.pagopa.interop.common.eservice.application.EServiceRiskAnalysisUseCase;
 import it.pagopa.interop.common.eservice.application.EServiceUseCase;
+import it.pagopa.interop.common.eservice.application.command.EServiceUpdateCommand;
+import it.pagopa.interop.common.kernel.domain.EServiceRiskAnalysis;
 import it.pagopa.interop.common.eservice.application.command.EServiceCreationCommand;
 import it.pagopa.interop.common.eservice.domain.EService;
 import it.pagopa.interop.common.eservice.domain.EServiceDescriptor;
 import it.pagopa.interop.common.eservice.domain.EServiceDescriptorState;
+import it.pagopa.interop.common.eservice.domain.EServiceUpdateFailureReason;
 import it.pagopa.interop.common.eservice.domain.GracePeriodDays;
 import it.pagopa.interop.common.eservice.domain.SoapInterfaceUploadFailureReason;
 import it.pagopa.interop.common.journey.application.EServiceJourney;
 import it.pagopa.interop.common.kernel.context.AuthSession;
-import it.pagopa.interop.common.kernel.domain.EServiceRiskAnalysis;
 import it.pagopa.utils.async.PollingUtils;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
@@ -50,6 +52,46 @@ public class EServiceJourneyImpl implements EServiceJourney<EServiceJourneyImpl>
     }
 
     @Override
+    public EServiceJourneyImpl updateEServiceMetadata(Consumer<EServiceUpdateCommand> commandConfig) {
+        EServiceUpdateCommand command = requestFactory.defaultUpdateEServiceCommand();
+        commandConfig.accept(command);
+        return updateEServiceMetadata(command);
+    }
+
+    @Override
+    public EServiceJourneyImpl updateEServiceMetadata(EServiceUpdateCommand command) {
+        String alias = command.getAlias();
+        EService eService = alias != null
+                ? entityStore.getByAliasOrThrow(alias, EService.class)
+                : entityStore.getLastOrThrow(EService.class);
+        eServiceUseCase.updateEServiceMetadata(eService, command);
+        return this;
+    }
+
+    @Override
+    public EServiceJourneyImpl tryUpdateEServiceMetadata(EServiceUpdateCommand command) {
+        String alias = command.getAlias();
+        EService eService = alias != null
+                ? entityStore.getByAliasOrThrow(alias, EService.class)
+                : entityStore.getLastOrThrow(EService.class);
+        eServiceUseCase.tryUpdateEServiceMetadata(eService, command);
+        return this;
+    }
+
+    @Override
+    public EServiceJourneyImpl tryUpdateEServiceMetadata(Consumer<EServiceUpdateCommand> command) {
+        EServiceUpdateCommand defaultCommand = requestFactory.defaultUpdateEServiceCommand();
+        command.accept(defaultCommand);
+        return tryUpdateEServiceMetadata(defaultCommand);
+    }
+
+    @Override
+    public EServiceJourneyImpl shouldFailToUpdateEServiceMetadata(EServiceUpdateFailureReason reason) {
+        eServiceUseCase.shouldFailToUpdateEServiceMetadata(reason);
+        return this;
+    }
+
+    @Override
     public EServiceJourneyImpl addRiskAnalysis() {
         EService eService = entityStore.getLastOrThrow(EService.class);
         EServiceRiskAnalysis riskAnalysis =
@@ -66,8 +108,25 @@ public class EServiceJourneyImpl implements EServiceJourney<EServiceJourneyImpl>
     }
 
     @Override
+    public EServiceJourneyImpl cloneEService() {
+        EService eService = entityStore.getLastOrThrow(EService.class);
+        eServiceUseCase.cloneEService(eService);
+        return this;
+    }
+
+    @Override
     public EServiceJourneyImpl waitUntilEService(Predicate<EService> predicate) {
         EService eService = entityStore.getLastOrThrow(EService.class);
+        PollingUtils.pollUntil(() -> {
+            eService.getDescriptors().forEach(descriptor -> eServiceDescriptorUseCase.getDescriptor(eService, descriptor));
+            return eServiceUseCase.getEService(eService);
+        }, predicate);
+        return this;
+    }
+
+    @Override
+    public EServiceJourneyImpl waitUntilEService(String alias, Predicate<EService> predicate) {
+        EService eService = entityStore.getByAliasOrThrow(alias, EService.class);
         PollingUtils.pollUntil(() -> {
             eService.getDescriptors().forEach(descriptor -> eServiceDescriptorUseCase.getDescriptor(eService, descriptor));
             return eServiceUseCase.getEService(eService);

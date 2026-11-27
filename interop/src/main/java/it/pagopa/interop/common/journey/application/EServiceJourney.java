@@ -1,8 +1,10 @@
 package it.pagopa.interop.common.journey.application;
 
 import it.pagopa.interop.common.eservice.application.command.EServiceCreationCommand;
+import it.pagopa.interop.common.eservice.application.command.EServiceUpdateCommand;
 import it.pagopa.interop.common.eservice.domain.EService;
 import it.pagopa.interop.common.eservice.domain.EServiceDescriptorState;
+import it.pagopa.interop.common.eservice.domain.EServiceUpdateFailureReason;
 import it.pagopa.interop.common.eservice.domain.GracePeriodDays;
 import it.pagopa.interop.common.eservice.domain.SoapInterfaceUploadFailureReason;
 
@@ -39,9 +41,23 @@ public interface EServiceJourney<SELF extends EServiceJourney<SELF>> extends Jou
         return createEService(EServiceDescriptorState.DRAFT);
     }
 
+    SELF updateEServiceMetadata(Consumer<EServiceUpdateCommand> commandConfig);
+
+    SELF updateEServiceMetadata(EServiceUpdateCommand command);
+
+    SELF tryUpdateEServiceMetadata(EServiceUpdateCommand command);
+
+    SELF tryUpdateEServiceMetadata(Consumer<EServiceUpdateCommand> command);
+
+    SELF shouldFailToUpdateEServiceMetadata(EServiceUpdateFailureReason reason);
+
     SELF addRiskAnalysis();
+
+    SELF cloneEService();
 
     SELF archiveEService(GracePeriodDays gracePeriodDays);
 
     SELF waitUntilEService(Predicate<EService> predicate);
+
+    SELF waitUntilEService(String alias, Predicate<EService> predicate);
 }
