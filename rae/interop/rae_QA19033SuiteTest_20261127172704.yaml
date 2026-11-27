@@ -1,0 +1,737 @@
+rae:
+  release: '[Interop] Core 2.25.0'
+  scope: PROMO
+  issue_jira: 'https://pagopa.atlassian.net/browse/QA-19033'
+  data_ora: '2026-11-27T17:25:22Z'
+  durata: 00:01:13
+  numero_ko: 18
+  run: https://github.com/pagopa/qe_suit/actions/runs/46041527303/attempts/1
+  suite: QA19033SuiteTest
+  environment: qa
+  executor: Vincenzo-Massaro
+  source_branch: feature/QA-19033-catalogo-compatto
+ko_know: []
+ko:
+- id_test: BffEServiceContractTest::getCompactCatalogEServices::[queryParams] REPLACED_WITH_NULL @ /q
+  error_log: |
+    java.lang.AssertionError: HTTP contract expectation failed
+    - scope: QUERY_PARAMS
+    - scenario: REPLACED_WITH_NULL
+    - targetPath: /q
+    - mutationKind: REPLACE
+    - mutationValue: null
+    - expectationOrigin: POLICY_UNKNOWN
+    - responseStatus: 200
+    - responseBody: {"results":[],"pagination":{"offset":0,"limit":200,"totalCount":0}}
+    - payload: null
+    - pathParams: null
+    	at it.pagopa.infrastructure.contract.http.HttpContractFailureDiagnostics.enrich(HttpContractFailureDiagnostics.java:22)
+    	at it.pagopa.infrastructure.contract.http.HttpContractRuntimeCaseExecutor.execute(HttpContractRuntimeCaseExecutor.java:61)
+    	at it.pagopa.infrastructure.contract.http.HttpContractInvocationBuilder.lambda$toDynamicTest$0(HttpContractInvocationBuilder.java:94)
+    	at java.base/java.util.concurrent.ForkJoinTask.doExec(ForkJoinTask.java:373)
+    	at java.base/java.util.concurrent.ForkJoinPool$WorkQueue.topLevelExec(ForkJoinPool.java:1182)
+    	at java.base/java.util.concurrent.ForkJoinPool.scan(ForkJoinPool.java:1655)
+    	at java.base/java.util.concurrent.ForkJoinPool.runWorker(ForkJoinPool.java:1622)
+    	at java.base/java.util.concurrent.ForkJoinWorkerThread.run(ForkJoinWorkerThread.java:165)
+    Caused by: java.lang.AssertionError: 1 expectation failed.
+    Expected status code <400> but was <200>.
+
+    	at org.codehaus.groovy.vmplugin.v8.IndyInterface.fromCache(IndyInterface.java:344)
+    	at io.restassured.internal.ResponseSpecificationImpl$HamcrestAssertionClosure.validate(ResponseSpecificationImpl.groovy:516)
+    	at org.codehaus.groovy.vmplugin.v8.IndyInterface.fromCache(IndyInterface.java:344)
+    	at io.restassured.internal.ResponseSpecificationImpl.validateResponseIfRequired(ResponseSpecificationImpl.groovy:714)
+    	at org.codehaus.groovy.vmplugin.v8.IndyInterface.fromCache(IndyInterface.java:344)
+    	at io.restassured.internal.ResponseSpecificationImpl.statusCode(ResponseSpecificationImpl.groovy:139)
+    	at org.codehaus.groovy.vmplugin.v8.IndyInterface.fromCache(IndyInterface.java:344)
+    	at io.restassured.internal.ResponseSpecificationImpl.statusCode(ResponseSpecificationImpl.groovy:147)
+    	at io.restassured.internal.ValidatableResponseOptionsImpl.statusCode(ValidatableResponseOptionsImpl.java:89)
+    	at it.pagopa.infrastructure.contract.http.DefaultHttpContractPolicy$BuilderImpl.lambda$scenarioStatus$2(DefaultHttpContractPolicy.java:94)
+    	at it.pagopa.infrastructure.contract.http.HttpContractRuntimeCaseExecutor.execute(HttpContractRuntimeCaseExecutor.java:59)
+    	... 6 more
+  procedure: "Dall'analisi dei log è emerso che la stringa specificata è ammessa, come qualsiasi altro valore del filtro. Il test è stato corretto nel branch feature/QA-19033-catalogo-compatto."
+  result: "Il test si attendeva un esito negativo quando il parametro di query q conteneva la stringa \"null\". Tuttavia, anche la stringa \"null\" è un valore valido per il filtro."
+  link_prod_bug: ''
+  link_suite_bug: ''
+- id_test: BffEServiceContractTest::getCompactCatalogEServices::[queryParams] REMOVED @ /states/0
+  error_log: |
+    java.lang.AssertionError: HTTP contract expectation failed
+    - scope: QUERY_PARAMS
+    - scenario: REMOVED
+    - targetPath: /states/0
+    - mutationKind: REMOVE
+    - mutationValue: null
+    - expectationOrigin: POLICY_UNKNOWN
+    - responseStatus: 200
+    - responseBody: {"results":[],"pagination":{"offset":0,"limit":200,"totalCount":0}}
+    - payload: null
+    - pathParams: null
+    	at it.pagopa.infrastructure.contract.http.HttpContractFailureDiagnostics.enrich(HttpContractFailureDiagnostics.java:22)
+    	at it.pagopa.infrastructure.contract.http.HttpContractRuntimeCaseExecutor.execute(HttpContractRuntimeCaseExecutor.java:61)
+    	at it.pagopa.infrastructure.contract.http.HttpContractInvocationBuilder.lambda$toDynamicTest$0(HttpContractInvocationBuilder.java:94)
+    	at java.base/java.util.Optional.ifPresent(Optional.java:178)
+    	at java.base/java.util.concurrent.ForkJoinTask.doExec(ForkJoinTask.java:373)
+    	at java.base/java.util.concurrent.ForkJoinPool$WorkQueue.topLevelExec(ForkJoinPool.java:1182)
+    	at java.base/java.util.concurrent.ForkJoinPool.scan(ForkJoinPool.java:1655)
+    	at java.base/java.util.concurrent.ForkJoinPool.runWorker(ForkJoinPool.java:1622)
+    	at java.base/java.util.concurrent.ForkJoinWorkerThread.run(ForkJoinWorkerThread.java:165)
+    Caused by: java.lang.AssertionError: 1 expectation failed.
+    Expected status code <400> but was <200>.
+
+    	at org.codehaus.groovy.vmplugin.v8.IndyInterface.fromCache(IndyInterface.java:344)
+    	at io.restassured.internal.ResponseSpecificationImpl$HamcrestAssertionClosure.validate(ResponseSpecificationImpl.groovy:516)
+    	at org.codehaus.groovy.vmplugin.v8.IndyInterface.fromCache(IndyInterface.java:344)
+    	at io.restassured.internal.ResponseSpecificationImpl.validateResponseIfRequired(ResponseSpecificationImpl.groovy:714)
+    	at org.codehaus.groovy.vmplugin.v8.IndyInterface.fromCache(IndyInterface.java:344)
+    	at io.restassured.internal.ResponseSpecificationImpl.statusCode(ResponseSpecificationImpl.groovy:139)
+    	at org.codehaus.groovy.vmplugin.v8.IndyInterface.fromCache(IndyInterface.java:344)
+    	at io.restassured.internal.ResponseSpecificationImpl.statusCode(ResponseSpecificationImpl.groovy:147)
+    	at io.restassured.internal.ValidatableResponseOptionsImpl.statusCode(ValidatableResponseOptionsImpl.java:89)
+    	at it.pagopa.infrastructure.contract.http.DefaultHttpContractPolicy$BuilderImpl.lambda$scenarioStatus$2(DefaultHttpContractPolicy.java:94)
+    	at it.pagopa.infrastructure.contract.http.HttpContractRuntimeCaseExecutor.execute(HttpContractRuntimeCaseExecutor.java:59)
+    	... 7 more
+  procedure: "Dall'analisi dei log è emerso che è possibile specificare il parametro 'state=' senza assegnargli un valore. Il comportamento è stato segnalato come bug a bassa priorità."
+  result: "Il sistema accetta il parametro 'state=' anche quando non gli viene assegnato alcun valore."
+  link_prod_bug: 'https://pagopa.atlassian.net/browse/PIN-11728'
+  link_suite_bug: ''
+- id_test: BffEServiceContractTest::getCompactCatalogEServices::[queryParams] REMOVED @ /q
+  error_log: |
+    java.lang.AssertionError: HTTP contract expectation failed
+    - scope: QUERY_PARAMS
+    - scenario: REMOVED
+    - targetPath: /q
+    - mutationKind: REMOVE
+    - mutationValue: null
+    - expectationOrigin: POLICY_UNKNOWN
+    - responseStatus: 200
+    - responseBody: {"results":[],"pagination":{"offset":0,"limit":200,"totalCount":0}}
+    - payload: null
+    - pathParams: null
+    	at it.pagopa.infrastructure.contract.http.HttpContractFailureDiagnostics.enrich(HttpContractFailureDiagnostics.java:22)
+    	at it.pagopa.infrastructure.contract.http.HttpContractRuntimeCaseExecutor.execute(HttpContractRuntimeCaseExecutor.java:61)
+    	at it.pagopa.infrastructure.contract.http.HttpContractInvocationBuilder.lambda$toDynamicTest$0(HttpContractInvocationBuilder.java:94)
+    	at java.base/java.util.concurrent.ForkJoinTask.doExec(ForkJoinTask.java:373)
+    	at java.base/java.util.concurrent.ForkJoinPool$WorkQueue.topLevelExec(ForkJoinPool.java:1182)
+    	at java.base/java.util.concurrent.ForkJoinPool.scan(ForkJoinPool.java:1655)
+    	at java.base/java.util.concurrent.ForkJoinPool.runWorker(ForkJoinPool.java:1622)
+    	at java.base/java.util.concurrent.ForkJoinWorkerThread.run(ForkJoinWorkerThread.java:165)
+    Caused by: java.lang.AssertionError: 1 expectation failed.
+    Expected status code <400> but was <200>.
+
+    	at org.codehaus.groovy.vmplugin.v8.IndyInterface.fromCache(IndyInterface.java:344)
+    	at io.restassured.internal.ResponseSpecificationImpl$HamcrestAssertionClosure.validate(ResponseSpecificationImpl.groovy:516)
+    	at org.codehaus.groovy.vmplugin.v8.IndyInterface.fromCache(IndyInterface.java:344)
+    	at io.restassured.internal.ResponseSpecificationImpl.validateResponseIfRequired(ResponseSpecificationImpl.groovy:714)
+    	at org.codehaus.groovy.vmplugin.v8.IndyInterface.fromCache(IndyInterface.java:344)
+    	at io.restassured.internal.ResponseSpecificationImpl.statusCode(ResponseSpecificationImpl.groovy:139)
+    	at org.codehaus.groovy.vmplugin.v8.IndyInterface.fromCache(IndyInterface.java:344)
+    	at io.restassured.internal.ResponseSpecificationImpl.statusCode(ResponseSpecificationImpl.groovy:147)
+    	at io.restassured.internal.ValidatableResponseOptionsImpl.statusCode(ValidatableResponseOptionsImpl.java:89)
+    	at it.pagopa.infrastructure.contract.http.DefaultHttpContractPolicy$BuilderImpl.lambda$scenarioStatus$2(DefaultHttpContractPolicy.java:94)
+    	at it.pagopa.infrastructure.contract.http.HttpContractRuntimeCaseExecutor.execute(HttpContractRuntimeCaseExecutor.java:59)
+    	... 6 more
+  procedure: "Dall'analisi dei log è emerso che il parametro q è facoltativo e che la sua omissione non deve causare un errore. Nel test getCompactCatalogEServices è stato aggiunto un override mirato che si attende HTTP 200 per REMOVED su q. È stato aperto il ticket QA-19859 per correggere il motore di fuzzing, affinché riconosca i parametri facoltativi."
+  result: "Il test si attendeva un esito negativo quando veniva omesso il parametro facoltativo q. L'API accetta la richiesta senza questo filtro e risponde con HTTP 200."
+  link_prod_bug: ''
+  link_suite_bug: 'https://pagopa.atlassian.net/browse/QA-19859'
+- id_test: BffEServiceContractTest::getCompactCatalogEServices::[queryParams] REMOVED @ /states
+  error_log: |
+    java.lang.AssertionError: HTTP contract expectation failed
+    - scope: QUERY_PARAMS
+    - scenario: REMOVED
+    - targetPath: /states
+    - mutationKind: REMOVE
+    - mutationValue: null
+    - expectationOrigin: POLICY_UNKNOWN
+    - responseStatus: 200
+    - responseBody: {"results":[],"pagination":{"offset":0,"limit":200,"totalCount":0}}
+    - payload: null
+    - pathParams: null
+    	at it.pagopa.infrastructure.contract.http.HttpContractFailureDiagnostics.enrich(HttpContractFailureDiagnostics.java:22)
+    	at it.pagopa.infrastructure.contract.http.HttpContractRuntimeCaseExecutor.execute(HttpContractRuntimeCaseExecutor.java:61)
+    	at it.pagopa.infrastructure.contract.http.HttpContractInvocationBuilder.lambda$toDynamicTest$0(HttpContractInvocationBuilder.java:94)
+    	at java.base/java.util.concurrent.ForkJoinTask.doExec(ForkJoinTask.java:373)
+    	at java.base/java.util.concurrent.ForkJoinPool$WorkQueue.topLevelExec(ForkJoinPool.java:1182)
+    	at java.base/java.util.concurrent.ForkJoinPool.scan(ForkJoinPool.java:1655)
+    	at java.base/java.util.concurrent.ForkJoinPool.runWorker(ForkJoinPool.java:1622)
+    	at java.base/java.util.concurrent.ForkJoinWorkerThread.run(ForkJoinWorkerThread.java:165)
+    Caused by: java.lang.AssertionError: 1 expectation failed.
+    Expected status code <400> but was <200>.
+
+    	at org.codehaus.groovy.vmplugin.v8.IndyInterface.fromCache(IndyInterface.java:344)
+    	at io.restassured.internal.ResponseSpecificationImpl$HamcrestAssertionClosure.validate(ResponseSpecificationImpl.groovy:516)
+    	at org.codehaus.groovy.vmplugin.v8.IndyInterface.fromCache(IndyInterface.java:344)
+    	at io.restassured.internal.ResponseSpecificationImpl.validateResponseIfRequired(ResponseSpecificationImpl.groovy:714)
+    	at org.codehaus.groovy.vmplugin.v8.IndyInterface.fromCache(IndyInterface.java:344)
+    	at io.restassured.internal.ResponseSpecificationImpl.statusCode(ResponseSpecificationImpl.groovy:139)
+    	at org.codehaus.groovy.vmplugin.v8.IndyInterface.fromCache(IndyInterface.java:344)
+    	at io.restassured.internal.ResponseSpecificationImpl.statusCode(ResponseSpecificationImpl.groovy:147)
+    	at io.restassured.internal.ValidatableResponseOptionsImpl.statusCode(ValidatableResponseOptionsImpl.java:89)
+    	at it.pagopa.infrastructure.contract.http.DefaultHttpContractPolicy$BuilderImpl.lambda$scenarioStatus$2(DefaultHttpContractPolicy.java:94)
+    	at it.pagopa.infrastructure.contract.http.HttpContractRuntimeCaseExecutor.execute(HttpContractRuntimeCaseExecutor.java:59)
+    	... 6 more
+  procedure: "Dall'analisi dei log e del contratto OpenAPI è emerso che il parametro states è facoltativo. Nel test getCompactCatalogEServices è stato aggiunto un override mirato che si attende HTTP 200 per REMOVED su states. È stato aperto il ticket QA-19859 per correggere il motore di fuzzing, affinché riconosca i parametri facoltativi."
+  result: "Il test si attendeva un esito negativo quando veniva omesso il parametro facoltativo states. L'API accetta la richiesta senza questo filtro e risponde con HTTP 200."
+  link_prod_bug: ''
+  link_suite_bug: 'https://pagopa.atlassian.net/browse/QA-19859'
+- id_test: BffEServiceContractTest::getCompactCatalogEServices::[queryParams] REMOVED @ /agreementStates
+  error_log: |
+    java.lang.AssertionError: HTTP contract expectation failed
+    - scope: QUERY_PARAMS"
+    - scenario: REMOVED
+    - targetPath: /agreementStates
+    - mutationKind: REMOVE
+    - mutationValue: null
+    - expectationOrigin: POLICY_UNKNOWN
+    - responseStatus: 200
+    - responseBody: {"results":[],"pagination":{"offset":0,"limit":200,"totalCount":0}}
+    - payload: null
+    - pathParams: null
+    	at it.pagopa.infrastructure.contract.http.HttpContractFailureDiagnostics.enrich(HttpContractFailureDiagnostics.java:22)
+    	at it.pagopa.infrastructure.contract.http.HttpContractRuntimeCaseExecutor.execute(HttpContractRuntimeCaseExecutor.java:61)
+    	at it.pagopa.infrastructure.contract.http.HttpContractInvocationBuilder.lambda$toDynamicTest$0(HttpContractInvocationBuilder.java:94)
+    	at java.base/java.util.concurrent.ForkJoinTask.doExec(ForkJoinTask.java:373)
+    	at java.base/java.util.concurrent.ForkJoinPool$WorkQueue.topLevelExec(ForkJoinPool.java:1182)
+    	at java.base/java.util.concurrent.ForkJoinPool.scan(ForkJoinPool.java:1655)
+    	at java.base/java.util.concurrent.ForkJoinPool.runWorker(ForkJoinPool.java:1622)
+    	at java.base/java.util.concurrent.ForkJoinWorkerThread.run(ForkJoinWorkerThread.java:165)
+    Caused by: java.lang.AssertionError: 1 expectation failed.
+    Expected status code <400> but was <200>.
+
+    	at org.codehaus.groovy.vmplugin.v8.IndyInterface.fromCache(IndyInterface.java:344)
+    	at io.restassured.internal.ResponseSpecificationImpl$HamcrestAssertionClosure.validate(ResponseSpecificationImpl.groovy:516)
+    	at org.codehaus.groovy.vmplugin.v8.IndyInterface.fromCache(IndyInterface.java:344)
+    	at io.restassured.internal.ResponseSpecificationImpl.validateResponseIfRequired(ResponseSpecificationImpl.groovy:714)
+    	at org.codehaus.groovy.vmplugin.v8.IndyInterface.fromCache(IndyInterface.java:344)
+    	at io.restassured.internal.ResponseSpecificationImpl.statusCode(ResponseSpecificationImpl.groovy:139)
+    	at org.codehaus.groovy.vmplugin.v8.IndyInterface.fromCache(IndyInterface.java:344)
+    	at io.restassured.internal.ResponseSpecificationImpl.statusCode(ResponseSpecificationImpl.groovy:147)
+    	at io.restassured.internal.ValidatableResponseOptionsImpl.statusCode(ValidatableResponseOptionsImpl.java:89)
+    	at it.pagopa.infrastructure.contract.http.DefaultHttpContractPolicy$BuilderImpl.lambda$scenarioStatus$2(DefaultHttpContractPolicy.java:94)
+    	at it.pagopa.infrastructure.contract.http.HttpContractRuntimeCaseExecutor.execute(HttpContractRuntimeCaseExecutor.java:59)
+    	... 6 more
+  procedure: "Dall'analisi dei log e del contratto OpenAPI è emerso che il parametro agreementStates è facoltativo. Nel test getCompactCatalogEServices è stato aggiunto un override mirato che si attende HTTP 200 per REMOVED su agreementStates. È stato aperto il ticket QA-19859 per correggere il motore di fuzzing, affinché riconosca i parametri facoltativi."
+  result: "Il test si attendeva un esito negativo quando veniva omesso il parametro facoltativo agreementStates. L'API accetta la richiesta senza questo filtro e risponde con HTTP 200."
+  link_prod_bug: ''
+  link_suite_bug: 'https://pagopa.atlassian.net/browse/QA-19859'
+- id_test: BffEServiceContractTest::getCompactCatalogEServices::[queryParams] REMOVED @ /agreementStates/0
+  error_log: |
+    java.lang.AssertionError: HTTP contract expectation failed
+    - scope: QUERY_PARAMS
+    - scenario: REMOVED
+    - targetPath: /agreementStates/0
+    - mutationKind: REMOVE
+    - mutationValue: null
+    - expectationOrigin: POLICY_UNKNOWN
+    - responseStatus: 200
+    - responseBody: {"results":[],"pagination":{"offset":0,"limit":200,"totalCount":0}}
+    - payload: null
+    - pathParams: null
+    	at it.pagopa.infrastructure.contract.http.HttpContractFailureDiagnostics.enrich(HttpContractFailureDiagnostics.java:22)
+    	at it.pagopa.infrastructure.contract.http.HttpContractRuntimeCaseExecutor.execute(HttpContractRuntimeCaseExecutor.java:61)
+    	at it.pagopa.infrastructure.contract.http.HttpContractInvocationBuilder.lambda$toDynamicTest$0(HttpContractInvocationBuilder.java:94)
+    	at java.base/java.util.concurrent.ForkJoinTask.doExec(ForkJoinTask.java:373)
+    	at java.base/java.util.concurrent.ForkJoinPool$WorkQueue.topLevelExec(ForkJoinPool.java:1182)
+    	at java.base/java.util.concurrent.ForkJoinPool.scan(ForkJoinPool.java:1655)
+    	at java.base/java.util.concurrent.ForkJoinPool.runWorker(ForkJoinPool.java:1622)
+    	at java.base/java.util.concurrent.ForkJoinWorkerThread.run(ForkJoinWorkerThread.java:165)
+    Caused by: java.lang.AssertionError: 1 expectation failed.
+    Expected status code <400> but was <200>.
+
+    	at org.codehaus.groovy.vmplugin.v8.IndyInterface.fromCache(IndyInterface.java:344)
+    	at io.restassured.internal.ResponseSpecificationImpl$HamcrestAssertionClosure.validate(ResponseSpecificationImpl.groovy:516)
+    	at org.codehaus.groovy.vmplugin.v8.IndyInterface.fromCache(IndyInterface.java:344)
+    	at io.restassured.internal.ResponseSpecificationImpl.validateResponseIfRequired(ResponseSpecificationImpl.groovy:714)
+    	at org.codehaus.groovy.vmplugin.v8.IndyInterface.fromCache(IndyInterface.java:344)
+    	at io.restassured.internal.ResponseSpecificationImpl.statusCode(ResponseSpecificationImpl.groovy:139)
+    	at org.codehaus.groovy.vmplugin.v8.IndyInterface.fromCache(IndyInterface.java:344)
+    	at io.restassured.internal.ResponseSpecificationImpl.statusCode(ResponseSpecificationImpl.groovy:147)
+    	at io.restassured.internal.ValidatableResponseOptionsImpl.statusCode(ValidatableResponseOptionsImpl.java:89)
+    	at it.pagopa.infrastructure.contract.http.DefaultHttpContractPolicy$BuilderImpl.lambda$scenarioStatus$2(DefaultHttpContractPolicy.java:94)
+    	at it.pagopa.infrastructure.contract.http.HttpContractRuntimeCaseExecutor.execute(HttpContractRuntimeCaseExecutor.java:59)
+    	... 6 more
+  procedure: "Dall'analisi dei log è emerso che è possibile specificare il parametro 'agreementStates=' senza assegnargli un valore. Il comportamento è stato segnalato come bug a bassa priorità."
+  result: "Il sistema accetta il parametro 'agreementStates=' anche quando non gli viene assegnato alcun valore."
+  link_prod_bug: 'https://pagopa.atlassian.net/browse/PIN-11728'
+  link_suite_bug: ''
+- id_test: BffEServiceContractTest::getCompactCatalogEServices::[queryParams] REMOVED @ /mode
+  error_log: |
+    java.lang.AssertionError: HTTP contract expectation failed
+    - scope: QUERY_PARAMS
+    - scenario: REMOVED
+    - targetPath: /mode
+    - mutationKind: REMOVE
+    - mutationValue: null
+    - expectationOrigin: POLICY_UNKNOWN
+    - responseStatus: 200
+    - responseBody: {"results":[],"pagination":{"offset":0,"limit":200,"totalCount":0}}
+    - payload: null
+    - pathParams: null
+    	at it.pagopa.infrastructure.contract.http.HttpContractFailureDiagnostics.enrich(HttpContractFailureDiagnostics.java:22)
+    	at it.pagopa.infrastructure.contract.http.HttpContractRuntimeCaseExecutor.execute(HttpContractRuntimeCaseExecutor.java:61)
+    	at it.pagopa.infrastructure.contract.http.HttpContractInvocationBuilder.lambda$toDynamicTest$0(HttpContractInvocationBuilder.java:94)
+    	at java.base/java.util.concurrent.ForkJoinTask.doExec(ForkJoinTask.java:373)
+    	at java.base/java.util.concurrent.ForkJoinPool$WorkQueue.topLevelExec(ForkJoinPool.java:1182)
+    	at java.base/java.util.concurrent.ForkJoinPool.scan(ForkJoinPool.java:1655)
+    	at java.base/java.util.concurrent.ForkJoinPool.runWorker(ForkJoinPool.java:1622)
+    	at java.base/java.util.concurrent.ForkJoinWorkerThread.run(ForkJoinWorkerThread.java:165)
+    Caused by: java.lang.AssertionError: 1 expectation failed.
+    Expected status code <400> but was <200>.
+
+    	at org.codehaus.groovy.vmplugin.v8.IndyInterface.fromCache(IndyInterface.java:344)
+    	at io.restassured.internal.ResponseSpecificationImpl$HamcrestAssertionClosure.validate(ResponseSpecificationImpl.groovy:516)
+    	at org.codehaus.groovy.vmplugin.v8.IndyInterface.fromCache(IndyInterface.java:344)
+    	at io.restassured.internal.ResponseSpecificationImpl.validateResponseIfRequired(ResponseSpecificationImpl.groovy:714)
+    	at org.codehaus.groovy.vmplugin.v8.IndyInterface.fromCache(IndyInterface.java:344)
+    	at io.restassured.internal.ResponseSpecificationImpl.statusCode(ResponseSpecificationImpl.groovy:139)
+    	at org.codehaus.groovy.vmplugin.v8.IndyInterface.fromCache(IndyInterface.java:344)
+    	at io.restassured.internal.ResponseSpecificationImpl.statusCode(ResponseSpecificationImpl.groovy:147)
+    	at io.restassured.internal.ValidatableResponseOptionsImpl.statusCode(ValidatableResponseOptionsImpl.java:89)
+    	at it.pagopa.infrastructure.contract.http.DefaultHttpContractPolicy$BuilderImpl.lambda$scenarioStatus$2(DefaultHttpContractPolicy.java:94)
+    	at it.pagopa.infrastructure.contract.http.HttpContractRuntimeCaseExecutor.execute(HttpContractRuntimeCaseExecutor.java:59)
+    	... 6 more
+  procedure: "Dall'analisi dei log e del contratto OpenAPI è emerso che il parametro mode è facoltativo. Nel test getCompactCatalogEServices è stato aggiunto un override mirato che si attende HTTP 200 per REMOVED su mode. È stato aperto il ticket QA-19859 per correggere il motore di fuzzing, affinché riconosca i parametri facoltativi."
+  result: "Il test si attendeva un esito negativo quando veniva omesso il parametro facoltativo mode. L'API accetta la richiesta senza questo filtro e risponde con HTTP 200."
+  link_prod_bug: ''
+  link_suite_bug: 'https://pagopa.atlassian.net/browse/QA-19859'
+- id_test: BffEServiceContractTest::getCompactCatalogEServices::[queryParams] REMOVED @ /personalData
+  error_log: |
+    java.lang.AssertionError: HTTP contract expectation failed
+    - scope: QUERY_PARAMS
+    - scenario: REMOVED
+    - targetPath: /personalData
+    - mutationKind: REMOVE
+    - mutationValue: null
+    - expectationOrigin: POLICY_UNKNOWN
+    - responseStatus: 200
+    - responseBody: {"results":[],"pagination":{"offset":0,"limit":200,"totalCount":0}}
+    - payload: null
+    - pathParams: null
+    	at it.pagopa.infrastructure.contract.http.HttpContractFailureDiagnostics.enrich(HttpContractFailureDiagnostics.java:22)
+    	at it.pagopa.infrastructure.contract.http.HttpContractRuntimeCaseExecutor.execute(HttpContractRuntimeCaseExecutor.java:61)
+    	at it.pagopa.infrastructure.contract.http.HttpContractInvocationBuilder.lambda$toDynamicTest$0(HttpContractInvocationBuilder.java:94)
+    	at java.base/java.util.concurrent.ForkJoinTask.doExec(ForkJoinTask.java:373)
+    	at java.base/java.util.concurrent.ForkJoinPool$WorkQueue.topLevelExec(ForkJoinPool.java:1182)
+    	at java.base/java.util.concurrent.ForkJoinPool.scan(ForkJoinPool.java:1655)
+    	at java.base/java.util.concurrent.ForkJoinPool.runWorker(ForkJoinPool.java:1622)
+    	at java.base/java.util.concurrent.ForkJoinWorkerThread.run(ForkJoinWorkerThread.java:165)
+    Caused by: java.lang.AssertionError: 1 expectation failed.
+    Expected status code <400> but was <200>.
+
+    	at org.codehaus.groovy.vmplugin.v8.IndyInterface.fromCache(IndyInterface.java:344)
+    	at io.restassured.internal.ResponseSpecificationImpl$HamcrestAssertionClosure.validate(ResponseSpecificationImpl.groovy:516)
+    	at org.codehaus.groovy.vmplugin.v8.IndyInterface.fromCache(IndyInterface.java:344)
+    	at io.restassured.internal.ResponseSpecificationImpl.validateResponseIfRequired(ResponseSpecificationImpl.groovy:714)
+    	at org.codehaus.groovy.vmplugin.v8.IndyInterface.fromCache(IndyInterface.java:344)
+    	at io.restassured.internal.ResponseSpecificationImpl.statusCode(ResponseSpecificationImpl.groovy:139)
+    	at org.codehaus.groovy.vmplugin.v8.IndyInterface.fromCache(IndyInterface.java:344)
+    	at io.restassured.internal.ResponseSpecificationImpl.statusCode(ResponseSpecificationImpl.groovy:147)
+    	at io.restassured.internal.ValidatableResponseOptionsImpl.statusCode(ValidatableResponseOptionsImpl.java:89)
+    	at it.pagopa.infrastructure.contract.http.DefaultHttpContractPolicy$BuilderImpl.lambda$scenarioStatus$2(DefaultHttpContractPolicy.java:94)
+    	at it.pagopa.infrastructure.contract.http.HttpContractRuntimeCaseExecutor.execute(HttpContractRuntimeCaseExecutor.java:59)
+    	... 6 more
+  procedure: "Dall'analisi dei log e del contratto OpenAPI è emerso che il parametro personalData è facoltativo. Nel test getCompactCatalogEServices è stato aggiunto un override mirato che si attende HTTP 200 per REMOVED su personalData. È stato aperto il ticket QA-19859 per correggere il motore di fuzzing, affinché riconosca i parametri facoltativi."
+  result: "Il test si attendeva un esito negativo quando veniva omesso il parametro facoltativo personalData. L'API accetta la richiesta senza questo filtro e risponde con HTTP 200."
+  link_prod_bug: ''
+  link_suite_bug: 'https://pagopa.atlassian.net/browse/QA-19859'
+- id_test: BffEServiceContractTest::getCompactCatalogEServices::[queryParams] REPLACED_WITH_EMPTY_STRING @ /q
+  error_log: |
+    java.lang.AssertionError: HTTP contract expectation failed
+    - scope: QUERY_PARAMS
+    - scenario: REPLACED_WITH_EMPTY_STRING
+    - targetPath: /q
+    - mutationKind: REPLACE
+    - mutationValue: 
+    - expectationOrigin: POLICY_UNKNOWN
+    - responseStatus: 200
+    - responseBody: {"results":[],"pagination":{"offset":0,"limit":200,"totalCount":0}}
+    - payload: null
+    - pathParams: null
+    	at it.pagopa.infrastructure.contract.http.HttpContractFailureDiagnostics.enrich(HttpContractFailureDiagnostics.java:22)
+    	at it.pagopa.infrastructure.contract.http.HttpContractRuntimeCaseExecutor.execute(HttpContractRuntimeCaseExecutor.java:61)
+    	at it.pagopa.infrastructure.contract.http.HttpContractInvocationBuilder.lambda$toDynamicTest$0(HttpContractInvocationBuilder.java:94)
+    	at java.base/java.util.Optional.ifPresent(Optional.java:178)
+    	at java.base/java.util.concurrent.ForkJoinTask.doExec(ForkJoinTask.java:373)
+    	at java.base/java.util.concurrent.ForkJoinPool$WorkQueue.topLevelExec(ForkJoinPool.java:1182)
+    	at java.base/java.util.concurrent.ForkJoinPool.scan(ForkJoinPool.java:1655)
+    	at java.base/java.util.concurrent.ForkJoinPool.runWorker(ForkJoinPool.java:1622)
+    	at java.base/java.util.concurrent.ForkJoinWorkerThread.run(ForkJoinWorkerThread.java:165)
+    Caused by: java.lang.AssertionError: 1 expectation failed.
+    Expected status code <400> but was <200>.
+
+    	at org.codehaus.groovy.vmplugin.v8.IndyInterface.fromCache(IndyInterface.java:344)
+    	at io.restassured.internal.ResponseSpecificationImpl$HamcrestAssertionClosure.validate(ResponseSpecificationImpl.groovy:516)
+    	at org.codehaus.groovy.vmplugin.v8.IndyInterface.fromCache(IndyInterface.java:344)
+    	at io.restassured.internal.ResponseSpecificationImpl.validateResponseIfRequired(ResponseSpecificationImpl.groovy:714)
+    	at org.codehaus.groovy.vmplugin.v8.IndyInterface.fromCache(IndyInterface.java:344)
+    	at io.restassured.internal.ResponseSpecificationImpl.statusCode(ResponseSpecificationImpl.groovy:139)
+    	at org.codehaus.groovy.vmplugin.v8.IndyInterface.fromCache(IndyInterface.java:344)
+    	at io.restassured.internal.ResponseSpecificationImpl.statusCode(ResponseSpecificationImpl.groovy:147)
+    	at io.restassured.internal.ValidatableResponseOptionsImpl.statusCode(ValidatableResponseOptionsImpl.java:89)
+    	at it.pagopa.infrastructure.contract.http.DefaultHttpContractPolicy$BuilderImpl.lambda$scenarioStatus$2(DefaultHttpContractPolicy.java:94)
+    	at it.pagopa.infrastructure.contract.http.HttpContractRuntimeCaseExecutor.execute(HttpContractRuntimeCaseExecutor.java:59)
+    	... 7 more
+  procedure: "Dall'analisi dei log è emerso che il valore vuoto di q è accettato come filtro. Nel test getCompactCatalogEServices è stato aggiunto un override mirato che si attende HTTP 200 per REPLACED_WITH_EMPTY_STRING su q."
+  result: "Il test si attendeva un esito negativo quando q veniva sostituito con una stringa vuota. L'API accetta il valore e risponde con HTTP 200; ciò è coerente con il significato dell'operazione, cioè filtrare per una stringa vuota."
+  link_prod_bug: ''
+  link_suite_bug: ''
+- id_test: BffEServiceContractTest::getCompactCatalogEServices::[queryParams] REMOVED @ /isConsumerDelegable
+  error_log: |
+    java.lang.AssertionError: HTTP contract expectation failed
+    - scope: QUERY_PARAMS
+    - scenario: REMOVED
+    - targetPath: /isConsumerDelegable
+    - mutationKind: REMOVE
+    - mutationValue: null
+    - expectationOrigin: POLICY_UNKNOWN
+    - responseStatus: 200
+    - responseBody: {"results":[],"pagination":{"offset":0,"limit":200,"totalCount":0}}
+    - payload: null
+    - pathParams: null
+    	at it.pagopa.infrastructure.contract.http.HttpContractFailureDiagnostics.enrich(HttpContractFailureDiagnostics.java:22)
+    	at it.pagopa.infrastructure.contract.http.HttpContractRuntimeCaseExecutor.execute(HttpContractRuntimeCaseExecutor.java:61)
+    	at it.pagopa.infrastructure.contract.http.HttpContractInvocationBuilder.lambda$toDynamicTest$0(HttpContractInvocationBuilder.java:94)
+    	at java.base/java.util.concurrent.ForkJoinTask.doExec(ForkJoinTask.java:373)
+    	at java.base/java.util.concurrent.ForkJoinPool$WorkQueue.topLevelExec(ForkJoinPool.java:1182)
+    	at java.base/java.util.concurrent.ForkJoinPool.scan(ForkJoinPool.java:1655)
+    	at java.base/java.util.concurrent.ForkJoinPool.runWorker(ForkJoinPool.java:1622)
+    	at java.base/java.util.concurrent.ForkJoinWorkerThread.run(ForkJoinWorkerThread.java:165)
+    Caused by: java.lang.AssertionError: 1 expectation failed.
+    Expected status code <400> but was <200>.
+
+    	at org.codehaus.groovy.vmplugin.v8.IndyInterface.fromCache(IndyInterface.java:344)
+    	at io.restassured.internal.ResponseSpecificationImpl$HamcrestAssertionClosure.validate(ResponseSpecificationImpl.groovy:516)
+    	at org.codehaus.groovy.vmplugin.v8.IndyInterface.fromCache(IndyInterface.java:344)
+    	at io.restassured.internal.ResponseSpecificationImpl.validateResponseIfRequired(ResponseSpecificationImpl.groovy:714)
+    	at org.codehaus.groovy.vmplugin.v8.IndyInterface.fromCache(IndyInterface.java:344)
+    	at io.restassured.internal.ResponseSpecificationImpl.statusCode(ResponseSpecificationImpl.groovy:139)
+    	at org.codehaus.groovy.vmplugin.v8.IndyInterface.fromCache(IndyInterface.java:344)
+    	at io.restassured.internal.ResponseSpecificationImpl.statusCode(ResponseSpecificationImpl.groovy:147)
+    	at io.restassured.internal.ValidatableResponseOptionsImpl.statusCode(ValidatableResponseOptionsImpl.java:89)
+    	at it.pagopa.infrastructure.contract.http.DefaultHttpContractPolicy$BuilderImpl.lambda$scenarioStatus$2(DefaultHttpContractPolicy.java:94)
+    	at it.pagopa.infrastructure.contract.http.HttpContractRuntimeCaseExecutor.execute(HttpContractRuntimeCaseExecutor.java:59)
+    	... 6 more
+  procedure: "Dall'analisi dei log e del contratto OpenAPI è emerso che il parametro isConsumerDelegable è facoltativo. Nel test getCompactCatalogEServices è stato aggiunto un override mirato che si attende HTTP 200 per REMOVED su isConsumerDelegable. È stato aperto il ticket QA-19859 per correggere il motore di fuzzing, affinché riconosca i parametri facoltativi."
+  result: "Il test si attendeva un esito negativo quando veniva omesso il parametro facoltativo isConsumerDelegable. L'API accetta la richiesta senza questo filtro e risponde con HTTP 200."
+  link_prod_bug: ''
+  link_suite_bug: 'https://pagopa.atlassian.net/browse/QA-19859'
+- id_test: BffEServiceContractTest::getCompactCatalogEServices::[queryParams] REPLACED_WITH_BLANK_STRING @ /q
+  error_log: |
+    java.lang.AssertionError: HTTP contract expectation failed
+    - scope: QUERY_PARAMS
+    - scenario: REPLACED_WITH_BLANK_STRING
+    - targetPath: /q
+    - mutationKind: REPLACE
+    - mutationValue:    
+    - expectationOrigin: POLICY_UNKNOWN
+    - responseStatus: 200
+    - responseBody: {"results":[],"pagination":{"offset":0,"limit":200,"totalCount":0}}
+    - payload: null
+    - pathParams: null
+    	at it.pagopa.infrastructure.contract.http.HttpContractFailureDiagnostics.enrich(HttpContractFailureDiagnostics.java:22)
+    	at it.pagopa.infrastructure.contract.http.HttpContractRuntimeCaseExecutor.execute(HttpContractRuntimeCaseExecutor.java:61)
+    	at it.pagopa.infrastructure.contract.http.HttpContractInvocationBuilder.lambda$toDynamicTest$0(HttpContractInvocationBuilder.java:94)
+    	at java.base/java.util.concurrent.ForkJoinTask.doExec(ForkJoinTask.java:373)
+    	at java.base/java.util.concurrent.ForkJoinPool$WorkQueue.topLevelExec(ForkJoinPool.java:1182)
+    	at java.base/java.util.concurrent.ForkJoinPool.scan(ForkJoinPool.java:1655)
+    	at java.base/java.util.concurrent.ForkJoinPool.runWorker(ForkJoinPool.java:1622)
+    	at java.base/java.util.concurrent.ForkJoinWorkerThread.run(ForkJoinWorkerThread.java:165)
+    Caused by: java.lang.AssertionError: 1 expectation failed.
+    Expected status code <400> but was <200>.
+
+    	at org.codehaus.groovy.vmplugin.v8.IndyInterface.fromCache(IndyInterface.java:344)
+    	at io.restassured.internal.ResponseSpecificationImpl$HamcrestAssertionClosure.validate(ResponseSpecificationImpl.groovy:516)
+    	at org.codehaus.groovy.vmplugin.v8.IndyInterface.fromCache(IndyInterface.java:344)
+    	at io.restassured.internal.ResponseSpecificationImpl.validateResponseIfRequired(ResponseSpecificationImpl.groovy:714)
+    	at org.codehaus.groovy.vmplugin.v8.IndyInterface.fromCache(IndyInterface.java:344)
+    	at io.restassured.internal.ResponseSpecificationImpl.statusCode(ResponseSpecificationImpl.groovy:139)
+    	at org.codehaus.groovy.vmplugin.v8.IndyInterface.fromCache(IndyInterface.java:344)
+    	at io.restassured.internal.ResponseSpecificationImpl.statusCode(ResponseSpecificationImpl.groovy:147)
+    	at io.restassured.internal.ValidatableResponseOptionsImpl.statusCode(ValidatableResponseOptionsImpl.java:89)
+    	at it.pagopa.infrastructure.contract.http.DefaultHttpContractPolicy$BuilderImpl.lambda$scenarioStatus$2(DefaultHttpContractPolicy.java:94)
+    	at it.pagopa.infrastructure.contract.http.HttpContractRuntimeCaseExecutor.execute(HttpContractRuntimeCaseExecutor.java:59)
+    	... 6 more
+  procedure: "Dall'analisi dei log è emerso che il valore blank di q non causa un errore. Nel test getCompactCatalogEServices è stato aggiunto un override mirato che si attende HTTP 200 per REPLACED_WITH_BLANK_STRING su q."
+  result: "Il test si attendeva un esito negativo quando q veniva sostituito con una stringa composta da spazi. L'API accetta il valore e risponde con HTTP 200; ciò è coerente con il significato dell'operazione, cioè filtrare per una stringa composta da spazi."
+  link_prod_bug: ''
+  link_suite_bug: ''
+- id_test: BffEServiceContractTest::getCompactCatalogEServices::[queryParams] REPLACED_WITH_LONG_STRING @ /q
+  error_log: |
+    java.lang.AssertionError: HTTP contract expectation failed
+    - scope: QUERY_PARAMS
+    - scenario: REPLACED_WITH_LONG_STRING
+    - targetPath: /q
+    - mutationKind: REPLACE
+    - mutationValue: AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA
+    - expectationOrigin: POLICY_UNKNOWN
+    - responseStatus: 403
+    - responseBody: {"message":"Forbidden"}
+    - payload: null
+    - pathParams: null
+    	at it.pagopa.infrastructure.contract.http.HttpContractFailureDiagnostics.enrich(HttpContractFailureDiagnostics.java:22)
+    	at it.pagopa.infrastructure.contract.http.HttpContractRuntimeCaseExecutor.execute(HttpContractRuntimeCaseExecutor.java:61)
+    	at it.pagopa.infrastructure.contract.http.HttpContractInvocationBuilder.lambda$toDynamicTest$0(HttpContractInvocationBuilder.java:94)
+    	at java.base/java.util.concurrent.ForkJoinTask.doExec(ForkJoinTask.java:373)
+    	at java.base/java.util.concurrent.ForkJoinPool$WorkQueue.topLevelExec(ForkJoinPool.java:1182)
+    	at java.base/java.util.concurrent.ForkJoinPool.scan(ForkJoinPool.java:1655)
+    	at java.base/java.util.concurrent.ForkJoinPool.runWorker(ForkJoinPool.java:1622)
+    	at java.base/java.util.concurrent.ForkJoinWorkerThread.run(ForkJoinWorkerThread.java:165)
+    Caused by: java.lang.AssertionError: 1 expectation failed.
+    Expected status code <400> but was <403>.
+
+    	at org.codehaus.groovy.vmplugin.v8.IndyInterface.fromCache(IndyInterface.java:344)
+    	at io.restassured.internal.ResponseSpecificationImpl$HamcrestAssertionClosure.validate(ResponseSpecificationImpl.groovy:516)
+    	at org.codehaus.groovy.vmplugin.v8.IndyInterface.fromCache(IndyInterface.java:344)
+    	at io.restassured.internal.ResponseSpecificationImpl.validateResponseIfRequired(ResponseSpecificationImpl.groovy:714)
+    	at org.codehaus.groovy.vmplugin.v8.IndyInterface.fromCache(IndyInterface.java:344)
+    	at io.restassured.internal.ResponseSpecificationImpl.statusCode(ResponseSpecificationImpl.groovy:139)
+    	at org.codehaus.groovy.vmplugin.v8.IndyInterface.fromCache(IndyInterface.java:344)
+    	at io.restassured.internal.ResponseSpecificationImpl.statusCode(ResponseSpecificationImpl.groovy:147)
+    	at io.restassured.internal.ValidatableResponseOptionsImpl.statusCode(ValidatableResponseOptionsImpl.java:89)
+    	at it.pagopa.infrastructure.contract.http.DefaultHttpContractPolicy$BuilderImpl.lambda$scenarioStatus$2(DefaultHttpContractPolicy.java:94)
+    	at it.pagopa.infrastructure.contract.http.HttpContractRuntimeCaseExecutor.execute(HttpContractRuntimeCaseExecutor.java:59)
+    	... 6 more
+  procedure: "Dall'analisi dei log è emerso che una stringa lunga nel parametro q viene respinta con HTTP 403. Nel test getCompactCatalogEServices è stato mantenuto l'override mirato che si attende HTTP 403 per REPLACED_WITH_LONG_STRING su q."
+  result: "Il test si attendeva HTTP 400 per una stringa lunga nel parametro q, ma l'API risponde con HTTP 403 Forbidden. L'aspettativa è stata quindi allineata al comportamento osservato, mantenendo HTTP 403."
+  link_prod_bug: ''
+  link_suite_bug: ''
+- id_test: BffEServiceContractTest::getCompactCatalogEServices::[queryParams] REPLACED_WITH_URL_INJECTION @ /q
+  error_log: |
+    java.lang.AssertionError: HTTP contract expectation failed
+    - scope: QUERY_PARAMS
+    - scenario: REPLACED_WITH_URL_INJECTION
+    - targetPath: /q
+    - mutationKind: REPLACE
+    - mutationValue: A URL injected http://injected.example.test with id URL-IrKHQ
+    - expectationOrigin: POLICY_UNKNOWN
+    - responseStatus: 200
+    - responseBody: {"results":[],"pagination":{"offset":0,"limit":200,"totalCount":0}}
+    - payload: null
+    - pathParams: null
+    	at it.pagopa.infrastructure.contract.http.HttpContractFailureDiagnostics.enrich(HttpContractFailureDiagnostics.java:22)
+    	at it.pagopa.infrastructure.contract.http.HttpContractRuntimeCaseExecutor.execute(HttpContractRuntimeCaseExecutor.java:61)
+    	at it.pagopa.infrastructure.contract.http.HttpContractInvocationBuilder.lambda$toDynamicTest$0(HttpContractInvocationBuilder.java:94)
+    	at java.base/java.util.concurrent.ForkJoinTask.doExec(ForkJoinTask.java:373)
+    	at java.base/java.util.concurrent.ForkJoinPool$WorkQueue.topLevelExec(ForkJoinPool.java:1182)
+    	at java.base/java.util.concurrent.ForkJoinPool.scan(ForkJoinPool.java:1655)
+    	at java.base/java.util.concurrent.ForkJoinPool.runWorker(ForkJoinPool.java:1622)
+    	at java.base/java.util.concurrent.ForkJoinWorkerThread.run(ForkJoinWorkerThread.java:165)
+    Caused by: java.lang.AssertionError: 1 expectation failed.
+    Expected status code <400> but was <200>.
+
+    	at org.codehaus.groovy.vmplugin.v8.IndyInterface.fromCache(IndyInterface.java:344)
+    	at io.restassured.internal.ResponseSpecificationImpl$HamcrestAssertionClosure.validate(ResponseSpecificationImpl.groovy:516)
+    	at org.codehaus.groovy.vmplugin.v8.IndyInterface.fromCache(IndyInterface.java:344)
+    	at io.restassured.internal.ResponseSpecificationImpl.validateResponseIfRequired(ResponseSpecificationImpl.groovy:714)
+    	at org.codehaus.groovy.vmplugin.v8.IndyInterface.fromCache(IndyInterface.java:344)
+    	at io.restassured.internal.ResponseSpecificationImpl.statusCode(ResponseSpecificationImpl.groovy:139)
+    	at org.codehaus.groovy.vmplugin.v8.IndyInterface.fromCache(IndyInterface.java:344)
+    	at io.restassured.internal.ResponseSpecificationImpl.statusCode(ResponseSpecificationImpl.groovy:147)
+    	at io.restassured.internal.ValidatableResponseOptionsImpl.statusCode(ValidatableResponseOptionsImpl.java:89)
+    	at it.pagopa.infrastructure.contract.http.DefaultHttpContractPolicy$BuilderImpl.lambda$scenarioStatus$2(DefaultHttpContractPolicy.java:94)
+    	at it.pagopa.infrastructure.contract.http.HttpContractRuntimeCaseExecutor.execute(HttpContractRuntimeCaseExecutor.java:59)
+    	... 6 more
+  procedure: "Dall'analisi dei log è emerso che l'inserimento di un URL nel parametro q è consentito in modo improprio, sia in chiaro sia in forma URL-encoded. Il comportamento è stato segnalato come bug di prodotto."
+  result: "Il sistema consente di specificare un URL come valore del parametro di query q."
+  link_prod_bug: 'https://pagopa.atlassian.net/browse/PIN-11729'
+  link_suite_bug: ''
+- id_test: BffEServiceContractTest::getCompactCatalogEServices::[queryParams] REPLACED_WITH_WRONG_TYPE_NUMBER @
+    /q
+  error_log: |
+    java.lang.AssertionError: HTTP contract expectation failed
+    - scope: QUERY_PARAMS
+    - scenario: REPLACED_WITH_WRONG_TYPE_NUMBER
+    - targetPath: /q
+    - mutationKind: REPLACE
+    - mutationValue: 124
+    - expectationOrigin: POLICY_UNKNOWN
+    - responseStatus: 200
+    - responseBody: {"results":[],"pagination":{"offset":0,"limit":200,"totalCount":0}}
+    - payload: null
+    - pathParams: null
+    	at it.pagopa.infrastructure.contract.http.HttpContractFailureDiagnostics.enrich(HttpContractFailureDiagnostics.java:22)
+    	at it.pagopa.infrastructure.contract.http.HttpContractRuntimeCaseExecutor.execute(HttpContractRuntimeCaseExecutor.java:61)
+    	at it.pagopa.infrastructure.contract.http.HttpContractInvocationBuilder.lambda$toDynamicTest$0(HttpContractInvocationBuilder.java:94)
+    	at java.base/java.util.concurrent.ForkJoinTask.doExec(ForkJoinTask.java:373)
+    	at java.base/java.util.concurrent.ForkJoinPool$WorkQueue.topLevelExec(ForkJoinPool.java:1182)
+    	at java.base/java.util.concurrent.ForkJoinPool.scan(ForkJoinPool.java:1655)
+    	at java.base/java.util.concurrent.ForkJoinPool.runWorker(ForkJoinPool.java:1622)
+    	at java.base/java.util.concurrent.ForkJoinWorkerThread.run(ForkJoinWorkerThread.java:165)
+    Caused by: java.lang.AssertionError: 1 expectation failed.
+    Expected status code <400> but was <200>.
+
+    	at org.codehaus.groovy.vmplugin.v8.IndyInterface.fromCache(IndyInterface.java:344)
+    	at io.restassured.internal.ResponseSpecificationImpl$HamcrestAssertionClosure.validate(ResponseSpecificationImpl.groovy:516)
+    	at org.codehaus.groovy.vmplugin.v8.IndyInterface.fromCache(IndyInterface.java:344)
+    	at io.restassured.internal.ResponseSpecificationImpl.validateResponseIfRequired(ResponseSpecificationImpl.groovy:714)
+    	at org.codehaus.groovy.vmplugin.v8.IndyInterface.fromCache(IndyInterface.java:344)
+    	at io.restassured.internal.ResponseSpecificationImpl.statusCode(ResponseSpecificationImpl.groovy:139)
+    	at org.codehaus.groovy.vmplugin.v8.IndyInterface.fromCache(IndyInterface.java:344)
+    	at io.restassured.internal.ResponseSpecificationImpl.statusCode(ResponseSpecificationImpl.groovy:147)
+    	at io.restassured.internal.ValidatableResponseOptionsImpl.statusCode(ValidatableResponseOptionsImpl.java:89)
+    	at it.pagopa.infrastructure.contract.http.DefaultHttpContractPolicy$BuilderImpl.lambda$scenarioStatus$2(DefaultHttpContractPolicy.java:94)
+    	at it.pagopa.infrastructure.contract.http.HttpContractRuntimeCaseExecutor.execute(HttpContractRuntimeCaseExecutor.java:59)
+    	... 6 more
+  procedure: "Dall'analisi dei log è emerso che la sostituzione di q con un numero è accettata e la chiamata termina con HTTP 200. Nel test getCompactCatalogEServices è stato aggiunto un override mirato per REPLACED_WITH_WRONG_TYPE_NUMBER su q."
+  result: "Il test si attendeva un esito negativo quando q veniva sostituito con un numero. L'API accetta il valore come filtro e risponde con HTTP 200."
+  link_prod_bug: ''
+  link_suite_bug: ''
+- id_test: BffEServiceContractTest::getCompactCatalogEServices::[queryParams] REPLACED_WITH_EMPTY_STRING @ /states/0
+  error_log: |
+    java.lang.AssertionError: HTTP contract expectation failed
+    - scope: QUERY_PARAMS
+    - scenario: REPLACED_WITH_EMPTY_STRING
+    - targetPath: /states/0
+    - mutationKind: REPLACE
+    - mutationValue: 
+    - expectationOrigin: POLICY_UNKNOWN
+    - responseStatus: 200
+    - responseBody: {"results":[],"pagination":{"offset":0,"limit":200,"totalCount":0}}
+    - payload: null
+    - pathParams: null
+    	at it.pagopa.infrastructure.contract.http.HttpContractFailureDiagnostics.enrich(HttpContractFailureDiagnostics.java:22)
+    	at it.pagopa.infrastructure.contract.http.HttpContractRuntimeCaseExecutor.execute(HttpContractRuntimeCaseExecutor.java:61)
+    	at it.pagopa.infrastructure.contract.http.HttpContractInvocationBuilder.lambda$toDynamicTest$0(HttpContractInvocationBuilder.java:94)
+    	at java.base/java.util.concurrent.ForkJoinTask.doExec(ForkJoinTask.java:373)
+    	at java.base/java.util.concurrent.ForkJoinPool$WorkQueue.topLevelExec(ForkJoinPool.java:1182)
+    	at java.base/java.util.concurrent.ForkJoinPool.scan(ForkJoinPool.java:1655)
+    	at java.base/java.util.concurrent.ForkJoinPool.runWorker(ForkJoinPool.java:1622)
+    	at java.base/java.util.concurrent.ForkJoinWorkerThread.run(ForkJoinWorkerThread.java:165)
+    Caused by: java.lang.AssertionError: 1 expectation failed.
+    Expected status code <400> but was <200>.
+
+    	at org.codehaus.groovy.vmplugin.v8.IndyInterface.fromCache(IndyInterface.java:344)
+    	at io.restassured.internal.ResponseSpecificationImpl$HamcrestAssertionClosure.validate(ResponseSpecificationImpl.groovy:516)
+    	at org.codehaus.groovy.vmplugin.v8.IndyInterface.fromCache(IndyInterface.java:344)
+    	at io.restassured.internal.ResponseSpecificationImpl.validateResponseIfRequired(ResponseSpecificationImpl.groovy:714)
+    	at org.codehaus.groovy.vmplugin.v8.IndyInterface.fromCache(IndyInterface.java:344)
+    	at io.restassured.internal.ResponseSpecificationImpl.statusCode(ResponseSpecificationImpl.groovy:139)
+    	at org.codehaus.groovy.vmplugin.v8.IndyInterface.fromCache(IndyInterface.java:344)
+    	at io.restassured.internal.ResponseSpecificationImpl.statusCode(ResponseSpecificationImpl.groovy:147)
+    	at io.restassured.internal.ValidatableResponseOptionsImpl.statusCode(ValidatableResponseOptionsImpl.java:89)
+    	at it.pagopa.infrastructure.contract.http.DefaultHttpContractPolicy$BuilderImpl.lambda$scenarioStatus$2(DefaultHttpContractPolicy.java:94)
+    	at it.pagopa.infrastructure.contract.http.HttpContractRuntimeCaseExecutor.execute(HttpContractRuntimeCaseExecutor.java:59)
+    	... 6 more
+  procedure: "Dall'analisi dei log è emerso che il valore vuoto nell'elemento states[0] è accettato come filtro e la chiamata risponde con HTTP 200. Nel test getCompactCatalogEServices è stato aggiunto un override mirato che si attende HTTP 200 per REPLACED_WITH_EMPTY_STRING su states[0]."
+  result: "Il test si attendeva un esito negativo quando states[0] veniva sostituito con una stringa vuota. L'API accetta il valore e risponde con HTTP 200; ciò è coerente con il significato dell'operazione, cioè filtrare per una stringa vuota."
+  link_prod_bug: ''
+  link_suite_bug: ''
+- id_test: BffEServiceContractTest::getCompactCatalogEServices::[queryParams] REPLACED_WITH_EMPTY_STRING @ /agreementStates/0
+  error_log: |
+    java.lang.AssertionError: HTTP contract expectation failed
+    - scope: QUERY_PARAMS
+    - scenario: REPLACED_WITH_EMPTY_STRING
+    - targetPath: /agreementStates/0
+    - mutationKind: REPLACE
+    - mutationValue: 
+    - expectationOrigin: POLICY_UNKNOWN
+    - responseStatus: 200
+    - responseBody: {"results":[],"pagination":{"offset":0,"limit":200,"totalCount":0}}
+    - payload: null
+    - pathParams: null
+    	at it.pagopa.infrastructure.contract.http.HttpContractFailureDiagnostics.enrich(HttpContractFailureDiagnostics.java:22)
+    	at it.pagopa.infrastructure.contract.http.HttpContractRuntimeCaseExecutor.execute(HttpContractRuntimeCaseExecutor.java:61)
+    	at it.pagopa.infrastructure.contract.http.HttpContractInvocationBuilder.lambda$toDynamicTest$0(HttpContractInvocationBuilder.java:94)
+    	at java.base/java.util.concurrent.ForkJoinTask.doExec(ForkJoinTask.java:373)
+    	at java.base/java.util.concurrent.ForkJoinPool$WorkQueue.topLevelExec(ForkJoinPool.java:1182)
+    	at java.base/java.util.concurrent.ForkJoinPool.scan(ForkJoinPool.java:1655)
+    	at java.base/java.util.concurrent.ForkJoinPool.runWorker(ForkJoinPool.java:1622)
+    	at java.base/java.util.concurrent.ForkJoinWorkerThread.run(ForkJoinWorkerThread.java:165)
+    Caused by: java.lang.AssertionError: 1 expectation failed.
+    Expected status code <400> but was <200>.
+
+    	at org.codehaus.groovy.vmplugin.v8.IndyInterface.fromCache(IndyInterface.java:344)
+    	at io.restassured.internal.ResponseSpecificationImpl$HamcrestAssertionClosure.validate(ResponseSpecificationImpl.groovy:516)
+    	at org.codehaus.groovy.vmplugin.v8.IndyInterface.fromCache(IndyInterface.java:344)
+    	at io.restassured.internal.ResponseSpecificationImpl.validateResponseIfRequired(ResponseSpecificationImpl.groovy:714)
+    	at org.codehaus.groovy.vmplugin.v8.IndyInterface.fromCache(IndyInterface.java:344)
+    	at io.restassured.internal.ResponseSpecificationImpl.statusCode(ResponseSpecificationImpl.groovy:139)
+    	at org.codehaus.groovy.vmplugin.v8.IndyInterface.fromCache(IndyInterface.java:344)
+    	at io.restassured.internal.ResponseSpecificationImpl.statusCode(ResponseSpecificationImpl.groovy:147)
+    	at io.restassured.internal.ValidatableResponseOptionsImpl.statusCode(ValidatableResponseOptionsImpl.java:89)
+    	at it.pagopa.infrastructure.contract.http.DefaultHttpContractPolicy$BuilderImpl.lambda$scenarioStatus$2(DefaultHttpContractPolicy.java:94)
+    	at it.pagopa.infrastructure.contract.http.HttpContractRuntimeCaseExecutor.execute(HttpContractRuntimeCaseExecutor.java:59)
+    	... 6 more
+  procedure: "Dall'analisi dei log è emerso che il valore vuoto nell'elemento agreementStates[0] è accettato come filtro e la chiamata risponde con HTTP 200."
+  result: "Il test si attendeva un esito negativo quando agreementStates[0] veniva sostituito con una stringa vuota. L'API accetta il valore e risponde con HTTP 200; ciò è coerente con il significato dell'operazione, cioè filtrare per una stringa vuota."
+  link_prod_bug: ''
+  link_suite_bug: ''
+- id_test: BffEServiceContractTest::getCompactCatalogEServices::[queryParams] REPLACED_WITH_ZERO @ /offset
+  error_log: |
+    java.lang.AssertionError: HTTP contract expectation failed
+    - scope: QUERY_PARAMS
+    - scenario: REPLACED_WITH_ZERO
+    - targetPath: /offset
+    - mutationKind: REPLACE
+    - mutationValue: 0
+    - expectationOrigin: POLICY_UNKNOWN
+    - responseStatus: 200
+    - responseBody: {"results":[],"pagination":{"offset":0,"limit":200,"totalCount":0}}
+    - payload: null
+    - pathParams: null
+    	at it.pagopa.infrastructure.contract.http.HttpContractFailureDiagnostics.enrich(HttpContractFailureDiagnostics.java:22)
+    	at it.pagopa.infrastructure.contract.http.HttpContractRuntimeCaseExecutor.execute(HttpContractRuntimeCaseExecutor.java:61)
+    	at it.pagopa.infrastructure.contract.http.HttpContractInvocationBuilder.lambda$toDynamicTest$0(HttpContractInvocationBuilder.java:94)
+    	at java.base/java.util.concurrent.ForkJoinTask.doExec(ForkJoinTask.java:373)
+    	at java.base/java.util.concurrent.ForkJoinPool$WorkQueue.topLevelExec(ForkJoinPool.java:1182)
+    	at java.base/java.util.concurrent.ForkJoinPool.scan(ForkJoinPool.java:1655)
+    	at java.base/java.util.concurrent.ForkJoinPool.runWorker(ForkJoinPool.java:1622)
+    	at java.base/java.util.concurrent.ForkJoinWorkerThread.run(ForkJoinWorkerThread.java:165)
+    Caused by: java.lang.AssertionError: 1 expectation failed.
+    Expected status code <400> but was <200>.
+
+    	at org.codehaus.groovy.vmplugin.v8.IndyInterface.fromCache(IndyInterface.java:344)
+    	at io.restassured.internal.ResponseSpecificationImpl$HamcrestAssertionClosure.validate(ResponseSpecificationImpl.groovy:516)
+    	at org.codehaus.groovy.vmplugin.v8.IndyInterface.fromCache(IndyInterface.java:344)
+    	at io.restassured.internal.ResponseSpecificationImpl.validateResponseIfRequired(ResponseSpecificationImpl.groovy:714)
+    	at org.codehaus.groovy.vmplugin.v8.IndyInterface.fromCache(IndyInterface.java:344)
+    	at io.restassured.internal.ResponseSpecificationImpl.statusCode(ResponseSpecificationImpl.groovy:139)
+    	at org.codehaus.groovy.vmplugin.v8.IndyInterface.fromCache(IndyInterface.java:344)
+    	at io.restassured.internal.ResponseSpecificationImpl.statusCode(ResponseSpecificationImpl.groovy:147)
+    	at io.restassured.internal.ValidatableResponseOptionsImpl.statusCode(ValidatableResponseOptionsImpl.java:89)
+    	at it.pagopa.infrastructure.contract.http.DefaultHttpContractPolicy$BuilderImpl.lambda$scenarioStatus$2(DefaultHttpContractPolicy.java:94)
+    	at it.pagopa.infrastructure.contract.http.HttpContractRuntimeCaseExecutor.execute(HttpContractRuntimeCaseExecutor.java:59)
+    	... 6 more
+  procedure: "Dall'analisi dei log è emerso che offset=0 è accettato e la chiamata risponde con HTTP 200. Nel test getCompactCatalogEServices è stato aggiunto un override mirato che si attende HTTP 200 per REPLACED_WITH_ZERO su offset. È stato aperto il ticket QA-19860 per correggere il motore di fuzzing, affinché riconosca zero come valore legittimo per campi come offset."
+  result: "Il test si attendeva un esito negativo quando offset veniva sostituito con zero. L'API accetta il valore e risponde con HTTP 200."
+  link_prod_bug: ''
+  link_suite_bug: 'https://pagopa.atlassian.net/browse/QA-19860'
+- id_test: BffEServiceContractTest::getCompactCatalogEServices::[queryParams] REPLACED_WITH_MAX_VALUE @ /offset
+  error_log: |
+    java.lang.AssertionError: HTTP contract expectation failed
+    - scope: QUERY_PARAMS
+    - scenario: REPLACED_WITH_MAX_VALUE
+    - targetPath: /offset
+    - mutationKind: REPLACE
+    - mutationValue: 2147483647
+    - expectationOrigin: POLICY_UNKNOWN
+    - responseStatus: 200
+    - responseBody: {"results":[],"pagination":{"offset":2147483647,"limit":200,"totalCount":0}}
+    - payload: null
+    - pathParams: null
+    	at it.pagopa.infrastructure.contract.http.HttpContractFailureDiagnostics.enrich(HttpContractFailureDiagnostics.java:22)
+    	at it.pagopa.infrastructure.contract.http.HttpContractRuntimeCaseExecutor.execute(HttpContractRuntimeCaseExecutor.java:61)
+    	at it.pagopa.infrastructure.contract.http.HttpContractInvocationBuilder.lambda$toDynamicTest$0(HttpContractInvocationBuilder.java:94)
+    	at java.base/java.util.concurrent.ForkJoinTask.doExec(ForkJoinTask.java:373)
+    	at java.base/java.util.concurrent.ForkJoinPool$WorkQueue.topLevelExec(ForkJoinPool.java:1182)
+    	at java.base/java.util.concurrent.ForkJoinPool.scan(ForkJoinPool.java:1655)
+    	at java.base/java.util.concurrent.ForkJoinPool.runWorker(ForkJoinPool.java:1622)
+    	at java.base/java.util.concurrent.ForkJoinWorkerThread.run(ForkJoinWorkerThread.java:165)
+    Caused by: java.lang.AssertionError: 1 expectation failed.
+    Expected status code <400> but was <200>.
+
+    	at org.codehaus.groovy.vmplugin.v8.IndyInterface.fromCache(IndyInterface.java:344)
+    	at io.restassured.internal.ResponseSpecificationImpl$HamcrestAssertionClosure.validate(ResponseSpecificationImpl.groovy:516)
+    	at org.codehaus.groovy.vmplugin.v8.IndyInterface.fromCache(IndyInterface.java:344)
+    	at io.restassured.internal.ResponseSpecificationImpl.validateResponseIfRequired(ResponseSpecificationImpl.groovy:714)
+    	at org.codehaus.groovy.vmplugin.v8.IndyInterface.fromCache(IndyInterface.java:344)
+    	at io.restassured.internal.ResponseSpecificationImpl.statusCode(ResponseSpecificationImpl.groovy:139)
+    	at org.codehaus.groovy.vmplugin.v8.IndyInterface.fromCache(IndyInterface.java:344)
+    	at io.restassured.internal.ResponseSpecificationImpl.statusCode(ResponseSpecificationImpl.groovy:147)
+    	at io.restassured.internal.ValidatableResponseOptionsImpl.statusCode(ValidatableResponseOptionsImpl.java:89)
+    	at it.pagopa.infrastructure.contract.http.DefaultHttpContractPolicy$BuilderImpl.lambda$scenarioStatus$2(DefaultHttpContractPolicy.java:94)
+    	at it.pagopa.infrastructure.contract.http.HttpContractRuntimeCaseExecutor.execute(HttpContractRuntimeCaseExecutor.java:59)
+    	... 6 more
+  procedure: "Dall'analisi dei log è emerso che il valore massimo di Integer per offset è accettato e la chiamata risponde con HTTP 200. Nel test getCompactCatalogEServices è stato aggiunto un override mirato che si attende HTTP 200 per REPLACED_WITH_MAX_VALUE su offset."
+  result: "Il test si attendeva un esito negativo quando offset veniva sostituito con il valore massimo rappresentabile. L'API accetta 2147483647 e risponde con HTTP 200."
+  link_prod_bug: ''
+  link_suite_bug: ''
