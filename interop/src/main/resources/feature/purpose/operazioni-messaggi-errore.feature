@@ -69,25 +69,6 @@ Feature: Messaggi di errore durante la gestione delle finalità e la valutazione
     When il fruitore tenta di modificare la purpose con il nome "Valore https://example.org"
     Then il messaggio di errore corrisponde al caso "PURPOSE_HYPERLINK_DETECTION_ERROR__POST_PURPOSES_PURPOSE_ID"
 
-  # Endpoint: POST /purposes/:purposeId/clone
-  # NON RIPRODUCIBILE: il nome del clone include il timestamp al secondo.
-  # Due clonazioni in secondi diversi generano nomi distinti, senza il conflitto richiesto.
-  Scenario: [ERROR_022] - Impossibilità di duplicare una finalità quando il nome derivato è già in uso
-  Data una finalità del fruitore e un'altra finalità dello stesso fruitore per lo stesso e-service con il nome che deriverebbe dalla duplicazione
-  Quando il fruitore tenta di duplicare la prima finalità
-  Allora il sistema rifiuta la duplicazione e segnala che il nome è già in uso.
-
-    Given i seguenti e-service pubblicati:
-      | alias | erogatore        |
-      | ES-1  | Comune di Milano |
-    And l'e-service "ES-1" del Comune di Milano sottoscritto da PagoPA con una richiesta di fruizione attiva
-    And le seguenti finalità in bozza create da PagoPA per l'e-service "ES-1" con nomi distinti:
-      | alias |
-      | F-1   |
-    And un'altra finalità di PagoPA per l'e-service "ES-1" con il nome che deriverebbe dalla duplicazione di "F-1"
-    When il fruitore tenta di duplicare la purpose "F-1"
-    Then il messaggio di errore corrisponde al caso "PURPOSE_DUPLICATED_PURPOSE_TITLE__POST_PURPOSES_PURPOSE_ID_CLONE"
-
   # Endpoint: POST /purposeTemplates/:purposeTemplateId/purposes
   @err_msg_when_exec
   Scenario: [ERROR_023] - Impossibilità di creare una finalità da template con un nome già usato
