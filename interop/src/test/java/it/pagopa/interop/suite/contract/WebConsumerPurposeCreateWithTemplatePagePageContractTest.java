@@ -122,7 +122,7 @@ public class WebConsumerPurposeCreateWithTemplatePagePageContractTest {
                                     softly.assertThat(page.purposeTemplateSection().purposeTemplateLabel().read())
                                             .as("Purpose template input label")
                                             .startsWith("Template per la compilazione agevolata della finalità");
-                                    softly.assertThat(page.purposeTemplateSection().purposeTemplateInput().label().read())
+                                    softly.assertThat(page.purposeTemplateSection().purposeTemplateInput().read())
                                             .as("Purpose template input value")
                                             .isNotBlank();
                                     softly.assertThat(page.purposeTemplateSection().acknowledgeResponsibilityLabel().read())

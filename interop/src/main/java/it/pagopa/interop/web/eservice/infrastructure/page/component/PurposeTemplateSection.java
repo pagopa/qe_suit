@@ -30,7 +30,7 @@ public interface PurposeTemplateSection extends Component {
     @XPath(".//label[starts-with(normalize-space(),'Template per la compilazione agevolata della finalità')]")
     Label purposeTemplateLabel();
 
-    @XPath(".//label[starts-with(normalize-space(),'Template per la compilazione agevolata della finalità')]/following::input[@role='combobox'][1]")
+    @XPath(".//div[contains(@class, 'MuiTextField-root') and .//label[starts-with(normalize-space(), 'Template per la compilazione agevolata della finalità')]]")
     TextField purposeTemplateInput();
 
     @XPath(".//*[@id='acknowledgeInfoResponsibility-label']")
