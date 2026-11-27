@@ -238,7 +238,7 @@ public class M2MEServiceDescriptorGateway implements EServiceDescriptorGateway {
                     problem, "Error extracting field from SOAP file", "Error extracting field soap:address from SOAP file", "10017"
             );
             case NOT_PARSABLE_SOAP_FILE -> assertProblemFields(
-                    problem, "Error while parsing SOAP file", "Error while parsing SOAP file", "10016"
+                    problem, "Error parsing SOAP file", "Error parsing SOAP file", "10016"
             );
             case MISSING_SOAP_OPERATION -> assertProblemFields(
                     problem, "Error extracting field from SOAP file", "Error extracting field soap:operation from SOAP file", "10017"

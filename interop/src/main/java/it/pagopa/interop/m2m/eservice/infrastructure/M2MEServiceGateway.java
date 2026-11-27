@@ -120,7 +120,7 @@ public class M2MEServiceGateway implements EServiceGateway {
     }
 
     @Override
-    public void assertEServiceNotPresentInProducerCatalog(String eserviceName) {
+    public void assertEServiceHasNoInterface(String eserviceName) {
         throw unsupportedOperation();
     }
 

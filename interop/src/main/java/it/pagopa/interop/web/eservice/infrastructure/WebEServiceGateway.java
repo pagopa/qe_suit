@@ -122,7 +122,7 @@ public class WebEServiceGateway implements EServiceGateway {
     }
 
     @Override
-    public void assertEServiceNotPresentInProducerCatalog(String eserviceName) {
+    public void assertEServiceHasNoInterface(String eserviceName) {
         throw new UnsupportedOperationException("Not supported yet.");
     }
 

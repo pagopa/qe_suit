@@ -35,7 +35,7 @@ public interface EServiceJourney<SELF extends EServiceJourney<SELF>> extends Jou
             SoapInterfaceUploadFailureReason reason
     );
 
-    SELF assertEServiceNotPresentInProducerCatalog(String eserviceName);
+    SELF assertEServiceHasNoInterface(String eserviceName);
 
     default SELF createEService() {
         return createEService(EServiceDescriptorState.DRAFT);
