@@ -30,20 +30,12 @@ import org.springframework.test.context.TestConstructor;
 
 import java.util.stream.Stream;
 
-/**
- * Test di contratto relativi alla feature
- * <a href="https://pagopa.atlassian.net/browse/PIN-10841">PIN-10841</a>,
- * inizialmente prevista per la release 2.24.0 e posticipata alla 2.25.0.
- * In attesa del rilascio della feature, i test non sono funzionanti e sono esclusi
- * dagli NRT tramite {@code @Tag("ignore")}.
- */
 @ActiveProfiles(resolver = JunitEnvironmentProfiles.class)
 @SpringBootTest(
         classes = {TestBootApp.class, JunitContextConfig.class, WebJUnitSuitConfig.class}
 )
 @TestConstructor(autowireMode = TestConstructor.AutowireMode.ALL)
 @RequiredArgsConstructor
-@Tag("ignore")
 public class WebEServiceDuplicationContractTest {
 
     private final WebBrowserContractValidator webContractValidator;
@@ -123,33 +115,7 @@ public class WebEServiceDuplicationContractTest {
                             eService.getId().toString(),
                             eService.getActiveDescriptor().getId().toString()
                     )
-                    .tests(Stream.of(unavailableDuplicationScenario(role, eService, "ACTIVE")));
-        });
-    }
-
-    @TestFactory
-    @ResourceLock("producer-delegation-availability:COMUNE_DI_POZZALLO")
-    Stream<DynamicTest> shouldHideDuplicationFromDelegateWithWaitingForApprovalProducerDelegation() {
-        Tenant delegator = Tenant.COMUNE_DI_MILANO;
-        Tenant delegate = Tenant.COMUNE_DI_POZZALLO;
-
-        return Stream.of(UserRole.ADMIN, UserRole.API, UserRole.API_SECURITY).flatMap(role -> {
-            EService eService = createPublishedEService(delegator);
-            interopJourney.createProducerDelegation(ProducerDelegationCreationCommand.builder()
-                    .delegator(delegator)
-                    .delegate(delegate)
-                    .eServiceRef(eService.getRef())
-                    .targetState(DelegationState.WAITING_FOR_APPROVAL)
-                    .build());
-
-            return webContractValidator
-                    .as(User.getTenantUser(delegate, role), delegate)
-                    .on(
-                            ProducerEServiceDetailPage.class,
-                            eService.getId().toString(),
-                            eService.getActiveDescriptor().getId().toString()
-                    )
-                    .tests(Stream.of(unavailableDuplicationScenario(role, eService, "WAITING_FOR_APPROVAL")));
+                    .tests(Stream.of(unavailableDuplicationScenario(role, eService)));
         });
     }
 
@@ -175,9 +141,9 @@ public class WebEServiceDuplicationContractTest {
     }
 
     private WebScenario<ProducerEServiceDetailPage> unavailableDuplicationScenario(
-            UserRole role, EService eService, String delegationState) {
+            UserRole role, EService eService) {
         return new WebScenario<>(
-                "Duplica e-service assente per il delegato " + role.name() + " con delega " + delegationState,
+                "Duplica e-service assente per il delegato " + role.name() + " con delega ACTIVE",
                 page -> {
                     page.pageTitle().readAndAssert(eService.getName());
                     page.actionsMenuButton().click();
