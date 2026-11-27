@@ -8,6 +8,7 @@ import it.pagopa.send.common.legal_notification.domain.LegalNotificationCreation
 import it.pagopa.send.common.legal_notification.domain.LegalNotificationDomain;
 import it.pagopa.send.common.legal_notification.domain.NotificationStatus;
 import it.pagopa.send.common.legal_notification.domain.RecipientSpec;
+import it.pagopa.send.common.legal_notification.domain.ResolvedRecipient;
 import it.pagopa.send.common.legal_notification.infrastructure.factory.LegalNotificationRequestFactory;
 import it.pagopa.send.common.user.domain.User;
 import it.pagopa.send.web.mittente.infrastructure.page.NotificationSuccessPage;
@@ -36,8 +37,9 @@ public class WebLegalNotificationGateway implements LegalNotificationGateway {
 
     private static final Duration STATUS_TIMEOUT = Duration.ofMinutes(10);
     private static final Duration STATUS_INTERVAL = Duration.ofSeconds(15);
-    // stesso PDF di test che il canale BFF carica con il preload
+    // stessi file di test che il canale BFF carica con il preload: documento e avviso pagoPA, metadati dell'F24
     private static final String TEST_DOCUMENT = "documents/test-attachment.pdf";
+    private static final String TEST_F24_METADATA = "documents/f24-metadata.json";
 
     private final CreateNotificationPage createNotificationPage;
     private final WebRecipientFormMapper recipientFormMapper;
@@ -59,17 +61,18 @@ public class WebLegalNotificationGateway implements LegalNotificationGateway {
         command.getRecipients().forEach(this::addRecipient);
     }
 
-    /** Compila il destinatario nel passo "Destinatari", in un nuovo blocco se il precedente è già compilato. */
+    /**
+     * Compila il destinatario nel passo "Destinatari", in un nuovo blocco se il precedente è già compilato, e lo
+     * risolve nella request: i suoi pagamenti, con la posizione debitoria, si compilano all'invio.
+     */
     @Override
     public void addRecipient(RecipientSpec recipient) {
-        if (!recipient.payments().isEmpty()) {
-            throw new UnsupportedOperationException("I pagamenti dei destinatari non sono ancora supportati sul canale Web");
-        }
         createNotificationPage.fillRecipient(recipientFormMapper.toForm(recipient));
+        request.addRecipient(requestFactory.resolveRecipient(recipient));
     }
 
     /**
-     * Completa la procedura guidata (nessun pagamento, documento di test) e invia la notifica; la notifica si ritrova
+     * Completa la procedura guidata (pagamenti dei destinatari, documento di test) e invia la notifica; la notifica si ritrova
      * tra quelle della PA dal numero di protocollo, poi si attende lo stato richiesto.
      * REFUSED non è osservabile dal portale: una notifica rifiutata non ha IUN e non compare tra le notifiche della PA.
      */
@@ -78,17 +81,16 @@ public class WebLegalNotificationGateway implements LegalNotificationGateway {
         if (targetStatus == NotificationStatus.REFUSED) {
             throw new UnsupportedOperationException("Lo stato REFUSED non è osservabile dal portale della PA");
         }
-        String recipientTaxId = createNotificationPage.recipientsStep().recipientBoxes().get(0).taxId().read();
         createNotificationPage.continueToNextStep();
-        createNotificationPage.debtPositionStep().selectNoPaymentForAllRecipients();
-        createNotificationPage.continueToNextStep();
-        createNotificationPage.attachmentsStep().fillFields(request.getSubject(), testDocumentPath());
+        compilePayments();
+        createNotificationPage.attachmentsStep().fillFields(request.getSubject(), resourcePath(TEST_DOCUMENT));
         createNotificationPage.continueToNextStep();
         notificationSuccessPage.assertLoaded();
 
         // la notifica compare tra quelle della PA solo dopo l'accettazione, quando ha lo IUN
         String iun = PollingUtils.pollUntil(
-                () -> readGateway.findIun(recipientTaxId, request.getSubject(), request.getPaProtocolNumber()),
+                () -> readGateway.findIun(request.getRecipients().get(0).taxId(), request.getSubject(),
+                        request.getPaProtocolNumber()),
                 Optional::isPresent,
                 STATUS_TIMEOUT,
                 STATUS_INTERVAL,
@@ -108,7 +110,7 @@ public class WebLegalNotificationGateway implements LegalNotificationGateway {
         String iun = entityStore.getLastOrThrow(LegalNotificationDomain.class).getIun();
         PollingUtils.pollUntil(
                 () -> readNotification(iun).getStatus(),
-                status -> status == targetStatus || (targetStatus == NotificationStatus.ACCEPTED && isAccepted(status)),
+                status -> status == targetStatus || (targetStatus == NotificationStatus.ACCEPTED && status.isAccepted()),
                 STATUS_TIMEOUT,
                 STATUS_INTERVAL,
                 String.format("La notifica %s non ha raggiunto lo stato %s", iun, targetStatus));
@@ -148,15 +150,32 @@ public class WebLegalNotificationGateway implements LegalNotificationGateway {
         return channel == Channel.WEB_BROWSER;
     }
 
-    private static boolean isAccepted(NotificationStatus status) {
-        return status != NotificationStatus.IN_VALIDATION && status != NotificationStatus.REFUSED;
+    /**
+     * "Posizione debitoria" e, se un destinatario ha dei pagamenti, "Dettaglio posizione debitoria". Con più
+     * destinatari con pagamenti si caricherebbero gli stessi file di test più volte, che il portale non accetta.
+     */
+    private void compilePayments() {
+        List<ResolvedRecipient> recipientsWithPayments = request.getRecipients().stream()
+                .filter(recipient -> !recipient.payments().isEmpty())
+                .toList();
+        if (recipientsWithPayments.size() > 1) {
+            throw new UnsupportedOperationException("Più destinatari con pagamenti non sono supportati sul canale Web:"
+                    + " il portale non accetta lo stesso file più di una volta");
+        }
+        createNotificationPage.debtPositionStep().selectPaymentModels(request.getRecipients());
+        createNotificationPage.continueToNextStep();
+        if (!recipientsWithPayments.isEmpty()) {
+            createNotificationPage.paymentDetailStep().fillFields(request.getFeePolicy(), recipientsWithPayments,
+                    resourcePath(TEST_DOCUMENT), resourcePath(TEST_F24_METADATA));
+            createNotificationPage.continueToNextStep();
+        }
     }
 
-    private static String testDocumentPath() {
+    private static String resourcePath(String classpathResource) {
         try {
-            return new ClassPathResource(TEST_DOCUMENT).getFile().getAbsolutePath();
+            return new ClassPathResource(classpathResource).getFile().getAbsolutePath();
         } catch (IOException e) {
-            throw new UncheckedIOException("Documento di test non trovato: " + TEST_DOCUMENT, e);
+            throw new UncheckedIOException("File di test non trovato: " + classpathResource, e);
         }
     }
 }

@@ -2,20 +2,18 @@ package it.pagopa.send.web.notification_creation.infrastructure.page.component;
 
 import it.frontend.e2e.framework.annotation.selector.XPath;
 import it.frontend.e2e.framework.core.capability.core.Clickable;
-import it.frontend.e2e.framework.core.model.selector.XPathSelector;
 import it.frontend.e2e.framework.web.capability.core.Readable;
 import it.frontend.e2e.framework.web.capability.core.Writable;
 import it.frontend.e2e.framework.web.domain.Component;
 import it.pagopa.infrastructure.suit.component.Button;
 import it.pagopa.infrastructure.suit.component.RadioButton;
 import it.pagopa.send.common.legal_notification.domain.LegalNotificationCreationRequest;
-import it.pagopa.send.web.notification_creation.application.NotificationData;
 
 import java.util.List;
 import java.util.function.Predicate;
 
 /**
- * Passo del wizard "Invia una nuova notifica" usato dagli step Cucumber ({@code CreateNotificationPage}).
+ * Passo "Informazioni preliminari" di "Invia una nuova notifica" ({@code CreateNotificationPage}).
  */
 public interface PreliminaryInformationStep extends Component {
     @XPath(".//*[@id=\"subject\"]")
@@ -49,20 +47,6 @@ public interface PreliminaryInformationStep extends Component {
     @XPath("//*[@role='option']")
     List<Button> groupOptions();
 
-    default void fillFields(NotificationData data) {
-        //selectLanguageItalian().click();
-        subject().write(data.getSubject());
-        protocolNumber().write(data.getProtocolNumber());
-        taxonomyCode().write(data.getTaxonomyCode());
-        //selectModel890().click();
-        // il gruppo indicato dai dati, altrimenti il primo disponibile se l'ente ha dei gruppi e quindi è obbligatorio
-        if (data.getGroup() != null) {
-            selectGroup(option -> data.getGroup().equals(option.read()));
-        } else if (groupLabel().read().endsWith("*")) {
-            selectGroup(option -> true);
-        }
-    }
-
     /**
      * Compila il passo con i dati preliminari della request di dominio, compresa la tipologia di comunicazione
      * fisica; il gruppo non è ancora noto (dipende dal mittente): se l'ente ha dei gruppi, e quindi è obbligatorio,
@@ -89,11 +73,5 @@ public interface PreliminaryInformationStep extends Component {
                 .findFirst()
                 .orElseThrow(() -> new IllegalStateException("Gruppo non presente nella tendina"))
                 .click();
-    }
-
-    default XPathSelector groupOptionSelector(String groupName) {
-        return XPathSelector.of(
-                "//*[@role='option'][normalize-space()='" + groupName + "']"
-        );
     }
 }

@@ -3,6 +3,7 @@ package it.pagopa.send.web.legal_notification.infrastructure;
 import it.pagopa.infrastructure.suit.component.Table;
 import it.pagopa.infrastructure.suit.component.TableRow;
 import it.pagopa.send.common.legal_notification.domain.LegalNotificationDomain;
+import it.pagopa.send.common.legal_notification.domain.NotificationStatus;
 import it.pagopa.send.web.mittente.infrastructure.page.DashboardPage;
 import it.pagopa.send.web.notification_details.infrastructure.page.MittenteNotificationDetailsPage;
 import it.pagopa.send.web.notification_details.infrastructure.page.section.MittenteNotificationSummarySection;
@@ -32,11 +33,13 @@ public class WebLegalNotificationReadGateway {
     public LegalNotificationDomain read(String iun) {
         notificationDetailsPage.navigateTo(iun);
         MittenteNotificationSummarySection summary = notificationDetailsPage.notificationSummarySection();
+        String statusLabel = notificationDetailsPage.notificationStatusSection().statusChip().text().read();
         return LegalNotificationDomain.builder()
                 .iun(iun)
                 .paProtocolNumber(summary.protocolNumberValue().read())
                 .senderDenomination(summary.senderValue().read())
-                .status(NotificationStatusLabel.toStatus(notificationDetailsPage.notificationStatusSection().statusChip().text().read()))
+                .status(NotificationStatus.fromLabel(statusLabel).orElseThrow(() ->
+                        new IllegalStateException("Stato della notifica non riconosciuto nel portale: " + statusLabel)))
                 .build();
     }
 
@@ -56,7 +59,7 @@ public class WebLegalNotificationReadGateway {
                 .map(cells -> LegalNotificationDomain.builder()
                         .iun(cells.get(iun).read())
                         .subject(cells.get(subject).read())
-                        .status(NotificationStatusLabel.find(cells.get(status).read()).orElse(null))
+                        .status(NotificationStatus.fromLabel(cells.get(status).read()).orElse(null))
                         .build())
                 .toList();
     }

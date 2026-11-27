@@ -1,6 +1,7 @@
 package it.pagopa.send.common.infrastructure.cucumber.parameter_type;
 
 import io.cucumber.java.ParameterType;
+import it.pagopa.send.common.legal_notification.domain.NotificationStatus;
 import it.pagopa.send.common.legal_notification.domain.PhysicalCommunicationKind;
 import it.pagopa.send.common.legal_notification.domain.RecipientCardinality;
 import it.pagopa.send.common.user.domain.UserType;
@@ -14,6 +15,8 @@ import it.pagopa.send.common.user.domain.UserType;
  *   <li>{@code {userType}}: tipologia dei destinatari generati, {@code PF} oppure {@code PG}. Non va confuso con
  *   {@code {recipientType}} di {@link UserParameterTypes}, che negli step di accesso indica il destinatario con
  *   l'articolo ("la PG", "l'utente").</li>
+ *   <li>{@code {notificationStatus}}: stato della notifica, tra virgolette, con la descrizione mostrata all'utente
+ *   ({@code "Perfezionata per decorrenza termini"}) al posto del valore tecnico ({@code EFFECTIVE_DATE}).</li>
  * </ul>
  */
 public class LegalNotificationCreationParameterTypes {
@@ -31,5 +34,11 @@ public class LegalNotificationCreationParameterTypes {
     @ParameterType("PF|PG")
     public UserType userType(String value) {
         return UserType.valueOf(value);
+    }
+
+    @ParameterType("\"([^\"]*)\"")
+    public NotificationStatus notificationStatus(String label) {
+        return NotificationStatus.fromLabel(label)
+                .orElseThrow(() -> new IllegalArgumentException("Nessuno stato della notifica con la descrizione: " + label));
     }
 }
