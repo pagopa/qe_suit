@@ -8,8 +8,13 @@ import it.pagopa.interop.common.kernel.domain.PurposeRef;
 import it.pagopa.interop.common.kernel.domain.PurposeTemplateRef;
 import it.pagopa.interop.common.kernel.domain.PurposeVersionRef;
 import it.pagopa.interop.common.purpose.domain.Purpose;
+import it.pagopa.interop.common.risk_analysis.domain.RiskAnalysisReviewMode;
+import it.pagopa.interop.common.risk_analysis.domain.RiskAnalysisForm;
 import jakarta.annotation.Nullable;
 import org.springframework.plugin.core.Plugin;
+
+import java.util.List;
+import java.util.UUID;
 
 public interface PurposeGateway extends Plugin<Channel> {
     /**
@@ -62,6 +67,26 @@ public interface PurposeGateway extends Plugin<Channel> {
 
     Purpose archivePurpose(PurposeRef purposeRef, PurposeVersionRef purposeVersionRef);
 
+
+    void assignRiskAnalysisReviewers(PurposeRef purposeRef, RiskAnalysisReviewMode reviewMode, List<UUID> reviewerIds);
+
+    void submitRiskAnalysis(PurposeRef purposeRef);
+
+    default void submitRiskAnalysis(PurposeRef purposeRef, RiskAnalysisForm form) {
+        throw new UnsupportedOperationException("Submission with an explicit risk-analysis form is not supported by this gateway");
+    }
+    default void deletePurpose(PurposeRef purposeRef) {
+        throw new UnsupportedOperationException("Purpose deletion is not supported by this gateway implementation");
+    }
+    RiskAnalysisForm getRiskAnalysisForm(PurposeRef purposeRef);
+
+    void saveRiskAnalysisForm(PurposeRef purposeRef, RiskAnalysisForm form);
+
+    void signRiskAnalysis(PurposeRef purposeRef, int metadataVersionToSign);
+
+    void signRiskAnalysis(PurposeRef purposeRef);
+
+    void rejectRiskAnalysis(PurposeRef purposeRef, String rejectionReason);
     // Proposta di refactor: https://pagopa.atlassian.net/browse/QA-19158
     /**
      * Tenta la creazione di una finalità senza polling.

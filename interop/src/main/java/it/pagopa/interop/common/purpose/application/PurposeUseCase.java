@@ -6,12 +6,17 @@ import it.pagopa.interop.common.kernel.domain.EServiceRiskAnalysis;
 import it.pagopa.interop.common.purpose.domain.Purpose;
 import it.pagopa.interop.common.purpose.domain.PurposeVersion;
 import it.pagopa.interop.common.purpose_template.domain.PurposeTemplate;
+import it.pagopa.interop.common.risk_analysis.domain.RiskAnalysisReviewMode;
+import it.pagopa.interop.common.risk_analysis.domain.RiskAnalysisForm;
+
 import it.pagopa.utils.async.PollingUtils;
 import jakarta.annotation.Nullable;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
 import java.util.Objects;
+import java.util.UUID;
 import java.util.function.Consumer;
 
 @Service
@@ -151,6 +156,42 @@ public class PurposeUseCase {
 
     public Purpose archivePurpose(Purpose purpose, PurposeVersion purposeVersion) {
         return purposeGateway.archivePurpose(purpose.getRef(), purposeVersion.getRef());
+    }
+
+    public void assignRiskAnalysisReviewers(
+            Purpose purpose,
+            RiskAnalysisReviewMode reviewMode,
+            List<UUID> reviewerIds
+    ) {
+        purposeGateway.assignRiskAnalysisReviewers(purpose.getRef(), reviewMode, reviewerIds);
+    }
+
+    public void submitRiskAnalysis(Purpose purpose) {
+        purposeGateway.submitRiskAnalysis(purpose.getRef());
+    }
+
+    public void submitRiskAnalysis(Purpose purpose, RiskAnalysisForm form) {
+        purposeGateway.submitRiskAnalysis(purpose.getRef(), form);
+    }
+
+    public void signRiskAnalysis(Purpose purpose, int metadataVersionToSign) {
+        purposeGateway.signRiskAnalysis(purpose.getRef(), metadataVersionToSign);
+    }
+
+    public void signRiskAnalysis(Purpose purpose) {
+        purposeGateway.signRiskAnalysis(purpose.getRef());
+    }
+
+    public void rejectRiskAnalysis(Purpose purpose, String rejectionReason) {
+        purposeGateway.rejectRiskAnalysis(purpose.getRef(), rejectionReason);
+    }
+
+    public RiskAnalysisForm getRiskAnalysisForm(Purpose purpose) {
+        return purposeGateway.getRiskAnalysisForm(purpose.getRef());
+    }
+
+    public void saveRiskAnalysisForm(Purpose purpose, RiskAnalysisForm form) {
+        purposeGateway.saveRiskAnalysisForm(purpose.getRef(), form);
     }
 
     // Proposta di refactor: https://pagopa.atlassian.net/browse/QA-19158

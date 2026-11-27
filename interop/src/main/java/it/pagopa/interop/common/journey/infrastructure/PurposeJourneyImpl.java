@@ -11,9 +11,11 @@ import it.pagopa.interop.common.purpose.domain.Purpose;
 import it.pagopa.interop.common.purpose.domain.PurposeVersion;
 import it.pagopa.interop.common.purpose.domain.PurposeVersionState;
 import it.pagopa.interop.common.purpose_template.domain.PurposeTemplate;
+import it.pagopa.interop.common.risk_analysis.domain.RiskAnalysisReviewMode;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
 
+import java.util.List;
 import java.util.UUID;
 import java.util.function.Supplier;
 
@@ -182,5 +184,33 @@ public class PurposeJourneyImpl implements PurposeJourney<PurposeJourneyImpl> {
                 }
             }
         }
+    }
+
+    @Override
+    public PurposeJourneyImpl assignRiskAnalysisReviewers(RiskAnalysisReviewMode reviewMode, List<UUID> reviewerIds) {
+        Purpose purpose = entityStore.getLastOrThrow(Purpose.class);
+        purposeUseCase.assignRiskAnalysisReviewers(purpose, reviewMode, reviewerIds);
+        return this;
+    }
+
+    @Override
+    public PurposeJourneyImpl submitRiskAnalysis() {
+        Purpose purpose = entityStore.getLastOrThrow(Purpose.class);
+        purposeUseCase.submitRiskAnalysis(purpose);
+        return this;
+    }
+
+    @Override
+    public PurposeJourneyImpl signRiskAnalysis() {
+        Purpose purpose = entityStore.getLastOrThrow(Purpose.class);
+        purposeUseCase.signRiskAnalysis(purpose);
+        return this;
+    }
+
+    @Override
+    public PurposeJourneyImpl rejectRiskAnalysis(String rejectionReason) {
+        Purpose purpose = entityStore.getLastOrThrow(Purpose.class);
+        purposeUseCase.rejectRiskAnalysis(purpose, rejectionReason);
+        return this;
     }
 }

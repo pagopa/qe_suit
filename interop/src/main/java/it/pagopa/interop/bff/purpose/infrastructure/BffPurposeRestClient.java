@@ -136,4 +136,68 @@ public class BffPurposeRestClient extends RestClient {
                 RiskAnalysisFormConfig.class
         );
     }
+
+    public TestChain<Void> assignRiskAnalysisReviewers(
+            @Nonnull UUID purposeId,
+            @Nonnull RiskAnalysisAssignmentSeed payload
+    ) {
+        return execute(
+                () -> purposesApi.assignRiskAnalysisReviewer()
+                        .purposeIdPath(purposeId)
+                        .body(payload)
+                        .execute(Function.identity()),
+                Void.class
+        );
+    }
+
+    public TestChain<Void> submitRiskAnalysis(
+            @Nonnull UUID purposeId,
+            @Nonnull RiskAnalysisSubmissionSeed payload
+    ) {
+        return execute(
+                () -> purposesApi.submitRiskAnalysis()
+                        .purposeIdPath(purposeId)
+                        .body(payload)
+                        .execute(Function.identity()),
+                Void.class
+        );
+    }
+
+    public TestChain<Void> saveRiskAnalysisForm(
+            @Nonnull UUID purposeId, @Nonnull RiskAnalysisFormSeed payload
+    ) {
+        return execute(
+                () -> purposesApi.editRiskAnalysisForm()
+                        .purposeIdPath(purposeId)
+                        .body(payload)
+                        .execute(Function.identity()),
+                Void.class
+        );
+    }
+
+    public TestChain<Void> signRiskAnalysis(
+            @Nonnull UUID purposeId,
+            @Nonnull RiskAnalysisSignSeed payload
+    ) {
+        return execute(
+                () -> purposesApi.signRiskAnalysis()
+                        .purposeIdPath(purposeId)
+                        .body(payload)
+                        .execute(Function.identity()),
+                Void.class
+        );
+    }
+
+    public TestChain<Void> rejectRiskAnalysis(
+            @Nonnull UUID purposeId,
+            @Nonnull RiskAnalysisRejectionSeed payload
+    ) {
+        return execute(
+                () -> purposesApi.rejectRiskAnalysis()
+                        .purposeIdPath(purposeId)
+                        .body(payload)
+                        .execute(Function.identity()),
+                Void.class
+        );
+    }
 }

@@ -15,11 +15,18 @@ import it.pagopa.interop.common.purpose.application.PurposeGateway;
 import it.pagopa.interop.common.purpose.domain.Purpose;
 import it.pagopa.interop.common.purpose.domain.PurposeVersionState;
 import it.pagopa.interop.generated.openapi.clients.m2m.v3.model.PurposeVersionSeed;
+import it.pagopa.interop.common.risk_analysis.domain.RiskAnalysisReviewMode;
+import it.pagopa.interop.common.risk_analysis.domain.RiskAnalysisForm;
+
+
 import it.pagopa.utils.async.PollingUtils;
 import jakarta.annotation.Nullable;
 import lombok.RequiredArgsConstructor;
 import org.jspecify.annotations.NonNull;
 import org.springframework.stereotype.Service;
+
+import java.util.List;
+import java.util.UUID;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
@@ -243,5 +250,42 @@ public class M2MPurposeGateway implements PurposeGateway {
 
     private static UnsupportedOperationException unsupportedOperation() {
         return new UnsupportedOperationException("This purpose operation is not actually supported on M2M v3");
+    }
+
+    @Override
+    public RiskAnalysisForm getRiskAnalysisForm(PurposeRef purposeRef) {
+        throw new UnsupportedOperationException("Risk-analysis form reads are not supported by M2M");
+    }
+
+    @Override
+    public void saveRiskAnalysisForm(
+            PurposeRef purposeRef, RiskAnalysisForm form
+    ) {
+        throw new UnsupportedOperationException("Risk-analysis form saves are not supported by M2M");
+    }
+
+    @Override
+    public void assignRiskAnalysisReviewers(PurposeRef purposeRef, RiskAnalysisReviewMode reviewMode, List<UUID> reviewerIds) {
+        throw unsupportedOperation();
+    }
+
+    @Override
+    public void submitRiskAnalysis(PurposeRef purposeRef) {
+        throw unsupportedOperation();
+    }
+
+    @Override
+    public void signRiskAnalysis(PurposeRef purposeRef, int metadataVersionToSign) {
+        throw unsupportedOperation();
+    }
+
+    @Override
+    public void signRiskAnalysis(PurposeRef purposeRef) {
+        throw unsupportedOperation();
+    }
+
+    @Override
+    public void rejectRiskAnalysis(PurposeRef purposeRef, String rejectionReason) {
+        throw unsupportedOperation();
     }
 }

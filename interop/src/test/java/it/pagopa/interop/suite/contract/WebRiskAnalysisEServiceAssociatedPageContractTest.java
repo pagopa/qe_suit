@@ -25,6 +25,7 @@ import it.pagopa.interop.web.infrastructure.config.WebJUnitSuitConfig;
 import lombok.RequiredArgsConstructor;
 import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.DynamicTest;
 import org.junit.jupiter.api.TestFactory;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -42,6 +43,7 @@ import java.util.stream.Stream;
 )
 @TestConstructor(autowireMode = TestConstructor.AutowireMode.ALL)
 @RequiredArgsConstructor
+@DisplayName("UI Contract Test - Risk Analysis EService Associated Page")
 public class WebRiskAnalysisEServiceAssociatedPageContractTest {
 
     private static final Tenant PRODUCER = Tenant.COMUNE_DI_MILANO;

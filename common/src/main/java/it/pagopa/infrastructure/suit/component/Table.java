@@ -25,4 +25,15 @@ public interface Table extends Component {
                 .map(TableCell::read)
                 .toList();
     }
+
+    /**
+     * Reads all cell values from the rows on the currently selected tab and page.
+     *
+     * @return table rows, each represented by its cell values
+     */
+    default List<List<String>> readCurrentRows() {
+        return tBody().rows().stream()
+                .map(row -> row.cells().stream().map(TableCell::read).toList())
+                .toList();
+    }
 }
