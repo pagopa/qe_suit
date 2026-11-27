@@ -9,6 +9,7 @@ import it.pagopa.send.common.legal_notification.application.AddRecipientGateway;
 import it.pagopa.send.common.legal_notification.application.SendNotificationGateway;
 import it.pagopa.send.common.legal_notification.application.WaitForNotificationStatusGateway;
 import it.pagopa.send.common.legal_notification.application.DeleteNotificationGateway;
+import it.pagopa.send.common.legal_notification.application.DownloadLegalFactsGateway;
 import it.pagopa.send.common.legal_notification.application.DownloadNotificationDocumentGateway;
 import it.pagopa.send.common.legal_notification.application.FindNotificationGateway;
 import it.pagopa.send.common.legal_notification.application.ReadNotificationGateway;
@@ -46,7 +47,8 @@ import org.springframework.plugin.core.config.EnablePluginRegistries;
         ReadNotificationTimelineGateway.class,
         SearchNotificationGateway.class,
         FindNotificationGateway.class,
-        DownloadNotificationDocumentGateway.class
+        DownloadNotificationDocumentGateway.class,
+        DownloadLegalFactsGateway.class
 })
 public class LegalNotificationRoutingConfig {
 
@@ -110,6 +112,12 @@ public class LegalNotificationRoutingConfig {
     @Primary
     public DownloadNotificationDocumentGateway transparentDownloadNotificationDocumentGateway(PluginRegistry<DownloadNotificationDocumentGateway, Channel> registry) {
         return transparent(DownloadNotificationDocumentGateway.class, registry);
+    }
+
+    @Bean
+    @Primary
+    public DownloadLegalFactsGateway transparentDownloadLegalFactsGateway(PluginRegistry<DownloadLegalFactsGateway, Channel> registry) {
+        return transparent(DownloadLegalFactsGateway.class, registry);
     }
 
     /**

@@ -16,7 +16,7 @@ import java.util.Map;
 /**
  * Casi d'uso per la creazione/gestione di una notifica legale: prepararla con i dati base,
  * aggiungerle destinatari (entrambi ripetibili/richiamabili da step Cucumber separati), inviarla e
- * attendere lo stato, eliminarla, leggerla, leggerne la cronologia, cercarla, ritrovarla tra quelle della PA e scaricarne i documenti. Puro pass-through verso un gateway per
+ * attendere lo stato, eliminarla, leggerla, leggerne la cronologia, cercarla, ritrovarla tra quelle della PA e scaricarne i documenti e le attestazioni. Puro pass-through verso un gateway per
  * ciascuna operazione: non ha logica né stato propri, sono le implementazioni dei gateway (una per
  * canale) a sapere come procedere.
  */
@@ -34,6 +34,7 @@ public class LegalNotificationUseCase {
     private final SearchNotificationGateway searchNotificationGateway;
     private final FindNotificationGateway findNotificationGateway;
     private final DownloadNotificationDocumentGateway downloadNotificationDocumentGateway;
+    private final DownloadLegalFactsGateway downloadLegalFactsGateway;
 
     public void prepareNotification(LegalNotificationCreationCommand command) {
         prepareNotificationGateway.prepareNotification(command);
@@ -73,5 +74,9 @@ public class LegalNotificationUseCase {
 
     public String downloadDocument(String iun, NotificationDocumentType type) {
         return downloadNotificationDocumentGateway.downloadDocument(iun, type);
+    }
+
+    public List<String> downloadLegalFacts(String iun) {
+        return downloadLegalFactsGateway.downloadLegalFacts(iun);
     }
 }

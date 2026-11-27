@@ -57,6 +57,12 @@ public class LegalNotificationConsultationSteps {
         downloadedFiles.add(legalNotificationUseCase.downloadDocument(notification.getIun(), type));
     }
 
+    @When("la PA {user} scarica le attestazioni opponibili a terzi {legalNotification}")
+    public void downloadLegalFacts(User sender, LegalNotificationDomain notification) {
+        currentUserSession.setUser(sender);
+        downloadedFiles.addAll(legalNotificationUseCase.downloadLegalFacts(notification.getIun()));
+    }
+
     @Then("{legalNotification} compare tra i risultati della ricerca con il suo stato attuale")
     public void assertNotificationFound(LegalNotificationDomain notification) {
         Assertions.assertThat(foundNotification.getIun())
@@ -96,8 +102,9 @@ public class LegalNotificationConsultationSteps {
                 .isNotNull();
     }
 
-    /** I documenti scaricati nello scenario sono file PDF. */
+    /** I documenti (o le attestazioni) scaricati nello scenario sono file PDF. */
     @Then("i documenti vengono scaricati")
+    @Then("le attestazioni vengono scaricate")
     public void assertDocumentsDownloaded() {
         Assertions.assertThat(downloadedFiles)
                 .as("File dei documenti scaricati")

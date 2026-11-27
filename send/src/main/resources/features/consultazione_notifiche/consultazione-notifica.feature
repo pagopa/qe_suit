@@ -30,9 +30,9 @@ Feature: Consultazione delle notifiche inviate e download dei documenti probator
     And la PA Comune_1 scarica l'avviso di avvenuta ricezione della notifica
     Then i documenti vengono scaricati
 
-  Scenario: [CONSULTAZIONE_NOTIFICA_DOWNLOAD_ATTESTAZIONI] Download delle attestazioni opponibili a terzi di una notifica consegnata
+  Scenario: [CONSULTAZIONE_NOTIFICA_DOWNLOAD_ATTESTAZIONI] Download delle attestazioni opponibili a terzi di una notifica perfezionata
     Given una notifica monodestinatario creata dalla PA Comune_1 con destinatario di tipo PG con domicilio digitale
-    And la notifica raggiunge lo stato "Consegnata"
+    And la notifica raggiunge lo stato "Perfezionata per decorrenza termini"
     When la PA Comune_1 scarica le attestazioni opponibili a terzi della notifica
     Then le attestazioni vengono scaricate
 
