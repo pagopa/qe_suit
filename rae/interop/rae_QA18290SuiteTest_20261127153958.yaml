@@ -1,7 +1,7 @@
 rae:
   release: '[INTEROP-2.25.0-RC-1]'
   scope: PROMO
-  issue_jira: 'https://pagopa.atlassian.net/jira/browse/QA-18261'
+  issue_jira: 'https://pagopa.atlassian.net/browse/QA-18290'
   data_ora: '2026-11-27T15:35:52Z'
   durata: 00:03:37
   numero_ko: 0
