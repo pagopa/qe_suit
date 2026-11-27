@@ -2,6 +2,7 @@ package it.pagopa.send.web.notification_details.infrastructure.page.timeline;
 
 import it.frontend.e2e.framework.annotation.selector.XPath;
 import it.frontend.e2e.framework.core.capability.core.Clickable;
+import it.frontend.e2e.framework.core.capability.core.Gettable.FindPolicy;
 import it.frontend.e2e.framework.web.capability.core.Readable;
 import it.frontend.e2e.framework.web.domain.Component;
 
@@ -20,11 +21,27 @@ public interface TimelineItemComponent extends Component {
     @XPath(".//div[contains(@class,'MuiStack-root')][1]/span[last()]")
     Readable<String> title();
 
+    // "Espandi tutti" / "Comprimi tutti": nel titolo di "Invio in corso" quando la card ha più gruppi
+    @XPath(".//button[@data-testid='timeline-expand-all']")
+    Component expandAllButton();
+
     @XPath(".//p[@data-testid='timeline-group-recipient']")
     List<Readable<String>> recipients();
 
     @XPath(".//div[@data-testid='timeline-group']")
     List<TimelineGroupComponent> groups();
+
+    /**
+     * Etichetta dello stato della card: il titolo senza il testo del pulsante "Espandi tutti", che nel portale sta
+     * nello stesso elemento del titolo.
+     */
+    default String statusLabel() {
+        String title = title().read();
+        return expandAllButton().get(FindPolicy.PRESENT)
+                .map(button -> title.replace(button.getText(), ""))
+                .orElse(title)
+                .strip();
+    }
 
     /**
      * Presenza di una frase limitata al testo di questa sola card, non dell'intera pagina.

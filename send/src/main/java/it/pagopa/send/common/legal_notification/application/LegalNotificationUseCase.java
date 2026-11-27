@@ -4,6 +4,7 @@ import it.pagopa.send.common.legal_notification.domain.LegalNotificationCreation
 import it.pagopa.send.common.user.domain.User;
 import it.pagopa.send.common.legal_notification.domain.LegalNotificationDomain;
 import it.pagopa.send.common.legal_notification.domain.NotificationStatus;
+import it.pagopa.send.common.legal_notification.domain.NotificationTimeline;
 import it.pagopa.send.common.legal_notification.domain.RecipientSpec;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -14,7 +15,7 @@ import java.util.Map;
 /**
  * Casi d'uso per la creazione/gestione di una notifica legale: prepararla con i dati base,
  * aggiungerle destinatari (entrambi ripetibili/richiamabili da step Cucumber separati), inviarla e
- * attendere lo stato, eliminarla, leggerla, cercarla. Puro pass-through verso un gateway per
+ * attendere lo stato, eliminarla, leggerla, leggerne la cronologia, cercarla e ritrovarla tra quelle della PA. Puro pass-through verso un gateway per
  * ciascuna operazione: non ha logica né stato propri, sono le implementazioni dei gateway (una per
  * canale) a sapere come procedere.
  */
@@ -28,7 +29,9 @@ public class LegalNotificationUseCase {
     private final WaitForNotificationStatusGateway waitForNotificationStatusGateway;
     private final DeleteNotificationGateway deleteNotificationGateway;
     private final ReadNotificationGateway readNotificationGateway;
+    private final ReadNotificationTimelineGateway readNotificationTimelineGateway;
     private final SearchNotificationGateway searchNotificationGateway;
+    private final FindNotificationGateway findNotificationGateway;
 
     public void prepareNotification(LegalNotificationCreationCommand command) {
         prepareNotificationGateway.prepareNotification(command);
@@ -54,7 +57,15 @@ public class LegalNotificationUseCase {
         return readNotificationGateway.readNotification(iun);
     }
 
+    public NotificationTimeline readNotificationTimeline(String iun) {
+        return readNotificationTimelineGateway.readNotificationTimeline(iun);
+    }
+
     public List<LegalNotificationDomain> searchNotification(Map<String, String> filters) {
         return searchNotificationGateway.searchNotification(filters);
+    }
+
+    public LegalNotificationDomain findNotification(String iun, Map<String, String> filters) {
+        return findNotificationGateway.findNotification(iun, filters);
     }
 }

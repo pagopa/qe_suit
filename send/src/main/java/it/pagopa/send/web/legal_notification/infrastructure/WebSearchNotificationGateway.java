@@ -13,9 +13,13 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
 import java.time.Duration;
+import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
+import java.util.Set;
 
 /**
  * Cerca tra le notifiche della PA con i filtri del portale ({@code iun}, {@code startDate}, ...): una notifica per
@@ -31,6 +35,9 @@ public class WebSearchNotificationGateway implements SearchNotificationGateway {
     private static final String STATUS_HEADER = "Stato";
     private static final Duration RESULTS_TIMEOUT = Duration.ofSeconds(20);
     private static final Duration RESULTS_INTERVAL = Duration.ofSeconds(1);
+    // le date dei filtri arrivano in ISO (aaaa-mm-gg), il portale le vuole come gg/mm/aaaa
+    private static final Set<String> DATE_FILTERS = Set.of("startDate", "endDate");
+    private static final DateTimeFormatter PORTAL_DATE_FORMAT = DateTimeFormatter.ofPattern("dd/MM/yyyy");
 
     private final DashboardPage dashboardPage;
 
@@ -44,7 +51,7 @@ public class WebSearchNotificationGateway implements SearchNotificationGateway {
         }
         // "Filtra" senza filtri è disabilitato
         if (!filters.isEmpty()) {
-            dashboardPage.searchNotification(filters);
+            dashboardPage.searchNotification(toPortalFilters(filters));
             // ricerca senza risultati
             if (!hasNotifications(dashboardPage)) {
                 return List.of();
@@ -85,6 +92,13 @@ public class WebSearchNotificationGateway implements SearchNotificationGateway {
                         RESULTS_INTERVAL,
                         "Né la tabella né lo stato di lista vuota compaiono tra le notifiche della PA")
                 .orElseThrow();
+    }
+
+    private static Map<String, String> toPortalFilters(Map<String, String> filters) {
+        Map<String, String> portalFilters = new LinkedHashMap<>();
+        filters.forEach((key, value) -> portalFilters.put(key,
+                DATE_FILTERS.contains(key) ? LocalDate.parse(value).format(PORTAL_DATE_FORMAT) : value));
+        return portalFilters;
     }
 
     private static int column(List<String> headers, String header) {
