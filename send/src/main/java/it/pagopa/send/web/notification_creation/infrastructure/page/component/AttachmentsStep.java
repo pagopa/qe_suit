@@ -9,13 +9,18 @@ import it.pagopa.send.web.notification_creation.application.NotificationData;
 /**
  * Passo del wizard "Invia una nuova notifica" usato dagli step Cucumber ({@code CreateNotificationPage}).
  */
-public interface DocumentazioneStep extends Component {
+public interface AttachmentsStep extends Component {
 
     @XPath(".//input[@id='documents.0.name']")
     Writable<String> documentTitle();
 
     @XPath(".//*[@id=\"file-input\"]")
     Uploadable attachment();
+
+    default void fillFields(String title, String absoluteFilePath) {
+        documentTitle().write(title);
+        attachment().upload(absoluteFilePath);
+    }
 
     default void fillFields(NotificationData data) {
         documentTitle().write(data.getDocumentTitle());

@@ -352,4 +352,24 @@ public class PurposeSteps {
 
         assertThat(actualState).isEqualTo(expectedState);
     }
+
+    @When("{tenant} tenta di creare una finalità a partire dal proprio template associando l'e-service creato")
+    public void tryCreatePurposeFromTemplateWithReceiveEService(Tenant tenant) {
+        authSession.set(tenant);
+        PurposeTemplate purposeTemplate = entityStore.getLastOrThrow(PurposeTemplate.class);
+        EService eService = entityStore.getLastOrThrow(EService.class);
+        purposeUseCase.tryCreatePurposeFromTemplate(purposeTemplate, eService);
+    }
+
+    @When("{tenant} tenta di creare una finalità associando l'e-service creato")
+    public void tryCreatePurposeWithReceiveEService(Tenant tenant) {
+        authSession.set(tenant);
+        EService eService = entityStore.getLastOrThrow(EService.class);
+        purposeUseCase.tryCreatePurpose(eService);
+    }
+
+    @Then("la creazione della finalità è negata")
+    public void assertPurposeCreationDenied() {
+        purposeUseCase.shouldFailLinkToReceiveEService();
+    }
 }
