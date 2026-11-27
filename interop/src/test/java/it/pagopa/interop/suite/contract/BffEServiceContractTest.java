@@ -7,6 +7,7 @@ import it.pagopa.infrastructure.fuzzing.FuzzScenario;
 import it.pagopa.infrastructure.contract.http.TargetExpression;
 import it.pagopa.interop.TestBootApp;
 import it.pagopa.interop.common.infrastructure.config.JunitEnvironmentProfiles;
+import it.pagopa.interop.bff.eservice.infrastructure.BffCompactCatalogEServicesQueryParams;
 import it.pagopa.interop.bff.eservice.infrastructure.BffEServiceRequestFactory;
 import it.pagopa.interop.bff.infrastructure.config.BffApiContractConfig;
 import it.pagopa.interop.bff.infrastructure.config.BffRestApiClientConfig;
@@ -317,6 +318,55 @@ public class BffEServiceContractTest {
 
     private static Consumer<Response> expectValidationError() {
         return response -> response.then().statusCode(is(400));
+    }
+
+    @Tag("private-compact-catalog")
+    @TestFactory
+    Stream<DynamicTest> getCompactCatalogEServices() {
+        return httpContractValidator
+                .as(Tenant.COMUNE_DI_MILANO, UserRole.ADMIN)
+                .apiCall(() -> apiClient.eservices().getCompactCatalogEServices())
+                .queryParams(requestFactory::compactCatalogRequest)
+                .targets(
+                        FuzzScenario.REMOVED,
+                        expectSuccess(),
+                        List.of(
+                                BffCompactCatalogEServicesQueryParams::getQ,
+                                BffCompactCatalogEServicesQueryParams::getMode,
+                                BffCompactCatalogEServicesQueryParams::getStates,
+                                BffCompactCatalogEServicesQueryParams::getAgreementStates,
+                                BffCompactCatalogEServicesQueryParams::getPersonalData,
+                                BffCompactCatalogEServicesQueryParams::getIsConsumerDelegable
+                        )
+                )
+                .targets(
+                        List.of(
+                                FuzzScenario.REPLACED_WITH_NULL,
+                                FuzzScenario.REPLACED_WITH_EMPTY_STRING,
+                                FuzzScenario.REPLACED_WITH_BLANK_STRING,
+                                FuzzScenario.REPLACED_WITH_WRONG_TYPE_NUMBER
+                        ),
+                        expectSuccess(),
+                        List.of(BffCompactCatalogEServicesQueryParams::getQ)
+                )
+                .targets(
+                        FuzzScenario.REPLACED_WITH_EMPTY_STRING,
+                        expectSuccess(),
+                        List.of(
+                            p -> p.getStates().get(0),
+                            p -> p.getAgreementStates().get(0))
+                )
+                .targets(
+                        FuzzScenario.REPLACED_WITH_LONG_STRING,
+                        response -> response.then().statusCode(is(403)),
+                        List.of(BffCompactCatalogEServicesQueryParams::getQ)
+                )
+                .targets(
+                        List.of(FuzzScenario.REPLACED_WITH_ZERO, FuzzScenario.REPLACED_WITH_MAX_VALUE),
+                        expectSuccess(),
+                        List.of(BffCompactCatalogEServicesQueryParams::getOffset)
+                )
+                .tests();
     }
 
     private UUID createEServiceId(EServiceDescriptorState descriptorState) {

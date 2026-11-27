@@ -85,6 +85,19 @@ public class BffEServiceRequestFactory implements EServiceRequestFactory {
         return payload;
     }
 
+    public BffCompactCatalogEServicesQueryParams compactCatalogRequest() {
+        BffCompactCatalogEServicesQueryParams queryParams = new BffCompactCatalogEServicesQueryParams();
+        queryParams.setOffset(0);
+        queryParams.setLimit(200);
+        queryParams.setQ("catalogo");
+        queryParams.setStates(new ArrayList<>(List.of(EServiceDescriptorState.PUBLISHED)));
+        queryParams.setAgreementStates(new ArrayList<>(List.of(AgreementState.ACTIVE)));
+        queryParams.setMode(EServiceMode.DELIVER);
+        queryParams.setIsConsumerDelegable(false);
+        queryParams.setPersonalData(PersonalDataFilter.TRUE);
+        return queryParams;
+    }
+
     @Override
     public EServiceCreationCommand defaultCreationEServiceCommand() {
         return BffEServiceCreationCommand.from(defaultEServiceSeed());
