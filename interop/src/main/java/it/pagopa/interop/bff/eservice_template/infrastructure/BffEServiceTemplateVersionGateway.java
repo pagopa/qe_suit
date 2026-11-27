@@ -11,10 +11,7 @@ import it.pagopa.interop.common.eservice_template.domain.EServiceTemplate;
 import it.pagopa.interop.common.eservice_template.domain.EServiceTemplateInterface;
 import it.pagopa.interop.common.eservice_template.domain.EServiceTemplateVersion;
 import it.pagopa.interop.common.eservice_template.domain.EServiceTemplateVersionState;
-import it.pagopa.interop.common.kernel.domain.Channel;
-import it.pagopa.interop.common.kernel.domain.DocumentKind;
-import it.pagopa.interop.common.kernel.domain.EServiceTemplateRef;
-import it.pagopa.interop.common.kernel.domain.EServiceTemplateVersionRef;
+import it.pagopa.interop.common.kernel.domain.*;
 import it.pagopa.utils.FileUtils;
 import it.pagopa.utils.async.PollingUtils;
 import lombok.RequiredArgsConstructor;
@@ -24,6 +21,7 @@ import org.springframework.stereotype.Service;
 import java.io.File;
 import java.nio.file.Path;
 import java.util.List;
+import java.util.Objects;
 import java.util.Optional;
 import java.util.UUID;
 
@@ -91,8 +89,10 @@ public class BffEServiceTemplateVersionGateway implements EServiceTemplateVersio
     @Override
     public EServiceTemplateVersion uploadInterface(EServiceTemplateRef templateRef, EServiceTemplateVersionRef versionRef, String fixturePath) {
         File document = FileUtils.loadClasspathResourceAsTempFile(fixturePath);
-        String prettyName = Path.of(fixturePath).getFileName().toString();
-
+        EServiceTemplate eServiceTemplate = entityStore.getById(templateRef.id(), EServiceTemplate.class).orElse(null);
+        Tenant producer = Tenant.fromOrganizationId(Objects.requireNonNull(eServiceTemplate).getCreatorId());
+        String lastVersion = eServiceTemplate.getLastDraftVersion().getVersion();
+        String prettyName = "Specifica API_" + Objects.requireNonNull(eServiceTemplate).getName() + "_" + producer.getName() +"_v" + lastVersion;
         var created = restClient.createEServiceTemplateDocument(
                         templateRef.id(), versionRef.versionId(), DocumentKind.INTERFACE.name(), prettyName, document
                 )

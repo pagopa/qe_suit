@@ -24,11 +24,10 @@ public interface EServiceTemplateGeneralInfoSection extends Component {
                 "normalize-space()='Riceve dati personali']/ancestor::div[1]/following-sibling::div//*[normalize-space()][1]")
     Label personalDataValue();
 
-    @XPath(".//*[self::h3 or self::h4 or self::p][normalize-space()='Nome del template di e-service']")
+    @XPath(".//*[self::h3 or self::h4 or self::p][normalize-space()='Nome del template']")
     Label nameHeading();
 
-    @XPath(".//*[(self::section or self::div) and contains(@class, 'MuiPaper-root') and .//*[normalize-space()='Nome del template di e-service']]//p")
-//    @XPath(".//*[self::h3 or self::h4 or self::p][normalize-space()='Nome del template di e-service']/ancestor::div[1]/following-sibling::div[1]")
+    @XPath(".//div[normalize-space()='Nome del template']/parent::div/div[2]/p")
     Label nameValue();
 
     @XPath(".//*[self::h3 or self::h4 or self::p][normalize-space()='Nome del template di e-service']/ancestor::div[2]//button[normalize-space()='Modifica']")
@@ -37,20 +36,19 @@ public interface EServiceTemplateGeneralInfoSection extends Component {
     @XPath(".//*[self::h3 or self::h4 or self::p][normalize-space()='A chi è rivolto il template']")
     Label intendedTargetHeading();
 
-    @XPath(".//*[(self::section or self::div) and contains(@class, 'MuiPaper-root') and .//*[normalize-space()='A chi è rivolto il template']]//p")
-//    @XPath(".//*[self::h3 or self::h4 or self::p][normalize-space()='A chi è rivolto il template']/ancestor::div[1]/following-sibling::div[1]")
+    @XPath(".//div[normalize-space()='A chi è rivolto il template']/parent::div/div[2]/p")
     Label intendedTargetValue();
 
     @XPath(".//*[self::h3 or self::h4 or self::p][normalize-space()='A chi è rivolto il template']/ancestor::div[2]//button[normalize-space()='Modifica']")
     Button editIntendedTargetButton();
 
-    @XPath(".//*[self::h3 or self::h4 or self::p][normalize-space()='Descrizione dell’e-service']")
+    @XPath(".//*[self::h3 or self::h4 or self::p][normalize-space()='Descrizione del template']")
     Label descriptionHeading();
 
-    @XPath(".//*[(self::section or self::div) and contains(@class, 'MuiPaper-root') and .//*[normalize-space()='Descrizione dell’e-service']]//p")
+    @XPath(".//div[normalize-space()='Descrizione del template']/parent::div/div[2]/p")
     Label descriptionValue();
 
-    @XPath(".//*[self::h3 or self::h4 or self::p][normalize-space()='Descrizione dell’e-service']/ancestor::div[2]//button[normalize-space()='Modifica']")
+    @XPath(".//*[self::h3 or self::h4 or self::p][normalize-space()='Descrizione del template']/ancestor::div[2]//button[normalize-space()='Modifica']")
     Button editDescriptionButton();
 
     @XPath(".//*[self::h3 or self::h4 or self::p][normalize-space()='Descrizione della versione']")
