@@ -146,6 +146,10 @@ gpd:
 external-registries:
   api:
     base-url: https://api.dev.notifichedigitali.it
+  # payment info e checkout (pn-payment-info-external-v1.yaml): non esposti su API Gateway dal 2024-12,
+  # si raggiungono sull'ALB interno con il tunnel SSM (porta 8886)
+  payment:
+    base-url: ${pn.external-registries.payment.base-url:http://localhost:8886}
 
 # ============================================================================
 # Pn Delivery B2B API Configuration (lettura notifiche via SenderReadB2BApi)

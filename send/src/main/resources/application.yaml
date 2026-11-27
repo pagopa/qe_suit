@@ -103,3 +103,7 @@ contract-report:
       label: WEB
       class-prefix: Web
       target-type: TEST_FACTORY
+    payment:
+      label: PAYMENT
+      class-prefix: Payment
+      target-type: TEST_FACTORY

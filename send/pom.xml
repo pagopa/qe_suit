@@ -612,6 +612,41 @@
                         </configuration>
                     </execution>
 
+                    <!-- Pn External Registries API (payment info e checkout pagoPA, esposte su webapi) -->
+                    <execution>
+                        <id>generate-external-registries-payment-client</id>
+                        <goals>
+                            <goal>generate</goal>
+                        </goals>
+                        <phase>process-resources</phase>
+                        <configuration>
+                            <typeMappings>
+                                <typeMapping>OffsetDateTime=java.lang.String</typeMapping>
+                            </typeMappings>
+                            <inputSpec>https://raw.githubusercontent.com/pagopa/pn-external-registries/f6e22ad6f70e5eddb2f83091a0fbac0b5f917cc5/docs/openapi/pn-payment-info-external-v1.yaml</inputSpec>
+                            <generatorName>java</generatorName>
+                            <library>rest-assured</library>
+                            <generateApiTests>false</generateApiTests>
+                            <generateModelTests>false</generateModelTests>
+                            <skipValidateSpec>true</skipValidateSpec>
+                            <configOptions>
+                                <apiPackage>it.pagopa.send.generated.openapi.clients.externalregistries.payment.api</apiPackage>
+                                <modelPackage>it.pagopa.send.generated.openapi.clients.externalregistries.payment.model</modelPackage>
+                                <dateLibrary>java8</dateLibrary>
+                                <annotationLibrary>none</annotationLibrary>
+                                <documentationProvider>source</documentationProvider>
+                                <openApiNullable>false</openApiNullable>
+                                <useAbstractionForFiles>true</useAbstractionForFiles>
+                                <useBeanValidation>false</useBeanValidation>
+                                <serializableModel>true</serializableModel>
+                                <serializationLibrary>jackson</serializationLibrary>
+                                <additionalModelTypeAnnotations>
+                                    @com.fasterxml.jackson.annotation.JsonInclude(com.fasterxml.jackson.annotation.JsonInclude.Include.NON_NULL)
+                                </additionalModelTypeAnnotations>
+                            </configOptions>
+                        </configuration>
+                    </execution>
+
                     <!-- Pn Zendesk Auth API (richieste di supporto, platea PF) -->
                     <execution>
                         <id>generate-zendesk-auth-client</id>
