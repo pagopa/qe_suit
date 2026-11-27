@@ -21,6 +21,10 @@ public interface TimelineItemComponent extends Component {
     @XPath(".//div[contains(@class,'MuiStack-root')][1]/span[last()]")
     Readable<String> title();
 
+    // data da cui lo stato è attivo, esclusa quella degli eventi dei gruppi; "Invio in corso" non la mostra
+    @XPath(".//*[@data-testid='dateItem'][not(ancestor::*[@data-testid='timeline-group'])]")
+    Component statusDate();
+
     // "Espandi tutti" / "Comprimi tutti": nel titolo di "Invio in corso" quando la card ha più gruppi
     @XPath(".//button[@data-testid='timeline-expand-all']")
     Component expandAllButton();

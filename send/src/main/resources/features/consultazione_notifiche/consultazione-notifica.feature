@@ -16,11 +16,13 @@ Feature: Consultazione delle notifiche inviate e download dei documenti probator
       | IUN           |
       | data di invio |
 
-  Scenario: [CONSULTAZIONE_NOTIFICA_PERFEZIONAMENTO] Una notifica giunta a conclusione riporta le date di perfezionamento di tutti i destinatari
+  # Il portale della PA mostra una sola data di perfezionamento per l'intera notifica, non una per destinatario:
+  # con più destinatari la notifica risulta perfezionata quando lo è per tutti, ed è questa la data verificata.
+  Scenario: [CONSULTAZIONE_NOTIFICA_PERFEZIONAMENTO] Una notifica giunta a conclusione riporta la data di perfezionamento
     Given una notifica multidestinatario mista creata dalla PA Comune_1
     And la notifica raggiunge lo stato "Perfezionata per decorrenza termini"
     When la PA Comune_1 consulta la cronologia della notifica
-    Then per ogni destinatario è riportata la data di perfezionamento
+    Then la cronologia riporta la data di perfezionamento della notifica
 
   Scenario: [CONSULTAZIONE_NOTIFICA_DOWNLOAD_ATTI] Download dell'atto notificato e dell'avviso di avvenuta ricezione
     Given una notifica monodestinatario creata dalla PA Comune_1 con destinatario di tipo PF

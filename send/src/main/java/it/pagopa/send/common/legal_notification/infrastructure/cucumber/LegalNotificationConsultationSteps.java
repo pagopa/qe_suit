@@ -5,6 +5,7 @@ import io.cucumber.java.en.When;
 import it.pagopa.send.common.kernel.context.CurrentUserSession;
 import it.pagopa.send.common.legal_notification.application.LegalNotificationUseCase;
 import it.pagopa.send.common.legal_notification.domain.LegalNotificationDomain;
+import it.pagopa.send.common.legal_notification.domain.NotificationStatus;
 import it.pagopa.send.common.legal_notification.domain.NotificationTimeline;
 import it.pagopa.send.common.user.domain.User;
 import lombok.RequiredArgsConstructor;
@@ -15,8 +16,8 @@ import java.util.Map;
 
 /**
  * Consultazione, da parte della PA mittente, dell'ultima notifica creata nello scenario: ricerca tra le notifiche
- * inviate e cronologia degli stati. La notifica trovata nel When resta nell'istanza degli step, che Cucumber crea per
- * ogni scenario.
+ * inviate e cronologia degli stati. La notifica trovata e la cronologia letta nel When restano nell'istanza degli step,
+ * che Cucumber crea per ogni scenario.
  */
 @RequiredArgsConstructor
 public class LegalNotificationConsultationSteps {
@@ -25,6 +26,7 @@ public class LegalNotificationConsultationSteps {
     private final CurrentUserSession currentUserSession;
 
     private LegalNotificationDomain foundNotification;
+    private NotificationTimeline timeline;
 
     @When("la PA {user} cerca {legalNotification} per IUN")
     public void searchByIun(User sender, LegalNotificationDomain notification) {
@@ -36,6 +38,12 @@ public class LegalNotificationConsultationSteps {
     public void searchBySentDate(User sender, LegalNotificationDomain notification) {
         String today = LocalDate.now().toString();
         find(sender, notification, Map.of("startDate", today, "endDate", today));
+    }
+
+    @When("la PA {user} consulta la cronologia {legalNotification}")
+    public void readTimeline(User sender, LegalNotificationDomain notification) {
+        currentUserSession.setUser(sender);
+        timeline = legalNotificationUseCase.readNotificationTimeline(notification.getIun());
     }
 
     @Then("{legalNotification} compare tra i risultati della ricerca con il suo stato attuale")
@@ -57,10 +65,24 @@ public class LegalNotificationConsultationSteps {
     @Then("la cronologia della notifica è coerente con lo stato attuale")
     public void assertTimelineMatchesCurrentStatus() {
         // cronologia dal dettaglio della notifica, da confrontare con lo stato letto nella ricerca
-        NotificationTimeline timeline = legalNotificationUseCase.readNotificationTimeline(foundNotification.getIun());
-        Assertions.assertThat(timeline.statuses())
-                .as("Stati della cronologia della notifica %s rispetto alla ricerca", timeline.iun())
+        NotificationTimeline detailTimeline = legalNotificationUseCase.readNotificationTimeline(foundNotification.getIun());
+        Assertions.assertThat(detailTimeline.statuses())
+                .as("Stati della cronologia della notifica %s rispetto alla ricerca", detailTimeline.iun())
                 .contains(foundNotification.getStatus());
+    }
+
+    /**
+     * La data da cui la notifica è perfezionata è riportata. È una sola per l'intera notifica, anche con più
+     * destinatari: il portale della PA non mostra il perfezionamento di ciascun destinatario.
+     */
+    @Then("la cronologia riporta la data di perfezionamento della notifica")
+    public void assertRefinementDate() {
+        NotificationTimeline.StatusChange refinement = timeline.find(NotificationStatus.EFFECTIVE_DATE)
+                .orElseThrow(() -> new AssertionError("Stato di perfezionamento assente nella cronologia della notifica "
+                        + timeline.iun() + ": " + timeline.statuses()));
+        Assertions.assertThat(refinement.activeFrom())
+                .as("Data di perfezionamento della notifica %s", timeline.iun())
+                .isNotNull();
     }
 
     // una notifica appena accettata compare tra quelle della PA con qualche secondo di ritardo: la ricerca si ripete
