@@ -6,6 +6,6 @@ import it.pagopa.infrastructure.suit.component.Button;
 
 @XPath(".//*[contains(@class, 'MuiTabPanel')]")
 public interface AttributeTabPanel extends Component {
-    @XPath(".//*[contains(@class, 'MuiButton') and contains(text(), 'Crea requisito')]")      
+    @XPath(".//*[contains(@class, 'MuiButton') and contains(normalize-space(.), 'Crea requisito')]")
     Button createRequirementButton();
 }
