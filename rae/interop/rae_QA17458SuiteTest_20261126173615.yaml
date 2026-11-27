@@ -31,7 +31,7 @@ ko:
     	at it.pagopa.interop.common.purpose_template.application.PurposeTemplateUseCase.shouldFailLinkToReceiveEService(PurposeTemplateUseCase.java:26)
     	at it.pagopa.interop.common.purpose_template.infrastructure.cucumber.PurposeTemplateSteps.assertEServiceTemplateLinkDenied(PurposeTemplateSteps.java:298)
     	at ✽.l'associazione del template e-service al template di finalità è negata(classpath:feature-expanded/purpose-template/purpose-template-eservice.feature:32)
-  procedure: >-
+  procedure: |
     Dal report Cucumber è stato verificato che tutti gli step di preparazione
     fossero stati superati e che il fallimento riguardasse soltanto l'assert
     finale. Nei log HTTP è stato poi verificato che il template e-service fosse
@@ -39,7 +39,7 @@ ko:
     corretta. Dall'analisi della risposta e della successiva lettura delle risorse
     associate è emerso che il sistema aveva accettato e registrato l'associazione,
     quindi il KO è dovuto a un comportamento errato del prodotto e non della suite.
-  result: >-
+  result: |
     L'API ha restituito HTTP 200 anziché HTTP 400 e ha registrato l'associazione
     tra il template e-service in ricezione e il template di finalità, che avrebbe
     dovuto essere negata.
