@@ -5,6 +5,7 @@ Feature: Associazione finalità a e-service in ricezione
   Voglio che il sistema impedisca l'associazione di un e-service in modalità di ricezione ad una finalità
   Affinché siano rispettati i vincoli di compatibilità tra la modalità del servizio e la finalità.
 
+  # Ticket aperto https://pagopa.atlassian.net/jira/browse/PIN-11715
   # PST: https://pagopa.atlassian.net/wiki/x/IQDwzQ
   # CASO DI TEST 1.4: Verificare che un e-service in modalità di ricezione non possa essere associato a una propria finalità
   @work-item:QA-17458
