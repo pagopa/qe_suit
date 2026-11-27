@@ -70,7 +70,7 @@ Feature: Messaggi di errore durante la gestione delle finalità e la valutazione
     Then il messaggio di errore corrisponde al caso "PURPOSE_HYPERLINK_DETECTION_ERROR__POST_PURPOSES_PURPOSE_ID"
 
   # Endpoint: POST /purposes/:purposeId/clone
-  # NON RIPRODUCIBILE IN MODO DETERMINISTICO: il nome del clone include il timestamp al secondo.
+  # NON RIPRODUCIBILE: il nome del clone include il timestamp al secondo.
   # Due clonazioni in secondi diversi generano nomi distinti, senza il conflitto richiesto.
   Scenario: [ERROR_022] - Impossibilità di duplicare una finalità quando il nome derivato è già in uso
   Data una finalità del fruitore e un'altra finalità dello stesso fruitore per lo stesso e-service con il nome che deriverebbe dalla duplicazione

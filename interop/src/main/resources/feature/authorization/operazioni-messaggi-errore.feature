@@ -30,7 +30,6 @@ Feature: Messaggi di errore durante la gestione dei client, dei portachiavi e de
     When l'utente tenta di associare il portachiavi erogatore all'e-service "ES-1"
     Then il messaggio di errore corrisponde al caso "AUTHORIZATION_TENANT_NOT_ALLOWED_ON_ESERVICE__POST_PRODUCER_KEYCHAINS_PRODUCER_KEYCHAIN_ID_ESERVICES"
 
-  #DA FARE MANUALE
   # Endpoint: POST /producerKeychains/:producerKeychainId/eservices
   @err_msg_given_exec_2
   Scenario: [ERROR_204] - Impossibilità di associare un portachiavi a un e-service archiviato

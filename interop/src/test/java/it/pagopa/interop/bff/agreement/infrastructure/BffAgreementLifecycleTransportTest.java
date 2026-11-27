@@ -3,6 +3,7 @@ package it.pagopa.interop.bff.agreement.infrastructure;
 import it.pagopa.application.context.EntityStore;
 import it.pagopa.application.context.LastApiResponseStore;
 import it.pagopa.infrastructure.context.InMemoryEntityStore;
+import it.pagopa.infrastructure.response.ApiResponse;
 import it.pagopa.infrastructure.template.action.TestChainFactory;
 import it.pagopa.interop.common.agreement.domain.Agreement;
 import it.pagopa.interop.common.agreement.domain.AgreementState;
@@ -14,6 +15,9 @@ import io.restassured.builder.ResponseBuilder;
 import io.restassured.http.ContentType;
 import io.restassured.response.Response;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.NullSource;
+import org.junit.jupiter.params.provider.ValueSource;
 
 import java.util.UUID;
 import java.util.Set;
@@ -27,13 +31,15 @@ import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.*;
 
 class BffAgreementLifecycleTransportTest {
-    @Test
-    void suspendsUsingGeneratedOperationAndPassesOptionalDelegationReference() {
+    @ParameterizedTest
+    @NullSource
+    @ValueSource(strings = "3f391cae-3187-4e56-8b5e-2b4673b93daf")
+    void suspendsUsingGeneratedOperationAndPassesOptionalDelegationReference(String delegation) {
         ApiClient apiClient = mock(ApiClient.class);
         AgreementsApi api = mock(AgreementsApi.class);
         AgreementsApi.SuspendAgreementOper operation = mock(AgreementsApi.SuspendAgreementOper.class);
         UUID agreementId = UUID.randomUUID();
-        UUID delegationId = UUID.randomUUID();
+        UUID delegationId = delegation == null ? null : UUID.fromString(delegation);
         when(apiClient.agreements()).thenReturn(api);
         when(api.suspendAgreement()).thenReturn(operation);
         when(operation.agreementIdPath(agreementId)).thenReturn(operation);
@@ -50,6 +56,45 @@ class BffAgreementLifecycleTransportTest {
         assertThat(AgreementsApi.SuspendAgreementOper.REQ_METHOD.name()).isEqualTo("POST");
         assertThat(AgreementsApi.SuspendAgreementOper.REQ_URI).isEqualTo("/agreements/{agreementId}/suspend");
         verify(operation, times(1)).execute(any());
+    }
+
+    @Test
+    void attemptsReactivationOnceWithoutDelegationAndPreservesErrorResponse() {
+        ApiClient apiClient = mock(ApiClient.class);
+        AgreementsApi api = mock(AgreementsApi.class);
+        var operation = mock(AgreementsApi.UnsuspendAgreementOper.class);
+        UUID agreementId = UUID.randomUUID();
+        var responses = mock(LastApiResponseStore.class);
+        Response error = new ResponseBuilder().setStatusCode(400)
+                .setContentType(ContentType.JSON).setBody("{\"title\":\"Descriptor not in expected state\"}")
+                .build();
+        when(apiClient.agreements()).thenReturn(api);
+        when(api.unsuspendAgreement()).thenReturn(operation);
+        when(operation.agreementIdPath(agreementId)).thenReturn(operation);
+        when(operation.body(any())).thenReturn(operation);
+        when(operation.execute(any())).thenAnswer(invocation -> {
+            Function<Response, Response> handler = invocation.getArgument(0);
+            return handler.apply(error);
+        });
+        var gateway = new BffAgreementGateway(
+                new BffAgreementRestClient(new TestChainFactory(responses, mock(EntityStore.class)), apiClient),
+                mock(BffAgreementMapper.class), new BffAgreementRequestFactory(),
+                mock(BffAgreementPrerequisiteGateway.class));
+
+        gateway.attemptAgreementReactivation(Agreement.builder().id(agreementId).build());
+
+        var body = org.mockito.ArgumentCaptor.forClass(DelegationRef.class);
+        verify(operation).body(body.capture());
+        assertThat(body.getValue().getDelegationId()).isNull();
+        verify(operation).agreementIdPath(agreementId);
+        assertThat(AgreementsApi.UnsuspendAgreementOper.REQ_METHOD.name()).isEqualTo("POST");
+        assertThat(AgreementsApi.UnsuspendAgreementOper.REQ_URI).isEqualTo("/agreements/{agreementId}/unsuspend");
+        verify(operation, times(1)).execute(any());
+        verify(api, never()).getAgreementById();
+        var storedResponse = org.mockito.ArgumentCaptor.forClass(ApiResponse.class);
+        verify(responses).setLastResponse(storedResponse.capture());
+        assertThat(storedResponse.getValue().getStatusCode()).isEqualTo(400);
+        assertThat(storedResponse.getValue().getRawContent()).isEqualTo(error.asString());
     }
 
     @Test

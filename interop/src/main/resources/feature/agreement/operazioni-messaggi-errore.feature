@@ -89,18 +89,12 @@ Feature: Messaggi di errore durante la gestione delle richieste di fruizione
     Then il messaggio di errore corrisponde al caso "AGREEMENT_AGREEMENT_NOT_IN_EXPECTED_STATE__POST_AGREEMENTS_AGREEMENT_ID_UNSUSPEND"
 
   # Endpoint: POST /agreements/:agreementId/unsuspend
-  Scenario: [ERROR_153] - Impossibilità di riattivare una richiesta per una versione archiviata
+  Scenario: [ERROR_153] - Impossibilità di riattivare una richiesta di fruizione per una versione archiviata
   Data una richiesta di fruizione del fruitore sospesa e riferita a una versione archiviata
   Quando il fruitore tenta di riattivare la richiesta
   Allora il sistema rifiuta la riattivazione e segnala che la versione non è più disponibile per la fruizione.
 
-    Given i seguenti e-service pubblicati:
-      | alias | erogatore        |
-      | ES-1  | Comune di Milano |
-    And l'e-service "ES-1" del Comune di Milano sottoscritto dal Comune di Pozzallo con una richiesta di fruizione archiviata
-    And l'e-service "ES-1" del Comune di Milano sottoscritto da PagoPA con una richiesta di fruizione sospesa
-    And la versione 2 dell'e-service "ES-1" del Comune di Milano pubblicata
-    And un admin appartenente al fruitore Comune di Pozzallo
+    Given la richiesta di fruizione in stato sospesa di Comune di Pozzallo legata alla prima versione archiviata dell'e-service
     When il fruitore tenta di riattivare la richiesta di fruizione
     Then il messaggio di errore corrisponde al caso "AGREEMENT_DESCRIPTOR_NOT_IN_EXPECTED_STATE__POST_AGREEMENTS_AGREEMENT_ID_UNSUSPEND"
 

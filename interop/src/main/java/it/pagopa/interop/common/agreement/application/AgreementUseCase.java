@@ -5,6 +5,7 @@ import it.pagopa.interop.common.agreement.domain.AgreementCreationFailureReason;
 import it.pagopa.interop.common.agreement.domain.AgreementState;
 import it.pagopa.interop.common.eservice.domain.EService;
 import it.pagopa.interop.common.eservice.domain.EServiceDescriptor;
+import it.pagopa.interop.common.kernel.domain.AgreementRef;
 import it.pagopa.interop.common.kernel.domain.Delegation;
 import it.pagopa.interop.common.kernel.domain.Document;
 import it.pagopa.utils.async.PollingUtils;
@@ -79,7 +80,11 @@ public class AgreementUseCase {
     }
 
     public Agreement getAgreement(Agreement agreement) {
-        return agreementGateway.getAgreement(agreement.getRef());
+        return getAgreement(agreement.getRef());
+    }
+
+    public Agreement getAgreement(AgreementRef ref) {
+        return agreementGateway.getAgreement(ref);
     }
 
     public Agreement activateAgreement(Agreement agreement, @Nullable Delegation delegation) {
