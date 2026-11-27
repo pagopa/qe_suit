@@ -1,7 +1,7 @@
 rae:
-  release: ''
-  scope: NIGHTLY
-  issue_jira: ''
+  release: '[Interop] Core 2.25.0'
+  scope: PROMO
+  issue_jira: 'https://pagopa.atlassian.net/browse/QA-19829'
   data_ora: '2026-11-26T17:34:25Z'
   durata: 00:01:27
   numero_ko: 2
@@ -31,9 +31,19 @@ ko:
     	at it.pagopa.interop.common.purpose_template.application.PurposeTemplateUseCase.shouldFailLinkToReceiveEService(PurposeTemplateUseCase.java:26)
     	at it.pagopa.interop.common.purpose_template.infrastructure.cucumber.PurposeTemplateSteps.assertEServiceTemplateLinkDenied(PurposeTemplateSteps.java:298)
     	at ✽.l'associazione del template e-service al template di finalità è negata(classpath:feature-expanded/purpose-template/purpose-template-eservice.feature:32)
-  procedure: ''
-  result: ''
-  link_prod_bug: ''
+  procedure: >-
+    Dal report Cucumber è stato verificato che tutti gli step di preparazione
+    fossero stati superati e che il fallimento riguardasse soltanto l'assert
+    finale. Nei log HTTP è stato poi verificato che il template e-service fosse
+    effettivamente in modalità RECEIVE e che la richiesta di associazione fosse
+    corretta. Dall'analisi della risposta e della successiva lettura delle risorse
+    associate è emerso che il sistema aveva accettato e registrato l'associazione,
+    quindi il KO è dovuto a un comportamento errato del prodotto e non della suite.
+  result: >-
+    L'API ha restituito HTTP 200 anziché HTTP 400 e ha registrato l'associazione
+    tra il template e-service in ricezione e il template di finalità, che avrebbe
+    dovuto essere negata.
+  link_prod_bug: 'https://pagopa.atlassian.net/jira/browse/PIN-11713'
   link_suite_bug: ''
 - id_test: '[PURPOSE_RECEIVE_ESERVICE_1.4] Impossibilità di associare un e-service in modalità di ricezione a una
     propria finalità [Given=BFF,When=BFF,Then=BFF]'
@@ -54,7 +64,18 @@ ko:
     	at it.pagopa.interop.common.purpose.application.PurposeUseCase.shouldFailLinkToReceiveEService(PurposeUseCase.java:24)
     	at it.pagopa.interop.common.purpose.infrastructure.cucumber.PurposeSteps.assertPurposeCreationDenied(PurposeSteps.java:373)
     	at ✽.la creazione della finalità è negata(classpath:feature-expanded/purpose/purpose-eservice.feature:19)
-  procedure: ''
-  result: ''
-  link_prod_bug: ''
+  procedure: >-
+    Dal report Cucumber è stato verificato che tutti gli step di preparazione,
+    compresa la richiesta di fruizione attiva, fossero stati superati e che il
+    fallimento riguardasse soltanto l'assert finale. Nei log HTTP è stato poi
+    verificato che l'e-service fosse effettivamente in modalità RECEIVE e che la
+    richiesta di creazione della finalità fosse corretta. In debug è stato
+    confermato che, al momento dell'assert, lo status ricevuto era 200. Dalla
+    lettura della finalità restituita è emerso che il sistema l'aveva creata,
+    quindi il KO è dovuto a un comportamento errato del prodotto e non della suite.
+  result: >-
+    L'API ha restituito HTTP 200 anziché HTTP 400 e ha creato una finalità in
+    bozza associata a un e-service in modalità RECEIVE, operazione che avrebbe
+    dovuto essere negata.
+  link_prod_bug: 'https://pagopa.atlassian.net/jira/browse/PIN-11715'
   link_suite_bug: ''
