@@ -2,11 +2,13 @@ package it.pagopa.send.suite.contract.stream.legacy;
 
 import it.pagopa.infrastructure.fuzzing.FuzzScenario;
 import it.pagopa.send.common.journey.application.SendJourney;
+import it.pagopa.send.common.kernel.context.CurrentUserSession;
 import it.pagopa.send.common.stream.domain.StreamApiVersion;
 import it.pagopa.send.common.user.domain.UserProvider;
 import it.pagopa.send.generated.openapi.clients.streamlegacy.ApiClient;
 import it.pagopa.send.generated.openapi.clients.streamlegacy.model.StreamCreationRequestV26;
 import it.pagopa.send.generated.openapi.clients.streamlegacy.model.StreamRequestV26;
+import it.pagopa.send.stream.infrastructure.StreamLegacyApiOperations;
 import it.pagopa.send.stream.infrastructure.StreamLegacyCreatedTracker;
 import it.pagopa.send.stream.infrastructure.StreamLegacyRequestFactory;
 import it.pagopa.send.stream.infrastructure.config.StreamLegacyContractValidatorFactory;
@@ -23,7 +25,7 @@ import java.util.stream.Stream;
  * Checklist delle operazioni coperte:
  * <ol>
  *   <li>{@code createEventStreamV26} POST /delivery-progresses/v2.6/streams payload 200</li>
- *   <li>{@code listEventStreamsV26} GET /delivery-progresses/v2.6/streams baseline 200</li>
+ *   <li>{@code listEventStreamsV26} GET /delivery-progresses/v2.6/streams solo-baseline 200</li>
  *   <li>{@code retrieveEventStreamV26} GET /delivery-progresses/v2.6/streams/{streamId} pathParams 200</li>
  *   <li>{@code updateEventStreamV26} PUT /delivery-progresses/v2.6/streams/{streamId} payload+pathParams 200</li>
  *   <li>{@code removeEventStreamV26} DELETE /delivery-progresses/v2.6/streams/{streamId} pathParams 204</li>
@@ -51,70 +53,78 @@ public class StreamV26ContractTest extends AbstractStreamLegacyContractTest {
             StreamLegacyRequestFactory requestFactory,
             StreamLegacyCreatedTracker createdTracker,
             SendJourney sendJourney,
-            UserProvider userProvider
+            UserProvider userProvider,
+            StreamLegacyApiOperations operations,
+            CurrentUserSession currentUserSession
     ) {
-        super(apiClient, validators, requestFactory, createdTracker, sendJourney, userProvider);
+        super(apiClient, validators, requestFactory, createdTracker, sendJourney, userProvider, operations,
+                currentUserSession);
     }
 
     @TestFactory
     Stream<DynamicTest> createEventStreamV26() {
-        return validators.create(VERSION)
-                .as(OWNER)
-                .apiCall(() -> apiClient.streams().createEventStreamV26())
-                .payload(() -> purgedCreationRequest(VERSION, StreamCreationRequestV26.class))
-                .targets(FuzzScenario.REPLACED_WITH_NULL, expectValidationError(), List.of(
-                        StreamCreationRequestV26::getFilterValues))
-                .targets(TITLE_ACCEPTED_SCENARIOS, expectTrackedSuccess(VERSION),
-                        List.of(StreamCreationRequestV26::getTitle))
-                .tests();
+        return withBaseline(baseline(VERSION, ops -> ops.create().apply(purgedTestTitle(VERSION)), expectTrackedSuccess(VERSION)),
+                validators.create(VERSION)
+                        .as(OWNER)
+                        .apiCall(() -> apiClient.streams().createEventStreamV26())
+                        .payload(() -> purgedCreationRequest(VERSION, StreamCreationRequestV26.class))
+                        .targets(FuzzScenario.REPLACED_WITH_NULL, expectValidationError(), List.of(
+                                StreamCreationRequestV26::getFilterValues))
+                        .targets(TITLE_ACCEPTED_SCENARIOS, expectTrackedSuccess(VERSION),
+                                List.of(StreamCreationRequestV26::getTitle))
+                        .tests());
     }
 
+    /**
+     * Operazione senza parametri: il fuzzing non genera casi, si verifica la risposta documentata.
+     */
     @TestFactory
     Stream<DynamicTest> listEventStreamsV26() {
-        return validators.standard(VERSION)
-                .as(OWNER)
-                .apiCall(() -> apiClient.streams().listEventStreamsV26())
-                .tests();
+        return Stream.of(baseline(VERSION, ops -> ops.list().get(), expectSuccess()));
     }
 
     @TestFactory
     Stream<DynamicTest> retrieveEventStreamV26() {
-        return withStreamIdExpectations(validators.standard(VERSION)
-                .as(OWNER)
-                .apiCall(() -> apiClient.streams().retrieveEventStreamV26())
-                .pathParams(() -> freshStreamPathParams(VERSION)), VERSION)
-                .tests();
+        return withBaseline(baseline(VERSION, ops -> ops.retrieve().apply(freshStreamId(VERSION)), expectSuccess()),
+                withStreamIdExpectations(validators.standard(VERSION)
+                        .as(OWNER)
+                        .apiCall(() -> apiClient.streams().retrieveEventStreamV26())
+                        .pathParams(() -> freshStreamPathParams(VERSION)), VERSION)
+                        .tests());
     }
 
     @TestFactory
     Stream<DynamicTest> updateEventStreamV26() {
-        return withStreamIdExpectations(validators.standard(VERSION)
-                .as(OWNER)
-                .apiCall(() -> apiClient.streams().updateEventStreamV26())
-                .payload(() -> requestFactory.updateRequest(VERSION, StreamRequestV26.class))
-                .targets(FuzzScenario.REPLACED_WITH_NULL, expectValidationError(), List.of(
-                        StreamRequestV26::getFilterValues))
-                .targets(TITLE_ACCEPTED_SCENARIOS, expectSuccess(),
-                        List.of(StreamRequestV26::getTitle))
-                .pathParams(() -> freshStreamPathParams(VERSION)), VERSION)
-                .tests();
+        return withBaseline(baseline(VERSION, ops -> ops.update().apply(freshStreamId(VERSION)), expectSuccess()),
+                withStreamIdExpectations(validators.standard(VERSION)
+                        .as(OWNER)
+                        .apiCall(() -> apiClient.streams().updateEventStreamV26())
+                        .payload(() -> requestFactory.updateRequest(VERSION, StreamRequestV26.class))
+                        .targets(FuzzScenario.REPLACED_WITH_NULL, expectValidationError(), List.of(
+                                StreamRequestV26::getFilterValues))
+                        .targets(TITLE_ACCEPTED_SCENARIOS, expectSuccess(),
+                                List.of(StreamRequestV26::getTitle))
+                        .pathParams(() -> freshStreamPathParams(VERSION)), VERSION)
+                        .tests());
     }
 
     @TestFactory
     Stream<DynamicTest> removeEventStreamV26() {
-        return withStreamIdExpectations(validators.remove(VERSION)
-                .as(OWNER)
-                .apiCall(() -> apiClient.streams().removeEventStreamV26())
-                .pathParams(() -> freshStreamPathParams(VERSION)), VERSION)
-                .tests();
+        return withBaseline(baseline(VERSION, ops -> ops.remove().apply(freshStreamId(VERSION)), expectRemoved()),
+                withStreamIdExpectations(validators.remove(VERSION)
+                        .as(OWNER)
+                        .apiCall(() -> apiClient.streams().removeEventStreamV26())
+                        .pathParams(() -> freshStreamPathParams(VERSION)), VERSION)
+                        .tests());
     }
 
     @TestFactory
     Stream<DynamicTest> disableEventStreamV26() {
-        return withStreamIdExpectations(validators.standard(VERSION)
-                .as(OWNER)
-                .apiCall(() -> apiClient.streams().disableEventStreamV26())
-                .pathParams(() -> freshStreamPathParams(VERSION)), VERSION)
-                .tests();
+        return withBaseline(baseline(VERSION, ops -> ops.disable().apply(freshStreamId(VERSION)), expectSuccess()),
+                withStreamIdExpectations(validators.standard(VERSION)
+                        .as(OWNER)
+                        .apiCall(() -> apiClient.streams().disableEventStreamV26())
+                        .pathParams(() -> freshStreamPathParams(VERSION)), VERSION)
+                        .tests());
     }
 }

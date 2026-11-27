@@ -31,7 +31,8 @@ public interface StreamLegacyGateway {
     void removeCreatedStreams();
 
     /**
-     * Rimuove gli stream di test residui di esecuzioni precedenti, riconosciuti dal titolo.
+     * Rimuove gli stream di test residui di esecuzioni precedenti, riconosciuti dal titolo e abbastanza
+     * vecchi da non appartenere a un'esecuzione in corso.
      */
     void removeLeftoverTestStreams();
 }

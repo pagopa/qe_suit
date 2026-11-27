@@ -21,8 +21,9 @@ public class StreamLegacyCreatedTracker {
     private final Map<UUID, StreamApiVersion> trackedStreams = new ConcurrentHashMap<>();
 
     /**
-     * Avvolge un'aspettativa: se la risposta contiene uno {@code streamId} (stream effettivamente
-     * creato, atteso o no) lo traccia con la versione indicata, poi applica l'aspettativa.
+     * Avvolge l'aspettativa di una create: una risposta 2xx (stream effettivamente creato, atteso o no)
+     * viene tracciata con la versione indicata, poi si applica l'aspettativa. Una risposta 2xx senza
+     * {@code streamId} valido fa fallire il caso: lo stream creato non potrebbe essere rimosso.
      */
     public Consumer<Response> tracking(StreamApiVersion version, Consumer<Response> expectation) {
         return response -> {
@@ -54,13 +55,13 @@ public class StreamLegacyCreatedTracker {
         if (response.statusCode() / 100 != 2) {
             return;
         }
+        UUID streamId;
         try {
-            String streamId = response.jsonPath().getString("streamId");
-            if (streamId != null) {
-                trackedStreams.put(UUID.fromString(streamId), version);
-            }
-        } catch (RuntimeException ignored) {
-            // body non conforme: nessuno stream da tracciare, l'aspettativa decidera' l'esito
+            streamId = UUID.fromString(response.jsonPath().getString("streamId"));
+        } catch (RuntimeException e) {
+            throw new IllegalStateException("Risposta " + response.statusCode() + " di creazione stream (" + version
+                    + ") senza streamId valido, stream non tracciabile per la pulizia: " + response.asString(), e);
         }
+        trackedStreams.put(streamId, version);
     }
 }

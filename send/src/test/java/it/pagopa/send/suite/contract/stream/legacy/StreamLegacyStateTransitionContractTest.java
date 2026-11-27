@@ -2,6 +2,7 @@ package it.pagopa.send.suite.contract.stream.legacy;
 
 import io.restassured.response.Response;
 import it.pagopa.send.common.journey.application.SendJourney;
+import it.pagopa.send.common.kernel.context.CurrentUserSession;
 import it.pagopa.send.common.stream.domain.LegacyEventStream;
 import it.pagopa.send.common.stream.domain.StreamApiVersion;
 import it.pagopa.send.common.user.domain.UserProvider;
@@ -43,8 +44,6 @@ import java.util.stream.Stream;
  */
 public class StreamLegacyStateTransitionContractTest extends AbstractStreamLegacyContractTest {
 
-    private final StreamLegacyApiOperations operations;
-
     public StreamLegacyStateTransitionContractTest(
             ApiClient apiClient,
             StreamLegacyContractValidatorFactory validators,
@@ -52,10 +51,11 @@ public class StreamLegacyStateTransitionContractTest extends AbstractStreamLegac
             StreamLegacyCreatedTracker createdTracker,
             SendJourney sendJourney,
             UserProvider userProvider,
-            StreamLegacyApiOperations operations
+            StreamLegacyApiOperations operations,
+            CurrentUserSession currentUserSession
     ) {
-        super(apiClient, validators, requestFactory, createdTracker, sendJourney, userProvider);
-        this.operations = operations;
+        super(apiClient, validators, requestFactory, createdTracker, sendJourney, userProvider, operations,
+                currentUserSession);
     }
 
     // ---------------------------------------------------------------- DISABILITATO (solo v2.x)
@@ -72,7 +72,7 @@ public class StreamLegacyStateTransitionContractTest extends AbstractStreamLegac
 
     @TestFactory
     Stream<DynamicTest> createReplacingDisabledStream() {
-        return onDisabledStream(Operations::createReplacing, StreamLegacyStatusCodes::forbidden);
+        return onDisabledStream(Operations::createReplacing, StreamLegacyStatusCodes::forbidden, true);
     }
 
     @TestFactory
@@ -119,7 +119,7 @@ public class StreamLegacyStateTransitionContractTest extends AbstractStreamLegac
 
     @TestFactory
     Stream<DynamicTest> createReplacingRemovedStream() {
-        return onRemovedStream(disableVersions(), Operations::createReplacing);
+        return onRemovedStream(disableVersions(), Operations::createReplacing, true);
     }
 
     // ---------------------------------------------------------------- VERSIONE DIVERSA
@@ -141,28 +141,47 @@ public class StreamLegacyStateTransitionContractTest extends AbstractStreamLegac
 
     private Stream<DynamicTest> onDisabledStream(
             Function<Operations, Function<UUID, Response>> operation, Function<StreamApiVersion, Integer> expectedStatus) {
+        return onDisabledStream(operation, expectedStatus, false);
+    }
+
+    private Stream<DynamicTest> onDisabledStream(
+            Function<Operations, Function<UUID, Response>> operation, Function<StreamApiVersion, Integer> expectedStatus,
+            boolean createsStream) {
         return disableVersions().map(version -> {
             int expected = expectedStatus.apply(version);
             return DynamicTest.dynamicTest(version + " DISABILITATO -> " + expected, () -> {
                 UUID streamId = streamId(sendJourney.withDisabledLegacyStream(owner(), version));
-                Response response = operation.apply(operations.of(version)).apply(streamId);
-                // una sostituzione accettata per errore crea uno stream: tracciato per la purge
-                createdTracker.tracking(version, r -> expect(r, expected)).accept(response);
+                verify(version, operation.apply(operations.of(version)).apply(streamId), expected, createsStream);
             });
         });
     }
 
     private Stream<DynamicTest> onRemovedStream(
             Stream<StreamApiVersion> versions, Function<Operations, Function<UUID, Response>> operation) {
+        return onRemovedStream(versions, operation, false);
+    }
+
+    private Stream<DynamicTest> onRemovedStream(
+            Stream<StreamApiVersion> versions, Function<Operations, Function<UUID, Response>> operation,
+            boolean createsStream) {
         return versions.map(version -> {
             int expected = StreamLegacyStatusCodes.notFound(version);
             return DynamicTest.dynamicTest(version + " RIMOSSO -> " + expected, () -> {
                 UUID streamId = streamId(sendJourney.withRemovedLegacyStream(owner(), version));
-                Response response = operation.apply(operations.of(version)).apply(streamId);
-                // una sostituzione accettata per errore crea uno stream: tracciato per la purge
-                createdTracker.tracking(version, r -> expect(r, expected)).accept(response);
+                verify(version, operation.apply(operations.of(version)).apply(streamId), expected, createsStream);
             });
         });
+    }
+
+    /**
+     * Una create (sostituzione) accettata per errore crea uno stream: lo si traccia per la pulizia
+     * prima di verificare lo status.
+     */
+    private void verify(StreamApiVersion version, Response response, int expected, boolean createsStream) {
+        if (createsStream && response.statusCode() / 100 == 2) {
+            createdTracker.tracking(version, r -> { }).accept(response);
+        }
+        expect(response, expected);
     }
 
     private static UUID streamId(SendJourney journey) {

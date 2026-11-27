@@ -8,18 +8,22 @@ import it.pagopa.infrastructure.fuzzing.FuzzScenario;
 import it.pagopa.send.TestBootApp;
 import it.pagopa.send.common.infrastructure.config.JunitContextConfig;
 import it.pagopa.send.common.journey.application.SendJourney;
+import it.pagopa.send.common.kernel.context.CurrentUserSession;
 import it.pagopa.send.common.stream.domain.LegacyEventStream;
 import it.pagopa.send.common.stream.domain.StreamApiVersion;
 import it.pagopa.send.common.user.domain.User;
 import it.pagopa.send.common.user.domain.UserAlias;
 import it.pagopa.send.common.user.domain.UserProvider;
 import it.pagopa.send.generated.openapi.clients.streamlegacy.ApiClient;
+import it.pagopa.send.stream.infrastructure.StreamLegacyApiOperations;
+import it.pagopa.send.stream.infrastructure.StreamLegacyApiOperations.Operations;
 import it.pagopa.send.stream.infrastructure.StreamLegacyCreatedTracker;
 import it.pagopa.send.stream.infrastructure.StreamLegacyRequestFactory;
 import it.pagopa.send.stream.infrastructure.StreamLegacyStatusCodes;
 import it.pagopa.send.stream.infrastructure.config.StreamLegacyContractValidatorFactory;
 import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.DynamicTest;
 import org.junit.jupiter.api.TestInstance;
 import org.junit.jupiter.api.parallel.ResourceLock;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -27,7 +31,10 @@ import org.springframework.test.context.TestConstructor;
 
 import java.util.List;
 import java.util.Map;
+import java.util.UUID;
 import java.util.function.Consumer;
+import java.util.function.Function;
+import java.util.stream.Stream;
 
 /**
  * Base comune dei contract test sulle API B2B pn-stream legacy ({@code pn-stream-api-external-older-version.yaml}):
@@ -35,9 +42,13 @@ import java.util.function.Consumer;
  * <p>
  * Lo spec ammette un numero limitato di stream attivi per PA, condiviso con i test pn-stream v3.0
  * (QA-19146): stesso {@link ResourceLock} ({@code @Execution} e' vietata sui ContractTest da
- * {@code ArchitectureRulesTest}). Prima di ogni creazione e a fine classe si rimuovono solo gli stream
- * creati da questa esecuzione; i residui di esecuzioni precedenti, riconosciuti dal titolo, solo
- * all'avvio della classe, per non interferire con un'esecuzione parallela sulla stessa PA.
+ * {@code ArchitectureRulesTest}), che pero' coordina solo le classi della stessa JVM. Prima di ogni
+ * creazione e a fine classe si rimuovono solo gli stream creati da questa esecuzione; all'avvio anche i
+ * residui di esecuzioni precedenti, solo se creati da almeno due ore: un'esecuzione parallela sulla
+ * stessa PA (CI, altro sviluppatore) non perde i propri stream.
+ * <p>
+ * Il framework genera solo casi mutati, e nessuno per un'operazione senza parametri: ogni operazione ha
+ * quindi anche un caso {@link #baseline baseline}, la richiesta valida con lo status documentato.
  * <p>
  * Aspettative derivate dallo spec e dal codice di pn-stream (lambda di versioning, StreamsServiceImpl),
  * da confermare al primo run annotando gli scostamenti nella classe interessata.
@@ -70,6 +81,8 @@ abstract class AbstractStreamLegacyContractTest {
     protected final StreamLegacyCreatedTracker createdTracker;
     protected final SendJourney sendJourney;
     protected final UserProvider userProvider;
+    protected final StreamLegacyApiOperations operations;
+    protected final CurrentUserSession currentUserSession;
 
     protected AbstractStreamLegacyContractTest(
             ApiClient apiClient,
@@ -77,7 +90,9 @@ abstract class AbstractStreamLegacyContractTest {
             StreamLegacyRequestFactory requestFactory,
             StreamLegacyCreatedTracker createdTracker,
             SendJourney sendJourney,
-            UserProvider userProvider
+            UserProvider userProvider,
+            StreamLegacyApiOperations operations,
+            CurrentUserSession currentUserSession
     ) {
         this.apiClient = apiClient;
         this.validators = validators;
@@ -85,6 +100,8 @@ abstract class AbstractStreamLegacyContractTest {
         this.createdTracker = createdTracker;
         this.sendJourney = sendJourney;
         this.userProvider = userProvider;
+        this.operations = operations;
+        this.currentUserSession = currentUserSession;
     }
 
     @BeforeAll
@@ -114,8 +131,36 @@ abstract class AbstractStreamLegacyContractTest {
      * Uno stream ATTIVO nuovo per ogni caso, creato con la stessa versione dell'operazione testata.
      */
     protected Map<String, Object> freshStreamPathParams(StreamApiVersion version) {
-        LegacyEventStream stream = sendJourney.withFreshLegacyStream(owner(), version).get(LegacyEventStream.class);
-        return Map.of("streamId", stream.getId());
+        return Map.of("streamId", freshStreamId(version));
+    }
+
+    protected UUID freshStreamId(StreamApiVersion version) {
+        return sendJourney.withFreshLegacyStream(owner(), version).get(LegacyEventStream.class).streamId();
+    }
+
+    /**
+     * Titolo di test per una create baseline, dopo aver rimosso gli stream creati in precedenza da
+     * questa esecuzione (limite di stream attivi).
+     */
+    protected String purgedTestTitle(StreamApiVersion version) {
+        sendJourney.removeCreatedLegacyStreams(owner());
+        return requestFactory.testStreamTitle(version);
+    }
+
+    /**
+     * Caso baseline: la richiesta valida, senza mutazioni, eseguita come {@link #OWNER} tramite il
+     * catalogo {@link StreamLegacyApiOperations}, con l'aspettativa sullo status documentato.
+     */
+    protected DynamicTest baseline(
+            StreamApiVersion version, Function<Operations, Response> call, Consumer<Response> expectation) {
+        return DynamicTest.dynamicTest("[baseline] richiesta valida, status documentato", () -> {
+            currentUserSession.setUser(owner());
+            expectation.accept(call.apply(operations.of(version)));
+        });
+    }
+
+    protected static Stream<DynamicTest> withBaseline(DynamicTest baseline, Stream<DynamicTest> fuzzCases) {
+        return Stream.concat(Stream.of(baseline), fuzzCases);
     }
 
     /**
@@ -175,6 +220,10 @@ abstract class AbstractStreamLegacyContractTest {
      */
     protected Consumer<Response> expectTrackedSuccess(StreamApiVersion version) {
         return createdTracker.tracking(version, expectSuccess());
+    }
+
+    protected static Consumer<Response> expectRemoved() {
+        return expectStatus(StreamLegacyStatusCodes.REMOVE_SUCCESS);
     }
 
     protected static Consumer<Response> expectStatus(int status) {

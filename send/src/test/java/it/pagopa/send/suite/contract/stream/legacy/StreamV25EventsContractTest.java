@@ -1,9 +1,11 @@
 package it.pagopa.send.suite.contract.stream.legacy;
 
 import it.pagopa.send.common.journey.application.SendJourney;
+import it.pagopa.send.common.kernel.context.CurrentUserSession;
 import it.pagopa.send.common.stream.domain.StreamApiVersion;
 import it.pagopa.send.common.user.domain.UserProvider;
 import it.pagopa.send.generated.openapi.clients.streamlegacy.ApiClient;
+import it.pagopa.send.stream.infrastructure.StreamLegacyApiOperations;
 import it.pagopa.send.stream.infrastructure.StreamLegacyCreatedTracker;
 import it.pagopa.send.stream.infrastructure.StreamLegacyRequestFactory;
 import it.pagopa.send.stream.infrastructure.config.StreamLegacyContractValidatorFactory;
@@ -38,18 +40,22 @@ public class StreamV25EventsContractTest extends AbstractStreamLegacyContractTes
             StreamLegacyRequestFactory requestFactory,
             StreamLegacyCreatedTracker createdTracker,
             SendJourney sendJourney,
-            UserProvider userProvider
+            UserProvider userProvider,
+            StreamLegacyApiOperations operations,
+            CurrentUserSession currentUserSession
     ) {
-        super(apiClient, validators, requestFactory, createdTracker, sendJourney, userProvider);
+        super(apiClient, validators, requestFactory, createdTracker, sendJourney, userProvider, operations,
+                currentUserSession);
     }
 
     @TestFactory
     Stream<DynamicTest> consumeEventStreamV25() {
-        return withLastEventIdExpectations(withStreamIdExpectations(validators.standard(VERSION)
-                .as(OWNER)
-                .apiCall(() -> apiClient.events().consumeEventStreamV25())
-                .pathParams(() -> freshStreamPathParams(VERSION)), VERSION)
-                .queryParams(AbstractStreamLegacyContractTest::lastEventIdQueryParams))
-                .tests();
+        return withBaseline(baseline(VERSION, ops -> ops.consume().apply(freshStreamId(VERSION)), expectSuccess()),
+                withLastEventIdExpectations(withStreamIdExpectations(validators.standard(VERSION)
+                        .as(OWNER)
+                        .apiCall(() -> apiClient.events().consumeEventStreamV25())
+                        .pathParams(() -> freshStreamPathParams(VERSION)), VERSION)
+                        .queryParams(AbstractStreamLegacyContractTest::lastEventIdQueryParams))
+                        .tests());
     }
 }

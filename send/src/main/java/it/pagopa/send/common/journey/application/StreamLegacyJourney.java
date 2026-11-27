@@ -38,8 +38,8 @@ public interface StreamLegacyJourney<SELF extends StreamLegacyJourney<SELF>> ext
     void removeCreatedLegacyStreams(User owner);
 
     /**
-     * Rimuove gli stream legacy di test residui di esecuzioni precedenti: solo all'avvio, perche'
-     * rimuoverebbe anche quelli di un'esecuzione parallela sulla stessa PA.
+     * Rimuove gli stream legacy di test residui di esecuzioni precedenti, abbastanza vecchi da non
+     * appartenere a un'esecuzione in corso sulla stessa PA.
      */
     void removeLeftoverLegacyTestStreams(User owner);
 }

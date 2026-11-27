@@ -11,6 +11,11 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
 
+import java.time.Instant;
+import java.util.ArrayList;
+import java.util.LinkedHashMap;
+import java.util.List;
+import java.util.Map;
 import java.util.Objects;
 import java.util.UUID;
 
@@ -67,21 +72,45 @@ public class StreamLegacyRestGateway implements StreamLegacyGateway {
 
     @Override
     public void removeCreatedStreams() {
-        createdTracker.trackedStreams().forEach((streamId, version) -> removeStream(version, streamId));
+        removeAll(createdTracker.trackedStreams());
     }
 
     /**
-     * Rimuove gli stream con il prefisso di test ({@code QE-LEGACY-<versione>-}), ciascuno con la versione
-     * letta dal titolo. Da usare solo all'avvio: rimuoverebbe anche gli stream di un'esecuzione parallela.
+     * Rimuove gli stream di test residui ({@code QE-LEGACY-<versione>-<epochMillis>-}), ciascuno con la
+     * versione letta dal titolo, solo se creati da almeno due ore
+     * ({@link StreamLegacyRequestFactory#leftoverVersion}): gli stream di un'esecuzione parallela in corso
+     * sulla stessa PA restano intatti.
      */
     @Override
     public void removeLeftoverTestStreams() {
         PollingAction<StreamListElement[]> listed = restClient.list(LIST_VERSION).withoutPolling();
         listed.assertStatusCode(StreamLegacyStatusCodes.SUCCESS);
         StreamListElement[] streams = Objects.requireNonNull(listed.get(), "Risposta della list degli stream vuota");
+        Instant now = Instant.now();
+        Map<UUID, StreamApiVersion> leftovers = new LinkedHashMap<>();
         for (StreamListElement element : streams) {
-            requestFactory.versionOfTestTitle(element.getTitle())
-                    .ifPresent(version -> removeStream(version, element.getStreamId()));
+            requestFactory.leftoverVersion(element.getTitle(), now)
+                    .ifPresent(version -> leftovers.put(element.getStreamId(), version));
+        }
+        removeAll(leftovers);
+    }
+
+    /**
+     * Le rimozioni sono indipendenti: si tentano tutte e i fallimenti si segnalano insieme alla fine,
+     * cosi' che un errore non lasci attivi gli altri stream (limite di stream attivi per PA).
+     */
+    private void removeAll(Map<UUID, StreamApiVersion> streams) {
+        List<String> failures = new ArrayList<>();
+        streams.forEach((streamId, version) -> {
+            try {
+                removeStream(version, streamId);
+            } catch (RuntimeException e) {
+                failures.add(streamId + " (" + version + "): " + e.getMessage());
+            }
+        });
+        if (!failures.isEmpty()) {
+            throw new IllegalStateException("Pulizia degli stream legacy incompleta, " + failures.size()
+                    + " rimozioni fallite: " + failures);
         }
     }
 }

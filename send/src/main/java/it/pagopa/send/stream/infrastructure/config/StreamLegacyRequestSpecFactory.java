@@ -1,6 +1,7 @@
 package it.pagopa.send.stream.infrastructure.config;
 
 import io.restassured.builder.RequestSpecBuilder;
+import io.restassured.filter.Filter;
 import it.pagopa.infrastructure.http.restassured.HttpLoggingFilter;
 import it.pagopa.send.common.kernel.context.CurrentUserSession;
 import it.pagopa.send.common.user.domain.User;
@@ -20,9 +21,14 @@ import static io.restassured.config.RestAssuredConfig.config;
  * <p>
  * La base URL e' {@code stream.api.base-url} se definita, altrimenti ricade su
  * {@code delivery.api.base-url}.
+ * <p>
+ * L'api-key e' aggiunta da un filtro eseguito dopo {@link HttpLoggingFilter}, che scrive la richiesta
+ * prima di passarla al filtro successivo: richieste e risposte restano nei log, la chiave no.
  */
 @Component
 public class StreamLegacyRequestSpecFactory {
+
+    private static final String API_KEY_HEADER = "x-api-key";
 
     private final ObjectProvider<CurrentUserSession> currentUserSessionProvider;
     private final UsersProperties usersProperties;
@@ -57,7 +63,14 @@ public class StreamLegacyRequestSpecFactory {
                 .setConfig(config().objectMapperConfig(
                         objectMapperConfig().defaultObjectMapper(JacksonObjectMapper.jackson())
                 ))
-                .addHeader("x-api-key", apiKey)
-                .addFilter(new HttpLoggingFilter());
+                .addFilter(new HttpLoggingFilter())
+                .addFilter(apiKeyHeader(apiKey));
+    }
+
+    private static Filter apiKeyHeader(String apiKey) {
+        return (request, response, context) -> {
+            request.header(API_KEY_HEADER, apiKey);
+            return context.next(request, response);
+        };
     }
 }
