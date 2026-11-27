@@ -10,6 +10,8 @@ from difflib import SequenceMatcher
 import re
 from typing import Literal
 
+from .qa_matching_extensions import ID_TAIL, json_normalized_heads, normalize_stamps
+
 UUID = re.compile(r'(?i)\b[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}\b')
 FRAME = re.compile(r'^\s*at\s+(?P<method>\S+)\((?P<source>[^():\n]*)(?::(?P<line>\d+))?\)\s*$')
 PROXY = re.compile(r'\$Proxy\d+(?=\.)')
@@ -320,6 +322,45 @@ def _message_reasons(historical: list[str], current: str) -> list[Reason]:
                                   'Valore non approvato o senza struttura sufficientemente distintiva',
                                   old_ctx, new_ctx, ctx_location))
     return reasons
+
+
+# Keep the original QA invariant checks authoritative. These two adapters
+# only generalize *already-observed* variable values in the same position.
+_structural_token_reasons_original = _structural_token_reasons
+_message_reasons_original = _message_reasons
+
+
+def _structural_token_reasons(previous: list[str], incoming: str, pos: int) -> list[Reason] | None:
+    outcome = _structural_token_reasons_original(previous, incoming, pos)
+    if outcome is not None:
+        return outcome
+    if len(set(previous)) < 2:
+        return None
+    old = [ID_TAIL.fullmatch(value) for value in previous]
+    new = ID_TAIL.fullmatch(incoming)
+    if not new or any(m is None for m in old):
+        return None
+    if len({m['anchor'] for m in old}) != 1 or len({m['suffix'] for m in old}) != 1:
+        return None
+    if new['anchor'] != old[0]['anchor'] or new['suffix'] != old[0]['suffix']:
+        return None
+    tails = [m['value'] for m in old]
+    if len(set(tails)) < 2:
+        return None
+    family = _char_family(tails)
+    if family is None or not _matches_family(new['value'], family, {len(s) for s in tails}):
+        return [Reason('STRUCTURAL_VARIANT_OUT_OF_SHAPE',
+                       ', '.join(sorted(set(tails))), new['value'],
+                       'Nuova parte alfanumerica fuori dal formato QA approvato')]
+    return []
+
+
+def _message_reasons(historical: list[str], current: str) -> list[Reason]:
+    # Order matters: this reproduces the validated 26 Nov cumulative replay.
+    stamped_history, stamped_current, _ = normalize_stamps(historical, current)
+    normalized_history, normalized_current, _ = json_normalized_heads(
+        stamped_history, stamped_current, _char_family, _matches_family)
+    return _message_reasons_original(normalized_history, normalized_current)
 
 
 @dataclass
