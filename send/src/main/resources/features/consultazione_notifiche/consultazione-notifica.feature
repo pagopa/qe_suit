@@ -26,8 +26,8 @@ Feature: Consultazione delle notifiche inviate e download dei documenti probator
 
   Scenario: [CONSULTAZIONE_NOTIFICA_DOWNLOAD_ATTI] Download dell'atto notificato e dell'avviso di avvenuta ricezione
     Given una notifica monodestinatario creata dalla PA Comune_1 con destinatario di tipo PF
-    When la PA Comune_1 scarica l'atto notificato
-    And la PA Comune_1 scarica l'avviso di avvenuta ricezione
+    When la PA Comune_1 scarica l'atto della notifica
+    And la PA Comune_1 scarica l'avviso di avvenuta ricezione della notifica
     Then i documenti vengono scaricati
 
   Scenario: [CONSULTAZIONE_NOTIFICA_DOWNLOAD_ATTESTAZIONI] Download delle attestazioni opponibili a terzi di una notifica consegnata

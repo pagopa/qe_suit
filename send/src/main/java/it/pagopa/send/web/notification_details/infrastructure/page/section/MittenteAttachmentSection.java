@@ -2,8 +2,11 @@ package it.pagopa.send.web.notification_details.infrastructure.page.section;
 
 import it.frontend.e2e.framework.annotation.selector.XPath;
 import it.frontend.e2e.framework.web.capability.core.Readable;
+import it.pagopa.infrastructure.suit.component.Button;
 import it.pagopa.send.web.notification_details.infrastructure.suit.section.AttachmentSection;
 import org.assertj.core.api.Assertions;
+
+import java.util.List;
 
 /**
  * Sezione "Documenti allegati" del dettaglio della PA: titolo ed elenco dei documenti scaricabili.
@@ -17,6 +20,10 @@ public interface MittenteAttachmentSection extends AttachmentSection {
     //        @XPath("griglia contenuti")
     @XPath("//div[@data-testid=\"notificationDetailDocuments\"]//button[@data-testid=\"documentButton\"]/div/span")
     Readable<String> attachmentGrid();
+
+    // un pulsante per documento allegato dalla PA, esclusi gli avvisi di avvenuta ricezione
+    @XPath(".//button[@data-testid=\"documentButton\"][not(ancestor::*[@data-testid=\"aarDownload\"])]")
+    List<Button> documentButtons();
 
     @Override
     default void assertLoaded() {

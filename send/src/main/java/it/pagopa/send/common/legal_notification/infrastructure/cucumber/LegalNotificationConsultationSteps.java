@@ -5,6 +5,7 @@ import io.cucumber.java.en.When;
 import it.pagopa.send.common.kernel.context.CurrentUserSession;
 import it.pagopa.send.common.legal_notification.application.LegalNotificationUseCase;
 import it.pagopa.send.common.legal_notification.domain.LegalNotificationDomain;
+import it.pagopa.send.common.legal_notification.domain.NotificationDocumentType;
 import it.pagopa.send.common.legal_notification.domain.NotificationStatus;
 import it.pagopa.send.common.legal_notification.domain.NotificationTimeline;
 import it.pagopa.send.common.user.domain.User;
@@ -12,12 +13,14 @@ import lombok.RequiredArgsConstructor;
 import org.assertj.core.api.Assertions;
 
 import java.time.LocalDate;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Map;
 
 /**
  * Consultazione, da parte della PA mittente, dell'ultima notifica creata nello scenario: ricerca tra le notifiche
- * inviate e cronologia degli stati. La notifica trovata e la cronologia letta nel When restano nell'istanza degli step,
- * che Cucumber crea per ogni scenario.
+ * inviate, cronologia degli stati e download dei documenti. Quanto letto o scaricato nei When resta nell'istanza degli
+ * step, che Cucumber crea per ogni scenario.
  */
 @RequiredArgsConstructor
 public class LegalNotificationConsultationSteps {
@@ -27,6 +30,7 @@ public class LegalNotificationConsultationSteps {
 
     private LegalNotificationDomain foundNotification;
     private NotificationTimeline timeline;
+    private final List<String> downloadedFiles = new ArrayList<>();
 
     @When("la PA {user} cerca {legalNotification} per IUN")
     public void searchByIun(User sender, LegalNotificationDomain notification) {
@@ -44,6 +48,13 @@ public class LegalNotificationConsultationSteps {
     public void readTimeline(User sender, LegalNotificationDomain notification) {
         currentUserSession.setUser(sender);
         timeline = legalNotificationUseCase.readNotificationTimeline(notification.getIun());
+    }
+
+    /** Ripetibile: ogni documento scaricato si aggiunge a quelli dello scenario. */
+    @When("la PA {user} scarica {notificationDocument} {legalNotification}")
+    public void downloadDocument(User sender, NotificationDocumentType type, LegalNotificationDomain notification) {
+        currentUserSession.setUser(sender);
+        downloadedFiles.add(legalNotificationUseCase.downloadDocument(notification.getIun(), type));
     }
 
     @Then("{legalNotification} compare tra i risultati della ricerca con il suo stato attuale")
@@ -83,6 +94,15 @@ public class LegalNotificationConsultationSteps {
         Assertions.assertThat(refinement.activeFrom())
                 .as("Data di perfezionamento della notifica %s", timeline.iun())
                 .isNotNull();
+    }
+
+    /** I documenti scaricati nello scenario sono file PDF. */
+    @Then("i documenti vengono scaricati")
+    public void assertDocumentsDownloaded() {
+        Assertions.assertThat(downloadedFiles)
+                .as("File dei documenti scaricati")
+                .isNotEmpty()
+                .allSatisfy(file -> Assertions.assertThat(file).endsWithIgnoringCase(".pdf"));
     }
 
     // una notifica appena accettata compare tra quelle della PA con qualche secondo di ritardo: la ricerca si ripete
