@@ -15,6 +15,7 @@ import it.pagopa.send.web.notification_details.infrastructure.page.timeline.Time
 
 import org.assertj.core.api.Assertions;
 
+import java.util.List;
 import java.util.Optional;
 
 /**
@@ -49,6 +50,15 @@ public interface MittenteNotificationDetailsPage extends NotificationDetailsPage
     // titolo della sezione "Dettaglio della notifica" con l'avviso di avvenuta ricezione
     @XPath("//*[@data-testid=\"aarDownload\"]//h2")
     Readable<String> notificationDetailSectionTitle();
+
+    // avvisi di avvenuta ricezione della sezione "Dettaglio della notifica", uno per destinatario
+    @XPath("//*[@data-testid=\"aarDownload\"]//button[@data-testid=\"documentButton\"]")
+    List<Button> aarButtons();
+
+    // etichette degli avvisi di avvenuta ricezione ("Avviso di avvenuta ricezione - nome (codice fiscale)"): il pulsante
+    // ha solo l'icona, il testo è accanto
+    @XPath("//*[@data-testid=\"aarDownload\"]//*[@data-testid=\"aarBox\"]//p")
+    List<Readable<String>> aarLabels();
 
     @XPath("//*[@data-testid=\"notificationDetailsDrawer\"]")
     NotificationDetailsDrawer notificationDetailsDrawer();

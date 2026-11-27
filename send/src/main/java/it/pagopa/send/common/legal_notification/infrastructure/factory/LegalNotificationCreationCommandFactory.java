@@ -47,9 +47,24 @@ public class LegalNotificationCreationCommandFactory {
 
     /** Destinatari generati per tipo e cardinalità, con i valori di default di {@link RecipientSpecFactory}. */
     public LegalNotificationCreationCommand forGeneratedRecipients(User sender, UserType type, RecipientCardinality cardinality) {
+        return forGeneratedRecipients(sender, type, cardinality, Map.of());
+    }
+
+    /** Come {@link #forGeneratedRecipients(User, UserType, RecipientCardinality)}, con gli stessi dati per ogni destinatario. */
+    public LegalNotificationCreationCommand forGeneratedRecipients(User sender, UserType type, RecipientCardinality cardinality,
+                                                                   Map<String, String> recipientData) {
         LegalNotificationCreationCommand command = new LegalNotificationCreationCommand().sender(sender);
         defaultRecipientSelector.select(type, cardinality)
-                .forEach(recipient -> command.recipient(recipientSpecFactory.build(recipient, Map.of())));
+                .forEach(recipient -> command.recipient(recipientSpecFactory.build(recipient, recipientData)));
+        return command;
+    }
+
+    /** Un destinatario persona fisica e uno persona giuridica generati, con gli stessi dati per entrambi. */
+    public LegalNotificationCreationCommand forMixedRecipients(User sender, Map<String, String> recipientData) {
+        LegalNotificationCreationCommand command = forGeneratedRecipients(sender, UserType.PF, RecipientCardinality.SINGLE,
+                recipientData);
+        defaultRecipientSelector.select(UserType.PG, RecipientCardinality.SINGLE)
+                .forEach(recipient -> command.recipient(recipientSpecFactory.build(recipient, recipientData)));
         return command;
     }
 

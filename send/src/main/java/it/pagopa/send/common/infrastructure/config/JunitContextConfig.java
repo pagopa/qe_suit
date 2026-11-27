@@ -13,7 +13,6 @@ import it.pagopa.send.common.infrastructure.context.InMemoryCurrentUserSession;
 import it.pagopa.send.common.kernel.context.CurrentUserSession;
 import it.pagopa.send.common.kernel.domain.Channel;
 import it.pagopa.send.common.legal_notification.domain.LegalNotificationCreationRequest;
-import it.pagopa.send.web.notification_creation.infrastructure.cucumber.NotificationContext;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.TestInfo;
@@ -80,9 +79,8 @@ public class JunitContextConfig {
 
     /**
      * Equivalente non scoped del bean {@code @ScenarioScope} di {@code
-     * LegalNotificationRoutingConfig}, usato dalle implementazioni di {@code
-     * LegalNotificationGateway} (es. {@code BffLegalNotificationGateway}) fuori da uno scenario
-     * Cucumber.
+     * LegalNotificationRoutingConfig}, usato dai gateway della notifica legale (es. {@code
+     * BffPrepareNotificationGateway}) fuori da uno scenario Cucumber.
      */
     @Bean
     LegalNotificationCreationRequest legalNotificationCreationRequest() {
@@ -92,15 +90,5 @@ public class JunitContextConfig {
     @Bean
     it.pagopa.send.common.informal_notification.domain.InformalNotificationCreationRequest informalNotificationCreationRequest() {
         return new it.pagopa.send.common.informal_notification.domain.InformalNotificationCreationRequest();
-    }
-
-    /**
-     * Equivalente non scoped di {@code NotificationContext} (di norma {@code @ScenarioScope}),
-     * usato dalle implementazioni di {@code LegalNotificationGateway} fuori da uno scenario
-     * Cucumber.
-     */
-    @Bean
-    NotificationContext notificationContext() {
-        return new NotificationContext();
     }
 }

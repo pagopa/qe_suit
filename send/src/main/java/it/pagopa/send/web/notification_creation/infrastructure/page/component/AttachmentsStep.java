@@ -4,10 +4,9 @@ import it.frontend.e2e.framework.annotation.selector.XPath;
 import it.frontend.e2e.framework.core.capability.core.Uploadable;
 import it.frontend.e2e.framework.web.capability.core.Writable;
 import it.frontend.e2e.framework.web.domain.Component;
-import it.pagopa.send.web.notification_creation.application.NotificationData;
 
 /**
- * Passo del wizard "Invia una nuova notifica" usato dagli step Cucumber ({@code CreateNotificationPage}).
+ * Passo "Documenti allegati" di "Invia una nuova notifica" ({@code CreateNotificationPage}): titolo e file del documento.
  */
 public interface AttachmentsStep extends Component {
 
@@ -20,10 +19,5 @@ public interface AttachmentsStep extends Component {
     default void fillFields(String title, String absoluteFilePath) {
         documentTitle().write(title);
         attachment().upload(absoluteFilePath);
-    }
-
-    default void fillFields(NotificationData data) {
-        documentTitle().write(data.getDocumentTitle());
-        attachment().upload(data.getDocumentFilePath());
     }
 }

@@ -8,8 +8,8 @@ import java.util.List;
 /**
  * Richiesta di creazione di una notifica legale, agnostica dal canale e dal DTO OpenAPI
  * (equivalente interno di {@code BffNewNotificationRequest}). Costruita da
- * {@code LegalNotificationRequestFactory}; solo l'implementazione del gateway del canale scelto
- * (es. {@code BffLegalNotificationGateway}) la traduce nel DTO OpenAPI del proprio canale.
+ * {@code LegalNotificationRequestFactory}; solo il gateway di invio del canale scelto
+ * (es. {@code BffSendNotificationGateway}) la traduce nel DTO OpenAPI del proprio canale.
  * <p>
  * Espone setter fluenti con lo stesso nome dei campi (nessun prefisso {@code set}) così che
  * {@code RequestOverrideApplier} (già generico via reflection) continui a funzionare invariato,
