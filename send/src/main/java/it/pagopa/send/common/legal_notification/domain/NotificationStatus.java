@@ -17,11 +17,13 @@ public enum NotificationStatus {
     IN_VALIDATION,
     ACCEPTED("Depositata"),
     DELIVERING("Invio in corso"),
-    DELIVERED("Consegnata"),
+    // nel portale cambia con i destinatari e la giacenza della raccomandata
+    DELIVERED("Consegnata", "Consegnata o in giacenza", "In giacenza", "Giacenza scaduta", "Ritirata"),
     VIEWED("Avvenuto accesso"),
     EFFECTIVE_DATE("Perfezionata per decorrenza termini"),
     PAID,
-    UNREACHABLE("Destinatario irreperibile"),
+    // "Destinatari irreperibili" con più destinatari
+    UNREACHABLE("Destinatario irreperibile", "Destinatari irreperibili"),
     // "Annullata" nel portale, "Notifica annullata" nella documentazione
     CANCELLED("Annullata", "Notifica annullata"),
     REFUSED,

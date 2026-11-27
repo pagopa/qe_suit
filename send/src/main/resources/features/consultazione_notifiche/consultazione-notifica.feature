@@ -36,8 +36,10 @@ Feature: Consultazione delle notifiche inviate e download dei documenti probator
     When la PA Comune_1 scarica le attestazioni opponibili a terzi della notifica
     Then le attestazioni vengono scaricate
 
+  # Destinatari raggiunti entrambi in digitale: i loro eventi sono già in cronologia quando la notifica si perfeziona,
+  # mentre l'invio cartaceo di un destinatario parte alcuni minuti dopo.
   Scenario: [CONSULTAZIONE_NOTIFICA_MULTI_DESTINATARIO] Cronologia e documenti sono distinti per ciascun destinatario
-    Given una notifica multidestinatario mista creata dalla PA Comune_1
+    Given una notifica multidestinatario creata dalla PA Comune_1 con destinatario di tipo PF con domicilio digitale
     And la notifica raggiunge lo stato "Perfezionata per decorrenza termini"
     When la PA Comune_1 consulta la cronologia della notifica
     Then la cronologia riporta gli eventi distinti per ciascun destinatario

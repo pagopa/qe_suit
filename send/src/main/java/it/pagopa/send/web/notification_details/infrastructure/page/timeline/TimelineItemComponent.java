@@ -47,6 +47,11 @@ public interface TimelineItemComponent extends Component {
                 .strip();
     }
 
+    /** Testo dell'intera card: titolo, descrizione, destinatari ed eventi dei gruppi espansi o meno. */
+    default String text() {
+        return get().map(element -> element.getText()).orElse("");
+    }
+
     /**
      * Presenza di una frase limitata al testo di questa sola card, non dell'intera pagina.
      */

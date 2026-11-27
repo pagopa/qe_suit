@@ -14,6 +14,7 @@ import it.pagopa.send.common.legal_notification.application.DownloadNotification
 import it.pagopa.send.common.legal_notification.application.FindNotificationGateway;
 import it.pagopa.send.common.legal_notification.application.ReadNotificationGateway;
 import it.pagopa.send.common.legal_notification.application.ReadNotificationTimelineGateway;
+import it.pagopa.send.common.legal_notification.application.ReadReceiptNoticesGateway;
 import it.pagopa.send.common.legal_notification.application.SearchNotificationGateway;
 import it.pagopa.send.common.legal_notification.domain.LegalNotificationCreationRequest;
 import lombok.RequiredArgsConstructor;
@@ -48,7 +49,8 @@ import org.springframework.plugin.core.config.EnablePluginRegistries;
         SearchNotificationGateway.class,
         FindNotificationGateway.class,
         DownloadNotificationDocumentGateway.class,
-        DownloadLegalFactsGateway.class
+        DownloadLegalFactsGateway.class,
+        ReadReceiptNoticesGateway.class
 })
 public class LegalNotificationRoutingConfig {
 
@@ -118,6 +120,12 @@ public class LegalNotificationRoutingConfig {
     @Primary
     public DownloadLegalFactsGateway transparentDownloadLegalFactsGateway(PluginRegistry<DownloadLegalFactsGateway, Channel> registry) {
         return transparent(DownloadLegalFactsGateway.class, registry);
+    }
+
+    @Bean
+    @Primary
+    public ReadReceiptNoticesGateway transparentReadReceiptNoticesGateway(PluginRegistry<ReadReceiptNoticesGateway, Channel> registry) {
+        return transparent(ReadReceiptNoticesGateway.class, registry);
     }
 
     /**

@@ -55,6 +55,11 @@ public interface MittenteNotificationDetailsPage extends NotificationDetailsPage
     @XPath("//*[@data-testid=\"aarDownload\"]//button[@data-testid=\"documentButton\"]")
     List<Button> aarButtons();
 
+    // etichette degli avvisi di avvenuta ricezione ("Avviso di avvenuta ricezione - nome (codice fiscale)"): il pulsante
+    // ha solo l'icona, il testo è accanto
+    @XPath("//*[@data-testid=\"aarDownload\"]//*[@data-testid=\"aarBox\"]//p")
+    List<Readable<String>> aarLabels();
+
     @XPath("//*[@data-testid=\"notificationDetailsDrawer\"]")
     NotificationDetailsDrawer notificationDetailsDrawer();
 

@@ -16,6 +16,7 @@ import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 /**
  * Consultazione, da parte della PA mittente, dell'ultima notifica creata nello scenario: ricerca tra le notifiche
@@ -29,6 +30,7 @@ public class LegalNotificationConsultationSteps {
     private final CurrentUserSession currentUserSession;
 
     private LegalNotificationDomain foundNotification;
+    private LegalNotificationDomain consultedNotification;
     private NotificationTimeline timeline;
     private final List<String> downloadedFiles = new ArrayList<>();
 
@@ -47,6 +49,7 @@ public class LegalNotificationConsultationSteps {
     @When("la PA {user} consulta la cronologia {legalNotification}")
     public void readTimeline(User sender, LegalNotificationDomain notification) {
         currentUserSession.setUser(sender);
+        consultedNotification = notification;
         timeline = legalNotificationUseCase.readNotificationTimeline(notification.getIun());
     }
 
@@ -100,6 +103,36 @@ public class LegalNotificationConsultationSteps {
         Assertions.assertThat(refinement.activeFrom())
                 .as("Data di perfezionamento della notifica %s", timeline.iun())
                 .isNotNull();
+    }
+
+    /**
+     * La cronologia riporta gli eventi di ciascun destinatario sotto il suo nome. Gli eventi stanno negli stati in cui
+     * avvengono (es. l'invio per raccomandata in "Invio in corso", la consegna PEC in "Consegnata"): si cerca il
+     * destinatario nell'intera cronologia.
+     */
+    @Then("la cronologia riporta gli eventi distinti per ciascun destinatario")
+    public void assertEventsPerRecipient() {
+        String content = timeline.history().stream()
+                .map(NotificationTimeline.StatusChange::content)
+                .collect(Collectors.joining("\n"));
+        Assertions.assertThat(consultedNotification.getRecipients())
+                .as("Destinatari della notifica %s", timeline.iun())
+                .isNotEmpty()
+                .allSatisfy(recipient -> Assertions.assertThat(content)
+                        .as("Eventi del destinatario %s nella cronologia", recipient.denomination())
+                        .contains(recipient.taxId()));
+    }
+
+    /** Il dettaglio della notifica riporta un avviso di avvenuta ricezione per ciascun destinatario. */
+    @Then("per ogni destinatario è disponibile l'avviso di avvenuta ricezione")
+    public void assertReceiptNoticePerRecipient() {
+        List<String> notices = legalNotificationUseCase.readReceiptNotices(consultedNotification.getIun());
+        Assertions.assertThat(consultedNotification.getRecipients())
+                .as("Destinatari della notifica %s", consultedNotification.getIun())
+                .isNotEmpty()
+                .allSatisfy(recipient -> Assertions.assertThat(notices)
+                        .as("Avviso di avvenuta ricezione del destinatario %s", recipient.denomination())
+                        .anyMatch(notice -> notice.contains(recipient.taxId())));
     }
 
     /** I documenti (o le attestazioni) scaricati nello scenario sono file PDF. */

@@ -11,9 +11,11 @@ import it.pagopa.send.web.notification_details.infrastructure.page.timeline.Time
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDateTime;
+
 /**
  * Legge la cronologia della notifica dalla pagina "Stato della notifica" del portale della PA: una card per stato,
- * dal più recente, con l'etichetta dello stato come titolo e la data da cui è attivo.
+ * dal più recente, con l'etichetta dello stato come titolo, la data da cui è attivo e il testo della card.
  */
 @Service
 @RequiredArgsConstructor
@@ -40,8 +42,10 @@ public class WebReadNotificationTimelineGateway implements ReadNotificationTimel
         String label = item.statusLabel();
         NotificationStatus status = NotificationStatus.fromLabel(label).orElseThrow(() ->
                 new IllegalStateException("Stato non riconosciuto nella cronologia della notifica " + iun + ": " + label));
-        return new StatusChange(status, item.statusDate().get(FindPolicy.PRESENT)
+        // "Invio in corso" non mostra la data: cercarla farebbe attendere fino al timeout
+        LocalDateTime activeFrom = status == NotificationStatus.DELIVERING ? null : item.statusDate().get(FindPolicy.PRESENT)
                 .map(date -> dateMapper.fromTimelineDate(date.getText()))
-                .orElse(null));
+                .orElse(null);
+        return new StatusChange(status, activeFrom, item.text());
     }
 }
