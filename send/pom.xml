@@ -646,6 +646,41 @@
                             </configOptions>
                         </configuration>
                     </execution>
+
+                    <!-- pn-radd-alt Registry v2 API (B2B operatori RADD: anagrafica sedi/registri) -->
+                    <execution>
+                        <id>generate-pn-radd-alt-registry-client</id>
+                        <goals>
+                            <goal>generate</goal>
+                        </goals>
+                        <phase>process-resources</phase>
+                        <configuration>
+                            <typeMappings>
+                                <typeMapping>OffsetDateTime=java.lang.String</typeMapping>
+                            </typeMappings>
+                            <inputSpec>https://raw.githubusercontent.com/pagopa/pn-radd-alt/refs/heads/develop/docs/openapi/pn-radd-alt-registry-v2-external.yaml</inputSpec>
+                            <generatorName>java</generatorName>
+                            <library>rest-assured</library>
+                            <generateApiTests>false</generateApiTests>
+                            <generateModelTests>false</generateModelTests>
+                            <skipValidateSpec>true</skipValidateSpec>
+                            <configOptions>
+                                <apiPackage>it.pagopa.send.generated.openapi.clients.raddregistry.api</apiPackage>
+                                <modelPackage>it.pagopa.send.generated.openapi.clients.raddregistry.model</modelPackage>
+                                <dateLibrary>java8</dateLibrary>
+                                <annotationLibrary>none</annotationLibrary>
+                                <documentationProvider>source</documentationProvider>
+                                <openApiNullable>false</openApiNullable>
+                                <useAbstractionForFiles>true</useAbstractionForFiles>
+                                <useBeanValidation>false</useBeanValidation>
+                                <serializableModel>true</serializableModel>
+                                <serializationLibrary>jackson</serializationLibrary>
+                                <additionalModelTypeAnnotations>
+                                    @com.fasterxml.jackson.annotation.JsonInclude(com.fasterxml.jackson.annotation.JsonInclude.Include.NON_NULL)
+                                </additionalModelTypeAnnotations>
+                            </configOptions>
+                        </configuration>
+                    </execution>
                 </executions>
             </plugin>
 
