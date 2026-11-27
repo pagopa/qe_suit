@@ -25,8 +25,8 @@ public final class BffSoapInterfaceProblemValidator {
             );
             case NOT_PARSABLE_SOAP_FILE -> assertProblemFields(
                     problem,
-                    "Error while parsing SOAP file",
-                    "Error while parsing SOAP file",
+                    "Error parsing SOAP file",
+                    "Error parsing SOAP file",
                     "10016"
             );
             case MISSING_SOAP_OPERATION -> assertProblemFields(
