@@ -43,7 +43,7 @@ ko:
     L'API ha restituito HTTP 200 anziché HTTP 400 e ha registrato l'associazione
     tra il template e-service in ricezione e il template di finalità, che avrebbe
     dovuto essere negata.
-  link_prod_bug: 'https://pagopa.atlassian.net/jira/browse/PIN-11713'
+  link_prod_bug: https://pagopa.atlassian.net/jira/browse/PIN-11713
   link_suite_bug: ''
 - id_test: '[PURPOSE_RECEIVE_ESERVICE_1.4] Impossibilità di associare un e-service in modalità di ricezione a una
     propria finalità [Given=BFF,When=BFF,Then=BFF]'
@@ -77,5 +77,5 @@ ko:
     L'API ha restituito HTTP 200 anziché HTTP 400 e ha creato una finalità in
     bozza associata a un e-service in modalità RECEIVE, operazione che avrebbe
     dovuto essere negata.
-  link_prod_bug: 'https://pagopa.atlassian.net/jira/browse/PIN-11715'
+  link_prod_bug: https://pagopa.atlassian.net/jira/browse/PIN-11715
   link_suite_bug: ''
