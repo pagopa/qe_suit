@@ -1477,9 +1477,30 @@ ko:
     	at it.pagopa.interop.common.eservice.application.EServiceCatalogPaginationUseCase.shouldContainInRelativeOrder(EServiceCatalogPaginationUseCase.java:82)
     	at it.pagopa.interop.common.eservice.infrastructure.cucumber.EServiceCatalogAssertionSteps.shouldContainEServicesInRelativeOrder(EServiceCatalogAssertionSteps.java:63)
     	at ✽.tra i risultati della ricerca, considerando tutte le pagine, i seguenti e-service compaiono in quest'ordine relativo:(classpath:feature-expanded/catalog/private-catalog-ordering-pagination.feature:43)
-  procedure: ''
-  result: ''
-  link_prod_bug: ''
+  procedure: |
+    Rieseguire in locale PRIVATE_CATALOG_ORDERING_PAGINATION_2 per
+    l'esempio in KO, con un breakpoint all'inizio dell'hook After, prima che
+    il teardown archivi o elimini gli e-service. Con l'esecuzione in pausa,
+    consultare i log della riesecuzione e risalire ai nomi dei tre e-service
+    a partire dagli ID riportati nell'asserzione. Confrontare il loro ordine
+    relativo con quello atteso per il criterio selezionato. Mantenere
+    l'esecuzione in pausa e ripetere da frontend la ricerca del Gherkin nel
+    catalogo autenticato come PagoPA. Cercare «Sorte», filtrare per
+    erogatore «Comune di Milano» e selezionare lo stesso ordinamento
+    dell'esempio in KO. Scorrere tutte le pagine e verificare l'ordine
+    relativo dei tre e-service identificati nei log. Ripetere la ricerca con
+    gli stessi dati, filtri e ordinamento per verificare se la sequenza
+    resta stabile.
+  result: |
+    Nel KO analizzato sono presenti tutti e tre gli e-service attesi, ma il
+    loro ordine relativo è diverso da quello previsto. La ri-esecuzione ha
+    restituito una sequenza diversa da quella del KO iniziale. In QA il
+    disallineamento è stato osservato per tutti e quattro i criteri
+    espliciti di ordinamento per nome e data di creazione, sia crescente sia
+    decrescente. L'ordine relativo deve rispettare il criterio selezionato
+    sull'insieme dei risultati paginati e restare stabile a parità di dati,
+    filtri e criterio. La causa tecnica resta da accertare.
+  link_prod_bug: https://pagopa.atlassian.net/browse/PIN-11313
   link_suite_bug: ''
 - id_test: '[PRIVATE_CATALOG_ORDERING_PAGINATION_2] Ordinamenti richiesti esplicitamente [Given=BFF,When=BFF,Then=BFF]
     [Examples: (senza nome) | Example #3 | line: 53]'
@@ -1620,9 +1641,21 @@ ko:
     	at it.pagopa.interop.common.eservice.application.EServiceDescriptorUseCase.shouldFailToConfigureSOAPInterface(EServiceDescriptorUseCase.java:173)
     	at it.pagopa.interop.common.eservice_template.infrastructure.cucumber.EServiceTemplateInstanceSteps.rejectSoapInterface(EServiceTemplateInstanceSteps.java:73)
     	at ✽.l'erogatore tenta di configurare l'interfaccia SOAP del descrittore dell'e-service appena istanziato ottenendo un rifiuto per "URL non ammesso" con i seguenti indirizzi:(classpath:feature-expanded/eservice-template/eservice-template-instance-interface.feature:140)
-  procedure: ''
-  result: ''
-  link_prod_bug: ''
+  procedure: |
+    Confrontare i valori inviati nel campo
+    serverUrls e le risposte del BFF con il rifiuto atteso dalla feature.
+
+    Verificare dallo stack trace se il test raggiunge anche i controlli
+    sull'interfaccia del descrittore e su quella del template.
+
+  result: |
+    Dopo la creazione di un e-service da template SOAP pubblicato,
+    il BFF ha ricevuto indirizzi contenenti markup o virgolette.
+
+    Per tutti e quattro gli esempi la richiesta di configurazione ha ricevuto
+    HTTP 200 con l'ID del descrittore, anziché il rifiuto atteso. La run
+    riportava un'attesa di HTTP 409.
+  link_prod_bug: https://pagopa.atlassian.net/browse/PIN-11710
   link_suite_bug: ''
 - id_test: '[ESERVICE_TEMPLATE_INTERFACE_6] Rifiuto di valori non ammessi come indirizzi SOAP [Given=BFF,When=BFF,Then=BFF]
     [Examples: markup-e-virgolette | Example #2]'
@@ -1643,9 +1676,21 @@ ko:
     	at it.pagopa.interop.common.eservice.application.EServiceDescriptorUseCase.shouldFailToConfigureSOAPInterface(EServiceDescriptorUseCase.java:173)
     	at it.pagopa.interop.common.eservice_template.infrastructure.cucumber.EServiceTemplateInstanceSteps.rejectSoapInterface(EServiceTemplateInstanceSteps.java:73)
     	at ✽.l'erogatore tenta di configurare l'interfaccia SOAP del descrittore dell'e-service appena istanziato ottenendo un rifiuto per "URL non ammesso" con i seguenti indirizzi:(classpath:feature-expanded/eservice-template/eservice-template-instance-interface.feature:140)
-  procedure: ''
-  result: ''
-  link_prod_bug: ''
+  procedure: |
+    Confrontare i valori inviati nel campo
+    serverUrls e le risposte del BFF con il rifiuto atteso dalla feature.
+
+    Verificare dallo stack trace se il test raggiunge anche i controlli
+    sull'interfaccia del descrittore e su quella del template.
+
+  result: |
+    Dopo la creazione di un e-service da template SOAP pubblicato,
+    il BFF ha ricevuto indirizzi contenenti markup o virgolette.
+
+    Per tutti e quattro gli esempi la richiesta di configurazione ha ricevuto
+    HTTP 200 con l'ID del descrittore, anziché il rifiuto atteso. La run
+    riportava un'attesa di HTTP 409.
+  link_prod_bug: https://pagopa.atlassian.net/browse/PIN-11710
   link_suite_bug: ''
 - id_test: '[ESERVICE_TEMPLATE_INTERFACE_6] Rifiuto di valori non ammessi come indirizzi SOAP [Given=BFF,When=BFF,Then=BFF]
     [Examples: markup-e-virgolette | Example #3]'
@@ -1666,9 +1711,21 @@ ko:
     	at it.pagopa.interop.common.eservice.application.EServiceDescriptorUseCase.shouldFailToConfigureSOAPInterface(EServiceDescriptorUseCase.java:173)
     	at it.pagopa.interop.common.eservice_template.infrastructure.cucumber.EServiceTemplateInstanceSteps.rejectSoapInterface(EServiceTemplateInstanceSteps.java:73)
     	at ✽.l'erogatore tenta di configurare l'interfaccia SOAP del descrittore dell'e-service appena istanziato ottenendo un rifiuto per "URL non ammesso" con i seguenti indirizzi:(classpath:feature-expanded/eservice-template/eservice-template-instance-interface.feature:140)
-  procedure: ''
-  result: ''
-  link_prod_bug: ''
+  procedure: |
+    Confrontare i valori inviati nel campo
+    serverUrls e le risposte del BFF con il rifiuto atteso dalla feature.
+
+    Verificare dallo stack trace se il test raggiunge anche i controlli
+    sull'interfaccia del descrittore e su quella del template.
+
+  result: |
+    Dopo la creazione di un e-service da template SOAP pubblicato,
+    il BFF ha ricevuto indirizzi contenenti markup o virgolette.
+
+    Per tutti e quattro gli esempi la richiesta di configurazione ha ricevuto
+    HTTP 200 con l'ID del descrittore, anziché il rifiuto atteso. La run
+    riportava un'attesa di HTTP 409.
+  link_prod_bug: https://pagopa.atlassian.net/browse/PIN-11710
   link_suite_bug: ''
 - id_test: '[ESERVICE_TEMPLATE_INTERFACE_6] Rifiuto di valori non ammessi come indirizzi SOAP [Given=BFF,When=BFF,Then=BFF]
     [Examples: markup-e-virgolette | Example #4]'
@@ -1689,9 +1746,21 @@ ko:
     	at it.pagopa.interop.common.eservice.application.EServiceDescriptorUseCase.shouldFailToConfigureSOAPInterface(EServiceDescriptorUseCase.java:173)
     	at it.pagopa.interop.common.eservice_template.infrastructure.cucumber.EServiceTemplateInstanceSteps.rejectSoapInterface(EServiceTemplateInstanceSteps.java:73)
     	at ✽.l'erogatore tenta di configurare l'interfaccia SOAP del descrittore dell'e-service appena istanziato ottenendo un rifiuto per "URL non ammesso" con i seguenti indirizzi:(classpath:feature-expanded/eservice-template/eservice-template-instance-interface.feature:140)
-  procedure: ''
-  result: ''
-  link_prod_bug: ''
+  procedure: |
+    Confrontare i valori inviati nel campo
+    serverUrls e le risposte del BFF con il rifiuto atteso dalla feature.
+
+    Verificare dallo stack trace se il test raggiunge anche i controlli
+    sull'interfaccia del descrittore e su quella del template.
+
+  result: |
+    Dopo la creazione di un e-service da template SOAP pubblicato,
+    il BFF ha ricevuto indirizzi contenenti markup o virgolette.
+
+    Per tutti e quattro gli esempi la richiesta di configurazione ha ricevuto
+    HTTP 200 con l'ID del descrittore, anziché il rifiuto atteso. La run
+    riportava un'attesa di HTTP 409.
+  link_prod_bug: https://pagopa.atlassian.net/browse/PIN-11710
   link_suite_bug: ''
 - id_test: BffPurposeTemplateContractTest::addPurposeTemplateRiskAnalysisAnswer::[payload] REPLACED_WITH_NULL @
     /answerData/annotation
@@ -5809,10 +5878,26 @@ ko:
     	at org.awaitility.core.ConditionFactory.until(ConditionFactory.java:729)
     	at it.pagopa.utils.async.PollingUtils.pollUntil(PollingUtils.java:48)
     	... 28 more
-  procedure: ''
-  result: ''
+  procedure: |
+    Eseguire in locale lo scenario e se funziona: 
+    1. Aprire il log del test e filtrare per "rejectConsumerDelegation". L'errore "pathParams supplier failed during discovery" indica che è fallita la precondizione, non la chiamata sotto test.
+    2. Seguire la causa annidata: createPendingConsumerDelegationId -> createConsumerDelegation -> polling UNTIL_SUCCESS scaduto dopo 20 secondi. Il timeout è solo l'effetto finale.
+    3. Nel log cercare la richiesta POST /1.0/backend-for-frontend/consumers/delegations e leggere lo status delle risposte. Risultano 14 tentativi, tutti 403.
+    4. Leggere il body della risposta: codice 010-0007, "Tenant 80bc8c2a-0f36-47b5-9b7f-7b74c73d2b20 not allowed to receive delegations of kind: DelegatedConsumer". Annotare il correlationId.
+    5. Controllare che l'e-service fosse pubblicato e delegabile (state PUBLISHED, isConsumerDelegable true).
+    6. Verificare la configurazione del tenant DELEGATE_CONSUMER (80bc8c2a-...) rispetto alla possibilità di ricevere deleghe consumer.
+  result: |
+    KO dovuto alla precondizione del test, non alla chiamata di reject.
+    La creazione della delega consumer riceve sempre 403 (codice 010-0007): il tenant delegato 80bc8c2a-0f36-47b5-9b7f-7b74c73d2b20 non è abilitato a ricevere deleghe di tipo DelegatedConsumer.
+    Il polling ritenta il 403 per 20 secondi e poi va in timeout, nascondendo l'errore reale.
+    
+    Una possibile causa del KO è il parallelismo tra scenari che modificano
+    la disponibilità a ricevere deleghe di uno stesso ente condiviso. Una
+    modifica concorrente può alterare la precondizione del test e produrre
+    un falso KO. I log disponibili non identificano la modifica responsabile
+    di questa specifica esecuzione.
   link_prod_bug: ''
-  link_suite_bug: ''
+  link_suite_bug: https://pagopa.atlassian.net/browse/QA-19759
 - id_test: BffEServiceContractTest::updateEServiceById::[payload] REPLACED_WITH_NULL @ /isSignalHubEnabled
   error_log: |
     java.lang.AssertionError: HTTP contract expectation failed
@@ -7791,10 +7876,24 @@ ko:
     	at org.awaitility.core.ConditionFactory.until(ConditionFactory.java:729)
     	at it.pagopa.utils.async.PollingUtils.pollUntil(PollingUtils.java:48)
     	... 23 more
-  procedure: ''
-  result: ''
+  procedure: |
+    Eseguire in locale lo scenario e se funziona: 
+    1. Aprire il log del test. "Precondition failed" indica che il KO avviene nella preparazione.
+    2. Seguire la causa annidata, polling UNTIL_SUCCESS scaduto dopo 20 secondi è solo l'effetto finale.
+    3. Cercare nel log le POST relative alle deleghe e leggere lo status delle risposte: tutte 403.
+    4. Leggere il body: codice 010-0007, "Tenant ... not allowed to receive delegations...". Annotare i correlationId.
+  result: |
+    KO dovuto alla precondizione del test, non alla chiamata di reject.
+    La creazione della delega riceve sempre 403 (codice 010-0007): il tenant ... non è abilitato a ricevere deleghe.. .
+    Il polling ritenta il 403 per 20 secondi e poi va in timeout, nascondendo l'errore reale.
+
+    Una possibile causa del KO è il parallelismo tra scenari che modificano
+    la disponibilità a ricevere deleghe di uno stesso ente condiviso. Una
+    modifica concorrente può alterare la precondizione del test e produrre
+    un falso KO. I log disponibili non identificano la modifica responsabile
+    di questa specifica esecuzione.
   link_prod_bug: ''
-  link_suite_bug: ''
+  link_suite_bug: https://pagopa.atlassian.net/browse/QA-19759
 - id_test: WebEServiceDetailsCatalogPageContractTest::checkCustomThresholdsOnCatalog7::Precondition failed
   error_log: |
     java.lang.IllegalStateException: Polling in timeout dopo 20 secondi.
@@ -7831,10 +7930,24 @@ ko:
     	at org.awaitility.core.ConditionFactory.until(ConditionFactory.java:729)
     	at it.pagopa.utils.async.PollingUtils.pollUntil(PollingUtils.java:48)
     	... 23 more
-  procedure: ''
-  result: ''
+  procedure: |
+    Eseguire in locale lo scenario e se funziona: 
+    1. Aprire il log del test. "Precondition failed" indica che il KO avviene nella preparazione.
+    2. Seguire la causa annidata, polling UNTIL_SUCCESS scaduto dopo 20 secondi è solo l'effetto finale.
+    3. Cercare nel log le POST relative alle deleghe e leggere lo status delle risposte: tutte 403.
+    4. Leggere il body: codice 010-0007, "Tenant ... not allowed to receive delegations...". Annotare i correlationId.
+  result: |
+    KO dovuto alla precondizione del test, non alla chiamata di reject.
+    La creazione della delega riceve sempre 403 (codice 010-0007): il tenant ... non è abilitato a ricevere deleghe.. .
+    Il polling ritenta il 403 per 20 secondi e poi va in timeout, nascondendo l'errore reale.
+
+    Una possibile causa del KO è il parallelismo tra scenari che modificano
+    la disponibilità a ricevere deleghe di uno stesso ente condiviso. Una
+    modifica concorrente può alterare la precondizione del test e produrre
+    un falso KO. I log disponibili non identificano la modifica responsabile
+    di questa specifica esecuzione.
   link_prod_bug: ''
-  link_suite_bug: ''
+  link_suite_bug: https://pagopa.atlassian.net/browse/QA-19759
 - id_test: WebEServiceDetailsCatalogPageContractTest::checkCustomThresholdsOnCatalog8::Precondition failed
   error_log: |
     java.lang.IllegalStateException: Polling in timeout dopo 20 secondi.
@@ -7871,10 +7984,24 @@ ko:
     	at org.awaitility.core.ConditionFactory.until(ConditionFactory.java:729)
     	at it.pagopa.utils.async.PollingUtils.pollUntil(PollingUtils.java:48)
     	... 23 more
-  procedure: ''
-  result: ''
+  procedure: |
+    Eseguire in locale lo scenario e se funziona: 
+    1. Aprire il log del test. "Precondition failed" indica che il KO avviene nella preparazione.
+    2. Seguire la causa annidata, polling UNTIL_SUCCESS scaduto dopo 20 secondi è solo l'effetto finale.
+    3. Cercare nel log le POST relative alle deleghe e leggere lo status delle risposte: tutte 403.
+    4. Leggere il body: codice 010-0007, "Tenant ... not allowed to receive delegations...". Annotare i correlationId.
+  result: |
+    KO dovuto alla precondizione del test, non alla chiamata di reject.
+    La creazione della delega riceve sempre 403 (codice 010-0007): il tenant ... non è abilitato a ricevere deleghe.. .
+    Il polling ritenta il 403 per 20 secondi e poi va in timeout, nascondendo l'errore reale.
+
+    Una possibile causa del KO è il parallelismo tra scenari che modificano
+    la disponibilità a ricevere deleghe di uno stesso ente condiviso. Una
+    modifica concorrente può alterare la precondizione del test e produrre
+    un falso KO. I log disponibili non identificano la modifica responsabile
+    di questa specifica esecuzione.
   link_prod_bug: ''
-  link_suite_bug: ''
+  link_suite_bug: https://pagopa.atlassian.net/browse/QA-19759
 - id_test: WebEServiceDetailsCatalogPageContractTest::checkCustomThresholdsOnCatalog9::Precondition failed
   error_log: |
     java.lang.IllegalStateException: Polling in timeout dopo 20 secondi.
@@ -7911,10 +8038,24 @@ ko:
     	at org.awaitility.core.ConditionFactory.until(ConditionFactory.java:729)
     	at it.pagopa.utils.async.PollingUtils.pollUntil(PollingUtils.java:48)
     	... 23 more
-  procedure: ''
-  result: ''
+  procedure: |
+    Eseguire in locale lo scenario e se funziona: 
+    1. Aprire il log del test. "Precondition failed" indica che il KO avviene nella preparazione.
+    2. Seguire la causa annidata, polling UNTIL_SUCCESS scaduto dopo 20 secondi è solo l'effetto finale.
+    3. Cercare nel log le POST relative alle deleghe e leggere lo status delle risposte: tutte 403.
+    4. Leggere il body: codice 010-0007, "Tenant ... not allowed to receive delegations...". Annotare i correlationId.
+  result: |
+    KO dovuto alla precondizione del test, non alla chiamata di reject.
+    La creazione della delega riceve sempre 403 (codice 010-0007): il tenant ... non è abilitato a ricevere deleghe.. .
+    Il polling ritenta il 403 per 20 secondi e poi va in timeout, nascondendo l'errore reale.
+
+    Una possibile causa del KO è il parallelismo tra scenari che modificano
+    la disponibilità a ricevere deleghe di uno stesso ente condiviso. Una
+    modifica concorrente può alterare la precondizione del test e produrre
+    un falso KO. I log disponibili non identificano la modifica responsabile
+    di questa specifica esecuzione.
   link_prod_bug: ''
-  link_suite_bug: ''
+  link_suite_bug: https://pagopa.atlassian.net/browse/QA-19759
 - id_test: WebConsumerPurposeDetailsPageContractTest::consumerPurposeDetailsPageContract::Consumer purpose details
     page shows the expected content and filters
   error_log: |
