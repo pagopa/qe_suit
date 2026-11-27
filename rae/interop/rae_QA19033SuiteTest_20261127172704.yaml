@@ -1,7 +1,7 @@
 rae:
-  release: ''
-  scope: NIGHTLY
-  issue_jira: ''
+  release: '[Interop] Core 2.25.0'
+  scope: PROMO
+  issue_jira: 'https://pagopa.atlassian.net/browse/QA-19033'
   data_ora: '2026-11-27T17:25:22Z'
   durata: 00:01:13
   numero_ko: 18
@@ -48,8 +48,8 @@ ko:
     	at it.pagopa.infrastructure.contract.http.DefaultHttpContractPolicy$BuilderImpl.lambda$scenarioStatus$2(DefaultHttpContractPolicy.java:94)
     	at it.pagopa.infrastructure.contract.http.HttpContractRuntimeCaseExecutor.execute(HttpContractRuntimeCaseExecutor.java:59)
     	... 6 more
-  procedure: ''
-  result: ''
+  procedure: "Attraverso analisi dei log si è osservato che la stringa specificata è lecita come qualsiasi altra stringa di filtering. Test corretto nel branch feature/QA-19033-catalogo-compatto"
+  result: "Il test si attende esito negativo quando viene specificata la stringa \"null\" come valore del parametro di query \"q\". Tuttavia specificare la stringa null è lecito come specificare qualunque altra stringa di filtering."
   link_prod_bug: ''
   link_suite_bug: ''
 - id_test: BffEServiceContractTest::getCompactCatalogEServices::[queryParams] REMOVED @ /states/0
@@ -89,9 +89,9 @@ ko:
     	at it.pagopa.infrastructure.contract.http.DefaultHttpContractPolicy$BuilderImpl.lambda$scenarioStatus$2(DefaultHttpContractPolicy.java:94)
     	at it.pagopa.infrastructure.contract.http.HttpContractRuntimeCaseExecutor.execute(HttpContractRuntimeCaseExecutor.java:59)
     	... 7 more
-  procedure: ''
-  result: ''
-  link_prod_bug: ''
+  procedure: "Dall'analisi dei log risulta che sia permesso specificare un parametro 'state=' senza alcuna valorizzazione. Rilevato come bug di bassa priorità."
+  result: "Il sistema permette di specificare un parametro 'state=', cioè senza alcuna valorizzazione."
+  link_prod_bug: 'https://pagopa.atlassian.net/browse/PIN-11728'
   link_suite_bug: ''
 - id_test: BffEServiceContractTest::getCompactCatalogEServices::[queryParams] REMOVED @ /q
   error_log: |
@@ -129,10 +129,10 @@ ko:
     	at it.pagopa.infrastructure.contract.http.DefaultHttpContractPolicy$BuilderImpl.lambda$scenarioStatus$2(DefaultHttpContractPolicy.java:94)
     	at it.pagopa.infrastructure.contract.http.HttpContractRuntimeCaseExecutor.execute(HttpContractRuntimeCaseExecutor.java:59)
     	... 6 more
-  procedure: ''
-  result: ''
+  procedure: "Dall'analisi dei log risulta che il parametro q è facoltativo: la sua omissione non deve causare un errore. Inserito un override mirato che si attende HTTP 200 per REMOVED su q nel test getCompactCatalogEServices. Aperto il ticket QA-19859 per correggere il motore di fuzzing affinché riconosca i parametri facoltativi."
+  result: "Il test si attendeva un esito negativo quando veniva omesso il parametro facoltativo q. L'API accetta la richiesta senza questo filtro e risponde HTTP 200."
   link_prod_bug: ''
-  link_suite_bug: ''
+  link_suite_bug: 'https://pagopa.atlassian.net/browse/QA-19859'
 - id_test: BffEServiceContractTest::getCompactCatalogEServices::[queryParams] REMOVED @ /states
   error_log: |
     java.lang.AssertionError: HTTP contract expectation failed
@@ -169,10 +169,10 @@ ko:
     	at it.pagopa.infrastructure.contract.http.DefaultHttpContractPolicy$BuilderImpl.lambda$scenarioStatus$2(DefaultHttpContractPolicy.java:94)
     	at it.pagopa.infrastructure.contract.http.HttpContractRuntimeCaseExecutor.execute(HttpContractRuntimeCaseExecutor.java:59)
     	... 6 more
-  procedure: ''
-  result: ''
+  procedure: "Dall'analisi dei log e del contratto OpenAPI risulta che states è un parametro facoltativo. Inserito un override mirato che si attende HTTP 200 per REMOVED su states nel test getCompactCatalogEServices. Aperto il ticket QA-19859 per correggere il motore di fuzzing affinché riconosca i parametri facoltativi."
+  result: "Il test si attendeva un esito negativo quando veniva omesso il parametro facoltativo states. L'API accetta la richiesta senza questo filtro e risponde HTTP 200."
   link_prod_bug: ''
-  link_suite_bug: ''
+  link_suite_bug: 'https://pagopa.atlassian.net/browse/QA-19859'
 - id_test: BffEServiceContractTest::getCompactCatalogEServices::[queryParams] REMOVED @ /agreementStates
   error_log: |
     java.lang.AssertionError: HTTP contract expectation failed
@@ -209,10 +209,10 @@ ko:
     	at it.pagopa.infrastructure.contract.http.DefaultHttpContractPolicy$BuilderImpl.lambda$scenarioStatus$2(DefaultHttpContractPolicy.java:94)
     	at it.pagopa.infrastructure.contract.http.HttpContractRuntimeCaseExecutor.execute(HttpContractRuntimeCaseExecutor.java:59)
     	... 6 more
-  procedure: ''
-  result: ''
+  procedure: "Dall'analisi dei log e del contratto OpenAPI risulta che agreementStates è un parametro facoltativo. Inserito un override mirato che si attende HTTP 200 per REMOVED su agreementStates nel test getCompactCatalogEServices. Aperto il ticket QA-19859 per correggere il motore di fuzzing affinché riconosca i parametri facoltativi."
+  result: "Il test si attendeva un esito negativo quando veniva omesso il parametro facoltativo agreementStates. L'API accetta la richiesta senza questo filtro e risponde HTTP 200."
   link_prod_bug: ''
-  link_suite_bug: ''
+  link_suite_bug: 'https://pagopa.atlassian.net/browse/QA-19859'
 - id_test: BffEServiceContractTest::getCompactCatalogEServices::[queryParams] REMOVED @ /agreementStates/0
   error_log: |
     java.lang.AssertionError: HTTP contract expectation failed
@@ -249,9 +249,9 @@ ko:
     	at it.pagopa.infrastructure.contract.http.DefaultHttpContractPolicy$BuilderImpl.lambda$scenarioStatus$2(DefaultHttpContractPolicy.java:94)
     	at it.pagopa.infrastructure.contract.http.HttpContractRuntimeCaseExecutor.execute(HttpContractRuntimeCaseExecutor.java:59)
     	... 6 more
-  procedure: ''
-  result: ''
-  link_prod_bug: ''
+  procedure: "Dall'analisi dei log risulta che è permesso specificare il parametro 'agreementStates=' senza alcuna valorizzazione. Rilevato come bug di bassa priorità."
+  result: "Il sistema permette di specificare il parametro 'agreementStates=', cioè senza alcuna valorizzazione."
+  link_prod_bug: 'https://pagopa.atlassian.net/browse/PIN-11728'
   link_suite_bug: ''
 - id_test: BffEServiceContractTest::getCompactCatalogEServices::[queryParams] REMOVED @ /mode
   error_log: |
@@ -289,10 +289,10 @@ ko:
     	at it.pagopa.infrastructure.contract.http.DefaultHttpContractPolicy$BuilderImpl.lambda$scenarioStatus$2(DefaultHttpContractPolicy.java:94)
     	at it.pagopa.infrastructure.contract.http.HttpContractRuntimeCaseExecutor.execute(HttpContractRuntimeCaseExecutor.java:59)
     	... 6 more
-  procedure: ''
-  result: ''
+  procedure: "Dall'analisi dei log e del contratto OpenAPI risulta che mode è un parametro facoltativo. Inserito un override mirato che si attende HTTP 200 per REMOVED su mode nel test getCompactCatalogEServices. Aperto il ticket QA-19859 per correggere il motore di fuzzing affinché riconosca i parametri facoltativi."
+  result: "Il test si attendeva un esito negativo quando veniva omesso il parametro facoltativo mode. L'API accetta la richiesta senza questo filtro e risponde HTTP 200."
   link_prod_bug: ''
-  link_suite_bug: ''
+  link_suite_bug: 'https://pagopa.atlassian.net/browse/QA-19859'
 - id_test: BffEServiceContractTest::getCompactCatalogEServices::[queryParams] REMOVED @ /personalData
   error_log: |
     java.lang.AssertionError: HTTP contract expectation failed
@@ -329,10 +329,10 @@ ko:
     	at it.pagopa.infrastructure.contract.http.DefaultHttpContractPolicy$BuilderImpl.lambda$scenarioStatus$2(DefaultHttpContractPolicy.java:94)
     	at it.pagopa.infrastructure.contract.http.HttpContractRuntimeCaseExecutor.execute(HttpContractRuntimeCaseExecutor.java:59)
     	... 6 more
-  procedure: ''
-  result: ''
+  procedure: "Dall'analisi dei log e del contratto OpenAPI risulta che personalData è un parametro facoltativo. Inserito un override mirato che si attende HTTP 200 per REMOVED su personalData nel test getCompactCatalogEServices. Aperto il ticket QA-19859 per correggere il motore di fuzzing affinché riconosca i parametri facoltativi."
+  result: "Il test si attendeva un esito negativo quando veniva omesso il parametro facoltativo personalData. L'API accetta la richiesta senza questo filtro e risponde HTTP 200."
   link_prod_bug: ''
-  link_suite_bug: ''
+  link_suite_bug: 'https://pagopa.atlassian.net/browse/QA-19859'
 - id_test: BffEServiceContractTest::getCompactCatalogEServices::[queryParams] REPLACED_WITH_EMPTY_STRING @ /q
   error_log: |
     java.lang.AssertionError: HTTP contract expectation failed
@@ -370,8 +370,8 @@ ko:
     	at it.pagopa.infrastructure.contract.http.DefaultHttpContractPolicy$BuilderImpl.lambda$scenarioStatus$2(DefaultHttpContractPolicy.java:94)
     	at it.pagopa.infrastructure.contract.http.HttpContractRuntimeCaseExecutor.execute(HttpContractRuntimeCaseExecutor.java:59)
     	... 7 more
-  procedure: ''
-  result: ''
+  procedure: "Dall'analisi dei log risulta che il valore vuoto di q è accettato come filtro. Inserito un override mirato che si attende HTTP 200 per REPLACED_WITH_EMPTY_STRING su q nel test getCompactCatalogEServices."
+  result: "Il test si attendeva un esito negativo quando q veniva sostituito con una stringa vuota. L'API accetta il valore e risponde HTTP 200. il ché si considera lecito poiché il senso semantico dell'operazione è vuota'."
   link_prod_bug: ''
   link_suite_bug: ''
 - id_test: BffEServiceContractTest::getCompactCatalogEServices::[queryParams] REMOVED @ /isConsumerDelegable
@@ -410,10 +410,10 @@ ko:
     	at it.pagopa.infrastructure.contract.http.DefaultHttpContractPolicy$BuilderImpl.lambda$scenarioStatus$2(DefaultHttpContractPolicy.java:94)
     	at it.pagopa.infrastructure.contract.http.HttpContractRuntimeCaseExecutor.execute(HttpContractRuntimeCaseExecutor.java:59)
     	... 6 more
-  procedure: ''
-  result: ''
+  procedure: "Dall'analisi dei log e del contratto OpenAPI risulta che isConsumerDelegable è un parametro facoltativo. Inserito un override mirato che si attende HTTP 200 per REMOVED su isConsumerDelegable nel test getCompactCatalogEServices. Aperto il ticket QA-19859 per correggere il motore di fuzzing affinché riconosca i parametri facoltativi."
+  result: "Il test si attendeva un esito negativo quando veniva omesso il parametro facoltativo isConsumerDelegable. L'API accetta la richiesta senza questo filtro e risponde HTTP 200."
   link_prod_bug: ''
-  link_suite_bug: ''
+  link_suite_bug: 'https://pagopa.atlassian.net/browse/QA-19859'
 - id_test: BffEServiceContractTest::getCompactCatalogEServices::[queryParams] REPLACED_WITH_BLANK_STRING @ /q
   error_log: |
     java.lang.AssertionError: HTTP contract expectation failed
@@ -450,8 +450,8 @@ ko:
     	at it.pagopa.infrastructure.contract.http.DefaultHttpContractPolicy$BuilderImpl.lambda$scenarioStatus$2(DefaultHttpContractPolicy.java:94)
     	at it.pagopa.infrastructure.contract.http.HttpContractRuntimeCaseExecutor.execute(HttpContractRuntimeCaseExecutor.java:59)
     	... 6 more
-  procedure: ''
-  result: ''
+  procedure: "Dall'analisi dei log risulta che il valore blank di q non causa un errore. Inserito un override mirato che si attende HTTP 200 per REPLACED_WITH_BLANK_STRING su q nel test getCompactCatalogEServices."
+  result: "Il test si attendeva un esito negativo quando q veniva sostituito con una stringa blank. L'API accetta il valore e risponde HTTP 200, il ché si considera lecito poiché il senso semantico dell'operazione è 'filtra per stringa blank'."
   link_prod_bug: ''
   link_suite_bug: ''
 - id_test: BffEServiceContractTest::getCompactCatalogEServices::[queryParams] REPLACED_WITH_LONG_STRING @ /q
@@ -490,8 +490,8 @@ ko:
     	at it.pagopa.infrastructure.contract.http.DefaultHttpContractPolicy$BuilderImpl.lambda$scenarioStatus$2(DefaultHttpContractPolicy.java:94)
     	at it.pagopa.infrastructure.contract.http.HttpContractRuntimeCaseExecutor.execute(HttpContractRuntimeCaseExecutor.java:59)
     	... 6 more
-  procedure: ''
-  result: ''
+  procedure: "Dall'analisi dei log risulta che una stringa lunga su q viene respinta con HTTP 403. Mantenuto l'override mirato che si attende 403 per REPLACED_WITH_LONG_STRING su q nel test getCompactCatalogEServices."
+  result: "Il test si attendeva HTTP 400 per una stringa lunga nel parametro q, mentre l'API risponde HTTP 403 Forbidden. L'aspettativa è stata allineata al comportamento osservato, mantenendo 403."
   link_prod_bug: ''
   link_suite_bug: ''
 - id_test: BffEServiceContractTest::getCompactCatalogEServices::[queryParams] REPLACED_WITH_URL_INJECTION @ /q
@@ -530,9 +530,9 @@ ko:
     	at it.pagopa.infrastructure.contract.http.DefaultHttpContractPolicy$BuilderImpl.lambda$scenarioStatus$2(DefaultHttpContractPolicy.java:94)
     	at it.pagopa.infrastructure.contract.http.HttpContractRuntimeCaseExecutor.execute(HttpContractRuntimeCaseExecutor.java:59)
     	... 6 more
-  procedure: ''
-  result: ''
-  link_prod_bug: ''
+  procedure: "Dall'analisi dei log si è osservato che l'injection di un URL nel parametro q è impropriamente permessa, sia in forma piana che in forma URL-encoded. Rilevato come bug di prodotto."
+  result: "Il sistema permette di specificare un url come valore del query param 'q'"
+  link_prod_bug: 'https://pagopa.atlassian.net/browse/PIN-11729'
   link_suite_bug: ''
 - id_test: BffEServiceContractTest::getCompactCatalogEServices::[queryParams] REPLACED_WITH_WRONG_TYPE_NUMBER @
     /q
@@ -571,8 +571,8 @@ ko:
     	at it.pagopa.infrastructure.contract.http.DefaultHttpContractPolicy$BuilderImpl.lambda$scenarioStatus$2(DefaultHttpContractPolicy.java:94)
     	at it.pagopa.infrastructure.contract.http.HttpContractRuntimeCaseExecutor.execute(HttpContractRuntimeCaseExecutor.java:59)
     	... 6 more
-  procedure: ''
-  result: ''
+  procedure: "Dall'analisi dei log risulta che la sostituzione numerica di q viene accettata e la chiamata termina con HTTP 200. Inserito un override mirato per REPLACED_WITH_WRONG_TYPE_NUMBER su q nel test getCompactCatalogEServices."
+  result: "Il test si attendeva un esito negativo quando q veniva sostituito con un numero. L'API accetta il valore come filtro e risponde HTTP 200."
   link_prod_bug: ''
   link_suite_bug: ''
 - id_test: BffEServiceContractTest::getCompactCatalogEServices::[queryParams] REPLACED_WITH_EMPTY_STRING @ /states/0
@@ -611,8 +611,8 @@ ko:
     	at it.pagopa.infrastructure.contract.http.DefaultHttpContractPolicy$BuilderImpl.lambda$scenarioStatus$2(DefaultHttpContractPolicy.java:94)
     	at it.pagopa.infrastructure.contract.http.HttpContractRuntimeCaseExecutor.execute(HttpContractRuntimeCaseExecutor.java:59)
     	... 6 more
-  procedure: ''
-  result: ''
+  procedure: "Dall'analisi dei log risulta che la stringa vuota nell'elemento states[0] non causa un errore e la chiamata risponde HTTP 200. Inserito un override mirato che si attende HTTP 200 per REPLACED_WITH_EMPTY_STRING su states[0] nel test getCompactCatalogEServices."
+  result: "Il test si attendeva un esito negativo quando states[0] veniva sostituito con una stringa vuota. L'API accetta il valore e risponde HTTP 200."
   link_prod_bug: ''
   link_suite_bug: ''
 - id_test: BffEServiceContractTest::getCompactCatalogEServices::[queryParams] REPLACED_WITH_EMPTY_STRING @ /agreementStates/0
@@ -651,8 +651,8 @@ ko:
     	at it.pagopa.infrastructure.contract.http.DefaultHttpContractPolicy$BuilderImpl.lambda$scenarioStatus$2(DefaultHttpContractPolicy.java:94)
     	at it.pagopa.infrastructure.contract.http.HttpContractRuntimeCaseExecutor.execute(HttpContractRuntimeCaseExecutor.java:59)
     	... 6 more
-  procedure: ''
-  result: ''
+  procedure: ""
+  result: ""
   link_prod_bug: ''
   link_suite_bug: ''
 - id_test: BffEServiceContractTest::getCompactCatalogEServices::[queryParams] REPLACED_WITH_ZERO @ /offset
@@ -691,10 +691,10 @@ ko:
     	at it.pagopa.infrastructure.contract.http.DefaultHttpContractPolicy$BuilderImpl.lambda$scenarioStatus$2(DefaultHttpContractPolicy.java:94)
     	at it.pagopa.infrastructure.contract.http.HttpContractRuntimeCaseExecutor.execute(HttpContractRuntimeCaseExecutor.java:59)
     	... 6 more
-  procedure: ''
-  result: ''
+  procedure: "Dall'analisi dei log risulta che offset=0 è accettato e la chiamata risponde HTTP 200. Inserito un override mirato che si attende HTTP 200 per REPLACED_WITH_ZERO su offset nel test getCompactCatalogEServices. Aperto il ticket QA-19860 per correggere il motore di fuzzing affinché riconosca zero come valore legittimo per campi come offset."
+  result: "Il test si attendeva un esito negativo quando offset veniva sostituito con zero. L'API accetta il valore e risponde HTTP 200."
   link_prod_bug: ''
-  link_suite_bug: ''
+  link_suite_bug: 'https://pagopa.atlassian.net/browse/QA-19860'
 - id_test: BffEServiceContractTest::getCompactCatalogEServices::[queryParams] REPLACED_WITH_MAX_VALUE @ /offset
   error_log: |
     java.lang.AssertionError: HTTP contract expectation failed
@@ -731,7 +731,7 @@ ko:
     	at it.pagopa.infrastructure.contract.http.DefaultHttpContractPolicy$BuilderImpl.lambda$scenarioStatus$2(DefaultHttpContractPolicy.java:94)
     	at it.pagopa.infrastructure.contract.http.HttpContractRuntimeCaseExecutor.execute(HttpContractRuntimeCaseExecutor.java:59)
     	... 6 more
-  procedure: ''
-  result: ''
+  procedure: "Dall'analisi dei log risulta che il valore massimo di Integer per offset è accettato e la chiamata risponde HTTP 200. Inserito un override mirato che si attende HTTP 200 per REPLACED_WITH_MAX_VALUE su offset nel test getCompactCatalogEServices."
+  result: "Il test si attendeva un esito negativo quando offset veniva sostituito con il valore massimo rappresentabile. L'API accetta 2147483647 e risponde HTTP 200."
   link_prod_bug: ''
   link_suite_bug: ''
