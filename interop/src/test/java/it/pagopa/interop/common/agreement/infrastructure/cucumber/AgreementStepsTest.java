@@ -15,6 +15,7 @@ import it.pagopa.interop.common.eservice.domain.EServiceDescriptorState;
 import it.pagopa.interop.common.eservice.infrastructure.cucumber.dto.SelectedEServiceDescriptor;
 import it.pagopa.interop.common.journey.application.InteropJourney;
 import it.pagopa.interop.common.kernel.context.AuthSession;
+import it.pagopa.interop.common.kernel.domain.Document;
 import it.pagopa.interop.common.kernel.domain.Tenant;
 import it.pagopa.interop.common.kernel.domain.TenantRef;
 import it.pagopa.interop.common.tenant.application.TenantUseCase;
@@ -59,7 +60,8 @@ class AgreementStepsTest {
 
     @Test
     void attachesAndRemovesConsumerDocuments() {
-        var agreement = Agreement.builder().id(UUID.randomUUID()).build();
+        var document = Document.builder().id(UUID.randomUUID()).name("allegato-a.pdf").build();
+        var agreement = Agreement.builder().id(UUID.randomUUID()).consumerDocument(document).build();
 
         steps.attachConsumerDocumentToAgreement(agreement);
         steps.attachNamedConsumerDocumentToAgreement("allegato-a.pdf", agreement);
