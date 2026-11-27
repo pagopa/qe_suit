@@ -52,7 +52,9 @@ import static io.cucumber.junit.platform.engine.Constants.*;
                          or @eservice-template-instance
                          or @eservice-attribute-threshold
                          or @debug-client-assertion-page-ui-behavior
-                         or @dev-tools-page-ui-behavior)
+                         or @dev-tools-page-ui-behavior
+                         or @purpose-template
+                         or @purpose)
                         and not @wait_for_fix
                         and not @awaiting_for_qa
                         and not @ignore

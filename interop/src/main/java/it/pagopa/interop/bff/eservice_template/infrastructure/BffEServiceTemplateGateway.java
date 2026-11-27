@@ -3,6 +3,7 @@ package it.pagopa.interop.bff.eservice_template.infrastructure;
 import it.pagopa.application.context.EntityStore;
 import it.pagopa.application.context.LastApiResponseStore;
 import it.pagopa.infrastructure.template.action.strategy.PollingStrategy;
+import it.pagopa.interop.bff.eservice.infrastructure.BffEServiceRiskAnalysisMapper;
 import it.pagopa.interop.bff.eservice_template.application.*;
 import it.pagopa.interop.common.eservice_template.application.EServiceTemplateGateway;
 import it.pagopa.interop.common.eservice_template.application.command.*;
@@ -10,8 +11,12 @@ import it.pagopa.interop.common.eservice_template.domain.EServiceTemplate;
 import it.pagopa.interop.common.eservice_template.domain.EServiceTemplateUpdateFailureReason;
 import it.pagopa.interop.common.eservice_template.domain.EServiceTemplateVersion;
 import it.pagopa.interop.common.kernel.domain.Channel;
+import it.pagopa.interop.common.kernel.domain.EServiceRiskAnalysis;
 import it.pagopa.interop.common.kernel.domain.EServiceTemplateRef;
 import it.pagopa.interop.common.kernel.domain.EServiceTemplateVersionRef;
+import it.pagopa.interop.common.kernel.domain.TenantKind;
+import it.pagopa.interop.generated.openapi.clients.bff.model.EServiceTemplateRiskAnalysisSeed;
+import java.util.Objects;
 import it.pagopa.interop.generated.openapi.clients.bff.model.PatchUpdateEServiceTemplateSeed;
 import it.pagopa.utils.async.PollingUtils;
 import lombok.RequiredArgsConstructor;
@@ -31,6 +36,7 @@ public class BffEServiceTemplateGateway implements EServiceTemplateGateway {
     private final BffEServiceTemplateVersionGateway versionGateway;
     private final EntityStore entityStore;
     private final BffEServiceTemplateMappingService assembler;
+    private final BffEServiceRiskAnalysisMapper riskAnalysisMapper;
     private final LastApiResponseStore lastApiResponseStore;
 
     @Override
@@ -42,6 +48,7 @@ public class BffEServiceTemplateGateway implements EServiceTemplateGateway {
                 .withPolling(PollingStrategy.UNTIL_SUCCESS)
                 .get();
 
+        Objects.requireNonNull(created, "Created template expected as non NULL: check response logs for details");
         return refresh(new EServiceTemplateRef(created.getId()), new EServiceTemplateVersionRef(created.getVersionId()));
     }
 
@@ -160,6 +167,23 @@ public class BffEServiceTemplateGateway implements EServiceTemplateGateway {
             throw new IllegalArgumentException("Command must be an instance of " + BffUpdateEServiceTemplateDescriptionCommand.class.getSimpleName());
 
         return restClient.updateTemplateDescription(templateRef.id(), bffCommand.getBffPayload())
+                .withPolling(PollingStrategy.UNTIL_SUCCESS)
+                .map(ignored -> getEServiceTemplate(templateRef))
+                .get();
+    }
+
+    @Override
+    public EServiceTemplate createEServiceTemplateRiskAnalysis(
+            EServiceTemplateRef templateRef,
+            TenantKind targetKind,
+            EServiceRiskAnalysis riskAnalysisForm
+    ) {
+        EServiceTemplateRiskAnalysisSeed payload = riskAnalysisMapper.toChannel(
+                riskAnalysisForm,
+                targetKind
+        );
+
+        return restClient.createEServiceTemplateRiskAnalysis(templateRef.id(), payload)
                 .withPolling(PollingStrategy.UNTIL_SUCCESS)
                 .map(ignored -> getEServiceTemplate(templateRef))
                 .get();
