@@ -84,7 +84,7 @@ class BffEServiceTemplateInstanceGatewayTest {
         }
 
         verify(operation).templateIdPath(template.getId());
-        verify(operation).body(argThat(seed -> seed.getInstanceLabel().equals("https://example.com")));
+        verify(operation).body(argThat(seed -> seed.getInstanceLabel().equals("https://interopLinkExample.com")));
         verify(operation, times(1)).execute(any());
         verify(responses).setLastResponse(any(ApiResponse.class));
         verifyNoInteractions(serviceGateway, descriptorGateway, entities);
