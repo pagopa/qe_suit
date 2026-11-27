@@ -15,6 +15,7 @@ import it.pagopa.interop.common.eservice_template.application.EServiceTemplateUs
 import it.pagopa.interop.common.eservice_template.application.EServiceTemplateVersionUseCase;
 import it.pagopa.interop.common.eservice_template.application.command.EServiceTemplateCreationCommand;
 import it.pagopa.interop.common.eservice_template.application.command.UpdateEServiceTemplateCommand;
+import it.pagopa.interop.common.eservice_template.application.command.PrepareEServiceTemplateForPublishingCommand;
 import it.pagopa.interop.common.eservice_template.application.command.UpdateEServiceTemplateVersionCommand;
 import it.pagopa.interop.common.eservice_template.domain.EServiceTemplate;
 import it.pagopa.interop.common.eservice_template.domain.EServiceTemplateUpdateFailureReason;
@@ -193,7 +194,15 @@ public class EServiceTemplateJourneyImpl implements EServiceTemplateJourney<ESer
     }
 
     private EServiceTemplateJourneyImpl publishPipeline(EServiceTemplate eServiceTemplate, EServiceTemplateVersion eServiceTemplateVersion, EServiceTemplateCreationCommand configuration) {
-        var enrichedVersion = eServiceTemplateVersionUseCase.prepareVersionForPublishing(eServiceTemplate, eServiceTemplateVersion, configuration.getInterfaceDocumentPath());
+        var enrichedVersion = eServiceTemplateVersionUseCase.prepareVersionForPublishing(
+                new PrepareEServiceTemplateForPublishingCommand(
+                        eServiceTemplate,
+                        eServiceTemplateVersion,
+                        configuration.getInterfaceDocumentPath(),
+                        null,
+                        null
+                )
+        );
         var publishedVersion = eServiceTemplateVersionUseCase.publishVersion(eServiceTemplate, enrichedVersion);
         eServiceTemplateVersionUseCase.downloadInterface(eServiceTemplate, publishedVersion);
         return this;

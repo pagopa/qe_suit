@@ -213,4 +213,18 @@ public class BffEServiceTemplateRestClient extends RestClient {
                 byte[].class
         );
     }
+
+    public TestChain<Void> createEServiceTemplateRiskAnalysis(
+        @Nonnull UUID templateId,
+        @Nonnull EServiceTemplateRiskAnalysisSeed payload
+    ) {
+        return execute(
+            () -> eServiceTemplatesApi
+                .createEServiceTemplateRiskAnalysis()
+                .eServiceTemplateIdPath(templateId)
+                .body(payload)
+                .execute(Function.identity()),
+            Void.class
+        );
+    }
 }
