@@ -4,11 +4,14 @@ import it.pagopa.application.context.EntityStore;
 import it.pagopa.infrastructure.suit.component.Snackbar;
 import it.pagopa.interop.common.eservice.application.EServiceGateway;
 import it.pagopa.interop.common.eservice.application.command.EServiceCreationCommand;
+import it.pagopa.interop.common.eservice.application.command.EServiceUpdateCommand;
 import it.pagopa.interop.common.eservice.domain.EService;
 import it.pagopa.interop.common.eservice.domain.EServiceArchivingFailureReason;
+import it.pagopa.interop.common.eservice.domain.EServiceUpdateFailureReason;
 import it.pagopa.interop.common.eservice.domain.GracePeriodDays;
 import it.pagopa.interop.common.eservice.domain.SoapInterfaceUploadFailureReason;
 import it.pagopa.interop.common.kernel.domain.Channel;
+import it.pagopa.interop.common.kernel.domain.EServiceDescriptorRef;
 import it.pagopa.interop.common.kernel.domain.EServiceRef;
 import it.pagopa.interop.web.eservice.application.WebEServiceCreationCommand;
 import it.pagopa.interop.web.eservice.infrastructure.page.ProducerEServiceDetailPage;
@@ -48,6 +51,21 @@ public class WebEServiceGateway implements EServiceGateway {
     }
 
     @Override
+    public void tryUpdateEServiceMetadata(EServiceRef eServiceRef, EServiceUpdateCommand command) {
+        throw new UnsupportedOperationException("Not supported yet.");
+    }
+
+    @Override
+    public void updateEServiceMetadata(EServiceRef eServiceRef, EServiceUpdateCommand command) {
+        throw new UnsupportedOperationException("Not supported yet.");
+    }
+
+    @Override
+    public void shouldFailToUpdateEServiceMetadata(EServiceUpdateFailureReason reason) {
+        throw new UnsupportedOperationException("Not supported yet.");
+    }
+
+    @Override
     public void deleteEService(EService eService) {
         throw new UnsupportedOperationException("Not supported yet.");
     }
@@ -63,6 +81,11 @@ public class WebEServiceGateway implements EServiceGateway {
         EServiceArchivingDialog dialog = producerEServiceDetailPage.getArchivingDialog();
         fillArchivingDialog(dialog, gracePeriodDays);
         dialog.getArchiveButton().click();
+    }
+
+    @Override
+    public void cloneEService(EServiceRef eServiceRef, EServiceDescriptorRef descriptorRef) {
+        throw new UnsupportedOperationException("Not supported yet.");
     }
 
     @Override

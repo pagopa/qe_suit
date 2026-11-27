@@ -31,7 +31,7 @@ public class BffEServiceTemplateVersionGateway implements EServiceTemplateVersio
 
     private final BffEServiceTemplateRestClient restClient;
     private final EntityStore entityStore;
-    private final BffEServiceTemplateVersionMapper mapper;
+    private final BffEServiceTemplateMappingService assembler;
     private final BffEServiceTemplateLifecycleRestClient lifecycleClient;
 
     @Override
@@ -52,7 +52,7 @@ public class BffEServiceTemplateVersionGateway implements EServiceTemplateVersio
                 .withPolling(PollingStrategy.UNTIL_SUCCESS)
                 .map(versionDetails -> {
                     Optional<EServiceTemplate> maybeTemplate = entityStore.getById(templateRef.id(), EServiceTemplate.class);
-                    return mapper.toTemplateWithUpsertVersion(versionDetails, maybeTemplate.orElse(null));
+                    return assembler.toEServiceTemplate(versionDetails, maybeTemplate.orElse(null));
                 })
                 .updateContext()
                 .map(template -> {

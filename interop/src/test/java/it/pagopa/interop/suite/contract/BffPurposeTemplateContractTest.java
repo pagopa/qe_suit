@@ -1,5 +1,6 @@
 package it.pagopa.interop.suite.contract;
 
+import io.restassured.http.ContentType;
 import it.pagopa.infrastructure.fuzzing.FuzzScenario;
 import it.pagopa.interop.TestBootApp;
 import it.pagopa.interop.common.infrastructure.config.JunitEnvironmentProfiles;
@@ -15,6 +16,7 @@ import it.pagopa.interop.common.purpose_template.domain.PurposeTemplateState;
 import it.pagopa.interop.generated.openapi.clients.bff.ApiClient;
 import it.pagopa.interop.generated.openapi.clients.bff.model.PurposeTemplateSeed;
 import org.junit.jupiter.api.DynamicTest;
+import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.TestFactory;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -24,6 +26,7 @@ import org.springframework.test.context.TestConstructor;
 import java.util.List;
 import java.util.Map;
 import java.util.UUID;
+import java.util.function.Function;
 import java.util.function.Supplier;
 import java.util.stream.Stream;
 
@@ -119,20 +122,62 @@ public class BffPurposeTemplateContractTest {
 
     @TestFactory
     Stream<DynamicTest> publishPurposeTemplate() {
-        return httpContractValidator
+        Stream<DynamicTest> contractTests =  httpContractValidator
                 .as(PRODUCER, UserRole.ADMIN)
-                .apiCall(() -> apiClient.purposeTemplates().publishPurposeTemplate())
+                .apiCall(() -> {
+                    var operation = apiClient.purposeTemplates().publishPurposeTemplate();
+                    operation.reqSpec(req -> req.setContentType(ContentType.JSON));
+                    return operation;
+                })
                 .pathParams(() -> Map.of("purposeTemplateId", createPurposeTemplate(PurposeTemplateState.DRAFT).getId()))
                 .tests();
+
+        DynamicTest multipartRejected = DynamicTest.dynamicTest(
+                "publishPurposeTemplate rejects multipart/form-data with 400",
+                () -> {
+                    PurposeTemplate purposeTemplate = createPurposeTemplate(PurposeTemplateState.DRAFT);
+
+                    apiClient.purposeTemplates()
+                            .publishPurposeTemplate()
+                            .purposeTemplateIdPath(purposeTemplate.getId())
+                            .reqSpec(req -> req.setContentType(ContentType.MULTIPART))
+                            .execute(Function.identity())
+                            .then()
+                            .statusCode(400);
+                }
+        );
+
+        return Stream.concat(contractTests, Stream.of(multipartRejected));
     }
 
     @TestFactory
     Stream<DynamicTest> unsuspendPurposeTemplate() {
-        return httpContractValidator
+        Stream<DynamicTest> contractTests = httpContractValidator
                 .as(PRODUCER, UserRole.ADMIN)
-                .apiCall(() -> apiClient.purposeTemplates().unsuspendPurposeTemplate())
+                .apiCall(() -> {
+                    var operation = apiClient.purposeTemplates().unsuspendPurposeTemplate();
+                    operation.reqSpec(req -> req.setContentType(ContentType.JSON));
+                    return operation;
+                })
                 .pathParams(() -> Map.of("purposeTemplateId", createPurposeTemplate(PurposeTemplateState.SUSPENDED).getId()))
                 .tests();
+
+        DynamicTest multipartRejected = DynamicTest.dynamicTest(
+                "unsuspendPurposeTemplate rejects multipart/form-data with 400",
+                () -> {
+                    PurposeTemplate purposeTemplate = createPurposeTemplate(PurposeTemplateState.SUSPENDED);
+
+                    apiClient.purposeTemplates()
+                            .unsuspendPurposeTemplate()
+                            .purposeTemplateIdPath(purposeTemplate.getId())
+                            .reqSpec(req -> req.setContentType(ContentType.MULTIPART))
+                            .execute(Function.identity())
+                            .then()
+                            .statusCode(400);
+                }
+        );
+
+        return Stream.concat(contractTests, Stream.of(multipartRejected));
     }
 
     private PurposeTemplate createPurposeTemplate(PurposeTemplateState state) {

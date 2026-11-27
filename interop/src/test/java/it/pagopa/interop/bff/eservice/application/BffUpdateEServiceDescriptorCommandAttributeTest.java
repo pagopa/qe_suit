@@ -1,7 +1,8 @@
 package it.pagopa.interop.bff.eservice.application;
 
+import it.pagopa.interop.bff.eservice.infrastructure.BffEServiceDescriptorMapper;
 import it.pagopa.interop.bff.eservice_template.application.BffUpdateEServiceTemplateVersionCommand;
-import it.pagopa.interop.bff.eservice_template.infrastructure.BffEServiceTemplateVersionMapper;
+import it.pagopa.interop.bff.eservice_template.infrastructure.BffEServiceTemplateMapper;
 import it.pagopa.interop.common.attribute.domain.Attribute;
 import it.pagopa.interop.common.attribute.domain.AttributeCertifiedDiscreteComparator;
 import it.pagopa.interop.common.attribute.domain.AttributeCertifiedDiscreteConfig;
@@ -12,8 +13,11 @@ import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.NullSource;
 import org.junit.jupiter.params.provider.ValueSource;
 import org.mapstruct.factory.Mappers;
+import org.springframework.test.util.ReflectionTestUtils;
 import it.pagopa.interop.generated.openapi.clients.bff.model.DescriptorAttribute;
 import it.pagopa.interop.generated.openapi.clients.bff.model.DescriptorAttributes;
+import it.pagopa.interop.generated.openapi.clients.bff.model.EServiceTemplateDetails;
+import it.pagopa.interop.generated.openapi.clients.bff.model.EServiceTemplateVersionDetails;
 import it.pagopa.interop.generated.openapi.clients.bff.model.UpdateEServiceTemplateInstanceDescriptorQuotas;
 
 import java.util.List;
@@ -46,7 +50,18 @@ class BffUpdateEServiceDescriptorCommandAttributeTest {
                         .kind(it.pagopa.interop.generated.openapi.clients.bff.model.AttributeKind.CERTIFIED)),
                 List.of(new DescriptorAttribute().id(second)
                         .kind(it.pagopa.interop.generated.openapi.clients.bff.model.AttributeKind.CERTIFIED))));
-        var attributes = Mappers.getMapper(BffEServiceTemplateVersionMapper.class).toAttributes(source);
+        var templateMapper = Mappers.getMapper(BffEServiceTemplateMapper.class);
+        ReflectionTestUtils.setField(
+                templateMapper,
+                "bffEServiceDescriptorMapper",
+                Mappers.getMapper(BffEServiceDescriptorMapper.class)
+        );
+        var attributes = templateMapper.toDetailedTemplateVersion(
+                new EServiceTemplateVersionDetails()
+                        .id(UUID.randomUUID())
+                        .eserviceTemplate(new EServiceTemplateDetails().id(UUID.randomUUID()))
+                        .attributes(source)
+        ).getAttributes();
         assertThat(attributes.getCertified()).extracting(Attribute::getGroup).containsExactly(1, 2);
 
         var instance = BffEServiceTemplateInstanceUpdateDescriptorCommand.from(

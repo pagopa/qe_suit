@@ -1,5 +1,10 @@
 package it.pagopa.interop.bff.purpose.infrastructure;
 
+import it.pagopa.application.context.LastApiResponseStore;
+import it.pagopa.infrastructure.response.ApiResponse;
+import it.pagopa.application.context.LastApiResponseStore;
+import it.pagopa.infrastructure.response.ApiResponse;
+import it.pagopa.infrastructure.template.action.PollingAction;
 import it.pagopa.infrastructure.template.action.strategy.PollingStrategy;
 import it.pagopa.interop.bff.purpose.application.BffPurposeCreateCommand;
 import it.pagopa.interop.common.kernel.domain.Channel;
@@ -12,15 +17,21 @@ import it.pagopa.interop.common.kernel.domain.PurposeVersionRef;
 import it.pagopa.interop.common.purpose.application.PurposeCreateCommand;
 import it.pagopa.interop.common.purpose.application.PurposeGateway;
 import it.pagopa.interop.common.purpose.domain.Purpose;
+import it.pagopa.interop.generated.openapi.clients.bff.model.CreatedResource;
 import it.pagopa.interop.common.purpose.domain.PurposeVersionState;
+import it.pagopa.interop.generated.openapi.clients.bff.model.PatchPurposeUpdateContent;
+import it.pagopa.interop.generated.openapi.clients.bff.model.PatchReversePurposeUpdateContent;
 import it.pagopa.interop.generated.openapi.clients.bff.model.PurposeSeed;
 import it.pagopa.interop.generated.openapi.clients.bff.model.PurposeVersionSeed;
 import it.pagopa.interop.generated.openapi.clients.bff.model.RejectPurposeVersionPayload;
 import it.pagopa.utils.async.PollingUtils;
 import jakarta.annotation.Nullable;
 import lombok.RequiredArgsConstructor;
+import org.assertj.core.api.Assertions;
 import org.jspecify.annotations.NonNull;
 import org.springframework.stereotype.Service;
+
+import static org.assertj.core.api.Assertions.assertThat;
 
 @Service
 @RequiredArgsConstructor
@@ -28,6 +39,48 @@ public class BffPurposeGateway implements PurposeGateway {
     private final BffPurposeRestClient restClient;
     private final BffPurposeMapper mapper;
     private final BffPurposeCommandFactory commandFactory;
+    private final LastApiResponseStore lastApiResponseStore;
+
+    @Override
+    public void shouldFailLinkToReceiveEService() {
+        ApiResponse lastResponse = lastApiResponseStore.getLastResponse();
+        Assertions.assertThat(lastResponse)
+                .as("Risposta al tentativo di creare una finalità con e-service in ricezione")
+                .isNotNull();
+        Assertions.assertThat(lastResponse.getStatusCode())
+                .as("La creazione della finalità con e-service in ricezione deve essere rifiutata con HTTP 409")
+                .isEqualTo(400);
+    }
+
+    @Override
+    public void shouldFailToUpdatePurposeMetadataAsMalformed() {
+        assertThat(lastApiResponseStore.getLastResponse())
+                .as("Risposta al tentativo di modifica dei metadati della finalita")
+                .isNotNull()
+                .extracting(ApiResponse::getStatusCode)
+                .as("Modifica dei metadati della finalita malformata")
+                .isEqualTo(400);
+    }
+
+    @Override
+    public void shouldFailToUpdatePurposeMetadataAsForbidden() {
+        assertThat(lastApiResponseStore.getLastResponse())
+                .as("Risposta al tentativo di modifica dei metadati della finalita")
+                .isNotNull()
+                .extracting(ApiResponse::getStatusCode)
+                .as("Modifica dei metadati della finalita vietata")
+                .isEqualTo(403);
+    }
+
+    @Override
+    public void shouldFailToUpdatePurposeMetadataAsConflict() {
+        assertThat(lastApiResponseStore.getLastResponse())
+                .as("Risposta al tentativo di modifica dei metadati della finalita")
+                .isNotNull()
+                .extracting(ApiResponse::getStatusCode)
+                .as("Modifica dei metadati della finalita in conflitto")
+                .isEqualTo(409);
+    }
 
     @Override
     public Purpose getPurpose(PurposeRef purposeRef) {
@@ -36,6 +89,68 @@ public class BffPurposeGateway implements PurposeGateway {
                 .map(mapper::toPurpose)
                 .updateContext()
                 .get();
+    }
+
+    @Override
+    public Purpose updatePurposeMetadata(
+            PurposeRef purposeRef, String name, String description,
+            @Nullable Boolean isFreeOfCharge, @Nullable String freeOfChargeReason, @Nullable Integer dailyCalls) {
+        PatchPurposeUpdateContent payload = new PatchPurposeUpdateContent()
+                .title(name)
+                .description(description)
+                .isFreeOfCharge(isFreeOfCharge)
+                .freeOfChargeReason(freeOfChargeReason)
+                .dailyCalls(dailyCalls);
+
+        return restClient.patchUpdatePurpose(purposeRef.id(), payload)
+                .withPolling(PollingStrategy.UNTIL_SUCCESS)
+                .map(ignored -> getPurpose(purposeRef))
+                .updateContext()
+                .get();
+    }
+
+    @Override
+    public Purpose updateReversePurposeMetadata(
+            PurposeRef purposeRef, String name, String description,
+            @Nullable Boolean isFreeOfCharge, @Nullable String freeOfChargeReason, @Nullable Integer dailyCalls) {
+        PatchReversePurposeUpdateContent payload = new PatchReversePurposeUpdateContent()
+                .title(name)
+                .description(description)
+                .isFreeOfCharge(isFreeOfCharge)
+                .freeOfChargeReason(freeOfChargeReason)
+                .dailyCalls(dailyCalls);
+
+        return restClient.patchUpdateReversePurpose(purposeRef.id(), payload)
+                .withPolling(PollingStrategy.UNTIL_SUCCESS)
+                .map(ignored -> getPurpose(purposeRef))
+                .updateContext()
+                .get();
+    }
+
+    @Override
+    public void tryToUpdatePurposeMetadata(
+            PurposeRef purposeRef, String name, String description,
+            @Nullable Boolean isFreeOfCharge, @Nullable String freeOfChargeReason, @Nullable Integer dailyCalls) {
+        PatchPurposeUpdateContent payload = new PatchPurposeUpdateContent()
+                .title(name)
+                .description(description)
+                .isFreeOfCharge(isFreeOfCharge)
+                .freeOfChargeReason(freeOfChargeReason)
+                .dailyCalls(dailyCalls);
+        restClient.patchUpdatePurpose(purposeRef.id(), payload).withoutPolling();
+    }
+
+    @Override
+    public void tryToUpdateReversePurposeMetadata(
+            PurposeRef purposeRef, String name, String description,
+            @Nullable Boolean isFreeOfCharge, @Nullable String freeOfChargeReason, @Nullable Integer dailyCalls) {
+        PatchReversePurposeUpdateContent payload = new PatchReversePurposeUpdateContent()
+                .title(name)
+                .description(description)
+                .isFreeOfCharge(isFreeOfCharge)
+                .freeOfChargeReason(freeOfChargeReason)
+                .dailyCalls(dailyCalls);
+        restClient.patchUpdateReversePurpose(purposeRef.id(), payload).withoutPolling();
     }
 
     @Override
@@ -153,8 +268,53 @@ public class BffPurposeGateway implements PurposeGateway {
     }
 
     @Override
-    public boolean supports(Channel delimiter) {
+    public Purpose archivePurpose(PurposeRef purposeRef, PurposeVersionRef purposeVersionRef) {
+        restClient.archivePurposeVersion(purposeRef.id(), purposeVersionRef.id())
+                .withPolling(PollingStrategy.UNTIL_SUCCESS);
+
+        return PollingUtils.pollUntil(
+                () -> getPurpose(purposeRef),
+                purpose -> purpose.findVersionById(purposeVersionRef.id())
+                        .map(version -> version.getPurposeVersionState() == PurposeVersionState.ARCHIVED)
+                        .orElse(false)
+        );
+    }
+
+    @Override
+    public boolean supports(@NonNull Channel delimiter) {
         return delimiter == Channel.BFF;
+    }
+
+    @Override
+    public Purpose tryCreatePurpose(PurposeCreateCommand createCommand) {
+        if (!(createCommand instanceof BffPurposeCreateCommand bffCommand))
+            throw new IllegalArgumentException("Command must be an instance of BffPurposeCreateCommand");
+
+        PurposeSeed bffCreationPayload = bffCommand.getBffCreationPayload();
+        var response = restClient.createPurpose(bffCreationPayload)
+                .withoutPolling();
+
+        return getPurpose(response);
+    }
+
+    @Override
+    public Purpose tryCreatePurposeFromTemplate(PurposeTemplateRef purposeTemplateRef, EServiceRef eServiceRef) {
+        var response = restClient.createPurposeFromTemplate(purposeTemplateRef.id(), commandFactory.creationFromTemplateRequest(eServiceRef, purposeTemplateRef))
+                .withoutPolling();
+
+        return getPurpose(response);
+    }
+
+    private Purpose getPurpose(
+        PollingAction<CreatedResource> response) {
+        if (!response.getRaw().isSuccess()) {
+            return null;
+        }
+
+        return response
+            .map(createdResource -> getPurpose(PurposeRef.of(createdResource.getId())))
+            .updateContext()
+            .get();
     }
 
     private static it.pagopa.interop.generated.openapi.clients.bff.model.@NonNull DelegationRef getDelegation(@org.jspecify.annotations.Nullable DelegationRef delegationRef) {

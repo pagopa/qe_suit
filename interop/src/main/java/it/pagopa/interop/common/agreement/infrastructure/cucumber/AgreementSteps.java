@@ -61,13 +61,28 @@ public class AgreementSteps {
         agreementUseCase.verifyConsumerAgreementDownloadAvailability(entityStore.getLastOrThrow(Agreement.class));
     }
 
+    // TODO 10/11/2026 attualmente inutilizzato, valutarne rimozione
     @Given("associa un Agreement in stato DRAFT all'{currentEService}")
     public void createAgreement(EService eService) {
         agreementUseCase.createAgreement(eService, eService.getLastDraftDescriptor());
     }
 
+    @Given("una richiesta di fruizione (in ){agreementState} verso l'{currentEService} da parte di/del {tenant}")
+    public void createAgreement(AgreementState agreementState, EService eService, Tenant consumer) {
+        authSession.set(consumer);
+        agreementUseCase.createAgreement(eService, eService.getActiveDescriptor(), agreementState, null);
+    }
+
     @Given("{eServiceByAlias} del/di {tenant} sottoscritto da/dal {tenant} con (una )richiesta di fruizione (in ){agreementState}")
     public void createAgreement(EService eService, Tenant producer, Tenant consumer, AgreementState targetState) {
+        interopJourney
+                .withConsumer(consumer)
+                .linkAgreement(eService, targetState);
+    }
+
+    @Given("l'e-service del/di {tenant} sottoscritto da/dal {tenant} con (una )richiesta di fruizione (in ){agreementState}")
+    public void createAgreement(Tenant producer, Tenant consumer, AgreementState targetState) {
+        EService eService = entityStore.getLastOrThrow(EService.class);
         interopJourney
                 .withConsumer(consumer)
                 .linkAgreement(eService, targetState);
