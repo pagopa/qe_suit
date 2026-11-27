@@ -17,7 +17,7 @@ public interface TextField extends Component, Writable<String>, Readable<String>
     @XPath(".//following::span[contains(@class, 'MuiFormHelperText-root')]")
     FormHelperText helperText();
 
-    @XPath("./ancestor::div[contains(@class,'MuiTextField-root')]//label")
+    @XPath("./ancestor-or-self::div[contains(@class,'MuiTextField-root') or contains(@class,'MuiFormControl-root')][1]//label")
     Label label();
 
     default String getErrorMessage(String labelId) {
