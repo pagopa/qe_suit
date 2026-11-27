@@ -1,7 +1,7 @@
 rae:
   release: ''
   scope: NIGHTLY
-  issue_jira: ''
+  issue_jira: https://pagopa.atlassian.net/browse/QA-19834
   data_ora: '2026-11-26T21:09:17Z'
   durata: 00:29:09
   numero_ko: 120
