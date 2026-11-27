@@ -11,7 +11,6 @@ import it.pagopa.interop.common.eservice_template.domain.EServiceTemplateInstanc
 import it.pagopa.interop.common.eservice_template.domain.EServiceTemplateVersionState;
 import it.pagopa.interop.common.journey.application.InteropJourney;
 import it.pagopa.interop.common.kernel.domain.Tenant;
-import it.pagopa.interop.common.kernel.domain.UserRole;
 import lombok.RequiredArgsConstructor;
 
 import java.util.List;
@@ -98,6 +97,17 @@ public class EServiceTemplateInstanceSteps {
                 descriptor,
                 addresses,
                 reason
+        );
+    }
+
+    @When("l'erogatore tenta di configurare l'interfaccia SOAP del {eServiceDescriptor} dell'{currentEService} senza indirizzi ottenendo un rifiuto per \"{soapInterfaceFailureReason}\"")
+    public void rejectSoapInterfaceWithoutAddresses(
+            EServiceDescriptor descriptor,
+            EService eService,
+            EServiceTemplateSOAPInterfaceFailureReason reason
+    ) {
+        descriptorUseCase.shouldFailToConfigureSOAPInterface(
+                eService, descriptor, List.of(), reason
         );
     }
 

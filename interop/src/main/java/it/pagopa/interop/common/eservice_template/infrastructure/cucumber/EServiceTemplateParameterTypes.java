@@ -24,11 +24,13 @@ public class EServiceTemplateParameterTypes {
         return entityStore.getByAliasOrThrow(alias, EServiceTemplate.class);
     }
 
-    @ParameterType("numero di URL non corrispondente|URL non ammesso")
+    @ParameterType("numero di URL non corrispondente|URL non ammesso|dati dell'interfaccia non validi")
     public EServiceTemplateSOAPInterfaceFailureReason soapInterfaceFailureReason(String reason) {
         return switch (reason) {
             case "numero di URL non corrispondente" -> EServiceTemplateSOAPInterfaceFailureReason.URL_COUNT_MISMATCH;
             case "URL non ammesso" -> EServiceTemplateSOAPInterfaceFailureReason.URL_NOT_ALLOWED;
+            case "dati dell'interfaccia non validi" ->
+                    EServiceTemplateSOAPInterfaceFailureReason.INVALID_INTERFACE_DATA;
             default -> throw new IllegalArgumentException("Motivo di rifiuto SOAP non supportato: " + reason);
         };
     }

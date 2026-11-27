@@ -60,13 +60,14 @@ public class BffEServiceDescriptorInterfaceGateway {
 
     public void shouldFailToConfigureSOAP(EServiceRef serviceRef, EServiceDescriptorRef descriptorRef, List<SoapAddressConfiguration> addresses, EServiceTemplateSOAPInterfaceFailureReason reason) {
         int expectedStatus = switch (reason) {
-            case URL_COUNT_MISMATCH, URL_NOT_ALLOWED -> 400;
+            case URL_COUNT_MISMATCH, URL_NOT_ALLOWED -> 409;
+            case INVALID_INTERFACE_DATA -> 400;
         };
 
         restClient.addEServiceTemplateInstanceInterfaceSoap(
                         serviceRef.id(), descriptorRef.id(), BffEServiceInterfacePayloadFactory.soapPayload(addresses)
                 )
-                .withPolling(PollingStrategy.UNTIL_ERROR)
+                .withoutPolling()
                 .assertStatusCode(expectedStatus);
     }
 
