@@ -20,6 +20,10 @@ import java.util.Map;
 @RequiredArgsConstructor
 public class LegalNotificationJourneySteps {
 
+    private static final String DIGITAL_DOMICILE_KEY = "digitalDomicile";
+    private static final String TEST_DIGITAL_DOMICILE = "test@pec.it";
+    private static final Map<String, String> NO_PAYMENTS = Map.of("pagoPA_number", "0", "F24_number", "0");
+
     private final SendJourney sendJourney;
     private final LegalNotificationCreationCommandFactory commandFactory;
     private final CurrentUserSession currentUserSession;
@@ -57,6 +61,20 @@ public class LegalNotificationJourneySteps {
     @Given("una notifica {recipientCardinality} creata dalla PA {user} con destinatario di tipo {userType}")
     public void createNotificationWithGeneratedRecipients(RecipientCardinality cardinality, User sender, UserType recipientType) {
         LegalNotificationCreationCommand command = commandFactory.forGeneratedRecipients(sender, recipientType, cardinality);
+        sendJourney.prepareNotification(command).sendNotification(sender, NotificationStatus.ACCEPTED);
+    }
+
+    @Given("una notifica {recipientCardinality} creata dalla PA {user} con destinatario di tipo {userType} con domicilio digitale")
+    public void createNotificationWithDigitalDomicile(RecipientCardinality cardinality, User sender, UserType recipientType) {
+        LegalNotificationCreationCommand command = commandFactory.forGeneratedRecipients(sender, recipientType, cardinality,
+                Map.of(DIGITAL_DOMICILE_KEY, TEST_DIGITAL_DOMICILE));
+        sendJourney.prepareNotification(command).sendNotification(sender, NotificationStatus.ACCEPTED);
+    }
+
+    /** Un destinatario persona fisica e uno persona giuridica, senza pagamenti. */
+    @Given("una notifica multidestinatario mista creata dalla PA {user}")
+    public void createMixedRecipientsNotification(User sender) {
+        LegalNotificationCreationCommand command = commandFactory.forMixedRecipients(sender, NO_PAYMENTS);
         sendJourney.prepareNotification(command).sendNotification(sender, NotificationStatus.ACCEPTED);
     }
 

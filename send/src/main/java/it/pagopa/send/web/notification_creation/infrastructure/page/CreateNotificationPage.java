@@ -10,13 +10,13 @@ import it.pagopa.send.common.legal_notification.domain.LegalNotificationCreation
 import it.pagopa.send.web.infrastructure.page.component.ErrorSnackbar;
 import it.pagopa.send.web.login.infrastructure.page.component.OneTrustBanner;
 import it.pagopa.send.web.mittente.infrastructure.page.DashboardPage;
-import it.pagopa.send.web.notification_creation.application.NotificationData;
 import it.pagopa.send.web.notification_creation.infrastructure.page.component.RecipientsStep;
 import it.pagopa.send.web.notification_creation.infrastructure.page.component.DebtPositionStep;
 import it.pagopa.send.web.notification_creation.infrastructure.page.component.AttachmentsStep;
 import it.pagopa.send.web.notification_creation.infrastructure.page.component.ExitDialog;
 import it.pagopa.send.web.notification_creation.infrastructure.page.component.PreliminaryInformationStep;
 import it.pagopa.send.web.notification_creation.infrastructure.page.component.RecipientForm;
+import it.pagopa.send.web.notification_creation.infrastructure.page.component.PaymentDetailStep;
 import it.pagopa.utils.async.PollingUtils;
 import org.assertj.core.api.Assertions;
 
@@ -54,6 +54,9 @@ public interface CreateNotificationPage extends Page, CreateNotificationForm {
 
     @XPath("//*[@id=\"root\"]/div[1]/div/main/div/div/div/form")
     DebtPositionStep debtPositionStep();
+
+    @XPath("//*[@id=\"root\"]/div[1]/div/main/div/div/div/form")
+    PaymentDetailStep paymentDetailStep();
 
     @XPath("//*[@id=\"root\"]/div[1]/div/main/div/div/div/form")
     AttachmentsStep attachmentsStep();
@@ -99,25 +102,25 @@ public interface CreateNotificationPage extends Page, CreateNotificationForm {
 
     // i passi dopo il primo si raggiungono compilando i precedenti con dati validi: la notifica parte solo con "Invia"
 
-    default void goToRecipientsStep(NotificationData data) {
-        fillPreliminaryInformation(data);
+    default void goToRecipientsStep(LegalNotificationCreationRequest request) {
+        fillPreliminaryInformation(request);
         continueToNextStep();
     }
 
-    default void goToDebtPositionStep(NotificationData data) {
-        goToRecipientsStep(data);
-        fillRecipients(data);
+    default void goToDebtPositionStep(LegalNotificationCreationRequest request, RecipientForm recipient) {
+        goToRecipientsStep(request);
+        fillRecipient(recipient);
         continueToNextStep();
     }
 
-    default void goToDebtPositionDetailStep(NotificationData data) {
-        goToDebtPositionStep(data);
+    default void goToDebtPositionDetailStep(LegalNotificationCreationRequest request, RecipientForm recipient) {
+        goToDebtPositionStep(request, recipient);
         pagoPaRadio().select();
         continueToNextStep();
     }
 
-    default void goToDocumentsStep(NotificationData data) {
-        goToDebtPositionStep(data);
+    default void goToDocumentsStep(LegalNotificationCreationRequest request, RecipientForm recipient) {
+        goToDebtPositionStep(request, recipient);
         noPaymentRadio().select();
         continueToNextStep();
     }
@@ -147,10 +150,6 @@ public interface CreateNotificationPage extends Page, CreateNotificationForm {
         });
     }
 
-    default void fillPreliminaryInformation(NotificationData data) {
-       preliminaryInformationStep().fillFields(data);
-    }
-
     default void fillPreliminaryInformation(LegalNotificationCreationRequest request) {
         // il banner dei cookie può comparire dopo il caricamento della pagina e coprire i campi
         oneTrustBanner().ifPresent(OneTrustBanner::acceptIfShown);
@@ -159,17 +158,5 @@ public interface CreateNotificationPage extends Page, CreateNotificationForm {
 
     default void fillRecipient(RecipientForm recipient) {
         recipientsStep().nextEmptyRecipientBox().fillFields(recipient);
-    }
-
-    default void fillRecipients(NotificationData data) {
-        recipientsStep().fillFields(data);
-    }
-
-    default void fillDebtPosition(NotificationData data) {
-        debtPositionStep().fillFields(data);
-    }
-
-    default void fillAttachments(NotificationData data) {
-        attachmentsStep().fillFields(data);
     }
 }
