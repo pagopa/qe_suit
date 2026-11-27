@@ -49,6 +49,7 @@ import static io.cucumber.junit.platform.engine.Constants.*;
                          or @eservice-archiving
                          or @private-catalog
                          or @eservice-template-interface
+                         or @eservice-template-instance
                          or @eservice-attribute-threshold
                          or @debug-client-assertion-page-ui-behavior
                          or @dev-tools-page-ui-behavior
