@@ -18,25 +18,25 @@ public interface PurposeTemplateSection extends Component {
     @XPath(".//*[@id='usePurposeTemplate-label']")
     Label usePurposeTemplateLabel();
 
-    @XPath(".//input[@name='usePurposeTemplate']/ancestor::span[contains(@class,'MuiSwitch-root')][1]")
+    @XPath(".//label[contains(@class, 'MuiFormControlLabel-root') and .//input[@name='usePurposeTemplate']]")
     Switch usePurposeTemplateSwitch();
 
     @XPath(".//*[@id='showOnlyLinkedPurposeTemplates-label']")
     Label showOnlySuggestedTemplatesLabel();
 
-    @XPath(".//input[@name='showOnlyLinkedPurposeTemplates']/ancestor::span[contains(@class,'MuiSwitch-root')][1]")
+    @XPath(".//label[contains(@class, 'MuiFormControlLabel-root') and .//input[@name='showOnlyLinkedPurposeTemplates']]")
     Switch showOnlySuggestedTemplatesSwitch();
 
     @XPath(".//label[starts-with(normalize-space(),'Template per la compilazione agevolata della finalità')]")
     Label purposeTemplateLabel();
 
-    @XPath(".//label[starts-with(normalize-space(),'Template per la compilazione agevolata della finalità')]/following::input[@role='combobox'][1]")
+    @XPath(".//div[contains(@class, 'MuiTextField-root') and .//label[starts-with(normalize-space(), 'Template per la compilazione agevolata della finalità')]]")
     TextField purposeTemplateInput();
 
     @XPath(".//*[@id='acknowledgeInfoResponsibility-label']")
     Label acknowledgeResponsibilityLabel();
 
-    @XPath(".//input[@name='acknowledgeInfoResponsibility']/ancestor::span[contains(@class,'MuiSwitch-root')][1]")
+    @XPath(".//label[contains(@class, 'MuiFormControlLabel-root') and .//input[@name='acknowledgeInfoResponsibility']]")
     Switch acknowledgeResponsibilitySwitch();
 
     Alert warningAlert();

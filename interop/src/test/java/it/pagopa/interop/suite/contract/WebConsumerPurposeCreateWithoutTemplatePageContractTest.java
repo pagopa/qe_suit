@@ -12,7 +12,7 @@ import it.pagopa.interop.common.kernel.domain.User;
 import it.pagopa.interop.common.kernel.domain.UserRole;
 import it.pagopa.interop.common.purpose_template.domain.PurposeTemplate;
 import it.pagopa.interop.common.purpose_template.domain.PurposeTemplateState;
-import it.pagopa.interop.web.eservice.infrastructure.page.ConsumerPurposeCreatePage;
+import it.pagopa.interop.web.purpose_template.infrastructure.page.ConsumerPurposeCreateWithoutTemplatePage;
 import it.pagopa.interop.web.infrastructure.config.WebJUnitSuitConfig;
 import lombok.RequiredArgsConstructor;
 import org.junit.jupiter.api.DynamicTest;
@@ -31,7 +31,7 @@ import static org.assertj.core.api.SoftAssertions.assertSoftly;
 )
 @TestConstructor(autowireMode = TestConstructor.AutowireMode.ALL)
 @RequiredArgsConstructor
-public class WebConsumerPurposeCreatePageContractTest {
+public class WebConsumerPurposeCreateWithoutTemplatePageContractTest {
 
     private final WebBrowserContractValidator webContractValidator;
     private final InteropJourney interopJourney;
@@ -41,7 +41,7 @@ public class WebConsumerPurposeCreatePageContractTest {
      */
     @TestFactory
     Stream<DynamicTest> consumerPurposeCreatePageContract() {
-        PurposeTemplate purposeTemplate = interopJourney
+        interopJourney
                 .withProducer(Tenant.PAGO_PA, UserRole.ADMIN)
                 .createEService(EServiceDescriptorState.PUBLISHED)
                 .withConsumer(Tenant.COMUNE_DI_MILANO, UserRole.ADMIN)
@@ -53,11 +53,11 @@ public class WebConsumerPurposeCreatePageContractTest {
                         User.getTenantAdmin(Tenant.COMUNE_DI_MILANO),
                         Tenant.COMUNE_DI_MILANO
                 )
-                .on(ConsumerPurposeCreatePage.class, purposeTemplate.getId().toString())
+                .on(ConsumerPurposeCreateWithoutTemplatePage.class)
                 .tests(contractScenarios());
     }
 
-    private Stream<WebScenario<ConsumerPurposeCreatePage>> contractScenarios() {
+    private Stream<WebScenario<ConsumerPurposeCreateWithoutTemplatePage>> contractScenarios() {
         return Stream.of(
                 new WebScenario<>(
                         "Consumer purpose create page shows the expected content",
@@ -110,6 +110,9 @@ public class WebConsumerPurposeCreatePageContractTest {
                                     softly.assertThat(page.purposeTemplateSection().usePurposeTemplateLabel().read())
                                             .as("Use purpose template label")
                                             .isEqualTo("Utilizza la funzionalità di compilazione agevolata");
+
+                                    page.purposeTemplateSection().usePurposeTemplateSwitch().click();
+
                                     softly.assertThat(page.purposeTemplateSection().usePurposeTemplateSwitch().isChecked())
                                             .as("Use purpose template switch")
                                             .isTrue();

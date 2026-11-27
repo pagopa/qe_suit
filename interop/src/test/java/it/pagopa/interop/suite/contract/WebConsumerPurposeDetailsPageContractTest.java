@@ -13,7 +13,7 @@ import it.pagopa.interop.common.kernel.domain.User;
 import it.pagopa.interop.common.kernel.domain.UserRole;
 import it.pagopa.interop.common.purpose.domain.Purpose;
 import it.pagopa.interop.common.purpose.domain.PurposeVersionState;
-import it.pagopa.interop.web.eservice.infrastructure.page.ConsumerPurposeDetailsPage;
+import it.pagopa.interop.web.purpose.infrastructure.page.ConsumerPurposeDetailsPage;
 import it.pagopa.interop.web.infrastructure.config.WebJUnitSuitConfig;
 import lombok.RequiredArgsConstructor;
 import org.junit.jupiter.api.DynamicTest;
