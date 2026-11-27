@@ -658,7 +658,7 @@
                             <typeMappings>
                                 <typeMapping>OffsetDateTime=java.lang.String</typeMapping>
                             </typeMappings>
-                            <inputSpec>https://raw.githubusercontent.com/pagopa/pn-radd-alt/adaa9f0c3c2c4be9bf887ca4659b830a07797d20/docs/openapi/pn-radd-alt-external.yaml</inputSpec>
+                            <inputSpec>https://raw.githubusercontent.com/pagopa/pn-radd-alt/refs/heads/develop/docs/openapi/pn-radd-alt-external.yaml</inputSpec>
                             <generatorName>java</generatorName>
                             <library>rest-assured</library>
                             <generateApiTests>false</generateApiTests>
