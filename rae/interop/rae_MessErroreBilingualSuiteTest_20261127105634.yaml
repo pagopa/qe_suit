@@ -178,9 +178,15 @@ ko:
        but was: null
         at it.pagopa.interop.bff.infrastructure.cucumber.BffErrorMessageSteps.assertErrorMessage(BffErrorMessageSteps.java:66)
         at ✽.il messaggio di errore corrisponde al caso "BFF_ESERVICE_TEMPLATE_VERSION_NOT_FOUND"(classpath:feature-expanded/eservice-template/caricamento-documenti-messaggi-errore.feature:26)
-    procedure: ''
-    result: ''
-    link_prod_bug: ''
+    procedure: '  Lo scenario è stato eseguito invocando direttamente il BFF
+      per tentare di allegare un documento a una versione in bozza di un
+      template e-service già eliminata. L''analisi del log ha mostrato che
+      il valore di userMessage rilevato dal test era null. La stessa
+      operazione è stata poi ripetuta manualmente dall''interfaccia grafica.'
+    result: '  Il valore di userMessage rilevato dal test è null. Il messaggio atteso
+      deve indicare che il documento non può essere caricato perché la
+      versione in bozza del template e-service non è più disponibile.'
+    link_prod_bug: 'https://pagopa.atlassian.net/browse/PIN-11701'
     link_suite_bug: ''
   - id_test: '[ERROR_175] - Impossibilità di allegare un documento a una versione eliminata [Given=BFF:en,When=BFF:en,Then=BFF:en]'
     error_log: |
@@ -215,7 +221,7 @@ ko:
       della risposta BFF, il parametro {identifyingWord} contiene il nome
       del template. Il valore atteso
       è la parola identificativa inviata nella richiesta.'
-    link_prod_bug: 'https://pagopa.atlassian.net/jira/browse/PIN-11674'
+    link_prod_bug: 'https://pagopa.atlassian.net/browse/PIN-11674'
     link_suite_bug: ''
   - id_test: '[ERROR_039] - Rifiuto della creazione di un''istanza con una parola identificativa già usata [Given=BFF:en,When=BFF:en,Then=BFF:en]'
     error_log: |
@@ -233,7 +239,7 @@ ko:
       della risposta BFF, il parametro {identifyingWord} contiene il nome
       del template. Il valore atteso
       è la parola identificativa inviata nella richiesta.'
-    link_prod_bug: 'https://pagopa.atlassian.net/jira/browse/PIN-11674'
+    link_prod_bug: 'https://pagopa.atlassian.net/browse/PIN-11674'
     link_suite_bug: ''
   - id_test: '[ERROR_040] - Rifiuto della modifica di un''istanza con una parola identificativa già usata [Given=BFF,When=BFF,Then=BFF]'
     error_log: |
@@ -459,7 +465,7 @@ ko:
         at ✽.il messaggio di errore corrisponde al caso "PURPOSE_TEMPLATE_RISK_ANALYSIS_VALIDATION_FAILED__PUT_PURPOSE_TEMPLATES_PURPOSE_TEMPLATE_ID"(classpath:feature-expanded/purpose-template/operazioni-messaggi-errore.feature:79)
     procedure: 'Bug noto'
     result: 'Il test è fallito a causa di un bug noto già segnalato in precedenza'
-    link_prod_bug: 'https://pagopa.atlassian.net/browse/PIN-11657?issueKey=PIN-11657&subProduct=jira-software'
+    link_prod_bug: 'https://pagopa.atlassian.net/browse/PIN-11657'
     link_suite_bug: ''
   - id_test: '[ERROR_207] - Rifiuto della modifica di un template finalità con un link in una risposta dell''analisi
       del rischio [Given=BFF:en,When=BFF:en,Then=BFF:en]'
@@ -471,7 +477,7 @@ ko:
         at ✽.il messaggio di errore corrisponde al caso "PURPOSE_TEMPLATE_RISK_ANALYSIS_VALIDATION_FAILED__PUT_PURPOSE_TEMPLATES_PURPOSE_TEMPLATE_ID"(classpath:feature-expanded/purpose-template/operazioni-messaggi-errore.feature:97)
     procedure: 'Bug noto'
     result: 'Il test è fallito a causa di un bug noto già segnalato in precedenza'
-    link_prod_bug: 'https://pagopa.atlassian.net/browse/PIN-11657?issueKey=PIN-11657&subProduct=jira-software'
+    link_prod_bug: 'https://pagopa.atlassian.net/browse/PIN-11657'
     link_suite_bug: ''
   - id_test: '[ERROR_141] - Rifiuto di un allegato all''annotazione con contenuto già presente [Given=BFF:en,When=BFF:en,Then=BFF:en]'
     error_log: |
