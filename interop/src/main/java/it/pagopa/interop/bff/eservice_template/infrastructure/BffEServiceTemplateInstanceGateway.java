@@ -13,7 +13,7 @@ import it.pagopa.interop.common.eservice.domain.EServiceDescriptorState;
 import it.pagopa.interop.common.eservice_template.application.EServiceTemplateInstanceGateway;
 import it.pagopa.interop.common.eservice_template.application.command.EServiceTemplateInstanceCreationCommand;
 import it.pagopa.interop.common.eservice_template.domain.EServiceTemplate;
-import it.pagopa.interop.common.eservice_template.domain.EServiceTemplateInstance;
+import it.pagopa.interop.common.eservice_template.domain.EServiceTemplateInstanceCreationFailureReason;
 import it.pagopa.interop.common.kernel.domain.Channel;
 import it.pagopa.interop.common.kernel.domain.EServiceDescriptorRef;
 import it.pagopa.interop.common.kernel.domain.EServiceRef;
@@ -30,25 +30,43 @@ public class BffEServiceTemplateInstanceGateway implements EServiceTemplateInsta
     private final BffEServiceGateway eServiceGateway;
     private final BffEServiceDescriptorGateway descriptorGateway;
     private final EntityStore entityStore;
+    private final BffEServiceTemplateRequestFactory requestFactory;
 
     @Override
     public EService createEServiceInstance(EServiceTemplate template, EServiceTemplateInstanceCreationCommand command) {
         if (!(command instanceof BffEServiceTemplateInstanceCreationCommand bffCommand)) {
             throw new IllegalArgumentException("Expected BffEServiceTemplateInstanceCreationCommand");
         }
-        var payload = bffCommand.getBffPayload();
-        String suffix = payload.getInstanceLabel();
-        var created = restClient.createEServiceInstanceFromTemplate(template.getId(), payload)
+        var created = restClient.createEServiceInstanceFromTemplate(
+                        template.getId(), bffCommand.getBffPayload()
+                )
                 .withPolling(PollingStrategy.UNTIL_SUCCESS)
                 .get();
 
         EServiceRef serviceRef = EServiceRef.of(created.getId());
-        EServiceTemplate storedTemplate = entityStore.getById(template.getId(), EServiceTemplate.class)
-                .orElse(template);
-        entityStore.upsert(storedTemplate.withUpsertedInstance(new EServiceTemplateInstance(suffix, serviceRef)));
+        EServiceDescriptorRef descriptorRef = EServiceDescriptorRef.of(created.getDescriptorId());
 
-        descriptorGateway.getEServiceDescriptor(serviceRef, EServiceDescriptorRef.of(created.getDescriptorId()));
-        return eServiceGateway.getEService(serviceRef);
+        descriptorGateway.getEServiceDescriptor(serviceRef, descriptorRef);
+        EService instance = eServiceGateway.getEService(serviceRef).toBuilder()
+                .instanceLabel(bffCommand.getBffPayload().getInstanceLabel())
+                .build();
+        entityStore.upsert(instance);
+        return instance;
+    }
+
+    @Override
+    public void shouldFailToCreateEServiceInstance(EServiceTemplate template,
+            EServiceTemplateInstanceCreationCommand command, EServiceTemplateInstanceCreationFailureReason reason) {
+        if (!(command instanceof BffEServiceTemplateInstanceCreationCommand bffCommand)) {
+            throw new IllegalArgumentException("Expected BffEServiceTemplateInstanceCreationCommand");
+        }
+        int expectedStatus = switch (reason) {
+            case HYPERLINK_DETECTED -> 400;
+            case DUPLICATE_NAME -> 409;
+        };
+        restClient.createEServiceInstanceFromTemplate(template.getId(), bffCommand.getBffPayload())
+                .withoutPolling()
+                .assertStatusCode(expectedStatus);
     }
 
     @Override
@@ -82,5 +100,17 @@ public class BffEServiceTemplateInstanceGateway implements EServiceTemplateInsta
     @Override
     public boolean supports(Channel channel) {
         return channel == Channel.BFF;
+    }
+
+    @Override
+    public void attemptGeneralDataUpdate(EService instance, String instanceLabel) {
+        restClient.updateEServiceTemplateInstance(instance.getId(),
+                requestFactory.instanceGeneralDataUpdateRequest(instance, instanceLabel)).withoutPolling();
+    }
+
+    @Override
+    public void attemptInstanceLabelUpdate(EServiceRef instanceRef, String instanceLabel) {
+        restClient.updateEServiceInstanceLabel(instanceRef.id(),
+                requestFactory.instanceLabelUpdateRequest(instanceLabel)).withoutPolling();
     }
 }

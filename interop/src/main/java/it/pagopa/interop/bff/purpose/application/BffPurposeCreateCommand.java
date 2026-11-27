@@ -22,7 +22,8 @@ public class BffPurposeCreateCommand implements PurposeCreateCommand {
 
     @Override
     public PurposeCreateCommand title(String title) {
-        return null;
+        bffCreationPayload.setTitle(title);
+        return this;
     }
 
     @Override

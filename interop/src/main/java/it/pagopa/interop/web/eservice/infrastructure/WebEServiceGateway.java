@@ -6,6 +6,8 @@ import it.pagopa.interop.common.eservice.application.EServiceGateway;
 import it.pagopa.interop.common.eservice.application.command.EServiceCreationCommand;
 import it.pagopa.interop.common.eservice.application.command.EServiceUpdateCommand;
 import it.pagopa.interop.common.eservice.domain.EService;
+import it.pagopa.interop.common.eservice.domain.EServiceUpdateFailureReason;
+import it.pagopa.interop.common.eservice.domain.EServiceCreationFailureReason;
 import it.pagopa.interop.common.eservice.domain.EServiceArchivingFailureReason;
 import it.pagopa.interop.common.eservice.domain.EServiceUpdateFailureReason;
 import it.pagopa.interop.common.eservice.domain.GracePeriodDays;
@@ -15,6 +17,7 @@ import it.pagopa.interop.common.kernel.domain.EServiceDescriptorRef;
 import it.pagopa.interop.common.kernel.domain.EServiceRef;
 import it.pagopa.interop.web.eservice.application.WebEServiceCreationCommand;
 import it.pagopa.interop.web.eservice.infrastructure.page.ProducerEServiceDetailPage;
+import it.pagopa.interop.web.eservice.infrastructure.page.EServiceDraftEditPage;
 import it.pagopa.interop.web.eservice.infrastructure.page.component.EServiceArchivingDialog;
 import it.pagopa.interop.web.eservice.infrastructure.suit.page.EServiceCreatePage;
 import lombok.RequiredArgsConstructor;
@@ -33,6 +36,7 @@ public class WebEServiceGateway implements EServiceGateway {
     private final WebEServiceGeneralDataGateway generalDataGateway;
     private final ProducerEServiceDetailPage producerEServiceDetailPage;
     private final Snackbar snackbar;
+    private final EServiceDraftEditPage eServiceDraftEditPage;
 
 
     @Override
@@ -40,8 +44,7 @@ public class WebEServiceGateway implements EServiceGateway {
         if (!(command instanceof WebEServiceCreationCommand creationCommand))
             throw new IllegalArgumentException("Invalid command type");
 
-        eServiceCreatePage.navigateTo();
-        eServiceCreatePage.assertLoaded();
+        openEServiceCreation();
 
         generalDataGateway.fillEServiceGeneralData(creationCommand.getWebEServiceGeneralData());
 
@@ -126,6 +129,42 @@ public class WebEServiceGateway implements EServiceGateway {
         throw new UnsupportedOperationException("Not supported yet.");
     }
 
+    @Override
+    public void openEServiceCreation() {
+        eServiceCreatePage.navigateTo();
+        eServiceCreatePage.assertLoaded();
+    }
+
+    @Override
+    public void openDraftEServiceGeneralData(EService eService) {
+        eServiceDraftEditPage.navigateTo(
+                eService.getId().toString(), eService.getLastDraftDescriptor().getId().toString()
+        );
+        eServiceDraftEditPage.assertLoaded();
+    }
+
+    @Override
+    public void shouldFailToUpdateDraftEServiceDescription(String description, EServiceUpdateFailureReason reason) {
+        eServiceDraftEditPage.generalDataForm().setEServiceDescription(description).saveDraft();
+    }
+
+    @Override
+    public void shouldFailToUpdateDraftEServiceName(String name, EServiceUpdateFailureReason reason) {
+        eServiceDraftEditPage.generalDataForm().setEServiceName(name).saveDraft();
+    }
+
+    @Override
+    public void shouldFailToCreateEService(EServiceCreationCommand command, EServiceCreationFailureReason reason) {
+        if (!(command instanceof WebEServiceCreationCommand creationCommand)) {
+            throw new IllegalArgumentException("Invalid command type");
+        }
+        openEServiceCreation();
+        generalDataGateway.fillEServiceGeneralData(creationCommand.getWebEServiceGeneralData());
+        assertThat(snackbar.getErrorMessage())
+                .as("EService creation rejection: %s", reason)
+                .isNotBlank();
+    }
+
     private void openEServiceArchivingDialog(EServiceRef eServiceRef) {
         EService eService = entityStore.getById(eServiceRef.id(), EService.class)
                 .orElseThrow(() -> new IllegalStateException("EService not found in scenario context: " + eServiceRef.id()));
@@ -159,5 +198,70 @@ public class WebEServiceGateway implements EServiceGateway {
     @Override
     public boolean supports(Channel delimiter) {
         return delimiter == Channel.WEB_BROWSER;
+    }
+
+    @Override
+    public void attemptProducerEServiceDetailsRead(EServiceRef eServiceRef) {
+        throw new UnsupportedOperationException("WebEServiceGateway does not support attemptProducerEServiceDetailsRead operation");
+    }
+
+    @Override
+    public void attemptNameUpdate(EServiceRef eServiceRef, String name) {
+        throw new UnsupportedOperationException("WebEServiceGateway does not support attemptNameUpdate operation");
+    }
+
+    @Override
+    public void attemptDelegatedArchivingRequest(EServiceRef eServiceRef, GracePeriodDays gracePeriodDays) {
+        throw new UnsupportedOperationException("attemptDelegatedArchivingRequest is not supported on the WEB channel");
+    }
+
+    @Override
+    public void submitDelegatedArchivingRequest(EServiceRef eServiceRef, GracePeriodDays gracePeriodDays) {
+        throw new UnsupportedOperationException("submitDelegatedArchivingRequest is not supported on the WEB channel");
+    }
+
+    @Override
+    public void attemptCancelDelegatedArchivingRequest(EServiceRef eServiceRef) {
+        throw new UnsupportedOperationException("attemptCancelDelegatedArchivingRequest is not supported on the WEB channel");
+    }
+
+    @Override
+    public void attemptEServiceDeletion(EServiceRef eServiceRef) {
+        throw new UnsupportedOperationException("attemptEServiceDeletion is not supported on the WEB channel");
+    }
+
+    @Override
+    public void attemptDelegationFlagsUpdate(EServiceRef eServiceRef) {
+        throw new UnsupportedOperationException("attemptDelegationFlagsUpdate is not supported on the WEB channel");
+    }
+
+    @Override
+    public void attemptSignalHubUpdate(EServiceRef eServiceRef) {
+        throw new UnsupportedOperationException("attemptSignalHubUpdate is not supported on the WEB channel");
+    }
+
+    @Override
+    public void attemptPersonalDataFlagUpdate(EServiceRef eServiceRef) {
+        throw new UnsupportedOperationException("attemptPersonalDataFlagUpdate is not supported on the WEB channel");
+    }
+
+    @Override
+    public void attemptInstanceUpgrade(EServiceRef eServiceRef) {
+        throw new UnsupportedOperationException("attemptInstanceUpgrade is not supported on the WEB channel");
+    }
+
+    @Override
+    public void attemptDescriptionUpdate(EServiceRef eServiceRef, String description) {
+        throw new UnsupportedOperationException("attemptDescriptionUpdate is not supported on the WEB channel");
+    }
+
+    @Override
+    public void attemptPartialNameUpdate(EServiceRef eServiceRef, String name) {
+        throw new UnsupportedOperationException("attemptPartialNameUpdate is not supported on the WEB channel");
+    }
+
+    @Override
+    public void attemptEServiceImportFromFile(String filePath) {
+        throw new UnsupportedOperationException("attemptEServiceImportFromFile is not supported on the WEB channel");
     }
 }

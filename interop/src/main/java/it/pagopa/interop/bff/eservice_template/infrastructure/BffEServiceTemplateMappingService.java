@@ -42,10 +42,11 @@ public class BffEServiceTemplateMappingService {
             upsertVersion(mergedVersions, mapper.toTemplateVersion(source.getDraftVersion()));
         }
 
-        List<EServiceRiskAnalysis> riskAnalyses =
-                existingTemplate != null && existingTemplate.getRiskAnalyses() != null
+        List<EServiceRiskAnalysis> riskAnalyses = source.getRiskAnalysis() != null
+                ? mapper.toRiskAnalyses(source.getRiskAnalysis())
+                : (existingTemplate != null && existingTemplate.getRiskAnalyses() != null
                         ? new ArrayList<>(existingTemplate.getRiskAnalyses())
-                        : new ArrayList<>();
+                        : new ArrayList<>());
 
         return mapped.toBuilder()
                 .versions(mergedVersions)

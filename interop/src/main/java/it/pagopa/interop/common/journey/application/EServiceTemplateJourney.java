@@ -46,6 +46,8 @@ public interface EServiceTemplateJourney<SELF extends EServiceTemplateJourney<SE
 
     SELF createEServiceInstanceTemplate();
 
+    SELF addTemplateRiskAnalysis();
+
     SELF updateEServiceInstanceDescriptorWithContextAttributes(
             Consumer<EServiceTemplateInstanceUpdateDescriptorCommand> commandConfig,
             int customThreshold,

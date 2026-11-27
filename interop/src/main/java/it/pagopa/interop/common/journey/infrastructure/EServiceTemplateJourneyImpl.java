@@ -21,6 +21,7 @@ import it.pagopa.interop.common.eservice_template.domain.EServiceTemplateUpdateF
 import it.pagopa.interop.common.eservice_template.domain.EServiceTemplateVersion;
 import it.pagopa.interop.common.eservice_template.domain.EServiceTemplateVersionState;
 import it.pagopa.interop.common.journey.application.EServiceTemplateJourney;
+import it.pagopa.interop.common.kernel.context.AuthSession;
 import it.pagopa.utils.async.PollingUtils;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
@@ -42,6 +43,7 @@ public class EServiceTemplateJourneyImpl implements EServiceTemplateJourney<ESer
     private final EServiceTemplateRequestFactory requestFactory;
     private final EServiceRequestFactory eServiceRequestFactory;
     private final EntityStore entityStore;
+    private final AuthSession authSession;
 
     @Override
     public EServiceTemplateJourneyImpl createEServiceTemplate(EServiceTemplateCreationCommand command, EServiceTemplateVersionState targetState) {
@@ -150,6 +152,13 @@ public class EServiceTemplateJourneyImpl implements EServiceTemplateJourney<ESer
     public EServiceTemplateJourneyImpl createEServiceInstanceTemplate() {
         EServiceTemplate template = entityStore.getLastOrThrow(EServiceTemplate.class);
         eServiceTemplateInstanceUseCase.createEServiceInstance(template);
+        return this;
+    }
+
+    @Override
+    public EServiceTemplateJourneyImpl addTemplateRiskAnalysis() {
+        EServiceTemplate template = entityStore.getLastOrThrow(EServiceTemplate.class);
+        eServiceTemplateUseCase.addLatestRiskAnalysis(authSession.getTenant(), template, true);
         return this;
     }
 

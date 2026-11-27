@@ -9,6 +9,7 @@ import it.pagopa.interop.common.eservice.application.EServiceRequestFactory;
 import it.pagopa.interop.common.eservice.application.command.EServiceCreationCommand;
 import it.pagopa.interop.common.eservice.domain.EServiceDescriptorState;
 import it.pagopa.interop.common.eservice.domain.GracePeriodDays;
+import it.pagopa.interop.common.eservice.domain.EServiceTechnology;
 import it.pagopa.interop.common.journey.application.InteropJourney;
 import it.pagopa.interop.common.eservice.infrastructure.cucumber.dto.EServicePreparationConfiguration;
 import it.pagopa.interop.common.eservice.infrastructure.cucumber.dto.mapper.EServicePreparationConfigurationMapper;
@@ -27,6 +28,11 @@ public class EServiceCreationJourneySteps {
     private final EServiceDescriptorUseCase eServiceDescriptorUseCase;
     private final EServiceRequestFactory eServiceRequestFactory;
     private final EServicePreparationConfigurationMapper eServicePreparationConfigurationMapper;
+
+    @Given("un e-service pubblicato da/dal {tenant} con approvazione manuale delle richieste di fruizione")
+    public void createPublishedEServiceWithManualAgreementApproval(Tenant producer) {
+        interopJourney.createPublishedEServiceWithManualAgreementApproval(producer);
+    }
 
     @Given("i seguenti e-service in bozza:")
     public void prepareEServicesForPublication(List<EServicePreparationConfiguration> configurations) {

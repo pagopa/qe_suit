@@ -166,6 +166,15 @@ public interface BffEServiceTemplateMapper {
                     : new ArrayList<>();
         }
 
+        return toRiskAnalyses(riskAnalyses);
+    }
+
+    default List<EServiceRiskAnalysis> toRiskAnalyses(
+            List<it.pagopa.interop.generated.openapi.clients.bff.model.EServiceTemplateRiskAnalysis> riskAnalyses
+    ) {
+        if (riskAnalyses == null) {
+            return new ArrayList<>();
+        }
         return riskAnalyses.stream()
                 .map(riskAnalysis -> EServiceRiskAnalysis.builder()
                         .id(riskAnalysis.getId())

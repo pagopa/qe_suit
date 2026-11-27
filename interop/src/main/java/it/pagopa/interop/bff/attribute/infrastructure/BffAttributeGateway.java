@@ -52,17 +52,7 @@ public class BffAttributeGateway implements AttributeGateway {
 
     @Override
     public Attribute createAttribute(Attribute attribute) {
-        AttributeSeed seed = new AttributeSeed();
-        seed.name(attribute.getName());
-        seed.description(attribute.getDescription());
-
-        TestChain<CreatedResource> createAttributeChain = switch (attribute.getKind()) {
-            case CERTIFIED -> restClient.createCertifiedAttribute(seed);
-            case DECLARED -> restClient.createDeclaredAttribute(seed);
-            case VERIFIED -> restClient.createVerifiedAttribute(seed);
-            case CERTIFIED_DISCRETE -> restClient.createCertifiedDiscreteAttribute(seed);
-        };
-        return createAttributeChain
+        return creationRequest(attribute)
                 .withPolling(PollingStrategy.UNTIL_SUCCESS)
                 .map(resource -> getAttribute(new AttributeRef(resource.getId())))
                 .updateContext()
@@ -89,4 +79,18 @@ public class BffAttributeGateway implements AttributeGateway {
         return delimiter == Channel.BFF;
     }
 
+    @Override
+    public void attemptAttributeCreation(Attribute attribute) {
+        creationRequest(attribute).withoutPolling();
+    }
+
+    private TestChain<CreatedResource> creationRequest(Attribute attribute) {
+        AttributeSeed seed = new AttributeSeed().name(attribute.getName()).description(attribute.getDescription());
+        return switch (attribute.getKind()) {
+            case CERTIFIED -> restClient.createCertifiedAttribute(seed);
+            case DECLARED -> restClient.createDeclaredAttribute(seed);
+            case VERIFIED -> restClient.createVerifiedAttribute(seed);
+            case CERTIFIED_DISCRETE -> restClient.createCertifiedDiscreteAttribute(seed);
+        };
+    }
 }

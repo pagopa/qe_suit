@@ -3,6 +3,8 @@ package it.pagopa.interop.bff.purpose_template.infrastructure;
 import it.pagopa.interop.bff.infrastructure.mapping.BffCommonMapper;
 import it.pagopa.interop.common.infrastructure.SharedMapper;
 import it.pagopa.interop.common.infrastructure.config.TestMapperConfig;
+import it.pagopa.interop.common.kernel.domain.Document;
+import it.pagopa.interop.common.kernel.domain.TenantKind;
 import it.pagopa.interop.common.purpose_template.domain.PurposeTemplate;
 import it.pagopa.interop.common.purpose_template.domain.PurposeTemplateState;
 import it.pagopa.interop.common.risk_analysis.domain.RiskAnalysisAnswerTemplate;
@@ -11,6 +13,7 @@ import it.pagopa.interop.generated.openapi.clients.bff.model.LinkableResources;
 import it.pagopa.interop.generated.openapi.clients.bff.model.PurposeTemplateWithCompactCreator;
 import it.pagopa.interop.generated.openapi.clients.bff.model.RiskAnalysisFormTemplate;
 import it.pagopa.interop.generated.openapi.clients.bff.model.RiskAnalysisTemplateAnswer;
+import it.pagopa.interop.generated.openapi.clients.bff.model.RiskAnalysisTemplateAnswerAnnotationDocument;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
 import org.mapstruct.MappingConstants;
@@ -31,6 +34,7 @@ import java.util.UUID;
 public interface BffPurposeTemplateMapper {
 
     @Mapping(target = "creatorId", source = "creator.id")
+    @Mapping(target = "targetTenantKind", source = "targetTenantKind")
     @Mapping(target = "title", source = "purposeTitle")
     @Mapping(target = "description", source = "purposeDescription")
     @Mapping(target = "targetDescription", source = "targetDescription")
@@ -44,6 +48,8 @@ public interface BffPurposeTemplateMapper {
     @Mapping(target = "riskAnalysisAnswerIds", source = "purposeRiskAnalysisForm", qualifiedByName = "mapRiskAnalysisAnswerIds")
     @Mapping(target = "riskAnalysisFormTemplate", source = "purposeRiskAnalysisForm", qualifiedByName = "mapRiskAnalysisFormTemplate")
     PurposeTemplate toPurposeTemplate(PurposeTemplateWithCompactCreator source);
+
+    Document toDocument(RiskAnalysisTemplateAnswerAnnotationDocument source);
 
     @Named("mapRiskAnalysisFormTemplate")
     default it.pagopa.interop.common.risk_analysis.domain.RiskAnalysisFormTemplate mapRiskAnalysisFormTemplate(
@@ -115,13 +121,24 @@ public interface BffPurposeTemplateMapper {
                 existing.getRiskAnalysisFormTemplate()
         );
 
+        List<Document> annotationDocuments = (mapped.getAnnotationDocuments() != null && !mapped.getAnnotationDocuments().isEmpty())
+                ? mapped.getAnnotationDocuments()
+                : (existing.getAnnotationDocuments() != null ? existing.getAnnotationDocuments() : List.of());
+
+        TenantKind targetTenantKind = mapped.getTargetTenantKind() != null
+                ? mapped.getTargetTenantKind()
+                : existing.getTargetTenantKind();
+
         return mapped.toBuilder()
+                .targetTenantKind(targetTenantKind)
                 .clearLinkedEServiceIds()
                 .linkedEServiceIds(existing.getLinkedEServiceIds() != null ? existing.getLinkedEServiceIds() : List.of())
                 .clearLinkedResourceIds()
                 .linkedResourceIds(existing.getLinkedResourceIds() != null ? existing.getLinkedResourceIds() : List.of())
                 .clearRiskAnalysisAnswerIds()
                 .riskAnalysisAnswerIds(answerIds)
+                .clearAnnotationDocuments()
+                .annotationDocuments(annotationDocuments)
                 .riskAnalysisFormTemplate(riskAnalysisFormTemplate)
                 .build();
     }

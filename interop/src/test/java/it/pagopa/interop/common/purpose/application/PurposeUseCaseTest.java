@@ -3,6 +3,8 @@ package it.pagopa.interop.common.purpose.application;
 import it.pagopa.interop.common.eservice.domain.EService;
 import it.pagopa.interop.common.eservice.domain.EServiceDescriptor;
 import it.pagopa.interop.common.eservice.domain.EServiceDescriptorState;
+import it.pagopa.interop.common.kernel.domain.EServiceRef;
+import it.pagopa.interop.common.kernel.domain.EServiceRef;
 import it.pagopa.interop.common.purpose.domain.Purpose;
 import it.pagopa.interop.common.purpose.domain.PurposeVersion;
 import it.pagopa.interop.common.purpose.domain.PurposeVersionState;
@@ -147,5 +149,91 @@ class PurposeUseCaseTest {
 
         verify(gateway).archivePurpose(purpose.getRef(), active.getRef());
         verifyNoMoreInteractions(gateway);
+    }
+
+    @Test
+    void attemptsCloningForTheSelectedPurposeAndItsOwnEService() {
+        var commands = mock(PurposeCommandFactory.class);
+        var command = mock(PurposeCloneCommand.class);
+        var eServiceRef = EServiceRef.of(purpose.getEserviceId());
+        when(commands.cloneCommand(eServiceRef)).thenReturn(command);
+
+        new PurposeUseCase(gateway, commands).attemptPurposeCloning(purpose);
+
+        verify(commands).cloneCommand(eServiceRef);
+        verify(gateway).attemptPurposeCloning(purpose.getRef(), command);
+        verifyNoMoreInteractions(gateway, commands);
+    }
+
+    @Test
+    void attemptsSigningWithTheKnownMetadataVersionWithoutUsingThePositiveOperation() {
+        var commands = mock(PurposeCommandFactory.class);
+        var command = mock(SignRiskAnalysisCommand.class);
+        var current = purpose.toBuilder().metadataVersion(7).build();
+        when(commands.signRiskAnalysisCommand(7)).thenReturn(command);
+
+        new PurposeUseCase(gateway, commands).attemptRiskAnalysisSigning(current);
+
+        verify(commands).signRiskAnalysisCommand(7);
+        verify(gateway).attemptRiskAnalysisSigning(current.getRef(), command);
+        verifyNoMoreInteractions(gateway, commands);
+    }
+
+    @Test
+    void refreshesMissingMetadataBeforeAttemptingSigning() {
+        var commands = mock(PurposeCommandFactory.class);
+        var command = mock(SignRiskAnalysisCommand.class);
+        when(gateway.getPurpose(purpose.getRef())).thenReturn(purpose.toBuilder().metadataVersion(8).build());
+        when(commands.signRiskAnalysisCommand(8)).thenReturn(command);
+
+        new PurposeUseCase(gateway, commands).attemptRiskAnalysisSigning(purpose);
+
+        var order = inOrder(gateway, commands);
+        order.verify(gateway).getPurpose(purpose.getRef());
+        order.verify(commands).signRiskAnalysisCommand(8);
+        order.verify(gateway).attemptRiskAnalysisSigning(purpose.getRef(), command);
+        verifyNoMoreInteractions(gateway, commands);
+    }
+
+    @Test
+    void failsBeforeSigningIfMetadataRemainsUnavailable() {
+        var commands = mock(PurposeCommandFactory.class);
+        when(gateway.getPurpose(purpose.getRef())).thenReturn(purpose);
+
+        assertThatThrownBy(() -> new PurposeUseCase(gateway, commands).attemptRiskAnalysisSigning(purpose))
+            .isInstanceOf(IllegalStateException.class).hasMessageContaining("Missing metadataVersion");
+
+        verify(gateway).getPurpose(purpose.getRef());
+        verifyNoMoreInteractions(gateway);
+        verifyNoInteractions(commands);
+    }
+
+    @Test
+    void positiveSigningStillUsesThePositiveGatewayWithRefreshedMetadata() {
+        var commands = mock(PurposeCommandFactory.class);
+        var command = mock(SignRiskAnalysisCommand.class);
+        when(gateway.getPurpose(purpose.getRef())).thenReturn(purpose.toBuilder().metadataVersion(9).build());
+        when(commands.signRiskAnalysisCommand(9)).thenReturn(command);
+        when(gateway.signRiskAnalysis(purpose.getRef(), command)).thenReturn(purpose);
+
+        assertThat(new PurposeUseCase(gateway, commands).signRiskAnalysis(purpose)).isSameAs(purpose);
+
+        verify(gateway).getPurpose(purpose.getRef());
+        verify(gateway).signRiskAnalysis(purpose.getRef(), command);
+        verifyNoMoreInteractions(gateway);
+    }
+
+    @ParameterizedTest
+    @ValueSource(strings = {"Informazioni insufficienti", "Motivazione https://example.org"})
+    void attemptsRejectionWithTheExactReasonWithoutUsingThePositiveOperation(String reason) {
+        var commands = mock(PurposeCommandFactory.class);
+        var command = mock(RejectRiskAnalysisCommand.class);
+        when(commands.rejectRiskAnalysisCommand(reason)).thenReturn(command);
+
+        new PurposeUseCase(gateway, commands).attemptRiskAnalysisRejection(purpose, reason);
+
+        verify(commands).rejectRiskAnalysisCommand(reason);
+        verify(gateway).attemptRiskAnalysisRejection(purpose.getRef(), command);
+        verifyNoMoreInteractions(gateway, commands);
     }
 }

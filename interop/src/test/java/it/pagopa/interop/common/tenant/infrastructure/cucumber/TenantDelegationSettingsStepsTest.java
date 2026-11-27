@@ -4,6 +4,8 @@ import io.cucumber.java.en.Given;
 import it.pagopa.interop.common.infrastructure.cucumber.DataTableMapper;
 import it.pagopa.interop.common.journey.application.InteropJourney;
 import it.pagopa.interop.common.kernel.domain.Tenant;
+import it.pagopa.interop.common.kernel.domain.User;
+import it.pagopa.interop.common.tenant.application.TenantUseCase;
 import it.pagopa.interop.common.tenant.infrastructure.cucumber.dto.ProducerDelegationRecipient;
 import jakarta.validation.ConstraintViolationException;
 import jakarta.validation.Validation;
@@ -23,7 +25,9 @@ class TenantDelegationSettingsStepsTest {
     private static final ValidatorFactory VALIDATORS = Validation.buildDefaultValidatorFactory();
     private final DataTableMapper transformer = new DataTableMapper(VALIDATORS.getValidator());
     private final InteropJourney journey = mock(InteropJourney.class, RETURNS_SELF);
-    private final TenantDelegationSettingsSteps steps = new TenantDelegationSettingsSteps(journey);
+    private final TenantUseCase tenantUseCase = mock(TenantUseCase.class);
+    private final TenantDelegationSettingsSteps steps =
+            new TenantDelegationSettingsSteps(journey, tenantUseCase);
 
     @AfterEach
     void clearKeys() {

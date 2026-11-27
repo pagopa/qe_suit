@@ -65,10 +65,10 @@ public class BffClientRestClient extends RestClient {
         );
     }
 
-    public TestChain<CreatedResource> addUsers(UUID clientId, AddUsersToClientRequest addUsersToClientRequest) {
+    public TestChain<Void> addUsers(UUID clientId, AddUsersToClientRequest addUsersToClientRequest) {
         return execute(
                 () -> clientsApi.addUsersToClient().clientIdPath(clientId).body(addUsersToClientRequest).execute(Function.identity()),
-                CreatedResource.class
+                Void.class
         );
     }
 
@@ -108,6 +108,14 @@ public class BffClientRestClient extends RestClient {
                             .reqSpec(builder -> builder.setBody(payload))
                             .execute(Function.identity());
                 },
+                Void.class
+        );
+    }
+
+    public TestChain<Void> deleteKey(UUID clientId, String keyId) {
+        return execute(
+                () -> clientsApi.deleteClientKeyById().clientIdPath(clientId).keyIdPath(keyId)
+                        .execute(Function.identity()),
                 Void.class
         );
     }

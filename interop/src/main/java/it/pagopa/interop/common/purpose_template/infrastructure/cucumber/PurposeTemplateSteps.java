@@ -6,14 +6,25 @@ import io.cucumber.java.en.Given;
 import io.cucumber.java.en.Then;
 import io.cucumber.java.en.When;
 import it.pagopa.application.context.EntityStore;
+import io.cucumber.java.en.When;
+import it.pagopa.application.context.EntityStore;
+import it.pagopa.interop.common.eservice.domain.EService;
 import it.pagopa.interop.common.journey.application.InteropJourney;
 import it.pagopa.interop.common.kernel.domain.Tenant;
 import it.pagopa.interop.common.kernel.domain.TenantKind;
 import it.pagopa.interop.common.kernel.domain.UserRole;
 import it.pagopa.interop.common.purpose_template.application.PurposeTemplateUseCase;
 import it.pagopa.interop.common.purpose_template.domain.PurposeTemplate;
+import it.pagopa.interop.common.kernel.domain.UserRole;
+import it.pagopa.interop.common.purpose_template.application.PurposeTemplateUseCase;
+import it.pagopa.interop.common.purpose_template.domain.PurposeTemplate;
 import it.pagopa.interop.common.purpose_template.domain.PurposeTemplateState;
 import it.pagopa.utils.RandomUtils;
+import it.pagopa.interop.common.purpose_template.infrastructure.cucumber.dto.PurposeTemplateAliasConfiguration;
+import it.pagopa.interop.common.purpose_template.infrastructure.cucumber.dto.PurposeTemplateDocumentConfiguration;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
 import lombok.RequiredArgsConstructor;
 
 import java.util.HashSet;
@@ -259,6 +270,164 @@ public class PurposeTemplateSteps {
         PurposeTemplateMetadataField(Set<String> fieldNames, String label) {
             this.fieldNames = fieldNames;
             this.label = label;
+        }
+    }
+
+    @Given("i seguenti template finalità in bozza creati da/dal {tenant} con nomi distinti:")
+    public void draftPurposeTemplatesCreatedWithDistinctNames(
+            Tenant creator,
+            List<PurposeTemplateAliasConfiguration> configurations
+    ) {
+        // Usato negli scenari con id ERROR_146, ERROR_147
+        validateAliases(configurations);
+        for (PurposeTemplateAliasConfiguration configuration : configurations) {
+            journey.withProducer(creator, UserRole.ADMIN)
+                    .createPurposeTemplate(
+                            Tenant.fromTenantType(TenantKind.PA),
+                            PurposeTemplateState.DRAFT,
+                            configuration.getAlias()
+                    );
+        }
+    }
+
+    @Given("un template finalità in bozza con una risposta annotata")
+    public void draftPurposeTemplateWithAnnotatedAnswer() {
+        journey.createPurposeTemplate(Tenant.fromTenantType(TenantKind.PA), PurposeTemplateState.DRAFT)
+                .addAnnotationToPurposeTemplateRiskAnalysisAnswer();
+    }
+
+    @Given("i seguenti documenti PDF allegati all'annotazione del template finalità:")
+    public void pdfDocumentsAttachedToPurposeTemplateAnnotation(List<PurposeTemplateDocumentConfiguration> documents) {
+        if (documents == null || documents.isEmpty()) {
+            throw new IllegalArgumentException("At least one document configuration is required");
+        }
+        PurposeTemplate purposeTemplate = entityStore.getLastOrThrow(PurposeTemplate.class);
+        for (PurposeTemplateDocumentConfiguration document : documents) {
+            purposeTemplate = purposeTemplateUseCase.addRiskAnalysisAnswerAnnotationDocument(
+                    purposeTemplate,
+                    document.getName(),
+                    document.getFixture()
+            );
+        }
+    }
+
+    @Given("un template finalità in bozza con una domanda predisposta per le annotazioni")
+    public void draftPurposeTemplateWithQuestionPreparedForAnnotations() {
+        journey.createPurposeTemplate(Tenant.fromTenantType(TenantKind.PA), PurposeTemplateState.DRAFT);
+    }
+
+    @Given("il documento firmato di analisi del rischio del template finalità disponibile")
+    public void signedRiskAnalysisDocumentForPurposeTemplateAvailable() {
+        PurposeTemplate purposeTemplate = entityStore.getLastOrThrow(PurposeTemplate.class);
+        purposeTemplateUseCase.awaitSignedRiskAnalysisDocumentAvailable(purposeTemplate);
+    }
+
+    @When("l'operatore tenta di riattivare il {currentPurposeTemplate}")
+    public void attemptPurposeTemplateReactivation(PurposeTemplate purposeTemplate) {
+        purposeTemplateUseCase.attemptPurposeTemplateReactivation(purposeTemplate);
+    }
+
+    @When("l'operatore tenta di pubblicare il {currentPurposeTemplate}")
+    public void attemptPurposeTemplatePublication(PurposeTemplate purposeTemplate) {
+        purposeTemplateUseCase.attemptPurposeTemplatePublication(purposeTemplate);
+    }
+
+    @When("l'operatore allega il file {string} all'annotazione del template finalità con il nome {string}")
+    public void attachFileToPurposeTemplateAnnotation(String filePath, String documentName) {
+        // Usato negli scenari con id ERROR_140, ERROR_141, ERROR_195, ERROR_196
+        PurposeTemplate purposeTemplate = entityStore.getLastOrThrow(PurposeTemplate.class);
+        purposeTemplateUseCase.attemptRiskAnalysisAnswerAnnotationDocumentUpload(
+                purposeTemplate, documentName, filePath
+        );
+    }
+
+    @When("l'operatore tenta di aggiungere l'e-service {string} agli e-service suggeriti del template finalità")
+    public void attemptAddSuggestedEServiceToPurposeTemplate(String eServiceAlias) {
+        // Usato negli scenari con id ERROR_206
+        PurposeTemplate purposeTemplate = entityStore.getLastOrThrow(PurposeTemplate.class);
+        EService eService = entityStore.getByAliasOrThrow(eServiceAlias, EService.class);
+        purposeTemplateUseCase.attemptLinkEService(purposeTemplate, eService);
+    }
+
+    @When("l'operatore tenta di modificare il template finalità inserendo {string} in una risposta a testo libero dell'analisi del rischio")
+    public void attemptUpdatePurposeTemplateWithLinkInRiskAnalysisFreeTextAnswer(String answerText) {
+        // Usato negli scenari con id ERROR_207
+        PurposeTemplate purposeTemplate = entityStore.getLastOrThrow(PurposeTemplate.class);
+        purposeTemplateUseCase.attemptUpdatePurposeTemplateWithFreeTextAnswer(
+                purposeTemplate, purposeTemplate.getTargetTenantKind(), answerText
+        );
+    }
+
+    @When("l'operatore tenta di aggiungere una risposta al template finalità con l'annotazione {string}")
+    public void attemptAddAnnotatedAnswerToPurposeTemplate(String annotationText) {
+        // Usato negli scenari con id ERROR_142
+        PurposeTemplate purposeTemplate = entityStore.getLastOrThrow(PurposeTemplate.class);
+        purposeTemplateUseCase.attemptAddRiskAnalysisAnswerWithAnnotation(
+                purposeTemplate, annotationText
+        );
+    }
+
+    @When("l'operatore tenta di aggiornare l'annotazione del template finalità con il testo {string}")
+    public void attemptUpdatePurposeTemplateAnnotationText(String annotationText) {
+        // Usato negli scenari con id ERROR_143
+        PurposeTemplate purposeTemplate = entityStore.getLastOrThrow(PurposeTemplate.class);
+        purposeTemplateUseCase.attemptUpdateRiskAnalysisAnswerAnnotation(
+                purposeTemplate, annotationText
+        );
+    }
+
+    @When("l'operatore tenta di rinominare l'allegato {string} dell'annotazione del template finalità in {string}")
+    public void attemptRenamePurposeTemplateAnnotationDocument(String currentDocumentName, String newDocumentName) {
+        // Usato negli scenari con id ERROR_144
+        PurposeTemplate purposeTemplate = entityStore.getLastOrThrow(PurposeTemplate.class);
+        purposeTemplateUseCase.attemptRenameRiskAnalysisAnswerAnnotationDocument(
+                purposeTemplate, currentDocumentName, newDocumentName
+        );
+    }
+
+    @When("l'utente tenta di scaricare il documento firmato di analisi del rischio del template finalità")
+    public void attemptDownloadSignedRiskAnalysisDocument() {
+        // Usato negli scenari con id ERROR_145
+        PurposeTemplate purposeTemplate = entityStore.getLastOrThrow(PurposeTemplate.class);
+        purposeTemplateUseCase.attemptSignedRiskAnalysisDocumentDownload(purposeTemplate);
+    }
+
+    @When("l'operatore tenta di modificare i dati del template finalità {string} con il nome del template {string}")
+    public void attemptUpdatePurposeTemplateWithAnotherTemplateName(
+            String targetTemplateAlias,
+            String sourceTemplateAlias
+    ) {
+        // Usato negli scenari con id ERROR_146
+        PurposeTemplate targetTemplate = entityStore.getByAliasOrThrow(targetTemplateAlias, PurposeTemplate.class);
+        PurposeTemplate sourceTemplate = entityStore.getByAliasOrThrow(sourceTemplateAlias, PurposeTemplate.class);
+        purposeTemplateUseCase.tryToUpdateMetadata(
+                targetTemplate,
+                sourceTemplate.getTitle(),
+                targetTemplate.getDescription(),
+                targetTemplate.getTargetDescription(),
+                null,
+                null,
+                null
+        );
+    }
+
+    private void validateAliases(List<PurposeTemplateAliasConfiguration> configurations) {
+        if (configurations == null || configurations.isEmpty()) {
+            throw new IllegalArgumentException("At least one purpose template alias is required");
+        }
+        Set<String> seen = new HashSet<>();
+        for (PurposeTemplateAliasConfiguration configuration : configurations) {
+            if (configuration == null
+                    || configuration.getAlias() == null
+                    || configuration.getAlias().isBlank()
+                    || !seen.add(configuration.getAlias())) {
+                throw new IllegalArgumentException("Purpose template aliases must be present and unique");
+            }
+            if (entityStore.getByAlias(configuration.getAlias(), PurposeTemplate.class).isPresent()) {
+                throw new IllegalArgumentException(
+                        "Purpose template alias is already registered: " + configuration.getAlias()
+                );
+            }
         }
     }
 }

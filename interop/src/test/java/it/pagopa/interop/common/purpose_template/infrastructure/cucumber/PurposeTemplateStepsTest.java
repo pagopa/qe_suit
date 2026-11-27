@@ -10,16 +10,23 @@ import it.pagopa.interop.common.purpose_template.application.PurposeTemplateUseC
 import it.pagopa.interop.common.purpose_template.domain.PurposeTemplate;
 import it.pagopa.interop.common.purpose_template.domain.PurposeTemplateState;
 import org.junit.jupiter.api.Test;
+import it.pagopa.interop.common.purpose_template.infrastructure.cucumber.dto.PurposeTemplateAliasConfiguration;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.EnumSource;
 
 import java.util.List;
+import java.util.Optional;
 import java.util.UUID;
 
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.mockito.Mockito.*;
 
 class PurposeTemplateStepsTest {
+
+    private final InteropJourney journey = mock(InteropJourney.class, RETURNS_SELF);
+    private final PurposeTemplateUseCase useCase = mock(PurposeTemplateUseCase.class);
+    private final EntityStore entityStore = mock(EntityStore.class);
+    private final PurposeTemplateSteps steps = new PurposeTemplateSteps(entityStore, journey, useCase);
 
     @ParameterizedTest
     @EnumSource(value = Tenant.class, names = {"COMUNE_DI_MILANO", "PAGO_PA"})
@@ -174,5 +181,80 @@ class PurposeTemplateStepsTest {
                 .hasMessageContaining("Valore booleano non valido");
 
         verifyNoInteractions(useCase);
+    }
+
+    @Test
+    void createsDraftPurposeTemplatesWithDistinctNamesAndAliases() {
+        var first = new PurposeTemplateAliasConfiguration();
+        first.setAlias("TF-1");
+        var second = new PurposeTemplateAliasConfiguration();
+        second.setAlias("TF-2");
+        when(entityStore.getByAlias("TF-1", PurposeTemplate.class)).thenReturn(Optional.empty());
+        when(entityStore.getByAlias("TF-2", PurposeTemplate.class)).thenReturn(Optional.empty());
+
+        steps.draftPurposeTemplatesCreatedWithDistinctNames(Tenant.PAGO_PA, List.of(first, second));
+
+        var order = inOrder(journey);
+        order.verify(journey).withProducer(Tenant.PAGO_PA, UserRole.ADMIN);
+        order.verify(journey).createPurposeTemplate(
+                Tenant.fromTenantType(TenantKind.PA), PurposeTemplateState.DRAFT, "TF-1");
+        order.verify(journey).withProducer(Tenant.PAGO_PA, UserRole.ADMIN);
+        order.verify(journey).createPurposeTemplate(
+                Tenant.fromTenantType(TenantKind.PA), PurposeTemplateState.DRAFT, "TF-2");
+        verifyNoMoreInteractions(journey);
+    }
+
+    @Test
+    void rejectsDuplicateOrAlreadyRegisteredPurposeTemplateAliases() {
+        var first = new PurposeTemplateAliasConfiguration();
+        first.setAlias("TF-1");
+        var duplicate = new PurposeTemplateAliasConfiguration();
+        duplicate.setAlias("TF-1");
+        when(entityStore.getByAlias("TF-1", PurposeTemplate.class)).thenReturn(Optional.empty());
+
+        assertThatThrownBy(() -> steps.draftPurposeTemplatesCreatedWithDistinctNames(
+                Tenant.PAGO_PA, List.of(first, duplicate)))
+                .isInstanceOf(IllegalArgumentException.class)
+                .hasMessageContaining("unique");
+
+        when(entityStore.getByAlias("TF-1", PurposeTemplate.class))
+                .thenReturn(Optional.of(PurposeTemplate.builder().id(UUID.randomUUID()).build()));
+
+        assertThatThrownBy(() -> steps.draftPurposeTemplatesCreatedWithDistinctNames(
+                Tenant.PAGO_PA, List.of(first)))
+                .isInstanceOf(IllegalArgumentException.class)
+                .hasMessageContaining("already registered");
+
+        verifyNoInteractions(journey);
+    }
+
+    @Test
+    void attemptsMetadataUpdateOfTargetPurposeTemplateUsingSourcePurposeTemplateTitle() {
+        var target = PurposeTemplate.builder()
+                .id(UUID.randomUUID())
+                .title("Titolo TF-2")
+                .description("Descrizione TF-2")
+                .targetDescription("Destinatari TF-2")
+                .build();
+        var source = PurposeTemplate.builder()
+                .id(UUID.randomUUID())
+                .title("Titolo TF-1")
+                .build();
+        when(entityStore.getByAliasOrThrow("TF-2", PurposeTemplate.class)).thenReturn(target);
+        when(entityStore.getByAliasOrThrow("TF-1", PurposeTemplate.class)).thenReturn(source);
+
+        steps.attemptUpdatePurposeTemplateWithAnotherTemplateName("TF-2", "TF-1");
+
+        verify(useCase).tryToUpdateMetadata(
+                target,
+                "Titolo TF-1",
+                "Descrizione TF-2",
+                "Destinatari TF-2",
+                null,
+                null,
+                null
+        );
+        verifyNoMoreInteractions(useCase);
+        verifyNoInteractions(journey);
     }
 }

@@ -10,9 +10,15 @@ import it.pagopa.interop.common.kernel.domain.EServiceRiskAnalysisRef;
 import it.pagopa.interop.common.kernel.domain.PurposeRef;
 import it.pagopa.interop.common.kernel.domain.PurposeTemplateRef;
 import it.pagopa.interop.common.kernel.domain.PurposeVersionRef;
+import it.pagopa.interop.common.purpose.application.AssignRiskAnalysisReviewerCommand;
+import it.pagopa.interop.common.purpose.application.PurposeCloneCommand;
 import it.pagopa.interop.common.purpose.application.PurposeCreateCommand;
 import it.pagopa.interop.common.purpose.application.PurposeGateway;
+import it.pagopa.interop.common.purpose.application.RejectRiskAnalysisCommand;
+import it.pagopa.interop.common.purpose.application.SignRiskAnalysisCommand;
+import it.pagopa.interop.common.purpose.application.SubmitRiskAnalysisCommand;
 import it.pagopa.interop.common.purpose.domain.Purpose;
+import it.pagopa.interop.common.purpose.domain.PurposeCreationFailureReason;
 import it.pagopa.interop.common.purpose.domain.PurposeVersionState;
 import it.pagopa.interop.generated.openapi.clients.m2m.v3.model.PurposeVersionSeed;
 import it.pagopa.utils.async.PollingUtils;
@@ -134,6 +140,11 @@ public class M2MPurposeGateway implements PurposeGateway {
     }
 
     @Override
+    public void shouldFailToCreatePurpose(PurposeCreateCommand createCommand, PurposeCreationFailureReason reason) {
+        throw unsupportedOperation();
+    }
+
+    @Override
     public Purpose createReversePurpose(EServiceRef eServiceRef, EServiceRiskAnalysisRef riskAnalysisRef) {
         throw unsupportedOperation();
     }
@@ -152,6 +163,31 @@ public class M2MPurposeGateway implements PurposeGateway {
 
     @Override
     public Purpose createPurposeFromTemplate(PurposeTemplateRef purposeTemplateRef, PurposeCreateCommand createCommand) {
+        throw unsupportedOperation();
+    }
+
+    @Override
+    public Purpose clonePurpose(PurposeRef purposeRef, PurposeCloneCommand cloneCommand) {
+        throw unsupportedOperation();
+    }
+
+    @Override
+    public Purpose assignRiskAnalysisReviewer(PurposeRef purposeRef, AssignRiskAnalysisReviewerCommand assignCommand) {
+        throw unsupportedOperation();
+    }
+
+    @Override
+    public Purpose submitRiskAnalysis(PurposeRef purposeRef, SubmitRiskAnalysisCommand submitCommand) {
+        throw unsupportedOperation();
+    }
+
+    @Override
+    public Purpose signRiskAnalysis(PurposeRef purposeRef, SignRiskAnalysisCommand signCommand) {
+        throw unsupportedOperation();
+    }
+
+    @Override
+    public Purpose rejectRiskAnalysis(PurposeRef purposeRef, RejectRiskAnalysisCommand rejectCommand) {
         throw unsupportedOperation();
     }
 
@@ -227,5 +263,61 @@ public class M2MPurposeGateway implements PurposeGateway {
 
     private static UnsupportedOperationException unsupportedOperation() {
         return new UnsupportedOperationException("This purpose operation is not supported on M2M v3");
+    }
+
+    @Override
+    public void attemptNameUpdate(PurposeRef purposeRef, String name) {
+        throw unsupportedOperation();
+    }
+
+    @Override
+    public void attemptPurposeCloning(PurposeRef purposeRef, PurposeCloneCommand cloneCommand) {
+        throw unsupportedOperation();
+    }
+
+    @Override
+    public void attemptRiskAnalysisSigning(PurposeRef purposeRef, SignRiskAnalysisCommand signCommand) {
+        throw unsupportedOperation();
+    }
+
+    @Override
+    public void attemptRiskAnalysisRejection(PurposeRef purposeRef, RejectRiskAnalysisCommand rejectCommand) {
+        throw unsupportedOperation();
+    }
+
+    @Override
+    public void attemptCreatePurpose(PurposeCreateCommand createCommand) {
+        throw unsupportedOperation();
+    }
+
+    @Override
+    public void attemptCreateReversePurpose(
+            EServiceRef eServiceRef,
+            EServiceRiskAnalysisRef riskAnalysisRef,
+            String title
+    ) {
+        throw unsupportedOperation();
+    }
+
+    @Override
+    public void attemptCreatePurposeFromTemplate(
+            PurposeTemplateRef purposeTemplateRef,
+            PurposeCreateCommand createCommand
+    ) {
+        throw unsupportedOperation();
+    }
+
+    @Override
+    public void attemptNameUpdateFromTemplate(
+            PurposeTemplateRef purposeTemplateRef,
+            PurposeRef purposeRef,
+            String name
+    ) {
+        throw unsupportedOperation();
+    }
+
+    @Override
+    public void attemptRiskAnalysisFormUpdate(PurposeRef purposeRef) {
+        throw unsupportedOperation();
     }
 }

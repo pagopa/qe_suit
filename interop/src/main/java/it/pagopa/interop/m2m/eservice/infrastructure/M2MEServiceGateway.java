@@ -8,6 +8,7 @@ import it.pagopa.interop.common.eservice.application.command.EServiceCreationCom
 import it.pagopa.interop.common.eservice.application.command.EServiceUpdateCommand;
 import it.pagopa.interop.common.eservice.domain.EService;
 import it.pagopa.interop.common.eservice.domain.EServiceArchivingFailureReason;
+import it.pagopa.interop.common.eservice.domain.EServiceCreationFailureReason;
 import it.pagopa.interop.common.eservice.domain.EServiceUpdateFailureReason;
 import it.pagopa.interop.common.eservice.domain.GracePeriodDays;
 import it.pagopa.interop.common.eservice.domain.SoapInterfaceUploadFailureReason;
@@ -32,6 +33,34 @@ public class M2MEServiceGateway implements EServiceGateway {
     private final M2MEServiceMapper mapper;
     private final EntityStore entityStore;
     private final LastApiResponseStore lastApiResponseStore;
+
+    @Override
+    public void openEServiceCreation() {
+        throw unsupportedOperation();
+    }
+
+    @Override
+    public void openDraftEServiceGeneralData(EService eService) {
+        throw unsupportedOperation();
+    }
+
+    @Override
+    public void shouldFailToUpdateDraftEServiceDescription(String description,
+        EServiceUpdateFailureReason reason) {
+        throw unsupportedOperation();
+    }
+
+    @Override
+    public void shouldFailToUpdateDraftEServiceName(String name,
+        EServiceUpdateFailureReason reason) {
+        throw unsupportedOperation();
+    }
+
+    @Override
+    public void shouldFailToCreateEService(EServiceCreationCommand command,
+        EServiceCreationFailureReason reason) {
+        throw unsupportedOperation();
+    }
 
     @Override
     public EService createEService(EServiceCreationCommand command) {
@@ -61,6 +90,7 @@ public class M2MEServiceGateway implements EServiceGateway {
             case INVALID_DATA, NOT_ALLOWED -> 400;
             case CONFLICT, OUT_OF_DRAFT_OPERATION_FIELD -> 409;
             case UNAUTHORIZED -> 403;
+            default -> throw new UnsupportedOperationException("Unsupported EServiceUpdateFailureReason: " + reason);
         };
         Assertions.assertThat(lastApiResponseStore.getLastResponse().getStatusCode()).isEqualTo(expected);
     }
@@ -121,6 +151,72 @@ public class M2MEServiceGateway implements EServiceGateway {
 
     @Override
     public void assertEServiceNotPresentInProducerCatalog(String eserviceName) {
+        throw unsupportedOperation();
+    }
+
+    @Override
+    public void attemptProducerEServiceDetailsRead(EServiceRef eServiceRef) {
+        throw unsupportedOperation();
+    }
+
+    @Override
+    public void attemptNameUpdate(EServiceRef eServiceRef, String name) {
+        throw unsupportedOperation();
+    }
+
+    @Override
+    public void attemptDelegatedArchivingRequest(EServiceRef eServiceRef,
+        GracePeriodDays gracePeriodDays) {
+        throw unsupportedOperation();
+    }
+
+    @Override
+    public void submitDelegatedArchivingRequest(EServiceRef eServiceRef, GracePeriodDays gracePeriodDays) {
+        throw unsupportedOperation();
+    }
+
+    @Override
+    public void attemptCancelDelegatedArchivingRequest(EServiceRef eServiceRef) {
+        throw unsupportedOperation();
+    }
+
+    @Override
+    public void attemptEServiceDeletion(EServiceRef eServiceRef) {
+        throw unsupportedOperation();
+    }
+
+    @Override
+    public void attemptDelegationFlagsUpdate(EServiceRef eServiceRef) {
+        throw unsupportedOperation();
+    }
+
+    @Override
+    public void attemptSignalHubUpdate(EServiceRef eServiceRef) {
+        throw unsupportedOperation();
+    }
+
+    @Override
+    public void attemptPersonalDataFlagUpdate(EServiceRef eServiceRef) {
+        throw unsupportedOperation();
+    }
+
+    @Override
+    public void attemptInstanceUpgrade(EServiceRef eServiceRef) {
+        throw unsupportedOperation();
+    }
+
+    @Override
+    public void attemptDescriptionUpdate(EServiceRef eServiceRef, String description) {
+        throw unsupportedOperation();
+    }
+
+    @Override
+    public void attemptPartialNameUpdate(EServiceRef eServiceRef, String name) {
+        throw unsupportedOperation();
+    }
+
+    @Override
+    public void attemptEServiceImportFromFile(String filePath) {
         throw unsupportedOperation();
     }
 

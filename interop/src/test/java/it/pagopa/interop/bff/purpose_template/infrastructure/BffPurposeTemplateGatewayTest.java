@@ -33,6 +33,26 @@ import static org.assertj.core.api.Assertions.*;
 import static org.mockito.Mockito.*;
 
 class BffPurposeTemplateGatewayTest {
+    @Test
+    void attemptsReactivationOnceWithoutPollingOrReadingBackTheTemplate() {
+        var restClient = mock(BffPurposeTemplateRestClient.class);
+        var store = mock(EntityStore.class);
+        var mapper = mock(BffPurposeTemplateMapper.class);
+        var requests = mock(BffPurposeTemplateRequestFactory.class);
+        var lastApiResponseStore = mock(LastApiResponseStore.class);
+        var adapter = new BffPurposeTemplateGateway(restClient, mapper, requests, store, lastApiResponseStore);
+        var template = PurposeTemplate.builder().id(UUID.randomUUID()).build();
+        TestChain<Void> chain = mock(TestChain.class);
+        when(restClient.unsuspendPurposeTemplate(template.getId())).thenReturn(chain);
+
+        adapter.attemptPurposeTemplateReactivation(template);
+
+        verify(restClient).unsuspendPurposeTemplate(template.getId());
+        verify(chain).withoutPolling();
+        verifyNoMoreInteractions(restClient, chain);
+        verifyNoInteractions(store, mapper, requests);
+    }
+
     private final BffPurposeTemplateRestClient rest = mock(BffPurposeTemplateRestClient.class);
     private final LastApiResponseStore lastApiResponseStore = mock(LastApiResponseStore.class);
     private final BffPurposeTemplateGateway gateway = new BffPurposeTemplateGateway(
@@ -56,36 +76,6 @@ class BffPurposeTemplateGatewayTest {
         gateway.shouldFailToUpdateMetadataAsNotFound();
 
         verify(lastApiResponseStore).getLastResponse();
-    }
-
-    @Test
-    void includesProvidedOperationalMetadataInThePatchRequest() {
-        var template = PurposeTemplate.builder().id(UUID.randomUUID()).build();
-        when(rest.updatePurposeTemplate(eq(template.getId()), any()))
-                .thenReturn(mock(TestChain.class));
-
-        gateway.tryToUpdateMetadata(template, "title", "description", "target", false, 500, true);
-
-        var payload = ArgumentCaptor.forClass(PatchUpdatePurposeTemplateSeed.class);
-        verify(rest).updatePurposeTemplate(eq(template.getId()), payload.capture());
-        assertThat(payload.getValue().getPurposeIsFreeOfCharge()).isFalse();
-        assertThat(payload.getValue().getPurposeDailyCalls()).isEqualTo(500);
-        assertThat(payload.getValue().getHandlesPersonalData()).isTrue();
-    }
-
-    @Test
-    void omitsUnspecifiedOperationalMetadataFromThePatchRequest() {
-        var template = PurposeTemplate.builder().id(UUID.randomUUID()).build();
-        when(rest.updatePurposeTemplate(eq(template.getId()), any()))
-                .thenReturn(mock(TestChain.class));
-
-        gateway.tryToUpdateMetadata(template, "title", "description", "target", null, null, null);
-
-        var payload = ArgumentCaptor.forClass(PatchUpdatePurposeTemplateSeed.class);
-        verify(rest).updatePurposeTemplate(eq(template.getId()), payload.capture());
-        assertThat(payload.getValue().getPurposeIsFreeOfCharge()).isNull();
-        assertThat(payload.getValue().getPurposeDailyCalls()).isNull();
-        assertThat(payload.getValue().getHandlesPersonalData()).isNull();
     }
 
     @ParameterizedTest
@@ -173,5 +163,25 @@ class BffPurposeTemplateGatewayTest {
 
     private static RiskAnalysisFormConfig.Question question(String id, String type) {
         return RiskAnalysisFormConfig.Question.builder().id(id).dataType(type).build();
+    }
+
+    @Test
+    void attemptsPublicationOnceWithoutPollingOrReadingBackTheTemplate() {
+        var restClient = mock(BffPurposeTemplateRestClient.class);
+        var store = mock(EntityStore.class);
+        var mapper = mock(BffPurposeTemplateMapper.class);
+        var requests = mock(BffPurposeTemplateRequestFactory.class);
+        var lastApiResponseStore = mock(LastApiResponseStore.class);
+        var adapter = new BffPurposeTemplateGateway(restClient, mapper, requests, store, lastApiResponseStore);
+        var template = PurposeTemplate.builder().id(UUID.randomUUID()).build();
+        TestChain<Void> chain = mock(TestChain.class);
+        when(restClient.publishPurposeTemplate(template.getId())).thenReturn(chain);
+
+        adapter.attemptPurposeTemplatePublication(template);
+
+        verify(restClient).publishPurposeTemplate(template.getId());
+        verify(chain).withoutPolling();
+        verifyNoMoreInteractions(restClient, chain);
+        verifyNoInteractions(store, mapper, requests);
     }
 }

@@ -4,6 +4,7 @@ import it.pagopa.interop.common.eservice.application.command.EServiceTemplateIns
 import it.pagopa.interop.common.eservice.domain.EService;
 import it.pagopa.interop.common.eservice.domain.EServiceDescriptorState;
 import it.pagopa.interop.common.eservice_template.domain.EServiceTemplate;
+import it.pagopa.interop.common.eservice_template.domain.EServiceTemplateInstanceCreationFailureReason;
 import it.pagopa.interop.common.kernel.domain.EServiceDescriptorRef;
 import it.pagopa.interop.common.kernel.domain.EServiceRef;
 import it.pagopa.interop.common.eservice_template.application.command.EServiceTemplateInstanceCreationCommand;
@@ -11,6 +12,7 @@ import it.pagopa.interop.common.eservice.application.EServiceDescriptorUseCase;
 import it.pagopa.interop.common.eservice.domain.EServiceTechnology;
 import it.pagopa.interop.common.eservice.domain.RestInterfaceConfiguration;
 import java.util.List;
+import java.util.function.Consumer;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
@@ -28,6 +30,14 @@ public class EServiceTemplateInstanceUseCase {
 
     public EService createEServiceInstance(EServiceTemplate template, EServiceTemplateInstanceCreationCommand command) {
         return gateway.createEServiceInstance(template, command);
+    }
+
+    public void shouldFailToCreateEServiceInstance(EServiceTemplate template,
+            Consumer<EServiceTemplateInstanceCreationCommand> config,
+            EServiceTemplateInstanceCreationFailureReason reason) {
+        var command = requestFactory.defaultCreationEServiceTemplateInstanceCommand();
+        config.accept(command);
+        gateway.shouldFailToCreateEServiceInstance(template, command, reason);
     }
 
     public void publishEServiceInstance(EServiceTemplate template, EService instance) {
@@ -54,5 +64,19 @@ public class EServiceTemplateInstanceUseCase {
             EServiceTemplateInstanceUpdateDescriptorCommand command
     ) {
         return gateway.updateEServiceInstanceDescriptor(eServiceRef, descriptorRef, currentDescriptorState, command);
+    }
+
+    public void attemptGeneralDataUpdate(EService instance, String instanceLabel) {
+        if (instanceLabel == null || instanceLabel.isBlank()) {
+            throw new IllegalArgumentException("Instance identifying word must not be blank");
+        }
+        gateway.attemptGeneralDataUpdate(instance, instanceLabel);
+    }
+
+    public void attemptInstanceLabelUpdate(EService instance, String instanceLabel) {
+        if (instanceLabel == null || instanceLabel.isBlank()) {
+            throw new IllegalArgumentException("Instance identifying word must not be blank");
+        }
+        gateway.attemptInstanceLabelUpdate(instance.getRef(), instanceLabel);
     }
 }

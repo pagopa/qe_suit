@@ -14,18 +14,17 @@ import it.pagopa.interop.common.eservice.domain.EService;
 import it.pagopa.interop.common.eservice.domain.EServiceArchivingFailureReason;
 import it.pagopa.interop.common.eservice.domain.EServiceDescriptor;
 import it.pagopa.interop.common.eservice.domain.GracePeriodDays;
+import it.pagopa.interop.common.eservice.domain.EServiceUpdateFailureReason;
+import it.pagopa.interop.common.eservice.domain.EServiceCreationFailureReason;
 import it.pagopa.interop.common.kernel.domain.Channel;
 import it.pagopa.interop.common.kernel.domain.EServiceDescriptorRef;
 import it.pagopa.interop.common.kernel.domain.EServiceRef;
-import it.pagopa.interop.generated.openapi.clients.bff.model.EServiceArchivingSeed;
 import it.pagopa.interop.generated.openapi.clients.bff.model.FileResource;
 import it.pagopa.interop.generated.openapi.clients.bff.model.PresignedUrl;
 import it.pagopa.interop.generated.openapi.clients.bff.model.ProducerEServices;
 import it.pagopa.utils.FileUtils;
-import it.pagopa.utils.RandomUtils;
 import it.pagopa.utils.async.PollingUtils;
 import lombok.RequiredArgsConstructor;
-import org.instancio.Instancio;
 import org.springframework.stereotype.Service;
 
 import java.io.ByteArrayOutputStream;
@@ -43,7 +42,6 @@ import java.util.zip.ZipEntry;
 import java.util.zip.ZipOutputStream;
 
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.instancio.Select.field;
 
 @Service
 @RequiredArgsConstructor
@@ -56,6 +54,7 @@ public class BffEServiceGateway implements EServiceGateway {
     private final EntityStore entityStore;
     private final BffEServiceMapper mapper;
     private final LastApiResponseStore lastApiResponseStore;
+    private final BffEServiceRequestFactory requestFactory;
 
     @Override
     public EService createEService(EServiceCreationCommand command) {
@@ -109,6 +108,7 @@ public class BffEServiceGateway implements EServiceGateway {
             case INVALID_DATA, NOT_ALLOWED -> 400;
             case CONFLICT, OUT_OF_DRAFT_OPERATION_FIELD -> 409;
             case UNAUTHORIZED -> 403;
+            default -> throw new UnsupportedOperationException("Unsupported EServiceUpdateFailureReason: " + reason);
         };
         var actual = lastApiResponseStore.getLastResponse().getStatusCode();
         assertThat(actual).isEqualTo(expected);
@@ -135,13 +135,10 @@ public class BffEServiceGateway implements EServiceGateway {
 
     @Override
     public void archiveEService(EServiceRef eServiceRef, GracePeriodDays gracePeriodDays) {
-        EServiceArchivingSeed payload = Instancio.of(EServiceArchivingSeed.class)
-                .set(field(EServiceArchivingSeed::getGracePeriodDays), it.pagopa.interop.generated.openapi.clients.bff.model.GracePeriodDays.fromValue(gracePeriodDays.getDays()))
-                .set(field(EServiceArchivingSeed::getArchivingReason), RandomUtils.randomAlphanumericName("archiving-reason"))
-                .create();
+        var payload = requestFactory.archivingRequest(gracePeriodDays);
 
         restClient.scheduleArchiveEservice(eServiceRef.id(), payload)
-                .withPolling(PollingStrategy.UNTIL_SUCCESS)
+                .withoutPolling()
                 .get();
     }
 
@@ -240,6 +237,33 @@ public class BffEServiceGateway implements EServiceGateway {
     }
 
     @Override
+    public void openEServiceCreation() {
+        throw new UnsupportedOperationException("Opening EService creation is not supported on the BFF channel");
+    }
+
+    @Override
+    public void openDraftEServiceGeneralData(EService eService) {
+        throw new UnsupportedOperationException("Opening draft EService editing is not supported on the BFF channel");
+    }
+
+    @Override
+    public void shouldFailToUpdateDraftEServiceDescription(String description, EServiceUpdateFailureReason reason) {
+        throw new UnsupportedOperationException("Attempting draft EService description update is not supported on the BFF channel");
+    }
+
+    @Override
+    public void shouldFailToUpdateDraftEServiceName(String name, EServiceUpdateFailureReason reason) {
+        throw new UnsupportedOperationException("Attempting draft EService name update is not supported on the BFF channel");
+    }
+
+    @Override
+    public void shouldFailToCreateEService(EServiceCreationCommand command, EServiceCreationFailureReason reason) {
+        if (!(command instanceof BffEServiceCreationCommand bffCommand))
+            throw new IllegalArgumentException("Command must be an instance of BffEServiceCreationCommand");
+        restClient.createEService(bffCommand.getBffCreationPayload()).withoutPolling();
+    }
+
+    @Override
     public boolean supports(Channel delimiter) {
         return delimiter == Channel.BFF;
     }
@@ -265,5 +289,106 @@ public class BffEServiceGateway implements EServiceGateway {
 
     private static <T> boolean isApplied(T actual, T requested) {
         return requested == null || Objects.equals(actual, requested);
+    }
+
+    @Override
+    public void attemptProducerEServiceDetailsRead(EServiceRef eServiceRef) {
+        restClient.readEService(eServiceRef.id()).withoutPolling();
+    }
+
+    @Override
+    public void attemptNameUpdate(EServiceRef eServiceRef, String name) {
+        restClient.updateName(eServiceRef.id(), requestFactory.updateNameRequest().name(name)).withoutPolling();
+    }
+
+    @Override
+    public void attemptDelegatedArchivingRequest(EServiceRef eServiceRef, GracePeriodDays gracePeriodDays) {
+        restClient.submitDelegatedEServiceArchiving(eServiceRef.id(), requestFactory.archivingRequest(gracePeriodDays))
+                .withoutPolling();
+    }
+
+    @Override
+    public void submitDelegatedArchivingRequest(EServiceRef eServiceRef, GracePeriodDays gracePeriodDays) {
+        restClient.submitDelegatedEServiceArchiving(eServiceRef.id(), requestFactory.archivingRequest(gracePeriodDays))
+                .withPolling(PollingStrategy.UNTIL_SUCCESS)
+                .get();
+    }
+
+    @Override
+    public void attemptCancelDelegatedArchivingRequest(EServiceRef eServiceRef) {
+        restClient.cancelDelegatedEServiceArchiving(eServiceRef.id()).withoutPolling();
+    }
+
+    @Override
+    public void attemptEServiceDeletion(EServiceRef eServiceRef) {
+        restClient.deleteEService(eServiceRef.id()).withoutPolling();
+    }
+
+    @Override
+    public void attemptDelegationFlagsUpdate(EServiceRef eServiceRef) {
+        restClient.updateEServiceDelegationFlags(eServiceRef.id(), requestFactory.delegationFlagsUpdateRequest())
+                .withoutPolling();
+    }
+
+    @Override
+    public void attemptSignalHubUpdate(EServiceRef eServiceRef) {
+        restClient.updateEServiceSignalHubFlag(eServiceRef.id(), requestFactory.signalHubUpdateRequest())
+                .withoutPolling();
+    }
+
+    @Override
+    public void attemptPersonalDataFlagUpdate(EServiceRef eServiceRef) {
+        restClient.updateEServicePersonalDataFlag(eServiceRef.id(), requestFactory.personalDataFlagUpdateRequest())
+                .withoutPolling();
+    }
+
+    @Override
+    public void attemptInstanceUpgrade(EServiceRef eServiceRef) {
+        restClient.upgradeEServiceInstance(eServiceRef.id()).withoutPolling();
+    }
+
+    @Override
+    public void attemptDescriptionUpdate(EServiceRef eServiceRef, String description) {
+        restClient.updateDescription(eServiceRef.id(), requestFactory.updateDescriptionRequest().description(description))
+                .withoutPolling();
+    }
+
+    @Override
+    public void attemptPartialNameUpdate(EServiceRef eServiceRef, String name) {
+        restClient.partialUpdateEService(eServiceRef.id(), requestFactory.partialNameUpdateRequest(name)).withoutPolling();
+    }
+
+    @Override
+    public void attemptEServiceImportFromFile(String filePath) {
+        File zipFile = resolveImportFixtureFile(filePath);
+        String zipFileName = Path.of(filePath).getFileName().toString();
+        byte[] zipBytes;
+        try {
+            zipBytes = Files.readAllBytes(zipFile.toPath());
+        } catch (IOException e) {
+            throw new UncheckedIOException("Errore nella lettura del file ZIP di importazione E-Service: " + filePath, e);
+        }
+        PresignedUrl presignedUrl = restClient.getImportEservicePresignedUrl(zipFileName)
+                .withPolling(PollingStrategy.UNTIL_SUCCESS)
+                .get();
+        restClient.uploadToPresignedUrl(presignedUrl.getUrl(), zipBytes)
+                .withPolling(PollingStrategy.UNTIL_SUCCESS)
+                .get();
+        FileResource fileResource = new FileResource().filename(zipFileName).url(presignedUrl.getUrl());
+        restClient.importEService(fileResource).withoutPolling();
+    }
+
+    private static File resolveImportFixtureFile(String fixturePath) {
+        ClassLoader classLoader = Thread.currentThread().getContextClassLoader();
+        if (classLoader == null) {
+            classLoader = BffEServiceGateway.class.getClassLoader();
+        }
+        for (String candidate : List.of(fixturePath, "assets/" + fixturePath, "assets/eservice/" + fixturePath)) {
+            String normalized = candidate.startsWith("/") ? candidate.substring(1) : candidate;
+            if (classLoader.getResource(normalized) != null) {
+                return FileUtils.loadClasspathResourceAsTempFile(normalized);
+            }
+        }
+        throw new IllegalStateException("Risorsa non trovata nel classpath: " + fixturePath);
     }
 }

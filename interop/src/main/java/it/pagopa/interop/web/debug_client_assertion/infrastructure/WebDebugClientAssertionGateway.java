@@ -2,7 +2,6 @@ package it.pagopa.interop.web.debug_client_assertion.infrastructure;
 
 import it.pagopa.interop.common.client.application.DebugClientAssertionGateway;
 import it.pagopa.interop.common.client.domain.ClientKind;
-import it.pagopa.interop.common.client.domain.DebugClientAssertionValidation;
 import it.pagopa.interop.common.kernel.domain.Channel;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -14,8 +13,8 @@ public class WebDebugClientAssertionGateway implements DebugClientAssertionGatew
     private final WebDebugClientAssertionClient client;
 
     @Override
-    public DebugClientAssertionValidation executeClientAssertionValidation(String clientAssertion, String dpopProof, ClientKind clientKind, String clientId) {
-        return client.submitClientAssertionValidationRequest(clientAssertion, clientKind, clientId, dpopProof)
+    public void executeClientAssertionValidation(String clientAssertion, String dpopProof, ClientKind clientKind, String clientId) {
+        client.submitClientAssertionValidationRequest(clientAssertion, clientKind, clientId, dpopProof)
                 .withoutPolling()
                 .updateContext()
                 .get();

@@ -10,10 +10,14 @@ import it.pagopa.interop.common.eservice.domain.EServiceDescriptor;
 import it.pagopa.interop.common.kernel.domain.AgreementRef;
 import it.pagopa.interop.common.kernel.domain.Channel;
 import it.pagopa.interop.common.kernel.domain.Delegation;
+import it.pagopa.interop.common.kernel.domain.Document;
 import it.pagopa.interop.generated.openapi.clients.m2m.v3.model.AgreementSeed;
 import it.pagopa.interop.generated.openapi.clients.m2m.v3.model.AgreementSubmission;
 import it.pagopa.utils.async.PollingUtils;
 import jakarta.annotation.Nullable;
+
+import java.util.UUID;
+
 import lombok.RequiredArgsConstructor;
 import org.jspecify.annotations.NonNull;
 import org.springframework.stereotype.Service;
@@ -98,13 +102,28 @@ public class M2MAgreementGateway implements AgreementGateway {
     }
 
     @Override
+    public void attemptAgreementSubmission(Agreement agreement) {
+        throw unsupportedOperation("attemptAgreementSubmission");
+    }
+
+    @Override
     public Agreement activateAgreement(Agreement agreement, @Nullable Delegation delegation) {
         throw unsupportedOperation("activateAgreement");
     }
 
     @Override
+    public void attemptAgreementActivation(Agreement agreement) {
+        throw unsupportedOperation("attemptAgreementActivation");
+    }
+
+    @Override
     public Agreement suspendAgreement(Agreement agreement, @Nullable Delegation delegation) {
         throw unsupportedOperation("suspendAgreement");
+    }
+
+    @Override
+    public Agreement rejectAgreement(Agreement agreement) {
+        throw unsupportedOperation("rejectAgreement");
     }
 
     @Override
@@ -134,6 +153,76 @@ public class M2MAgreementGateway implements AgreementGateway {
                     return false;
                 }
         );
+    }
+
+    @Override
+    public Agreement awaitContractAvailable(Agreement agreement) {
+        throw unsupportedOperation("awaitContractAvailable");
+    }
+
+    @Override
+    public Agreement addConsumerDocument(Agreement agreement, @Nullable String fileName) {
+        throw unsupportedOperation("addConsumerDocument");
+    }
+
+    @Override
+    public Agreement removeConsumerDocument(Agreement agreement, Document document) {
+        throw unsupportedOperation("removeConsumerDocument");
+    }
+
+    @Override
+    public void attemptAgreementSuspension(Agreement agreement) {
+        throw unsupportedOperation("attemptAgreementSuspension");
+    }
+
+    @Override
+    public void attemptAgreementReactivation(Agreement agreement) {
+        throw unsupportedOperation("attemptAgreementReactivation");
+    }
+
+    @Override
+    public void attemptAgreementArchiving(Agreement agreement) {
+        throw unsupportedOperation("attemptAgreementArchiving");
+    }
+
+    @Override
+    public void attemptConsumerDocumentUpload(Agreement agreement) {
+        throw unsupportedOperation("attemptConsumerDocumentUpload");
+    }
+
+    @Override
+    public void attemptAgreementCreation(EService eService, EServiceDescriptor descriptor) {
+        throw unsupportedOperation("attemptAgreementCreation");
+    }
+
+    @Override
+    public void attemptAgreementCloning(Agreement agreement) {
+        throw unsupportedOperation("attemptAgreementCloning");
+    }
+
+    @Override
+    public void attemptAgreementRejection(Agreement agreement) {
+        throw unsupportedOperation("attemptAgreementRejection");
+    }
+
+    @Override
+    public void attemptAgreementSignedDocumentDownload(Agreement agreement) {
+        throw unsupportedOperation("attemptAgreementSignedDocumentDownload");
+    }
+
+    @Override
+    public void attemptInvalidFormatConsumerDocumentUpload(Agreement agreement) {
+        throw unsupportedOperation("attemptInvalidFormatConsumerDocumentUpload");
+    }
+
+    @Override
+    public void attemptAgreementDocumentDownload(Agreement agreement, @Nullable UUID documentId) {
+        throw unsupportedOperation("attemptAgreementDocumentDownload");
+    }
+
+    @Override
+    public void attemptAgreementDocumentDeletion(Agreement agreement, @Nullable UUID documentId) {
+        throw unsupportedOperation("attemptAgreementDocumentDeletion");
     }
 
     @Override

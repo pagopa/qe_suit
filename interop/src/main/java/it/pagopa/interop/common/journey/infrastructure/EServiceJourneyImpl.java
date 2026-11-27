@@ -17,6 +17,10 @@ import it.pagopa.interop.common.eservice.domain.GracePeriodDays;
 import it.pagopa.interop.common.eservice.domain.SoapInterfaceUploadFailureReason;
 import it.pagopa.interop.common.journey.application.EServiceJourney;
 import it.pagopa.interop.common.kernel.context.AuthSession;
+import it.pagopa.interop.common.agreement.domain.AgreementApprovalPolicy;
+import it.pagopa.interop.common.kernel.domain.Tenant;
+import it.pagopa.interop.common.kernel.domain.User;
+import it.pagopa.interop.common.kernel.domain.EServiceRiskAnalysis;
 import it.pagopa.utils.async.PollingUtils;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
@@ -35,6 +39,17 @@ public class EServiceJourneyImpl implements EServiceJourney<EServiceJourneyImpl>
     private final EServiceRiskAnalysisUseCase eServiceRiskAnalysisUseCase;
     private final AuthSession authSession;
     private final EServiceRequestFactory requestFactory;
+
+    @Override
+    public EServiceJourneyImpl createPublishedEServiceWithManualAgreementApproval(Tenant producer) {
+        authSession.set(User.getTenantAdmin(producer), producer);
+        EService service = eServiceUseCase.createEService(requestFactory.defaultCreationEServiceCommand());
+        var command = requestFactory.defaultUpdateDescriptorCommand()
+                .agreementApprovalPolicy(AgreementApprovalPolicy.MANUAL);
+        lifecycle.bringToState(service, service.getLastDraftDescriptor(),
+                EServiceDescriptorState.PUBLISHED, command);
+        return this;
+    }
 
     @Override
     public EServiceJourneyImpl createEService(EServiceCreationCommand command, EServiceDescriptorState targetState) {
@@ -93,10 +108,19 @@ public class EServiceJourneyImpl implements EServiceJourney<EServiceJourneyImpl>
 
     @Override
     public EServiceJourneyImpl addRiskAnalysis() {
+        return addRiskAnalysis(null, null);
+    }
+
+    @Override
+    public EServiceJourneyImpl addRiskAnalysis(String name, String alias) {
         EService eService = entityStore.getLastOrThrow(EService.class);
         EServiceRiskAnalysis riskAnalysis =
-                eServiceRiskAnalysisUseCase.addLatestRiskAnalysis(authSession.getTenant(), eService, true);
-        entityStore.upsert(riskAnalysis);
+                eServiceRiskAnalysisUseCase.addLatestRiskAnalysis(authSession.getTenant(), eService, true, name);
+        if (alias != null && !alias.isBlank()) {
+            // L'upsert della entity a meno dell'alias, come da linee guida architetturali,
+            // è riservato al gateway; qui si gestisce solo il caso in cui ci sia un alias.
+            entityStore.upsert(alias, riskAnalysis);
+        }
         return this;
     }
 

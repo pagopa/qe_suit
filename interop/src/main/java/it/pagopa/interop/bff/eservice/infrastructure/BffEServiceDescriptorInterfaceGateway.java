@@ -30,6 +30,7 @@ public class BffEServiceDescriptorInterfaceGateway {
     private final BffEServiceRestClient restClient;
     private final EntityStore entityStore;
     private final BffEServiceDescriptorMapper mapper;
+    private final BffEServiceRequestFactory requestFactory;
 
     public EServiceDescriptor configureSOAP(EServiceRef serviceRef, EServiceDescriptorRef descriptorRef, List<SoapAddressConfiguration> addresses) {
         restClient.addEServiceTemplateInstanceInterfaceSoap(
@@ -119,7 +120,13 @@ public class BffEServiceDescriptorInterfaceGateway {
         DelayUtils.waitForSeconds(1);
         return restClient.addDocument(serviceRef.id(), descriptorRef.id(), kind.name(), fileName, document)
                 .withPolling(PollingStrategy.UNTIL_SUCCESS)
-                .map(ignored -> readAndUpdate(serviceRef, descriptorRef))
+                .map(created -> kind == DocumentKind.DOCUMENT
+                        ? PollingUtils.pollUntil(
+                                () -> readAndUpdate(serviceRef, descriptorRef),
+                                descriptor -> descriptor.getDocs().stream()
+                                        .anyMatch(doc -> doc.getId().equals(created.getId()))
+                        )
+                        : readAndUpdate(serviceRef, descriptorRef))
                 .get();
     }
 
@@ -171,4 +178,69 @@ public class BffEServiceDescriptorInterfaceGateway {
                 .get();
     }
 
+    public void attemptValidDocumentUpload(EServiceRef serviceRef, EServiceDescriptorRef descriptorRef) {
+        attemptDocumentUpload(serviceRef, descriptorRef,
+                "assets/eservice-template/openapi3-riferimenti.json", "Allegato di test");
+    }
+
+    public void attemptDocumentUpload(EServiceRef serviceRef, EServiceDescriptorRef descriptorRef, String path, String name) {
+        attemptFileUpload(serviceRef, descriptorRef, path, DocumentKind.DOCUMENT, name);
+    }
+
+    public void attemptFileUpload(
+            EServiceRef serviceRef,
+            EServiceDescriptorRef descriptorRef,
+            String path,
+            DocumentKind kind,
+            String name
+    ) {
+        File document = resolveDocumentFixtureFile(path);
+        restClient.addDocument(serviceRef.id(), descriptorRef.id(), kind.name(), name, document)
+                .withoutPolling();
+    }
+
+    public void attemptDocumentRename(EServiceRef serviceRef, EServiceDescriptorRef descriptorRef, UUID documentId, String newName) {
+        restClient.updateDocument(serviceRef.id(), descriptorRef.id(), documentId,
+                requestFactory.documentRenameRequest(newName)).withoutPolling();
+    }
+
+    public void attemptDocumentDeletion(EServiceRef serviceRef, EServiceDescriptorRef descriptorRef, UUID documentId) {
+        restClient.deleteDocument(serviceRef.id(), descriptorRef.id(), documentId).withoutPolling();
+    }
+
+    public void attemptConfigureSOAP(
+            EServiceRef serviceRef, EServiceDescriptorRef descriptorRef, List<SoapAddressConfiguration> addresses
+    ) {
+        restClient.addEServiceTemplateInstanceInterfaceSoap(
+                serviceRef.id(), descriptorRef.id(), BffEServiceInterfacePayloadFactory.soapPayload(addresses)
+        ).withoutPolling();
+    }
+
+    public void attemptConfigureREST(
+            EServiceRef serviceRef, EServiceDescriptorRef descriptorRef, RestInterfaceConfiguration configuration
+    ) {
+        restClient.addEServiceTemplateInstanceInterfaceRest(
+                serviceRef.id(), descriptorRef.id(), BffEServiceInterfacePayloadFactory.restPayload(configuration)
+        ).withoutPolling();
+    }
+
+    private static File resolveDocumentFixtureFile(String fixturePath) {
+        ClassLoader classLoader = Thread.currentThread().getContextClassLoader();
+        if (classLoader == null) {
+            classLoader = BffEServiceDescriptorInterfaceGateway.class.getClassLoader();
+        }
+        for (String candidate : List.of(
+                fixturePath,
+                "assets/" + fixturePath,
+                "assets/eservice/" + fixturePath,
+                "assets/eservice-template/" + fixturePath,
+                "assets/wsdl/" + fixturePath
+        )) {
+            String normalized = candidate.startsWith("/") ? candidate.substring(1) : candidate;
+            if (classLoader.getResource(normalized) != null) {
+                return FileUtils.loadClasspathResourceAsTempFile(normalized);
+            }
+        }
+        throw new IllegalStateException("Risorsa non trovata nel classpath: " + fixturePath);
+    }
 }

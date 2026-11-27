@@ -1,5 +1,6 @@
 package it.pagopa.interop.bff.client.infrastructure;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
 import it.pagopa.application.context.EntityStore;
 import it.pagopa.application.context.LastApiResponseStore;
 import it.pagopa.infrastructure.response.ApiResponse;
@@ -7,12 +8,16 @@ import it.pagopa.infrastructure.template.action.TestChain;
 import it.pagopa.infrastructure.template.action.strategy.PollingStrategy;
 import it.pagopa.interop.bff.client.application.BffClientCreationCommand;
 import it.pagopa.interop.bff.client.application.BffClientKeyCreationCommand;
+import it.pagopa.interop.bff.infrastructure.security.BffKeyRequestFactory;
 import it.pagopa.interop.common.client.application.ClientGateway;
 import it.pagopa.interop.common.client.application.command.ClientCreationCommand;
 import it.pagopa.interop.common.client.application.command.ClientKeyCreationCommand;
 import it.pagopa.interop.common.client.domain.Client;
+import it.pagopa.interop.common.client.domain.ClientKey;
 import it.pagopa.interop.common.kernel.domain.Channel;
 import it.pagopa.interop.common.kernel.domain.ClientRef;
+import it.pagopa.interop.common.kernel.domain.KeyRegistrationMaterial;
+import it.pagopa.interop.common.kernel.domain.Tenant;
 import it.pagopa.interop.common.kernel.domain.User;
 import it.pagopa.interop.common.kernel.domain.UserRef;
 import it.pagopa.interop.common.purpose.domain.Purpose;
@@ -21,6 +26,8 @@ import it.pagopa.interop.generated.openapi.clients.bff.model.ClientUpdateSeed;
 import it.pagopa.interop.generated.openapi.clients.bff.model.CreatedResource;
 import it.pagopa.interop.generated.openapi.clients.bff.model.KeySeed;
 import it.pagopa.interop.generated.openapi.clients.bff.model.PurposeAdditionDetailsSeed;
+import it.pagopa.kernel.security.Key;
+import it.pagopa.utils.jwt.JwtUtils;
 import it.pagopa.utils.async.PollingUtils;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -29,6 +36,7 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
+import java.security.NoSuchAlgorithmException;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
@@ -39,6 +47,7 @@ public class BffClientGateway implements ClientGateway {
     private final BffClientRestClient restClient;
     private final EntityStore entityStore;
     private final BffClientMapper mapper;
+    private final BffKeyRequestFactory keyRequests;
     private final LastApiResponseStore lastApiResponseStore;
 
     @Override
@@ -72,6 +81,9 @@ public class BffClientGateway implements ClientGateway {
                     bffCommand.getKeysCommands().forEach(keyCommand -> {
                         addKeys(client, keyCommand.getKeySeed());
                         client.getKeys().add(keyCommand.getKey());
+                        client.getRegisteredKeys().add(
+                                new ClientKey(keyCommand.getKeySeed().getName(), keyCommand.getKey())
+                        );
                     });
 
                     // Associo i membri al client
@@ -96,20 +108,37 @@ public class BffClientGateway implements ClientGateway {
 
         return restClient.addKey(client.getId(), bffCommand.getKeySeed())
                 .withPolling(PollingStrategy.UNTIL_SUCCESS)
-                .map((Void) -> getClient(ClientRef.of(client.getId())))
+                .map((Void) -> {
+                    Client updatedClient = getClient(ClientRef.of(client.getId()));
+                    updatedClient.getKeys().add(bffCommand.getKey());
+                    updatedClient.getRegisteredKeys().add(
+                            new ClientKey(bffCommand.getKeySeed().getName(), bffCommand.getKey())
+                    );
+                    return updatedClient;
+                })
                 .updateContext()
                 .get();
     }
 
     @Override
     public Client addKeys(Client client, List<ClientKeyCreationCommand> keyCreationCommands) {
-        var requests = keyCreationCommands.stream()
+        var bffCommands = keyCreationCommands.stream()
                 .map(cmd -> (BffClientKeyCreationCommand) cmd)
+                .toList();
+        var requests = bffCommands.stream()
                 .map(BffClientKeyCreationCommand::getKeySeed)
                 .toArray(KeySeed[]::new);
 
         addKeys(client, requests);
-        return getClient(ClientRef.of(client.getId()));
+        Client updatedClient = getClient(ClientRef.of(client.getId()));
+        bffCommands.forEach(cmd -> {
+            updatedClient.getKeys().add(cmd.getKey());
+            updatedClient.getRegisteredKeys().add(
+                    new ClientKey(cmd.getKeySeed().getName(), cmd.getKey())
+            );
+        });
+        entityStore.upsert(updatedClient);
+        return updatedClient;
     }
 
     @Override
@@ -119,7 +148,17 @@ public class BffClientGateway implements ClientGateway {
 
         return restClient.addUsers(client.getId(), request)
                 .withPolling(PollingStrategy.UNTIL_SUCCESS)
-                .map((res) -> getClient(ClientRef.of(res.getId())))
+                .map((Void) -> {
+                    Client updatedClient = getClient(ClientRef.of(client.getId()));
+                    if (updatedClient.getConsumerId() != null) {
+                        Tenant tenant = Tenant.fromOrganizationId(updatedClient.getConsumerId());
+                        users.stream()
+                                .map(user -> UserRef.of(user, tenant))
+                                .filter(ref -> !updatedClient.getUsers().contains(ref))
+                                .forEach(updatedClient.getUsers()::add);
+                    }
+                    return updatedClient;
+                })
                 .updateContext()
                 .get();
     }
@@ -205,10 +244,53 @@ public class BffClientGateway implements ClientGateway {
         return delimiter == Channel.BFF;
     }
 
+    @Override
+    public void attemptClientKeyDeletion(Client client, Key key) {
+        String keyId;
+        try {
+            keyId = JwtUtils.calculateKidFromPublicKey(key.pair().getPublic());
+        } catch (NoSuchAlgorithmException | JsonProcessingException exception) {
+            throw new IllegalStateException("Cannot calculate key ID for client " + client.getId(), exception);
+        }
+        restClient.deleteKey(client.getId(), keyId).withoutPolling();
+    }
+
     private void addKeys(Client client, KeySeed... keySeeds) {
         Arrays.stream(keySeeds).forEach(keySeed ->
                 restClient.addKey(client.getId(), keySeed)
                         .withPolling(PollingStrategy.UNTIL_SUCCESS)
         );
+    }
+
+    @Override
+    public void attemptClientCreation(ClientCreationCommand command) {
+        if (!(command instanceof BffClientCreationCommand bffCommand))
+            throw new IllegalArgumentException("Command must be an instance of BffClientCreationCommand");
+        TestChain<CreatedResource> request = switch (bffCommand.getClientKind()) {
+            case API -> restClient.createApiClient(bffCommand.getClientSeed());
+            case CONSUMER -> restClient.createConsumerClient(bffCommand.getClientSeed());
+        };
+        request.withoutPolling();
+    }
+
+    @Override
+    public void attemptKeyRegistration(Client client, KeyRegistrationMaterial material, String name) {
+        if (material == KeyRegistrationMaterial.REGISTERED_PUBLIC_KEY) {
+            // Temporary diagnostic delay to check for conflicts with the setup writes.
+            try {
+                Thread.sleep(2000L);
+            } catch (InterruptedException exception) {
+                Thread.currentThread().interrupt();
+                throw new IllegalStateException("Interrupted before duplicate client key registration", exception);
+            }
+        }
+        restClient.addKey(client.getId(), keyRequests.registrationRequest(material, name, client.getKeys()))
+                .withoutPolling();
+    }
+
+    @Override
+    public void attemptPurposeAssociation(Client client, Purpose purpose) {
+        restClient.linkPurpose(client.getId(), new PurposeAdditionDetailsSeed().purposeId(purpose.getId()))
+                .withoutPolling();
     }
 }

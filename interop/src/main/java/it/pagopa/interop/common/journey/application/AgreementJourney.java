@@ -9,6 +9,8 @@ public interface AgreementJourney<SELF extends AgreementJourney<SELF>> extends J
 
     SELF linkAgreement(EService eService, AgreementState agreementState, @Nullable Delegation delegation);
 
+    SELF linkAgreement(EService eService, AgreementState agreementState, @Nullable Delegation delegation, @Nullable String alias);
+
     default SELF linkAgreement(EService eService, AgreementState agreementState){
         return linkAgreement(eService, agreementState, null);
     }

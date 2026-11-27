@@ -213,4 +213,36 @@ public class BffEServiceTemplateRestClient extends RestClient {
                 byte[].class
         );
     }
+
+    public TestChain<EServiceDoc> updateEServiceTemplateDocument(
+            @Nonnull UUID templateId,
+            @Nonnull UUID versionId,
+            @Nonnull UUID documentId,
+            @Nonnull UpdateEServiceTemplateVersionDocumentSeed payload
+    ) {
+        return execute(
+                () -> eServiceTemplatesApi
+                        .updateEServiceTemplateDocumentById()
+                        .eServiceTemplateIdPath(templateId)
+                        .eServiceTemplateVersionIdPath(versionId)
+                        .documentIdPath(documentId)
+                        .body(payload)
+                        .execute(Function.identity()),
+                EServiceDoc.class
+        );
+    }
+
+    public TestChain<Void> addRiskAnalysis(
+            @Nonnull UUID templateId,
+            @Nonnull EServiceTemplateRiskAnalysisSeed payload
+    ) {
+        return execute(
+                () -> eServiceTemplatesApi
+                        .createEServiceTemplateRiskAnalysis()
+                        .eServiceTemplateIdPath(templateId)
+                        .body(payload)
+                        .execute(Function.identity()),
+                Void.class
+        );
+    }
 }

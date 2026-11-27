@@ -11,6 +11,8 @@ import it.pagopa.interop.common.eservice.domain.EServiceUpdateFailureReason;
 import it.pagopa.interop.common.eservice_template.domain.EServiceTemplate;
 import it.pagopa.interop.common.eservice_template.domain.EServiceTemplateUpdateFailureReason;
 import it.pagopa.interop.common.purpose.domain.Purpose;
+import it.pagopa.interop.common.purpose_template.domain.PurposeTemplate;
+import it.pagopa.interop.common.producer_keychain.domain.ProducerKeychain;
 import it.pagopa.kernel.security.DPoPProof;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -76,5 +78,20 @@ public class ScenarioParameterTypes {
     @ParameterType("CONFLICT|OUT_OF_DRAFT_OPERATION_FIELD|INVALID_DATA|UNAUTHORIZED")
     public EServiceTemplateUpdateFailureReason eServiceTemplateUpdateFailureReason(String reason) {
         return EServiceTemplateUpdateFailureReason.valueOf(reason);
+    }
+
+    @ParameterType("purpose template")
+    public PurposeTemplate currentPurposeTemplate(String token) {
+        return entityStore.getLastOrThrow(PurposeTemplate.class);
+    }
+
+    @ParameterType("portachiavi erogatore|portachiavi")
+    public ProducerKeychain currentProducerKeychain(String token) {
+        return entityStore.getLastOrThrow(ProducerKeychain.class);
+    }
+
+    @ParameterType("(?:purpose|finalità) \"([^\"]+)\"")
+    public Purpose purposeByAlias(String alias) {
+        return entityStore.getByAliasOrThrow(alias, Purpose.class);
     }
 }

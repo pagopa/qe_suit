@@ -17,6 +17,9 @@ public interface BffPurposeMapper {
     @Mapping(target = "consumerId", source = "consumer.id")
     @Mapping(target = "eserviceId", source = "eservice.id")
     @Mapping(target = "delegationId", source = "delegation.id")
+    @Mapping(target = "riskAnalysisSigningState", source = "reviewerWorkflow.signingState")
+    @Mapping(target = "riskAnalysisReviewMode", source = "riskAnalysisReviewMode")
+    @Mapping(target = "metadataVersion", ignore = true)
     Purpose toPurpose(
             it.pagopa.interop.generated.openapi.clients.bff.model.Purpose purpose
     );

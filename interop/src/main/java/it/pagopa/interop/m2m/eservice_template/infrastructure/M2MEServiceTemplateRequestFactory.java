@@ -5,6 +5,8 @@ import it.pagopa.interop.common.eservice.domain.EServiceTechnology;
 import it.pagopa.interop.common.eservice_template.application.EServiceTemplateRequestFactory;
 import it.pagopa.interop.common.eservice_template.application.command.*;
 import it.pagopa.interop.common.kernel.domain.Channel;
+import it.pagopa.interop.common.kernel.domain.TenantKind;
+import it.pagopa.interop.common.risk_analysis.domain.RiskAnalysisForm;
 import it.pagopa.interop.m2m.eservice_template.application.M2MUpdateEServiceTemplateCommand;
 import org.jspecify.annotations.NonNull;
 import org.springframework.stereotype.Component;
@@ -57,6 +59,12 @@ public class M2MEServiceTemplateRequestFactory implements EServiceTemplateReques
 
     @Override
     public UpdateEServiceTemplateVersionCommand defaultUpdateTemplateVersionCommand() {
+        throw unsupportedOperation();
+    }
+
+    @Override
+    public CreateEServiceTemplateRiskAnalysisCommand createRiskAnalysisCommand(
+        TenantKind tenantKind, RiskAnalysisForm riskAnalysisForm) {
         throw unsupportedOperation();
     }
 

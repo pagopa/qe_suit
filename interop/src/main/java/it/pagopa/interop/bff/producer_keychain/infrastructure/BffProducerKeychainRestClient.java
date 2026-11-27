@@ -70,4 +70,10 @@ public class BffProducerKeychainRestClient extends RestClient {
         return execute(() -> api.getProducerKeys().producerKeychainIdPath(keychainId)
                 .offsetQuery(offset).limitQuery(limit).execute(Function.identity()), PublicKeys.class);
     }
+
+    public TestChain<Void> addEService(UUID keychainId, UUID eServiceId) {
+        return execute(() -> api.addProducerKeychainEService().producerKeychainIdPath(keychainId)
+                .body(new EServiceAdditionDetailsSeed().eserviceId(eServiceId))
+                .execute(Function.identity()), Void.class);
+    }
 }

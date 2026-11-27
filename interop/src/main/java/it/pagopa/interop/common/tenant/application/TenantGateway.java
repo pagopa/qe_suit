@@ -7,12 +7,15 @@ import it.pagopa.interop.common.kernel.domain.TenantRef;
 import it.pagopa.interop.common.attribute.domain.AttributeKind;
 import org.springframework.plugin.core.Plugin;
 
+import java.time.OffsetDateTime;
 import java.util.Set;
 import java.util.UUID;
 
 public interface TenantGateway extends Plugin<Channel> {
 
     void enableProducerDelegationAvailability(TenantRef tenantRef);
+
+    void enableConsumerDelegationAvailability(TenantRef tenantRef);
 
     void ensureProducerDelegationEnabled(TenantRef tenantRef);
 
@@ -35,4 +38,18 @@ public interface TenantGateway extends Plugin<Channel> {
     void revokeCertifiedDiscreteAttribute(TenantRef tenantRef, AttributeRef attributeRef);
 
     void revokeVerifiedAttribute(TenantRef tenantRef, AttributeRef attributeRef, AgreementRef agreementRef);
+
+    void attemptVerifiedAttributeExpirationUpdate(TenantRef tenantRef, AttributeRef attributeRef, OffsetDateTime expirationDate);
+
+    void attemptProducerDelegationAvailability(TenantRef tenantRef);
+
+    void attemptCertifiedAttributeAssignment(TenantRef tenantRef, AttributeRef attributeRef);
+
+    void attemptCertifiedDiscreteAttributeAssignment(TenantRef tenantRef, AttributeRef attributeRef, int value);
+
+    void attemptContactEmailSaveWithHyperlinkInNotes(TenantRef tenantRef);
+
+    void attemptVerifiedAttributeAssignment(
+            TenantRef tenantRef, AttributeRef attributeRef, AgreementRef agreementRef, OffsetDateTime expirationDate
+    );
 }

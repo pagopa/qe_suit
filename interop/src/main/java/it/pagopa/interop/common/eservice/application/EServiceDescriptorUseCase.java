@@ -123,6 +123,9 @@ public class EServiceDescriptorUseCase {
 
     private UpdateEServiceDescriptorCommand publicationCommand(EServiceDescriptor descriptor) {
         UpdateEServiceDescriptorCommand command = requestFactory.prepareDescriptorForPublicationCommand();
+        if (descriptor.getAgreementApprovalPolicy() != null) {
+            command.agreementApprovalPolicy(descriptor.getAgreementApprovalPolicy());
+        }
         if (descriptor.getDailyCallsPerConsumer() != null) {
             command.dailyCallsPerConsumer(descriptor.getDailyCallsPerConsumer());
         }
@@ -190,6 +193,11 @@ public class EServiceDescriptorUseCase {
         return eServiceDescriptorGateway.downloadInterface(eService.getRef(), descriptor.getRef());
     }
 
+    public void deleteDraftVersion(EService eService) {
+        EServiceDescriptor draft = eService.getLastDraftDescriptor();
+        eServiceDescriptorGateway.deleteDraftVersion(eService.getRef(), draft.getRef());
+    }
+
     private static void assertSameSnapshot(
             java.util.Optional<it.pagopa.interop.common.eservice.domain.EServiceDescriptorInterface> before,
             java.util.Optional<it.pagopa.interop.common.eservice.domain.EServiceDescriptorInterface> after,
@@ -216,5 +224,93 @@ public class EServiceDescriptorUseCase {
                 || !java.util.Arrays.equals(original.getContent(), current.getContent())) {
             throw new AssertionError("L'interfaccia è cambiata dopo il rifiuto (" + reason + ")");
         }
+    }
+
+    public void attemptProducerDescriptorDetailsRead(EService eService, EServiceDescriptor descriptor) {
+        eServiceDescriptorGateway.attemptProducerDescriptorDetailsRead(eService.getRef(), descriptor.getRef());
+    }
+
+    public void attemptDescriptorExport(EService eService, EServiceDescriptor descriptor) {
+        eServiceDescriptorGateway.attemptDescriptorExport(eService.getRef(), descriptor.getRef());
+    }
+
+    /**
+     * Tenta di creare una nuova versione per l'e-service indicato.
+     * <p>
+     * NOTA (ERROR_085): l'endpoint BFF {@code POST /eservices/{eServiceId}/descriptors} non accetta la descrizione
+     * in input ma clona i dati dalla versione precedente; la fattibilità dello scenario ERROR_085 è dubbia poiché
+     * una versione precedente con link nella descrizione non potrebbe essere stata creata/pubblicata a monte.
+     */
+    public void attemptDescriptorCreation(EService eService) {
+        eServiceDescriptorGateway.attemptDescriptorCreation(eService.getRef());
+    }
+
+    public void attemptDraftVersionDeletion(EService eService, EServiceDescriptor descriptor) {
+        eServiceDescriptorGateway.attemptDraftVersionDeletion(eService.getRef(), descriptor.getRef());
+    }
+
+    public void submitDelegatedArchivingRequest(
+            EService eService, EServiceDescriptor descriptor, GracePeriodDays gracePeriodDays
+    ) {
+        eServiceDescriptorGateway.submitDelegatedArchivingRequest(
+                eService.getRef(), descriptor.getRef(), gracePeriodDays
+        );
+    }
+
+    public void attemptDelegatedArchivingRequest(
+            EService eService, EServiceDescriptor descriptor, GracePeriodDays gracePeriodDays
+    ) {
+        eServiceDescriptorGateway.attemptDelegatedArchivingRequest(
+                eService.getRef(), descriptor.getRef(), gracePeriodDays
+        );
+    }
+
+    public void attemptCancelDelegatedArchivingRequest(EService eService, EServiceDescriptor descriptor) {
+        eServiceDescriptorGateway.attemptCancelDelegatedArchivingRequest(eService.getRef(), descriptor.getRef());
+    }
+
+    public void attemptDescriptorConfigurationUpdate(EService eService, EServiceDescriptor descriptor) {
+        eServiceDescriptorGateway.attemptDescriptorConfigurationUpdate(eService, descriptor);
+    }
+
+    public void attemptDescriptorPublication(EService eService, EServiceDescriptor descriptor) {
+        eServiceDescriptorGateway.attemptDescriptorPublication(eService.getRef(), descriptor.getRef());
+    }
+
+    public void attemptDescriptorSuspension(EService eService, EServiceDescriptor descriptor) {
+        eServiceDescriptorGateway.attemptDescriptorSuspension(eService.getRef(), descriptor.getRef());
+    }
+
+    public void attemptDescriptorActivation(EService eService, EServiceDescriptor descriptor) {
+        eServiceDescriptorGateway.attemptDescriptorActivation(eService.getRef(), descriptor.getRef());
+    }
+
+    public void attemptAgreementApprovalPolicyUpdate(EService eService, EServiceDescriptor descriptor) {
+        eServiceDescriptorGateway.attemptAgreementApprovalPolicyUpdate(eService.getRef(), descriptor.getRef());
+    }
+
+    public void attemptAttributesUpdate(EService eService, EServiceDescriptor descriptor) {
+        eServiceDescriptorGateway.attemptAttributesUpdate(eService.getRef(), descriptor.getRef());
+    }
+
+    public void attemptTemplateInstanceSOAPInterfaceConfiguration(
+            EService eService, EServiceDescriptor descriptor, List<SoapAddressConfiguration> addresses
+    ) {
+        eServiceDescriptorGateway.attemptTemplateInstanceSOAPInterfaceConfiguration(
+                eService.getRef(), descriptor.getRef(), List.copyOf(addresses)
+        );
+    }
+
+    public void attemptTemplateInstanceRESTInterfaceConfiguration(EService eService, EServiceDescriptor descriptor) {
+        RestInterfaceConfiguration validConfig = new RestInterfaceConfiguration(
+                List.of("https://erogatore.example/api"),
+                "Erogatore",
+                "support@erogatore.example",
+                "https://erogatore.example",
+                "https://erogatore.example/terms"
+        );
+        eServiceDescriptorGateway.attemptTemplateInstanceRESTInterfaceConfiguration(
+                eService.getRef(), descriptor.getRef(), validConfig
+        );
     }
 }

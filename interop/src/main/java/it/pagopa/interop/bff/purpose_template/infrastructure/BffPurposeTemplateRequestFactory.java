@@ -1,6 +1,7 @@
 package it.pagopa.interop.bff.purpose_template.infrastructure;
 
 import it.pagopa.interop.common.kernel.domain.Tenant;
+import it.pagopa.interop.common.kernel.domain.TenantKind;
 import it.pagopa.interop.common.risk_analysis.application.RiskAnalysisDataFactory;
 import it.pagopa.interop.common.risk_analysis.application.RiskAnalysisGateway;
 import it.pagopa.interop.common.risk_analysis.domain.RiskAnalysisForm;
@@ -39,15 +40,19 @@ public class BffPurposeTemplateRequestFactory {
                 .answers(riskAnalysisDataFactory.getTemplateForTenant(targetTenant, true))
                 .build();
 
-        return buildCreationRequest(targetTenant, form, latestConfig);
+        return buildCreationRequest(targetTenant.getTenantType(), form, latestConfig);
     }
 
     public PurposeTemplateSeed creationRequest(Tenant targetTenant, RiskAnalysisForm riskAnalysisForm) {
-        RiskAnalysisFormConfig latestConfig = riskAnalysisGateway.getLatestRiskAnalysisConfig(targetTenant);
-        return buildCreationRequest(targetTenant, riskAnalysisForm, latestConfig);
+        return creationRequest(targetTenant.getTenantType(), riskAnalysisForm);
     }
 
-    private PurposeTemplateSeed buildCreationRequest(Tenant targetTenant,
+    public PurposeTemplateSeed creationRequest(TenantKind targetTenantKind, RiskAnalysisForm riskAnalysisForm) {
+        RiskAnalysisFormConfig latestConfig = riskAnalysisGateway.getLatestRiskAnalysisConfig(targetTenantKind);
+        return buildCreationRequest(targetTenantKind, riskAnalysisForm, latestConfig);
+    }
+
+    private PurposeTemplateSeed buildCreationRequest(TenantKind targetTenantKind,
                                                      RiskAnalysisForm riskAnalysisForm,
                                                      RiskAnalysisFormConfig config) {
         Set<String> freeTextQuestions = freeTextQuestionIds(config);
@@ -57,7 +62,10 @@ public class BffPurposeTemplateRequestFactory {
 
         return new PurposeTemplateSeed()
                 .targetDescription(randomAlphanumericName("target-description", 20))
-                .targetTenantKind(TargetTenantKind.fromValue(targetTenant.getTenantType().name()))
+                .targetTenantKind(switch (targetTenantKind) {
+                    case PA -> TargetTenantKind.PA;
+                    case PRIVATE, GSP -> TargetTenantKind.PRIVATE;
+                })
                 .purposeTitle(randomAlphanumericName("purpose-template", 15))
                 .purposeDescription(randomAlphanumericName("purpose-description", 20))
                 .purposeIsFreeOfCharge(true)

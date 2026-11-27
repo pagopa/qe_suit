@@ -206,4 +206,49 @@ public class BffEServiceRequestFactory implements EServiceRequestFactory {
     public boolean supports(@NonNull Channel delimiter) {
         return delimiter == Channel.BFF;
     }
+
+    public UpdateEServiceDescriptorDocumentSeed documentRenameRequest(String newName) {
+        return new UpdateEServiceDescriptorDocumentSeed().prettyName(newName);
+    }
+
+    public EServiceArchivingSeed archivingRequest(it.pagopa.interop.common.eservice.domain.GracePeriodDays gracePeriodDays) {
+        return Instancio.of(EServiceArchivingSeed.class)
+                .set(field(EServiceArchivingSeed::getGracePeriodDays), GracePeriodDays.fromValue(gracePeriodDays.getDays()))
+                .set(field(EServiceArchivingSeed::getArchivingReason), RandomUtils.randomAlphanumericName("archiving-reason"))
+                .create();
+    }
+
+    public PatchUpdateEServiceSeed partialNameUpdateRequest(String name) {
+        return new PatchUpdateEServiceSeed().name(name);
+    }
+
+    public GracePeriodDaysSeed gracePeriodDaysRequest(it.pagopa.interop.common.eservice.domain.GracePeriodDays gracePeriodDays) {
+        return new GracePeriodDaysSeed().gracePeriodDays(GracePeriodDays.fromValue(gracePeriodDays.getDays()));
+    }
+
+    public EServiceDelegationFlagsUpdateSeed delegationFlagsUpdateRequest() {
+        return new EServiceDelegationFlagsUpdateSeed()
+                .isConsumerDelegable(true)
+                .isClientAccessDelegable(true);
+    }
+
+    public EServiceSignalHubUpdateSeed signalHubUpdateRequest() {
+        return new EServiceSignalHubUpdateSeed().isSignalHubEnabled(false);
+    }
+
+    public EServicePersonalDataFlagUpdateSeed personalDataFlagUpdateRequest() {
+        return new EServicePersonalDataFlagUpdateSeed().personalData(false);
+    }
+
+    public UpdateEServiceDescriptorAgreementApprovalPolicySeed agreementApprovalPolicyUpdateRequest() {
+        return new UpdateEServiceDescriptorAgreementApprovalPolicySeed()
+                .agreementApprovalPolicy(AgreementApprovalPolicy.AUTOMATIC);
+    }
+
+    public DescriptorAttributesSeed emptyDescriptorAttributesRequest() {
+        return new DescriptorAttributesSeed()
+                .certified(List.of())
+                .declared(List.of())
+                .verified(List.of());
+    }
 }

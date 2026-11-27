@@ -35,16 +35,16 @@ public class ClientJourneySteps {
     @Given("un client {string} CONSUMER creato da/dal {tenant}, associato alla {currentPurpose}, in cui è presente un (utente ){userRole} e una coppia di chiavi crittografiche")
     public void setupConsumerClient(String alias, Tenant consumer, Purpose purpose, UserRole userRole) {
         interopJourney
-                .withConsumer(consumer)
-                .createClient(clientConfig ->
-                        clientConfig
-                                .name(RandomUtils.randomAlphanumericName("client"))
-                                .kind(ClientKind.CONSUMER)
-                                .users(UserRef.of(User.getTenantUser(consumer, userRole), consumer))
-                                .keys(List.of(ClientKeyCreationCommand::randomClientKey))
-                                .alias(alias)
-                )
-                .linkPurposeToClient(purpose);
+            .withConsumer(consumer)
+            .createClient(clientConfig ->
+                clientConfig
+                    .name(RandomUtils.randomAlphanumericName("client"))
+                    .kind(ClientKind.CONSUMER)
+                    .users(UserRef.of(User.getTenantUser(consumer, userRole), consumer))
+                    .keys(List.of(ClientKeyCreationCommand::randomClientKey))
+                    .alias(alias)
+            )
+            .linkPurposeToClient(purpose);
     }
 
     @Given("un client {clientType} creato da/dal {tenant} in cui è presente un (utente ){userRole} e una coppia di chiavi crittografiche")
@@ -55,13 +55,13 @@ public class ClientJourneySteps {
             interopJourney.withConsumer(consumer, userRole);
         }
         interopJourney
-                .createClient(clientConfig ->
-                        clientConfig
-                                .name(RandomUtils.randomAlphanumericName("client"))
-                                .kind(kind)
-                                .users(UserRef.of(User.getTenantUser(consumer, userRole), consumer))
-                                .keys(List.of(ClientKeyCreationCommand::randomClientKey))
-                );
+            .createClient(clientConfig ->
+                clientConfig
+                    .name(RandomUtils.randomAlphanumericName("client"))
+                    .kind(kind)
+                    .users(UserRef.of(User.getTenantUser(consumer, userRole), consumer))
+                    .keys(List.of(ClientKeyCreationCommand::randomClientKey))
+            );
     }
 
     @Given("un client {string} {clientType} creato da/dal {tenant} in cui è presente un (utente ){userRole} e una coppia di chiavi crittografiche")
@@ -72,13 +72,22 @@ public class ClientJourneySteps {
             interopJourney.withConsumer(consumer, userRole);
         }
         interopJourney
-                .createClient(clientConfig ->
-                        clientConfig
-                                .name(RandomUtils.randomAlphanumericName("client"))
-                                .kind(kind)
-                                .users(UserRef.of(User.getTenantUser(consumer, userRole), consumer))
-                                .keys(List.of(ClientKeyCreationCommand::randomClientKey))
-                                .alias(alias)
-                );
+            .createClient(clientConfig ->
+                clientConfig
+                    .name(RandomUtils.randomAlphanumericName("client"))
+                    .kind(kind)
+                    .users(UserRef.of(User.getTenantUser(consumer, userRole), consumer))
+                    .keys(List.of(ClientKeyCreationCommand::randomClientKey))
+                    .alias(alias)
+            );
+    }
+
+    @Given("un client CONSUMER creato da/dal {tenant} senza finalità associate")
+    public void setupConsumerClientWithoutPurposes(Tenant consumer) {
+        interopJourney
+                .withConsumer(consumer, UserRole.ADMIN)
+                .createClient(command -> command.name(RandomUtils.randomAlphanumericName("client"))
+                        .kind(ClientKind.CONSUMER)
+                        .users(UserRef.of(User.getTenantAdmin(consumer), consumer)));
     }
 }

@@ -3,18 +3,26 @@ package it.pagopa.interop.common.purpose.infrastructure.cucumber;
 import io.cucumber.datatable.DataTable;
 import it.pagopa.application.context.EntityStore;
 import it.pagopa.infrastructure.channel.CurrentChannel;
+import it.pagopa.interop.common.agreement.domain.AgreementState;
+import it.pagopa.interop.common.eservice.application.EServiceRiskAnalysisUseCase;
 import it.pagopa.interop.common.eservice.domain.EService;
 import it.pagopa.interop.common.eservice.domain.EServiceMode;
+import it.pagopa.interop.common.eservice.domain.EServiceDescriptorState;
 import it.pagopa.interop.common.journey.application.InteropJourney;
 import it.pagopa.interop.common.kernel.context.AuthSession;
 import it.pagopa.interop.common.kernel.domain.Channel;
 import it.pagopa.interop.common.kernel.domain.EServiceRiskAnalysis;
 import it.pagopa.interop.common.kernel.domain.Tenant;
+import it.pagopa.interop.common.kernel.domain.User;
 import it.pagopa.interop.common.kernel.domain.UserRole;
 import it.pagopa.interop.common.purpose.application.PurposeUseCase;
 import it.pagopa.interop.common.purpose.domain.Purpose;
 import it.pagopa.interop.common.purpose.domain.PurposeVersion;
 import it.pagopa.interop.common.purpose.domain.PurposeVersionState;
+import it.pagopa.interop.common.purpose.domain.RiskAnalysisSigningState;
+import it.pagopa.interop.common.purpose.infrastructure.cucumber.dto.PurposeAliasConfiguration;
+import it.pagopa.interop.common.purpose_template.domain.PurposeTemplate;
+import it.pagopa.interop.m2m.kernel.domain.M2MRole;
 import it.pagopa.interop.common.purpose_template.domain.PurposeTemplate;
 import it.pagopa.interop.common.purpose_template.domain.PurposeTemplateState;
 import org.junit.jupiter.api.Test;
@@ -25,6 +33,8 @@ import org.junit.jupiter.params.provider.EnumSource;
 import java.time.Instant;
 import java.util.List;
 import java.util.NoSuchElementException;
+import java.util.List;
+import java.util.UUID;
 import java.util.Optional;
 import java.util.UUID;
 
@@ -37,7 +47,8 @@ class PurposeStepsTest {
     private final PurposeUseCase useCase = mock(PurposeUseCase.class);
     private final AuthSession userSession = mock(AuthSession.class);
     private final CurrentChannel<Channel> currentChannel = mock(CurrentChannel.class);
-    private final PurposeSteps steps = new PurposeSteps(entities, interopJourney, useCase, userSession, currentChannel);
+    private final EServiceRiskAnalysisUseCase riskAnalysisUseCase = mock(EServiceRiskAnalysisUseCase.class);
+    private final PurposeSteps steps = new PurposeSteps(entities, interopJourney, useCase, riskAnalysisUseCase, userSession);
     private final PurposeVersion waiting = PurposeVersion.builder()
             .id(UUID.randomUUID()).createdAt(Instant.EPOCH)
             .purposeVersionState(PurposeVersionState.WAITING_FOR_APPROVAL).build();
@@ -339,5 +350,230 @@ class PurposeStepsTest {
     private Purpose result(PurposeVersionState state) {
         return purpose.toBuilder().clearVersions()
                 .version(waiting.toBuilder().purposeVersionState(state).build()).build();
+    }
+
+    @Test
+    void createsDraftPurposesForDeliverEServiceAndRegistersAliases() {
+        var eService = EService.builder().id(UUID.randomUUID()).mode(EServiceMode.DELIVER).build();
+        when(entities.getByAliasOrThrow("ES-1", EService.class)).thenReturn(eService);
+        when(entities.getByAlias(anyString(), eq(Purpose.class))).thenReturn(Optional.empty());
+        when(interopJourney.withConsumer(Tenant.PAGO_PA, UserRole.ADMIN)).thenReturn(interopJourney);
+
+        steps.draftPurposesCreatedForEServiceWithDistinctNames(
+                Tenant.PAGO_PA,
+                "ES-1",
+                List.of(aliasConfig("F-1"), aliasConfig("F-2"))
+        );
+
+        verify(interopJourney, times(2)).withConsumer(Tenant.PAGO_PA, UserRole.ADMIN);
+        verify(interopJourney).createPurposeAndLinkToEService(eService, PurposeVersionState.DRAFT, "F-1");
+        verify(interopJourney).createPurposeAndLinkToEService(eService, PurposeVersionState.DRAFT, "F-2");
+    }
+
+    @Test
+    void createsDraftReversePurposesForReceiveEServiceUsingProducerRiskAnalysis() {
+        var eService = EService.builder().id(UUID.randomUUID()).mode(EServiceMode.RECEIVE).build();
+        var riskAnalysis = EServiceRiskAnalysis.builder().id(UUID.randomUUID()).build();
+        when(entities.getByAliasOrThrow("ES-1", EService.class)).thenReturn(eService);
+        when(entities.getByAlias("F-1", Purpose.class)).thenReturn(Optional.empty());
+        when(entities.getLast(EServiceRiskAnalysis.class)).thenReturn(Optional.empty());
+        when(riskAnalysisUseCase.getRiskAnalysis(eService)).thenReturn(riskAnalysis);
+        when(interopJourney.withConsumer(Tenant.PAGO_PA, UserRole.ADMIN)).thenReturn(interopJourney);
+
+        steps.draftPurposesCreatedForEServiceWithDistinctNames(
+                Tenant.PAGO_PA,
+                "ES-1",
+                List.of(aliasConfig("F-1"))
+        );
+
+        verify(interopJourney).withConsumer(Tenant.PAGO_PA, UserRole.ADMIN);
+        verify(interopJourney).createReversePurposeAndLinkToEService(
+                eService,
+                riskAnalysis,
+                PurposeVersionState.DRAFT,
+                "F-1"
+        );
+    }
+
+    @Test
+    void clonesSourcePurposeForSameEService() {
+        var eService = EService.builder().id(UUID.randomUUID()).build();
+        when(entities.getByAliasOrThrow("ES-1", EService.class)).thenReturn(eService);
+        when(entities.getByAliasOrThrow("F-1", Purpose.class)).thenReturn(purpose);
+        when(interopJourney.withConsumer(Tenant.PAGO_PA, UserRole.ADMIN)).thenReturn(interopJourney);
+
+        steps.anotherPurposeWithDuplicatedName(Tenant.PAGO_PA, "ES-1", "F-1");
+
+        verify(interopJourney).withConsumer(Tenant.PAGO_PA, UserRole.ADMIN);
+        verify(interopJourney).clonePurpose(purpose, eService);
+    }
+
+    @Test
+    void createsDraftPurposeFromTemplateAndRegistersAlias() {
+        var eService = EService.builder().id(UUID.randomUUID()).build();
+        var template = PurposeTemplate.builder().id(UUID.randomUUID()).build();
+        when(entities.getByAlias("F-2", Purpose.class)).thenReturn(Optional.empty());
+        when(entities.getByAliasOrThrow("ES-1", EService.class)).thenReturn(eService);
+        when(entities.getLastOrThrow(PurposeTemplate.class)).thenReturn(template);
+        when(interopJourney.withConsumer(Tenant.PAGO_PA, UserRole.ADMIN)).thenReturn(interopJourney);
+
+        steps.draftPurposeCreatedFromTemplateForEService(Tenant.PAGO_PA, "ES-1", "F-2");
+
+        verify(interopJourney).withConsumer(Tenant.PAGO_PA, UserRole.ADMIN);
+        verify(interopJourney).createPurposeFromTemplateAndLinkToEService(
+                template,
+                eService,
+                PurposeVersionState.DRAFT,
+                "F-2"
+        );
+    }
+
+    @Test
+    void setsUpPurposeAndBringsRiskAnalysisToRequestedSigningStateForReviewer() {
+        when(interopJourney.withProducer(Tenant.COMUNE_DI_MILANO, UserRole.ADMIN)).thenReturn(interopJourney);
+        when(interopJourney.createEService(EServiceDescriptorState.PUBLISHED)).thenReturn(interopJourney);
+        when(interopJourney.withConsumer(Tenant.PAGO_PA, UserRole.ADMIN)).thenReturn(interopJourney);
+        when(interopJourney.linkAgreement(AgreementState.ACTIVE)).thenReturn(interopJourney);
+        when(interopJourney.createPurpose(PurposeVersionState.DRAFT)).thenReturn(interopJourney);
+        when(entities.getLastOrThrow(Purpose.class)).thenReturn(purpose);
+
+        steps.purposeRiskAnalysisInStateAssignedToReviewer("approvata", Tenant.PAGO_PA);
+
+        verify(interopJourney).bringPurposeRiskAnalysisToStateForReviewer(
+                purpose,
+                Tenant.PAGO_PA,
+                RiskAnalysisSigningState.SIGNED
+        );
+    }
+
+    private static PurposeAliasConfiguration aliasConfig(String alias) {
+        var config = new PurposeAliasConfiguration();
+        config.setAlias(alias);
+        return config;
+    }
+
+    @Test
+    void delegatesCloningOfTheSelectedPurposeWithoutChangingSessionOrChannel() {
+        steps.attemptPurposeCloning(purpose);
+
+        verify(useCase).attemptPurposeCloning(purpose);
+        verifyNoMoreInteractions(useCase);
+        verifyNoInteractions(entities, interopJourney, userSession, currentChannel);
+    }
+
+    @Test
+    void attemptsCreateReversePurposeWithExistingPurposeNameForReceiveEService() {
+        var eService = EService.builder().id(UUID.randomUUID()).mode(EServiceMode.RECEIVE).build();
+        var existingPurpose = purpose.toBuilder().eserviceId(eService.getId()).title("Finalità Esistente").build();
+        var riskAnalysis = EServiceRiskAnalysis.builder().id(UUID.randomUUID()).build();
+        when(entities.getLastOrThrow(Purpose.class)).thenReturn(existingPurpose);
+        when(entities.getById(eService.getId(), EService.class)).thenReturn(Optional.of(eService));
+        when(entities.getLast(EServiceRiskAnalysis.class)).thenReturn(Optional.of(riskAnalysis));
+
+        steps.attemptCreatePurposeWithExistingPurposeName();
+
+        verify(useCase).attemptCreateReversePurposeWithTitle(eService, riskAnalysis, "Finalità Esistente");
+    }
+
+    @Test
+    void attemptsCreatePurposeFromTemplateWithExistingPurposeName() {
+        var eService = EService.builder().id(UUID.randomUUID()).build();
+        var template = PurposeTemplate.builder().id(UUID.randomUUID()).build();
+        var existingPurpose = purpose.toBuilder().eserviceId(eService.getId()).title("Finalità Esistente").build();
+        when(entities.getLastOrThrow(Purpose.class)).thenReturn(existingPurpose);
+        when(entities.getLastOrThrow(PurposeTemplate.class)).thenReturn(template);
+        when(entities.getById(eService.getId(), EService.class)).thenReturn(Optional.of(eService));
+
+        steps.attemptCreatePurposeFromTemplateWithExistingPurposeName();
+
+        verify(useCase).attemptCreatePurposeFromTemplateWithTitle(template, eService, "Finalità Esistente");
+    }
+
+    @Test
+    void attemptsUpdatePurposeFromTemplateWithExistingPurposeName() {
+        var template = PurposeTemplate.builder().id(UUID.randomUUID()).build();
+        var targetPurpose = purpose.toBuilder().id(UUID.randomUUID()).title("F-2").build();
+        var sourcePurpose = purpose.toBuilder().id(UUID.randomUUID()).title("F-1").build();
+        when(entities.getByAliasOrThrow("F-2", Purpose.class)).thenReturn(targetPurpose);
+        when(entities.getByAliasOrThrow("F-1", Purpose.class)).thenReturn(sourcePurpose);
+        when(entities.getLastOrThrow(PurposeTemplate.class)).thenReturn(template);
+
+        steps.attemptUpdatePurposeFromTemplateWithExistingPurposeName("F-2", "F-1");
+
+        verify(useCase).attemptNameUpdateFromTemplate(template, targetPurpose, "F-1");
+    }
+
+    @Test
+    void attemptsSaveValidAnswersInPurposeRiskAnalysis() {
+        when(entities.getLastOrThrow(Purpose.class)).thenReturn(purpose);
+
+        steps.attemptSaveValidAnswersInPurposeRiskAnalysis();
+
+        verify(useCase).attemptRiskAnalysisFormUpdate(purpose);
+    }
+
+    @ParameterizedTest
+    @EnumSource(value = EServiceMode.class, names = {"DELIVER", "RECEIVE"})
+    void attemptsPartialNameUpdateWithAnotherPurposeNameUsingTheModeSpecificPatchOperation(EServiceMode mode) {
+        var eService = EService.builder().id(UUID.randomUUID()).mode(mode).build();
+        var targetPurpose = purpose.toBuilder()
+                .id(UUID.randomUUID())
+                .eserviceId(eService.getId())
+                .title("Titolo F-2")
+                .description("Descrizione F-2")
+                .build();
+        var existingPurpose = purpose.toBuilder()
+                .id(UUID.randomUUID())
+                .eserviceId(eService.getId())
+                .title("Titolo F-1")
+                .build();
+        when(entities.getById(eService.getId(), EService.class)).thenReturn(Optional.of(eService));
+
+        steps.attemptPartialNameUpdateWithAnotherPurposeName(targetPurpose, existingPurpose);
+
+        if (mode == EServiceMode.RECEIVE) {
+            verify(useCase).tryToUpdateReversePurposeMetadata(
+                    targetPurpose, "Titolo F-1", "Descrizione F-2", null, null, null);
+        } else {
+            verify(useCase).tryToUpdatePurposeMetadata(
+                    targetPurpose, "Titolo F-1", "Descrizione F-2", null, null, null);
+        }
+        verifyNoMoreInteractions(useCase);
+        verifyNoInteractions(interopJourney, userSession, currentChannel);
+    }
+
+    @Test
+    void signsRiskAnalysisWithStaleMetadataVersionReadBeforeConcurrentUpdate() {
+        User reviewer = User.getTenantUser(Tenant.PAGO_PA, UserRole.REVIEWER);
+        Purpose initial = purpose.toBuilder()
+                .id(UUID.randomUUID())
+                .consumerId(Tenant.PAGO_PA.getOrganizationId())
+                .title("Finalita")
+                .description("Descrizione iniziale")
+                .metadataVersion(3)
+                .build();
+        Purpose afterUpdate = initial.toBuilder()
+                .description("Descrizione iniziale aggiornata")
+                .metadataVersion(4)
+                .build();
+        when(entities.getLastOrThrow(Purpose.class)).thenReturn(initial, initial, afterUpdate);
+        when(useCase.getPurpose(initial)).thenReturn(initial);
+        when(userSession.getActor()).thenReturn(reviewer);
+        when(userSession.getTenant()).thenReturn(Tenant.PAGO_PA);
+        when(useCase.updatePurposeMetadata(
+                initial, "Finalita", "Descrizione iniziale aggiornata", null, null, null
+        )).thenReturn(afterUpdate);
+
+        steps.reviewerReadsRiskAnalysisData();
+        steps.riskAnalysisUpdatedAfterReviewerRead();
+        steps.attemptRiskAnalysisSigningWithStaleMetadataVersion();
+
+        var order = inOrder(userSession, useCase);
+        order.verify(useCase).getPurpose(initial);
+        order.verify(userSession).set(User.getTenantAdmin(Tenant.PAGO_PA), Tenant.PAGO_PA);
+        order.verify(useCase).updatePurposeMetadata(
+                initial, "Finalita", "Descrizione iniziale aggiornata", null, null, null);
+        order.verify(userSession).set(reviewer, Tenant.PAGO_PA);
+        order.verify(useCase).attemptRiskAnalysisSigning(afterUpdate, 3);
     }
 }

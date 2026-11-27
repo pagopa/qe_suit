@@ -5,13 +5,20 @@ import it.pagopa.interop.common.agreement.domain.AgreementCreationFailureReason;
 import it.pagopa.interop.common.agreement.domain.AgreementState;
 import it.pagopa.interop.common.eservice.domain.EService;
 import it.pagopa.interop.common.eservice.domain.EServiceDescriptor;
+import it.pagopa.interop.common.kernel.domain.AgreementRef;
 import it.pagopa.interop.common.kernel.domain.Delegation;
+import it.pagopa.interop.common.kernel.domain.Document;
 import it.pagopa.utils.async.PollingUtils;
 import jakarta.annotation.Nullable;
+
+import java.util.UUID;
+
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
 import java.util.Set;
+
+import static org.assertj.core.api.Assertions.assertThat;
 
 @Service
 @RequiredArgsConstructor
@@ -73,7 +80,11 @@ public class AgreementUseCase {
     }
 
     public Agreement getAgreement(Agreement agreement) {
-        return agreementGateway.getAgreement(agreement.getRef());
+        return getAgreement(agreement.getRef());
+    }
+
+    public Agreement getAgreement(AgreementRef ref) {
+        return agreementGateway.getAgreement(ref);
     }
 
     public Agreement activateAgreement(Agreement agreement, @Nullable Delegation delegation) {
@@ -84,12 +95,24 @@ public class AgreementUseCase {
         return activateAgreement(agreement, null);
     }
 
+    public void attemptAgreementActivation(Agreement agreement) {
+        agreementGateway.attemptAgreementActivation(agreement);
+    }
+
     public Agreement submitAgreement(Agreement agreement) {
         return agreementGateway.submitAgreement(agreement);
     }
 
+    public void attemptAgreementSubmission(Agreement agreement) {
+        agreementGateway.attemptAgreementSubmission(agreement);
+    }
+
     public Agreement suspendAgreement(Agreement agreement, @Nullable Delegation delegation) {
         return agreementGateway.suspendAgreement(agreement, delegation);
+    }
+
+    public Agreement rejectAgreement(Agreement agreement) {
+        return agreementGateway.rejectAgreement(agreement);
     }
 
     public Agreement archiveAgreement(Agreement agreement) {
@@ -98,5 +121,75 @@ public class AgreementUseCase {
 
     public Agreement awaitState(Agreement agreement, Set<AgreementState> expectedStates) {
         return agreementGateway.awaitState(agreement, expectedStates);
+    }
+
+    public Agreement awaitContractAvailable(Agreement agreement) {
+        return agreementGateway.awaitContractAvailable(agreement);
+    }
+
+    public void verifySignedContractNotYetAvailable(Agreement agreement) {
+        Agreement refreshed = getAgreement(agreement);
+        assertThat(refreshed.getIsDocumentReady())
+                .as("Il documento firmato della richiesta di fruizione non deve essere ancora disponibile")
+                .isNotEqualTo(Boolean.TRUE);
+    }
+
+    public Agreement addConsumerDocument(Agreement agreement, @Nullable String fileName) {
+        return agreementGateway.addConsumerDocument(agreement, fileName);
+    }
+
+    public Agreement removeLastConsumerDocument(Agreement agreement) {
+        Agreement current = agreement.getConsumerDocuments() != null && !agreement.getConsumerDocuments().isEmpty()
+                ? agreement
+                : getAgreement(agreement);
+        if (current.getConsumerDocuments() == null || current.getConsumerDocuments().isEmpty()) {
+            throw new IllegalStateException("No consumer document found for agreement " + agreement.getId());
+        }
+        Document document = current.getConsumerDocuments().get(current.getConsumerDocuments().size() - 1);
+        return agreementGateway.removeConsumerDocument(current, document);
+    }
+
+    public void attemptAgreementSuspension(Agreement agreement) {
+        agreementGateway.attemptAgreementSuspension(agreement);
+    }
+
+    public void attemptAgreementReactivation(Agreement agreement) {
+        agreementGateway.attemptAgreementReactivation(agreement);
+    }
+
+    public void attemptAgreementArchiving(Agreement agreement) {
+        agreementGateway.attemptAgreementArchiving(agreement);
+    }
+
+    public void attemptConsumerDocumentUpload(Agreement agreement) {
+        agreementGateway.attemptConsumerDocumentUpload(agreement);
+    }
+
+    public void attemptAgreementCreation(EService eService, EServiceDescriptor descriptor) {
+        agreementGateway.attemptAgreementCreation(eService, descriptor);
+    }
+
+    public void attemptAgreementCloning(Agreement agreement) {
+        agreementGateway.attemptAgreementCloning(agreement);
+    }
+
+    public void attemptAgreementRejection(Agreement agreement) {
+        agreementGateway.attemptAgreementRejection(agreement);
+    }
+
+    public void attemptAgreementSignedDocumentDownload(Agreement agreement) {
+        agreementGateway.attemptAgreementSignedDocumentDownload(agreement);
+    }
+
+    public void attemptInvalidFormatConsumerDocumentUpload(Agreement agreement) {
+        agreementGateway.attemptInvalidFormatConsumerDocumentUpload(agreement);
+    }
+
+    public void attemptAgreementDocumentDownload(Agreement agreement, UUID documentId) {
+        agreementGateway.attemptAgreementDocumentDownload(agreement, documentId);
+    }
+
+    public void attemptAgreementDocumentDeletion(Agreement agreement, UUID documentId) {
+        agreementGateway.attemptAgreementDocumentDeletion(agreement, documentId);
     }
 }

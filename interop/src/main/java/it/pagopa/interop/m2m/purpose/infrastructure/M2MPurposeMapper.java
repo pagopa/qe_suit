@@ -20,6 +20,8 @@ import java.util.stream.Stream;
 public interface M2MPurposeMapper {
 
     @Mapping(target = "versions", expression = "java(mapVersions(source))")
+    @Mapping(target = "riskAnalysisSigningState", source = "reviewerWorkflow.signingState")
+    @Mapping(target = "metadataVersion", ignore = true)
     Purpose toPurpose(it.pagopa.interop.generated.openapi.clients.m2m.v3.model.Purpose source);
 
     @Mapping(target = "purposeVersionState", source = "state")

@@ -36,6 +36,7 @@ public interface BffEServiceMapper {
         // 3. Uniamo le due informazioni: prendiamo la base aggiornata dal BFF e ripristiniamo
         // lo stato dei descrittori e del producerId dal vecchio EService del test
         return mapped.toBuilder()
+                .instanceLabel(existingEService.getInstanceLabel())
                 .producerId(existingEService.getProducerId())
                 .descriptors(existingEService.getDescriptors() != null ? new ArrayList<>(existingEService.getDescriptors()) : new ArrayList<>())
                 .build();

@@ -2,6 +2,7 @@ package it.pagopa.interop.bff.eservice.infrastructure;
 
 import it.pagopa.application.context.EntityStore;
 import it.pagopa.infrastructure.template.action.strategy.PollingStrategy;
+import it.pagopa.interop.bff.eservice.application.BffEServiceTemplateInstanceUpdateDescriptorCommand;
 import it.pagopa.interop.bff.eservice.application.BffUpdateEServiceDescriptorCommand;
 import it.pagopa.interop.common.eservice.application.EServiceDescriptorGateway;
 import it.pagopa.interop.common.eservice.application.command.UpdateEServiceDescriptorCommand;
@@ -25,6 +26,7 @@ public class BffEServiceDescriptorGateway implements EServiceDescriptorGateway {
     private final BffEServiceDescriptorInterfaceGateway interfaceGateway;
     private final BffEServiceDescriptorArchiveGateway archiveGateway;
     private final BffEServiceDescriptorUpdateGateway updateGateway;
+    private final BffEServiceRequestFactory requestFactory;
 
     @Override
     public EServiceDescriptor getEServiceDescriptor(EServiceRef serviceRef, EServiceDescriptorRef descriptorRef) {
@@ -154,6 +156,11 @@ public class BffEServiceDescriptorGateway implements EServiceDescriptorGateway {
     }
 
     @Override
+    public EServiceDescriptor addDocument(EServiceRef serviceRef, EServiceDescriptorRef descriptorRef, String path, String name) {
+        return linkDocument(serviceRef, descriptorRef, path, DocumentKind.DOCUMENT, name);
+    }
+
+    @Override
     public void archiveDescriptor(EServiceRef serviceRef, EServiceDescriptorRef descriptorRef, GracePeriodDays gracePeriodDays) {
         archiveGateway.archive(serviceRef, descriptorRef, gracePeriodDays);
     }
@@ -194,5 +201,162 @@ public class BffEServiceDescriptorGateway implements EServiceDescriptorGateway {
     @Override
     public boolean supports(Channel channel) {
         return channel == Channel.BFF;
+    }
+
+    @Override
+    public void deleteDraftVersion(EServiceRef serviceRef, EServiceDescriptorRef descriptorRef) {
+        restClient.deleteDraftVersion(serviceRef.id(), descriptorRef.id())
+                .withoutPolling().assertStatusCode(204);
+        restClient.readDescriptor(serviceRef.id(), descriptorRef.id())
+                .withPolling(PollingStrategy.UNTIL_ERROR).assertStatusCode(404);
+    }
+
+    @Override
+    public void attemptProducerDescriptorDetailsRead(EServiceRef serviceRef, EServiceDescriptorRef descriptorRef) {
+        restClient.readDescriptor(serviceRef.id(), descriptorRef.id()).withoutPolling();
+    }
+
+    @Override
+    public void attemptDescriptorExport(EServiceRef serviceRef, EServiceDescriptorRef descriptorRef) {
+        restClient.exportDescriptor(serviceRef.id(), descriptorRef.id()).withoutPolling();
+    }
+
+    @Override
+    public void attemptValidDocumentUpload(EServiceRef serviceRef, EServiceDescriptorRef descriptorRef) {
+        interfaceGateway.attemptValidDocumentUpload(serviceRef, descriptorRef);
+    }
+
+    @Override
+    public void attemptDocumentUpload(EServiceRef serviceRef, EServiceDescriptorRef descriptorRef, String path, String name) {
+        interfaceGateway.attemptDocumentUpload(serviceRef, descriptorRef, path, name);
+    }
+
+    @Override
+    public void attemptFileUpload(
+            EServiceRef serviceRef,
+            EServiceDescriptorRef descriptorRef,
+            String path,
+            DocumentKind kind,
+            String name
+    ) {
+        interfaceGateway.attemptFileUpload(serviceRef, descriptorRef, path, kind, name);
+    }
+
+    @Override
+    public void attemptDocumentRename(EServiceRef serviceRef, EServiceDescriptorRef descriptorRef, Document document, String newName) {
+        interfaceGateway.attemptDocumentRename(serviceRef, descriptorRef, document.getId(), newName);
+    }
+
+    @Override
+    public void attemptDocumentDeletion(EServiceRef serviceRef, EServiceDescriptorRef descriptorRef, Document document) {
+        interfaceGateway.attemptDocumentDeletion(serviceRef, descriptorRef, document.getId());
+    }
+
+    @Override
+    public void attemptDescriptorCreation(EServiceRef serviceRef) {
+        restClient.addDescriptor(serviceRef.id()).withoutPolling();
+    }
+
+    @Override
+    public void attemptDraftVersionDeletion(EServiceRef serviceRef, EServiceDescriptorRef descriptorRef) {
+        restClient.deleteDraftVersion(serviceRef.id(), descriptorRef.id()).withoutPolling();
+    }
+
+    @Override
+    public void submitDelegatedArchivingRequest(
+            EServiceRef serviceRef, EServiceDescriptorRef descriptorRef, GracePeriodDays gracePeriodDays
+    ) {
+        restClient.submitDelegatedDescriptorArchiving(
+                        serviceRef.id(), descriptorRef.id(), requestFactory.gracePeriodDaysRequest(gracePeriodDays)
+                )
+                .withPolling(PollingStrategy.UNTIL_SUCCESS)
+                .get();
+    }
+
+    @Override
+    public void attemptDelegatedArchivingRequest(
+            EServiceRef serviceRef, EServiceDescriptorRef descriptorRef, GracePeriodDays gracePeriodDays
+    ) {
+        restClient.submitDelegatedDescriptorArchiving(
+                serviceRef.id(), descriptorRef.id(), requestFactory.gracePeriodDaysRequest(gracePeriodDays)
+        ).withoutPolling();
+    }
+
+    @Override
+    public void attemptCancelDelegatedArchivingRequest(EServiceRef serviceRef, EServiceDescriptorRef descriptorRef) {
+        restClient.cancelDelegatedDescriptorArchiving(serviceRef.id(), descriptorRef.id()).withoutPolling();
+    }
+
+    @Override
+    public void attemptDescriptorConfigurationUpdate(EService eService, EServiceDescriptor descriptor) {
+        boolean isTemplateInstance = descriptor.getTemplateRef() != null || eService.getInstanceLabel() != null;
+        if (isTemplateInstance) {
+            switch (descriptor.getState()) {
+                case DRAFT -> {
+                    var command = (BffEServiceTemplateInstanceUpdateDescriptorCommand)
+                            requestFactory.defaultUpdateDescriptorInstanceCommand(EServiceDescriptorState.DRAFT);
+                    restClient.updateDraftDescriptorTemplateInstance(
+                            eService.getId(), descriptor.getId(), command.getBffUpdateDraftServiceInstancePayload()
+                    ).withoutPolling();
+                }
+                case PUBLISHED -> {
+                    var command = (BffEServiceTemplateInstanceUpdateDescriptorCommand)
+                            requestFactory.defaultUpdateDescriptorInstanceCommand(EServiceDescriptorState.PUBLISHED);
+                    restClient.updateTemplateInstanceDescriptor(
+                            eService.getId(), descriptor.getId(), command.getBffUpdatePublishedEServiceInstancePayload()
+                    ).withoutPolling();
+                }
+                default -> throw new IllegalArgumentException(
+                        "Unsupported template instance descriptor state for configuration update attempt: "
+                                + descriptor.getState()
+                );
+            }
+            return;
+        }
+        var command = (BffUpdateEServiceDescriptorCommand) requestFactory.defaultUpdateDescriptorCommand();
+        restClient.updateDescriptor(eService.getId(), descriptor.getId(), command.getBffPayload()).withoutPolling();
+    }
+
+    @Override
+    public void attemptDescriptorPublication(EServiceRef serviceRef, EServiceDescriptorRef descriptorRef) {
+        restClient.publishDescriptor(serviceRef.id(), descriptorRef.id()).withoutPolling();
+    }
+
+    @Override
+    public void attemptDescriptorSuspension(EServiceRef serviceRef, EServiceDescriptorRef descriptorRef) {
+        restClient.suspendDescriptor(serviceRef.id(), descriptorRef.id()).withoutPolling();
+    }
+
+    @Override
+    public void attemptDescriptorActivation(EServiceRef serviceRef, EServiceDescriptorRef descriptorRef) {
+        restClient.activateDescriptor(serviceRef.id(), descriptorRef.id()).withoutPolling();
+    }
+
+    @Override
+    public void attemptAgreementApprovalPolicyUpdate(EServiceRef serviceRef, EServiceDescriptorRef descriptorRef) {
+        restClient.updateAgreementApprovalPolicy(
+                serviceRef.id(), descriptorRef.id(), requestFactory.agreementApprovalPolicyUpdateRequest()
+        ).withoutPolling();
+    }
+
+    @Override
+    public void attemptAttributesUpdate(EServiceRef serviceRef, EServiceDescriptorRef descriptorRef) {
+        restClient.updateDescriptorAttributes(
+                serviceRef.id(), descriptorRef.id(), requestFactory.emptyDescriptorAttributesRequest()
+        ).withoutPolling();
+    }
+
+    @Override
+    public void attemptTemplateInstanceSOAPInterfaceConfiguration(
+            EServiceRef serviceRef, EServiceDescriptorRef descriptorRef, List<SoapAddressConfiguration> addresses
+    ) {
+        interfaceGateway.attemptConfigureSOAP(serviceRef, descriptorRef, addresses);
+    }
+
+    @Override
+    public void attemptTemplateInstanceRESTInterfaceConfiguration(
+            EServiceRef serviceRef, EServiceDescriptorRef descriptorRef, RestInterfaceConfiguration configuration
+    ) {
+        interfaceGateway.attemptConfigureREST(serviceRef, descriptorRef, configuration);
     }
 }

@@ -15,6 +15,7 @@ import it.pagopa.interop.common.kernel.domain.Channel;
 import it.pagopa.interop.common.kernel.domain.DocumentKind;
 import it.pagopa.interop.common.kernel.domain.EServiceTemplateRef;
 import it.pagopa.interop.common.kernel.domain.EServiceTemplateVersionRef;
+import it.pagopa.interop.generated.openapi.clients.bff.model.UpdateEServiceTemplateVersionDocumentSeed;
 import it.pagopa.utils.FileUtils;
 import it.pagopa.utils.async.PollingUtils;
 import lombok.RequiredArgsConstructor;
@@ -127,6 +128,104 @@ public class BffEServiceTemplateVersionGateway implements EServiceTemplateVersio
     }
 
     @Override
+    public EServiceTemplateVersion addDocument(
+            EServiceTemplateRef templateRef,
+            EServiceTemplateVersionRef versionRef,
+            String fixturePath,
+            String documentName
+    ) {
+        File document = resolveTemplateFixtureFile(fixturePath);
+        var created = restClient.createEServiceTemplateDocument(
+                        templateRef.id(),
+                        versionRef.versionId(),
+                        DocumentKind.DOCUMENT.name(),
+                        documentName,
+                        document
+                )
+                .withPolling(PollingStrategy.UNTIL_SUCCESS)
+                .get();
+
+        return PollingUtils.pollUntil(
+                () -> getEServiceTemplateVersion(templateRef, versionRef),
+                current -> current.getDocs().stream().anyMatch(doc -> created.getId().equals(doc.id())),
+                "EService template document was not visible after upload"
+        );
+    }
+
+    @Override
+    public void requestDocumentUpload(EServiceTemplateRef templateRef, EServiceTemplateVersionRef versionRef, String fixturePath) {
+        File document = FileUtils.loadClasspathResourceAsTempFile(fixturePath);
+        restClient.createEServiceTemplateDocument(templateRef.id(), versionRef.versionId(),
+                DocumentKind.DOCUMENT.name(), Path.of(fixturePath).getFileName().toString(), document)
+                .withoutPolling();
+    }
+
+    @Override
+    public void attemptFileUpload(
+            EServiceTemplateRef templateRef,
+            EServiceTemplateVersionRef versionRef,
+            String fixturePath,
+            DocumentKind kind,
+            String documentName
+    ) {
+        File document = resolveTemplateFixtureFile(fixturePath);
+        restClient.createEServiceTemplateDocument(
+                templateRef.id(),
+                versionRef.versionId(),
+                kind.name(),
+                documentName,
+                document
+        ).withoutPolling();
+    }
+
+    @Override
+    public void attemptDocumentRename(
+            EServiceTemplateRef templateRef,
+            EServiceTemplateVersionRef versionRef,
+            UUID documentId,
+            String newName
+    ) {
+        restClient.updateEServiceTemplateDocument(
+                templateRef.id(),
+                versionRef.versionId(),
+                documentId,
+                new UpdateEServiceTemplateVersionDocumentSeed().prettyName(newName)
+        ).withoutPolling();
+    }
+
+    @Override
+    public void attemptDocumentDownload(
+            EServiceTemplateRef templateRef,
+            EServiceTemplateVersionRef versionRef,
+            UUID documentId
+    ) {
+        restClient.getEServiceTemplateDocumentById(
+                templateRef.id(),
+                versionRef.versionId(),
+                documentId
+        ).withoutPolling();
+    }
+
+    private static File resolveTemplateFixtureFile(String fixturePath) {
+        ClassLoader classLoader = Thread.currentThread().getContextClassLoader();
+        if (classLoader == null) {
+            classLoader = BffEServiceTemplateVersionGateway.class.getClassLoader();
+        }
+        for (String candidate : List.of(
+                fixturePath,
+                "assets/" + fixturePath,
+                "assets/eservice-template/" + fixturePath,
+                "assets/wsdl/" + fixturePath
+        )) {
+            String normalized = candidate.startsWith("/") ? candidate.substring(1) : candidate;
+            if (classLoader.getResource(normalized) != null) {
+                return FileUtils.loadClasspathResourceAsTempFile(normalized);
+            }
+        }
+        throw new IllegalStateException("Risorsa non trovata nel classpath: " + fixturePath);
+    }
+
+    @Override
     public EServiceTemplateVersion updateDraftVersion(
             EServiceTemplateRef templateRef,
             EServiceTemplateVersionRef versionRef,
@@ -190,5 +289,14 @@ public class BffEServiceTemplateVersionGateway implements EServiceTemplateVersio
     public boolean supports(@NonNull Channel delimiter) {
         return delimiter == Channel.BFF;
     }
-}
 
+    @Override
+    public void attemptDraftVersionUpdate(EServiceTemplateRef templateRef, EServiceTemplateVersionRef versionRef,
+                                         UpdateEServiceTemplateVersionCommand command) {
+        if (!(command instanceof BffUpdateEServiceTemplateVersionCommand bffCommand))
+            throw new IllegalArgumentException("Command must be an instance of " + BffUpdateEServiceTemplateVersionCommand.class.getSimpleName());
+
+        restClient.updateDraftVersion(templateRef.id(), versionRef.versionId(), bffCommand.getBffPayload())
+                .withoutPolling();
+    }
+}

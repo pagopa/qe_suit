@@ -29,7 +29,18 @@ public class AgreementJourneyImpl implements AgreementJourney<AgreementJourneyIm
             AgreementState agreementState,
             @org.jspecify.annotations.Nullable Delegation delegation
     ) {
+        return linkAgreement(eService, agreementState, delegation, null);
+    }
+
+    @Override
+    public AgreementJourneyImpl linkAgreement(
+            EService eService,
+            AgreementState agreementState,
+            @Nullable Delegation delegation,
+            @Nullable String alias
+    ) {
         Agreement agreement = agreementUseCase.createAgreement(eService, eService.getActiveDescriptor(), delegation);
+        registerAliasIfPresent(alias, agreement);
 
         switch (agreementState) {
             case DRAFT -> requireRequestedState(agreement, AgreementState.DRAFT);
@@ -38,6 +49,18 @@ public class AgreementJourneyImpl implements AgreementJourney<AgreementJourneyIm
                 requireRequestedState(submitted, AgreementState.PENDING);
             }
             case ACTIVE -> activateIfPending(submitAndResolveState(agreement), delegation);
+            case REJECTED -> {
+                Agreement submitted = submitAndResolveState(agreement);
+                requireRequestedState(submitted, AgreementState.PENDING);
+                Agreement rejected = withProducerSession(
+                        submitted,
+                        () -> agreementUseCase.rejectAgreement(submitted)
+                );
+                requireRequestedState(
+                    agreementUseCase.awaitState(rejected, Set.of(AgreementState.REJECTED)),
+                    AgreementState.REJECTED
+                );
+            }
             case SUSPENDED -> {
                 Agreement active = activateIfPending(submitAndResolveState(agreement), delegation);
                 Agreement suspended = agreementUseCase.suspendAgreement(active, delegation);
@@ -58,6 +81,15 @@ public class AgreementJourneyImpl implements AgreementJourney<AgreementJourneyIm
         }
 
         return this;
+    }
+
+    private void registerAliasIfPresent(@Nullable String alias, Agreement agreement) {
+        if (alias == null || alias.isBlank()) {
+            return;
+        }
+        Agreement storedAgreement = entityStore.getById(agreement.getId(), Agreement.class)
+                .orElse(agreement);
+        entityStore.upsert(alias, storedAgreement);
     }
 
     @Override

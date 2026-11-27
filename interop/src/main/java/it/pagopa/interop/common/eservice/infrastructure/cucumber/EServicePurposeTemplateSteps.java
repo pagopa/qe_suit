@@ -7,6 +7,8 @@ import it.pagopa.interop.common.eservice.domain.EService;
 import it.pagopa.interop.common.journey.application.InteropJourney;
 import it.pagopa.interop.common.kernel.domain.Tenant;
 import it.pagopa.interop.common.kernel.domain.UserRole;
+import it.pagopa.interop.common.purpose_template.application.PurposeTemplateUseCase;
+import it.pagopa.interop.common.purpose_template.domain.PurposeTemplate;
 import it.pagopa.interop.common.purpose_template.domain.PurposeTemplateState;
 import lombok.RequiredArgsConstructor;
 
@@ -14,6 +16,12 @@ import lombok.RequiredArgsConstructor;
 public class EServicePurposeTemplateSteps {
     private final InteropJourney journey;
     private final EntityStore entities;
+    private final PurposeTemplateUseCase purposeTemplateUseCase;
+
+    @Given("il template finalità sospeso")
+    public void suspendPurposeTemplate() {
+        purposeTemplateUseCase.suspendPurposeTemplate(entities.getLastOrThrow(PurposeTemplate.class));
+    }
 
     @Given("l'e-service {string} collegato a un template di finalità {purposeTemplateState}")
     public void linkPurposeTemplate(String alias, PurposeTemplateState state) {
