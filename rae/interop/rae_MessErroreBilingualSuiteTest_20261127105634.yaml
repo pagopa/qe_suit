@@ -1,0 +1,650 @@
+rae:
+  release: '[INTEROP-2.25.0-RC1]'
+  scope: PROMO
+  issue_jira: 'https://pagopa.atlassian.net/browse/QA-18436'
+  data_ora: '2026-11-27T10:43:35Z'
+  durata: 00:12:25
+  numero_ko: 36
+  run: https://github.com/pagopa/qe_suit/actions/runs/45984397533/attempts/1
+  suite: MessErroreBilingualSuiteTest
+  environment: qa
+  executor: speratimatteo
+  source_branch: feature/QA-18434-error-messages
+ko_know: []
+ko:
+  - id_test: '[ERROR_165] - Impossibilità di duplicare una richiesta dopo la perdita di un attributo certificato [Given=BFF,When=BFF,Then=BFF]'
+    error_log: |
+      org.opentest4j.AssertionFailedError: [Status HTTP di errore per AGREEMENT_MISSING_CERTIFIED_ATTRIBUTES_ERROR__POST_AGREEMENTS_AGREEMENT_ID_CLONE] 
+      Expecting value to be false but was true
+        at it.pagopa.interop.bff.infrastructure.cucumber.BffErrorMessageSteps.assertErrorMessage(BffErrorMessageSteps.java:62)
+        at ✽.il messaggio di errore corrisponde al caso "AGREEMENT_MISSING_CERTIFIED_ATTRIBUTES_ERROR__POST_AGREEMENTS_AGREEMENT_ID_CLONE"(classpath:feature-expanded/agreement/operazioni-messaggi-errore.feature:654)
+    procedure: 'Esecuzione in locale del test con debugger attivo; individuazione del frammento di codice problematico; replica della casistica in modalità manuale'
+    result: 'Il ko è dovuto a una errata configurazione del test automatico lato QA. La creazione dell''eservice avviene nell''arco di 3 step distinti. Nel primo l''attributo certificato viene impostato, ma già nel secondo, nell''atto di effettuare un''update, l''attributo certificato viene rimosso.'
+    link_prod_bug: ''
+    link_suite_bug: ''
+  - id_test: '[ERROR_165] - Impossibilità di duplicare una richiesta dopo la perdita di un attributo certificato [Given=BFF:en,When=BFF:en,Then=BFF:en]'
+    error_log: |
+      org.opentest4j.AssertionFailedError: [Status HTTP di errore per AGREEMENT_MISSING_CERTIFIED_ATTRIBUTES_ERROR__POST_AGREEMENTS_AGREEMENT_ID_CLONE] 
+      Expecting value to be false but was true
+        at it.pagopa.interop.bff.infrastructure.cucumber.BffErrorMessageSteps.assertErrorMessage(BffErrorMessageSteps.java:62)
+        at ✽.il messaggio di errore corrisponde al caso "AGREEMENT_MISSING_CERTIFIED_ATTRIBUTES_ERROR__POST_AGREEMENTS_AGREEMENT_ID_CLONE"(classpath:feature-expanded/agreement/operazioni-messaggi-errore.feature:687)
+    procedure: 'Esecuzione in locale del test con debugger attivo; individuazione del frammento di codice problematico; replica della casistica in modalità manuale'
+    result: 'Il ko è dovuto a una errata configurazione del test automatico lato QA. La creazione dell''eservice avviene nell''arco di 3 step distinti. Nel primo l''attributo certificato viene impostato, ma già nel secondo, nell''atto di effettuare un''update, l''attributo certificato viene rimosso.'
+    link_prod_bug: ''
+    link_suite_bug: ''
+  - id_test: '[ERROR_203] - Impossibilità per il delegato di associare un portachiavi a un e-service gestito in delega
+      [Given=BFF,When=BFF,Then=BFF]'
+    error_log: |
+      org.opentest4j.AssertionFailedError: [userMessage per AUTHORIZATION_TENANT_NOT_ALLOWED_ON_ESERVICE__POST_PRODUCER_KEYCHAINS_PRODUCER_KEYCHAIN_ID_ESERVICES in lingua it] 
+      expected: "Non puoi associare un portachiavi a questo e-service perché lo gestisci in delega. Può associarlo solo l'ente delegante."
+       but was: null
+        at it.pagopa.interop.bff.infrastructure.cucumber.BffErrorMessageSteps.assertErrorMessage(BffErrorMessageSteps.java:66)
+        at ✽.il messaggio di errore corrisponde al caso "AUTHORIZATION_TENANT_NOT_ALLOWED_ON_ESERVICE__POST_PRODUCER_KEYCHAINS_PRODUCER_KEYCHAIN_ID_ESERVICES"(classpath:feature-expanded/authorization/operazioni-messaggi-errore.feature:32)
+    procedure: '  Lo scenario è stato eseguito localmente invocando direttamente
+      il BFF per tentare di associare un portachiavi a un e-service gestito in
+      delega dall''ente che effettua l''operazione. L''analisi dei log ha mostrato
+      che il BFF ha restituito un errore generico e che il valore di userMessage
+      rilevato dal test era null. La stessa operazione è stata poi ripetuta
+      manualmente dall''interfaccia, dove è stato visualizzato il messaggio
+      di errore generico.'
+    result: '  La risposta del BFF non contiene il campo userMessage con il messaggio
+      specifico previsto quando il delegato tenta di associare un portachiavi
+      a un e-service che gestisce in delega. L''interfaccia mostra un messaggio
+      di errore generico.'
+    link_prod_bug: 'https://pagopa.atlassian.net/browse/PIN-11698'
+    link_suite_bug: ''
+  - id_test: '[ERROR_203] - Impossibilità per il delegato di associare un portachiavi a un e-service gestito in delega
+      [Given=BFF:en,When=BFF:en,Then=BFF:en]'
+    error_log: |
+      org.opentest4j.AssertionFailedError: [userMessage per AUTHORIZATION_TENANT_NOT_ALLOWED_ON_ESERVICE__POST_PRODUCER_KEYCHAINS_PRODUCER_KEYCHAIN_ID_ESERVICES in lingua en] 
+      expected: "You can't associate a keychain with this e-service because you manage it as a delegate. Only the delegating party can associate it."
+       but was: null
+        at it.pagopa.interop.bff.infrastructure.cucumber.BffErrorMessageSteps.assertErrorMessage(BffErrorMessageSteps.java:66)
+        at ✽.il messaggio di errore corrisponde al caso "AUTHORIZATION_TENANT_NOT_ALLOWED_ON_ESERVICE__POST_PRODUCER_KEYCHAINS_PRODUCER_KEYCHAIN_ID_ESERVICES"(classpath:feature-expanded/authorization/operazioni-messaggi-errore.feature:54)
+    procedure: '  Lo scenario è stato eseguito localmente invocando direttamente
+      il BFF per tentare di associare un portachiavi a un e-service gestito in
+      delega dall''ente che effettua l''operazione. L''analisi dei log ha mostrato
+      che il BFF ha restituito un errore generico e che il valore di userMessage
+      rilevato dal test era null. La stessa operazione è stata poi ripetuta
+      manualmente dall''interfaccia, dove è stato visualizzato il messaggio
+      di errore generico.'
+    result: '  La risposta del BFF non contiene il campo userMessage con il messaggio
+      specifico previsto quando il delegato tenta di associare un portachiavi
+      a un e-service che gestisce in delega. L''interfaccia mostra un messaggio
+      di errore generico.'
+    link_prod_bug: 'https://pagopa.atlassian.net/browse/PIN-11698'
+    link_suite_bug: ''
+  - id_test: '[ERROR_004] - Impossibilità di proporre una delega in erogazione a un ente non pubblico [Given=BFF,When=BFF,Then=BFF]'
+    error_log: |
+      org.opentest4j.AssertionFailedError: [userMessage per DELEGATION_DELEGATION_NOT_ALLOWED_FOR_TENANT__POST_PRODUCERS_DELEGATIONS in lingua it] 
+      expected: "Non puoi scegliere questo ente per la delega perché non è una Pubblica Amministrazione. Scegli un altro ente."
+       but was: null
+        at it.pagopa.interop.bff.infrastructure.cucumber.BffErrorMessageSteps.assertErrorMessage(BffErrorMessageSteps.java:66)
+        at ✽.il messaggio di errore corrisponde al caso "DELEGATION_DELEGATION_NOT_ALLOWED_FOR_TENANT__POST_PRODUCERS_DELEGATIONS"(classpath:feature-expanded/delegation/operazioni-messaggi-errore.feature:80)
+    procedure: 'Lo scenario è stato eseguito invocando direttamente il BFF
+      per tentare di proporre una delega in erogazione a un ente non pubblico. L''analisi dei log ha mostrato
+      che il valore di userMessage rilevato dal test era null. Il messaggio
+      atteso doveva indicare che l''ente selezionato non è una Pubblica
+      Amministrazione e invitare a sceglierne un altro.'
+    result: '  La risposta del BFF non riporta in userMessage il messaggio specifico
+      previsto quando l''erogatore tenta di proporre una delega in erogazione
+      a un ente non pubblico.'
+    link_prod_bug: 'https://pagopa.atlassian.net/browse/PIN-11699'
+    link_suite_bug: ''
+  - id_test: '[ERROR_004] - Impossibilità di proporre una delega in erogazione a un ente non pubblico [Given=BFF:en,When=BFF:en,Then=BFF:en]'
+    error_log: |
+      org.opentest4j.AssertionFailedError: [userMessage per DELEGATION_DELEGATION_NOT_ALLOWED_FOR_TENANT__POST_PRODUCERS_DELEGATIONS in lingua en] 
+      expected: "You can't select this party for the delegation because it isn't a Public Administration. Select another party."
+       but was: null
+        at it.pagopa.interop.bff.infrastructure.cucumber.BffErrorMessageSteps.assertErrorMessage(BffErrorMessageSteps.java:66)
+        at ✽.il messaggio di errore corrisponde al caso "DELEGATION_DELEGATION_NOT_ALLOWED_FOR_TENANT__POST_PRODUCERS_DELEGATIONS"(classpath:feature-expanded/delegation/operazioni-messaggi-errore.feature:91)
+    procedure: 'Lo scenario è stato eseguito invocando direttamente il BFF
+      per tentare di proporre una delega in erogazione a un ente non pubblico. L''analisi dei log ha mostrato
+      che il valore di userMessage rilevato dal test era null. Il messaggio
+      atteso doveva indicare che l''ente selezionato non è una Pubblica
+      Amministrazione e invitare a sceglierne un altro.'
+    result: '  La risposta del BFF non riporta in userMessage il messaggio specifico
+      previsto quando l''erogatore tenta di proporre una delega in erogazione
+      a un ente non pubblico.'
+    link_prod_bug: 'https://pagopa.atlassian.net/browse/PIN-11699'
+    link_suite_bug: ''
+  - id_test: '[ERROR_007] - Impossibilità di proporre una delega in fruizione a un ente non pubblico [Given=BFF,When=BFF,Then=BFF]'
+    error_log: |
+      org.opentest4j.AssertionFailedError: [userMessage per DELEGATION_DELEGATION_NOT_ALLOWED_FOR_TENANT__POST_CONSUMERS_DELEGATIONS in lingua it] 
+      expected: "Non puoi scegliere questo ente per la delega perché non è una Pubblica Amministrazione. Scegli un altro ente."
+       but was: null
+        at it.pagopa.interop.bff.infrastructure.cucumber.BffErrorMessageSteps.assertErrorMessage(BffErrorMessageSteps.java:66)
+        at ✽.il messaggio di errore corrisponde al caso "DELEGATION_DELEGATION_NOT_ALLOWED_FOR_TENANT__POST_CONSUMERS_DELEGATIONS"(classpath:feature-expanded/delegation/operazioni-messaggi-errore.feature:164)
+    procedure: '  Lo scenario è stato eseguito invocando direttamente il BFF
+      per tentare di proporre una delega in fruizione a un ente che non è
+      una Pubblica Amministrazione. L''analisi del log ha mostrato che il
+      valore di userMessage rilevato dal test era null. La stessa operazione
+      è stata poi ripetuta manualmente dall''interfaccia grafica.'
+    result: '  Il valore di userMessage rilevato dal test è null. Il messaggio
+      atteso deve indicare che l''ente selezionato non è una Pubblica
+      Amministrazione e invitare a scegliere un altro ente.'
+    link_prod_bug: 'https://pagopa.atlassian.net/browse/PIN-11700'
+    link_suite_bug: ''
+  - id_test: '[ERROR_007] - Impossibilità di proporre una delega in fruizione a un ente non pubblico [Given=BFF:en,When=BFF:en,Then=BFF:en]'
+    error_log: |
+      org.opentest4j.AssertionFailedError: [userMessage per DELEGATION_DELEGATION_NOT_ALLOWED_FOR_TENANT__POST_CONSUMERS_DELEGATIONS in lingua en] 
+      expected: "You can't select this party for the delegation because it isn't a Public Administration. Select another party."
+       but was: null
+        at it.pagopa.interop.bff.infrastructure.cucumber.BffErrorMessageSteps.assertErrorMessage(BffErrorMessageSteps.java:66)
+        at ✽.il messaggio di errore corrisponde al caso "DELEGATION_DELEGATION_NOT_ALLOWED_FOR_TENANT__POST_CONSUMERS_DELEGATIONS"(classpath:feature-expanded/delegation/operazioni-messaggi-errore.feature:176)
+    procedure: '  Lo scenario è stato eseguito invocando direttamente il BFF
+      per tentare di proporre una delega in fruizione a un ente che non è
+      una Pubblica Amministrazione. L''analisi del log ha mostrato che il
+      valore di userMessage rilevato dal test era null. La stessa operazione
+      è stata poi ripetuta manualmente dall''interfaccia grafica.'
+    result: '  Il valore di userMessage rilevato dal test è null. Il messaggio
+      atteso deve indicare che l''ente selezionato non è una Pubblica
+      Amministrazione e invitare a scegliere un altro ente.'
+    link_prod_bug: 'https://pagopa.atlassian.net/browse/PIN-11700'
+    link_suite_bug: ''
+  - id_test: '[ERROR_009] - Impossibilità di revocare una delega in fruizione già revocata [Given=BFF:en,When=BFF:en,Then=BFF:en]'
+    error_log: |
+      java.lang.IllegalStateException: Errore durante revoca della delega di fruizione (HTTP 409)
+        at it.pagopa.interop.bff.delegation.infrastructure.BffDelegationGateway.requireSuccessfulResponse(BffDelegationGateway.java:179)
+        at it.pagopa.interop.bff.delegation.infrastructure.BffDelegationGateway.revokeConsumerDelegation(BffDelegationGateway.java:82)
+        at java.base/jdk.internal.reflect.NativeMethodAccessorImpl.invoke0(Native Method)
+        at java.base/jdk.internal.reflect.NativeMethodAccessorImpl.invoke(NativeMethodAccessorImpl.java:77)
+        at java.base/jdk.internal.reflect.DelegatingMethodAccessorImpl.invoke(DelegatingMethodAccessorImpl.java:43)
+        at java.base/java.lang.reflect.Method.invoke(Method.java:569)
+        at it.pagopa.infrastructure.channel.ChannelRouter.invoke(ChannelRouter.java:43)
+        at it.pagopa.interop.common.infrastructure.ChannelRoutingInterceptor.invoke(ChannelRoutingInterceptor.java:40)
+        at org.springframework.aop.framework.ReflectiveMethodInvocation.proceed(ReflectiveMethodInvocation.java:179)
+        at org.springframework.aop.framework.JdkDynamicAopProxy.invoke(JdkDynamicAopProxy.java:222)
+        at jdk.proxy2/jdk.proxy2.$Proxy157.revokeConsumerDelegation(Unknown Source)
+        at it.pagopa.interop.common.delegation.application.DelegationUseCase.revokeConsumerDelegation(DelegationUseCase.java:128)
+        at it.pagopa.interop.common.journey.infrastructure.DelegationJourneyImpl.revokeConsumerDelegationAsDelegator(DelegationJourneyImpl.java:44)
+        at java.base/jdk.internal.reflect.NativeMethodAccessorImpl.invoke0(Native Method)
+        at java.base/jdk.internal.reflect.NativeMethodAccessorImpl.invoke(NativeMethodAccessorImpl.java:77)
+        at java.base/jdk.internal.reflect.DelegatingMethodAccessorImpl.invoke(DelegatingMethodAccessorImpl.java:43)
+        at java.base/java.lang.reflect.Method.invoke(Method.java:569)
+        at it.pagopa.interop.common.journey.infrastructure.config.JourneyInvocationHandler.invoke(JourneyInvocationHandler.java:25)
+        at jdk.proxy2/jdk.proxy2.$Proxy173.revokeConsumerDelegationAsDelegator(Unknown Source)
+        at it.pagopa.interop.common.journey.infrastructure.cucumber.DelegationJourneySteps.revokeConsumerDelegation(DelegationJourneySteps.java:27)
+        at ✽.la delega in fruizione viene revocata da Comune di Milano(classpath:feature-expanded/delegation/operazioni-messaggi-errore.feature:225)
+    procedure: '  procedure: |
+      Lo stack trace individua il KO nella prima revoca, eseguita durante il setup dopo l''attesa dello stato ACTIVE. La DELETE (la revoca) non prevede retry e la risposta HTTP 409 interrompe lo scenario prima dell''azione sotto test. Nel log il codice 010-10034 segnala un''operazione ancora in corso sulla delega. Una successiva riesecuzione locale del test ha avuto esito positivo, coerentemente con la natura intermittente del problema.'
+    result: ' Il test fallisce durante la revoca di preparazione, che riceve HTTP 409 e non prevede retry. Nell''esecuzione locale è confermato un conflitto transitorio con un''operazione ancora in corso sulla delega'
+    link_prod_bug: ''
+    link_suite_bug: ''
+  - id_test: '[ERROR_175] - Impossibilità di allegare un documento a una versione eliminata [Given=BFF,When=BFF,Then=BFF]'
+    error_log: |
+      org.opentest4j.AssertionFailedError: [userMessage per BFF_ESERVICE_TEMPLATE_VERSION_NOT_FOUND in lingua it] 
+      expected: "Non puoi caricare il file perché questa bozza di versione del template e-service non è più disponibile."
+       but was: null
+        at it.pagopa.interop.bff.infrastructure.cucumber.BffErrorMessageSteps.assertErrorMessage(BffErrorMessageSteps.java:66)
+        at ✽.il messaggio di errore corrisponde al caso "BFF_ESERVICE_TEMPLATE_VERSION_NOT_FOUND"(classpath:feature-expanded/eservice-template/caricamento-documenti-messaggi-errore.feature:26)
+    procedure: '  Lo scenario è stato eseguito invocando direttamente il BFF
+      per tentare di allegare un documento a una versione in bozza di un
+      template e-service già eliminata. L''analisi del log ha mostrato che
+      il valore di userMessage rilevato dal test era null. La stessa
+      operazione è stata poi ripetuta manualmente dall''interfaccia grafica.'
+    result: '  Il valore di userMessage rilevato dal test è null. Il messaggio atteso
+      deve indicare che il documento non può essere caricato perché la
+      versione in bozza del template e-service non è più disponibile.'
+    link_prod_bug: 'https://pagopa.atlassian.net/browse/PIN-11701'
+    link_suite_bug: ''
+  - id_test: '[ERROR_175] - Impossibilità di allegare un documento a una versione eliminata [Given=BFF:en,When=BFF:en,Then=BFF:en]'
+    error_log: |
+      org.opentest4j.AssertionFailedError: [userMessage per BFF_ESERVICE_TEMPLATE_VERSION_NOT_FOUND in lingua en] 
+      expected: "You can't upload the file because this draft e-service template version is no longer available."
+       but was: null
+        at it.pagopa.interop.bff.infrastructure.cucumber.BffErrorMessageSteps.assertErrorMessage(BffErrorMessageSteps.java:66)
+        at ✽.il messaggio di errore corrisponde al caso "BFF_ESERVICE_TEMPLATE_VERSION_NOT_FOUND"(classpath:feature-expanded/eservice-template/caricamento-documenti-messaggi-errore.feature:41)
+    procedure: '  Lo scenario è stato eseguito invocando direttamente il BFF
+      per tentare di allegare un documento a una versione in bozza di un
+      template e-service già eliminata. L''analisi del log ha mostrato che
+      il valore di userMessage rilevato dal test era null. La stessa
+      operazione è stata poi ripetuta manualmente dall''interfaccia grafica.'
+    result: '  Il valore di userMessage rilevato dal test è null. Il messaggio atteso
+      deve indicare che il documento non può essere caricato perché la
+      versione in bozza del template e-service non è più disponibile.'
+    link_prod_bug: 'https://pagopa.atlassian.net/browse/PIN-11701'
+    link_suite_bug: ''
+  - id_test: '[ERROR_039] - Rifiuto della creazione di un''istanza con una parola identificativa già usata [Given=BFF,When=BFF,Then=BFF]'
+    error_log: |
+      org.opentest4j.AssertionFailedError: [userMessage per CATALOG_E_SERVICE_NAME_DUPLICATE_FOR_PRODUCER__POST_TEMPLATES_TEMPLATE_ID_ESERVICES in lingua it] 
+      expected: "Esiste già un e-service con la parola identificativa Duplicato. Scegli un'altra parola identificativa."
+       but was: "Esiste già un e-service con la parola identificativa Template di origine-dQZuNWYLVSwXgSb. Scegli un'altra parola identificativa."
+        at it.pagopa.interop.bff.infrastructure.cucumber.BffErrorMessageSteps.assertErrorMessage(BffErrorMessageSteps.java:66)
+        at it.pagopa.interop.bff.infrastructure.cucumber.BffErrorMessageSteps.assertErrorMessageWithValues(BffErrorMessageSteps.java:37)
+        at ✽.il messaggio di errore corrisponde al caso "CATALOG_E_SERVICE_NAME_DUPLICATE_FOR_PRODUCER__POST_TEMPLATES_TEMPLATE_ID_ESERVICES" con i valori:(classpath:feature-expanded/eservice/operazioni-messaggi-errore.feature:115)
+    procedure: '  Lo scenario è stato eseguito invocando direttamente il BFF
+      per tentare di creare un e-service da template con una parola
+      identificativa già utilizzata per lo stesso template. La stessa
+      operazione è stata poi ripetuta manualmente dall''interfaccia grafica'
+    result: '  La creazione dell''e-service viene rifiutata. Nel campo userMessage
+      della risposta BFF, il parametro {identifyingWord} contiene il nome
+      del template. Il valore atteso
+      è la parola identificativa inviata nella richiesta.'
+    link_prod_bug: 'https://pagopa.atlassian.net/browse/PIN-11674'
+    link_suite_bug: ''
+  - id_test: '[ERROR_039] - Rifiuto della creazione di un''istanza con una parola identificativa già usata [Given=BFF:en,When=BFF:en,Then=BFF:en]'
+    error_log: |
+      org.opentest4j.AssertionFailedError: [userMessage per CATALOG_E_SERVICE_NAME_DUPLICATE_FOR_PRODUCER__POST_TEMPLATES_TEMPLATE_ID_ESERVICES in lingua en] 
+      expected: "There is already an e-service with the identifying word Duplicato. Choose a different identifying word."
+       but was: "There is already an e-service with the identifying word Template di origine-ZkcUxQz9tfol7m2. Choose a different identifying word."
+        at it.pagopa.interop.bff.infrastructure.cucumber.BffErrorMessageSteps.assertErrorMessage(BffErrorMessageSteps.java:66)
+        at it.pagopa.interop.bff.infrastructure.cucumber.BffErrorMessageSteps.assertErrorMessageWithValues(BffErrorMessageSteps.java:37)
+        at ✽.il messaggio di errore corrisponde al caso "CATALOG_E_SERVICE_NAME_DUPLICATE_FOR_PRODUCER__POST_TEMPLATES_TEMPLATE_ID_ESERVICES" con i valori:(classpath:feature-expanded/eservice/operazioni-messaggi-errore.feature:134)
+    procedure: '  Lo scenario è stato eseguito invocando direttamente il BFF
+      per tentare di creare un e-service da template con una parola
+      identificativa già utilizzata per lo stesso template. La stessa
+      operazione è stata poi ripetuta manualmente dall''interfaccia grafica'
+    result: '  La creazione dell''e-service viene rifiutata. Nel campo userMessage
+      della risposta BFF, il parametro {identifyingWord} contiene il nome
+      del template. Il valore atteso
+      è la parola identificativa inviata nella richiesta.'
+    link_prod_bug: 'https://pagopa.atlassian.net/browse/PIN-11674'
+    link_suite_bug: ''
+  - id_test: '[ERROR_040] - Rifiuto della modifica di un''istanza con una parola identificativa già usata [Given=BFF,When=BFF,Then=BFF]'
+    error_log: |
+      org.opentest4j.AssertionFailedError: [userMessage per CATALOG_E_SERVICE_NAME_DUPLICATE_FOR_PRODUCER__POST_TEMPLATES_ESERVICES_E_SERVICE_ID in lingua it] 
+      expected: "Esiste già un e-service con la parola identificativa Duplicato. Scegli un'altra parola identificativa."
+       but was: "Esiste già un e-service con la parola identificativa Template di origine-Ly3FSe7VaZJTRj4 - label-bkfCGv. Scegli un'altra parola identificativa."
+        at it.pagopa.interop.bff.infrastructure.cucumber.BffErrorMessageSteps.assertErrorMessage(BffErrorMessageSteps.java:66)
+        at it.pagopa.interop.bff.infrastructure.cucumber.BffErrorMessageSteps.assertErrorMessageWithValues(BffErrorMessageSteps.java:37)
+        at ✽.il messaggio di errore corrisponde al caso "CATALOG_E_SERVICE_NAME_DUPLICATE_FOR_PRODUCER__POST_TEMPLATES_ESERVICES_E_SERVICE_ID" con i valori:(classpath:feature-expanded/eservice/operazioni-messaggi-errore.feature:153)
+    procedure: 'Lo scenario è stato eseguito invocando direttamente il BFF
+      per tentare di modificare un e-service creato da template, impostando una
+      parola identificativa già utilizzata per lo stesso template. La stessa
+      operazione è stata poi ripetuta manualmente dall''interfaccia grafica.'
+    result: 'La modifica dell''e-service viene rifiutata. Nel campo userMessage
+      della risposta BFF, il parametro {identifyingWord} contiene il nome
+      completo dell''e-service, composto dal nome del template e dalla parola
+      identificativa. Il valore atteso è la sola parola identificativa inviata
+      nella richiesta di modifica.'
+    link_prod_bug: 'https://pagopa.atlassian.net/browse/PIN-11702'
+    link_suite_bug: ''
+  - id_test: '[ERROR_040] - Rifiuto della modifica di un''istanza con una parola identificativa già usata [Given=BFF:en,When=BFF:en,Then=BFF:en]'
+    error_log: |
+      org.opentest4j.AssertionFailedError: [userMessage per CATALOG_E_SERVICE_NAME_DUPLICATE_FOR_PRODUCER__POST_TEMPLATES_ESERVICES_E_SERVICE_ID in lingua en] 
+      expected: "There is already an e-service with the identifying word Duplicato. Choose a different identifying word."
+       but was: "There is already an e-service with the identifying word Template di origine-K01fP6P6i2npV79 - label-dA0R1w. Choose a different identifying word."
+        at it.pagopa.interop.bff.infrastructure.cucumber.BffErrorMessageSteps.assertErrorMessage(BffErrorMessageSteps.java:66)
+        at it.pagopa.interop.bff.infrastructure.cucumber.BffErrorMessageSteps.assertErrorMessageWithValues(BffErrorMessageSteps.java:37)
+        at ✽.il messaggio di errore corrisponde al caso "CATALOG_E_SERVICE_NAME_DUPLICATE_FOR_PRODUCER__POST_TEMPLATES_ESERVICES_E_SERVICE_ID" con i valori:(classpath:feature-expanded/eservice/operazioni-messaggi-errore.feature:173)
+    procedure: 'Lo scenario è stato eseguito invocando direttamente il BFF
+      per tentare di modificare un e-service creato da template, impostando una
+      parola identificativa già utilizzata per lo stesso template. La stessa
+      operazione è stata poi ripetuta manualmente dall''interfaccia grafica.'
+    result: 'La modifica dell''e-service viene rifiutata. Nel campo userMessage
+      della risposta BFF, il parametro {identifyingWord} contiene il nome
+      completo dell''e-service, composto dal nome del template e dalla parola
+      identificativa. Il valore atteso è la sola parola identificativa inviata
+      nella richiesta di modifica.'
+    link_prod_bug: 'https://pagopa.atlassian.net/browse/PIN-11702'
+    link_suite_bug: ''
+  - id_test: '[ERROR_050] - Rifiuto dell''aggiornamento della sola parola identificativa con un valore già usato [Given=BFF,When=BFF,Then=BFF]'
+    error_log: |
+      org.opentest4j.AssertionFailedError: [userMessage per CATALOG_E_SERVICE_NAME_DUPLICATE_FOR_PRODUCER__POST_TEMPLATES_ESERVICES_E_SERVICE_ID_INSTANCE_LABEL_UPDATE in lingua it] 
+      expected: "Esiste già un e-service con la parola identificativa Duplicato. Scegli un'altra parola identificativa."
+       but was: "Esiste già un e-service con la parola identificativa Template di origine-F14vC7xR9f4vZld - Modificare. Scegli un'altra parola identificativa."
+        at it.pagopa.interop.bff.infrastructure.cucumber.BffErrorMessageSteps.assertErrorMessage(BffErrorMessageSteps.java:66)
+        at it.pagopa.interop.bff.infrastructure.cucumber.BffErrorMessageSteps.assertErrorMessageWithValues(BffErrorMessageSteps.java:37)
+        at ✽.il messaggio di errore corrisponde al caso "CATALOG_E_SERVICE_NAME_DUPLICATE_FOR_PRODUCER__POST_TEMPLATES_ESERVICES_E_SERVICE_ID_INSTANCE_LABEL_UPDATE" con i valori:(classpath:feature-expanded/eservice/operazioni-messaggi-errore.feature:489)
+    procedure: 'Lo scenario è stato eseguito invocando direttamente il BFF
+      per tentare di aggiornare la sola parola identificativa di un e-service
+      creato da template, inserendo un valore già utilizzato per lo stesso
+      template. La stessa operazione è stata poi ripetuta manualmente
+      dall''interfaccia grafica.'
+    result: 'L''aggiornamento della parola identificativa viene rifiutato. Nel
+      campo userMessage della risposta BFF, il parametro {identifyingWord}
+      contiene il nome completo dell''e-service, composto dal nome del template
+      e dalla parola identificativa. Il valore atteso è la sola parola
+      identificativa inviata nella richiesta di aggiornamento.'
+    link_prod_bug: 'https://pagopa.atlassian.net/browse/PIN-11703'
+    link_suite_bug: ''
+  - id_test: '[ERROR_050] - Rifiuto dell''aggiornamento della sola parola identificativa con un valore già usato [Given=BFF:en,When=BFF:en,Then=BFF:en]'
+    error_log: |
+      org.opentest4j.AssertionFailedError: [userMessage per CATALOG_E_SERVICE_NAME_DUPLICATE_FOR_PRODUCER__POST_TEMPLATES_ESERVICES_E_SERVICE_ID_INSTANCE_LABEL_UPDATE in lingua en] 
+      expected: "There is already an e-service with the identifying word Duplicato. Choose a different identifying word."
+       but was: "There is already an e-service with the identifying word Template di origine-sTylrz0XbyBoTDg - Modificare. Choose a different identifying word."
+        at it.pagopa.interop.bff.infrastructure.cucumber.BffErrorMessageSteps.assertErrorMessage(BffErrorMessageSteps.java:66)
+        at it.pagopa.interop.bff.infrastructure.cucumber.BffErrorMessageSteps.assertErrorMessageWithValues(BffErrorMessageSteps.java:37)
+        at ✽.il messaggio di errore corrisponde al caso "CATALOG_E_SERVICE_NAME_DUPLICATE_FOR_PRODUCER__POST_TEMPLATES_ESERVICES_E_SERVICE_ID_INSTANCE_LABEL_UPDATE" con i valori:(classpath:feature-expanded/eservice/operazioni-messaggi-errore.feature:510)
+    procedure: 'Lo scenario è stato eseguito invocando direttamente il BFF
+      per tentare di aggiornare la sola parola identificativa di un e-service
+      creato da template, inserendo un valore già utilizzato per lo stesso
+      template. La stessa operazione è stata poi ripetuta manualmente
+      dall''interfaccia grafica.'
+    result: 'L''aggiornamento della parola identificativa viene rifiutato. Nel
+      campo userMessage della risposta BFF, il parametro {identifyingWord}
+      contiene il nome completo dell''e-service, composto dal nome del template
+      e dalla parola identificativa. Il valore atteso è la sola parola
+      identificativa inviata nella richiesta di aggiornamento.'
+    link_prod_bug: 'https://pagopa.atlassian.net/browse/PIN-11703'
+    link_suite_bug: ''
+  - id_test: '[ERROR_056] - Impossibilità per un ente diverso dal delegato di annullare l''archiviazione di una versione
+      [Given=BFF,When=BFF,Then=BFF]'
+    error_log: |
+      java.lang.IllegalStateException: Polling in timeout dopo 20 secondi.
+      
+        at it.pagopa.utils.async.PollingUtils.pollUntil(PollingUtils.java:68)
+        at it.pagopa.utils.async.PollingUtils.pollUntil(PollingUtils.java:93)
+        at it.pagopa.infrastructure.template.action.PollingAction.handle(PollingAction.java:32)
+        at it.pagopa.infrastructure.template.action.TestChain.withPolling(TestChain.java:23)
+        at it.pagopa.interop.bff.eservice.infrastructure.BffEServiceDescriptorGateway.submitDelegatedArchivingRequest(BffEServiceDescriptorGateway.java:272)
+        at java.base/jdk.internal.reflect.NativeMethodAccessorImpl.invoke0(Native Method)
+        at java.base/jdk.internal.reflect.NativeMethodAccessorImpl.invoke(NativeMethodAccessorImpl.java:77)
+        at java.base/jdk.internal.reflect.DelegatingMethodAccessorImpl.invoke(DelegatingMethodAccessorImpl.java:43)
+        at java.base/java.lang.reflect.Method.invoke(Method.java:569)
+        at it.pagopa.infrastructure.channel.ChannelRouter.invoke(ChannelRouter.java:43)
+        at it.pagopa.interop.common.infrastructure.ChannelRoutingInterceptor.invoke(ChannelRoutingInterceptor.java:40)
+        at org.springframework.aop.framework.ReflectiveMethodInvocation.proceed(ReflectiveMethodInvocation.java:179)
+        at org.springframework.aop.framework.JdkDynamicAopProxy.invoke(JdkDynamicAopProxy.java:222)
+        at jdk.proxy2/jdk.proxy2.$Proxy161.submitDelegatedArchivingRequest(Unknown Source)
+        at it.pagopa.interop.common.eservice.application.EServiceDescriptorUseCase.submitDelegatedArchivingRequest(EServiceDescriptorUseCase.java:255)
+        at it.pagopa.interop.common.eservice.infrastructure.cucumber.EServiceSteps.submitDelegatedDescriptorArchivingRequest(EServiceSteps.java:222)
+        at ✽.una richiesta di archiviazione della versione 1 dell'e-service inoltrata al delegante con 60 giorni di preavviso e una motivazione valida(classpath:feature-expanded/eservice/operazioni-messaggi-errore.feature:714)
+      Caused by: org.awaitility.core.ConditionTimeoutException: Lambda expression in it.pagopa.utils.async.PollingUtils expected the predicate to return <true> but it returned <false> for input of <it.pagopa.infrastructure.response.ApiResponse@3795c9e7> within 20 seconds.
+        at org.awaitility.core.ConditionAwaiter.await(ConditionAwaiter.java:167)
+        at org.awaitility.core.AbstractHamcrestCondition.await(AbstractHamcrestCondition.java:86)
+        at org.awaitility.core.ConditionFactory.until(ConditionFactory.java:1160)
+        at org.awaitility.core.ConditionFactory.until(ConditionFactory.java:712)
+        at org.awaitility.core.ConditionFactory.until(ConditionFactory.java:729)
+        at it.pagopa.utils.async.PollingUtils.pollUntil(PollingUtils.java:48)
+        ... 16 more
+    procedure: 'Il test è annotato con NON REPLICABILE A FRONTEND'
+    result: 'Il test fallito non risulta riproducibile a FE, pertanto non si ritiene il KO impattante ai fini del rilascio della feature'
+    link_prod_bug: ''
+    link_suite_bug: ''
+  - id_test: '[ERROR_056] - Impossibilità per un ente diverso dal delegato di annullare l''archiviazione di una versione
+      [Given=BFF:en,When=BFF:en,Then=BFF:en]'
+    error_log: |
+      java.lang.IllegalStateException: Polling in timeout dopo 20 secondi.
+      
+        at it.pagopa.utils.async.PollingUtils.pollUntil(PollingUtils.java:68)
+        at it.pagopa.utils.async.PollingUtils.pollUntil(PollingUtils.java:93)
+        at it.pagopa.infrastructure.template.action.PollingAction.handle(PollingAction.java:32)
+        at it.pagopa.infrastructure.template.action.TestChain.withPolling(TestChain.java:23)
+        at it.pagopa.interop.bff.eservice.infrastructure.BffEServiceDescriptorGateway.submitDelegatedArchivingRequest(BffEServiceDescriptorGateway.java:272)
+        at java.base/jdk.internal.reflect.NativeMethodAccessorImpl.invoke0(Native Method)
+        at java.base/jdk.internal.reflect.NativeMethodAccessorImpl.invoke(NativeMethodAccessorImpl.java:77)
+        at java.base/jdk.internal.reflect.DelegatingMethodAccessorImpl.invoke(DelegatingMethodAccessorImpl.java:43)
+        at java.base/java.lang.reflect.Method.invoke(Method.java:569)
+        at it.pagopa.infrastructure.channel.ChannelRouter.invoke(ChannelRouter.java:43)
+        at it.pagopa.interop.common.infrastructure.ChannelRoutingInterceptor.invoke(ChannelRoutingInterceptor.java:40)
+        at org.springframework.aop.framework.ReflectiveMethodInvocation.proceed(ReflectiveMethodInvocation.java:179)
+        at org.springframework.aop.framework.JdkDynamicAopProxy.invoke(JdkDynamicAopProxy.java:222)
+        at jdk.proxy2/jdk.proxy2.$Proxy161.submitDelegatedArchivingRequest(Unknown Source)
+        at it.pagopa.interop.common.eservice.application.EServiceDescriptorUseCase.submitDelegatedArchivingRequest(EServiceDescriptorUseCase.java:255)
+        at it.pagopa.interop.common.eservice.infrastructure.cucumber.EServiceSteps.submitDelegatedDescriptorArchivingRequest(EServiceSteps.java:222)
+        at ✽.una richiesta di archiviazione della versione 1 dell'e-service inoltrata al delegante con 60 giorni di preavviso e una motivazione valida(classpath:feature-expanded/eservice/operazioni-messaggi-errore.feature:735)
+      Caused by: org.awaitility.core.ConditionTimeoutException: Lambda expression in it.pagopa.utils.async.PollingUtils expected the predicate to return <true> but it returned <false> for input of <it.pagopa.infrastructure.response.ApiResponse@58d86fd> within 20 seconds.
+        at org.awaitility.core.ConditionAwaiter.await(ConditionAwaiter.java:167)
+        at org.awaitility.core.AbstractHamcrestCondition.await(AbstractHamcrestCondition.java:86)
+        at org.awaitility.core.ConditionFactory.until(ConditionFactory.java:1160)
+        at org.awaitility.core.ConditionFactory.until(ConditionFactory.java:712)
+        at org.awaitility.core.ConditionFactory.until(ConditionFactory.java:729)
+        at it.pagopa.utils.async.PollingUtils.pollUntil(PollingUtils.java:48)
+        ... 16 more
+    procedure: 'Il test è annotato con NON REPLICABILE A FRONTEND'
+    result: 'Il test fallito non risulta riproducibile a FE, pertanto non si ritiene il KO impattante ai fini del rilascio della feature'
+    link_prod_bug: ''
+    link_suite_bug: ''
+  - id_test: '[ERROR_057] - Impossibilità di allegare un documento dopo la revoca della delega [Given=BFF,When=BFF,Then=BFF]'
+    error_log: |
+      org.opentest4j.AssertionFailedError: [userMessage per CATALOG_OPERATION_FORBIDDEN__POST_ESERVICES_E_SERVICE_ID_DESCRIPTORS_DESCRIPTOR_ID_DOCUMENTS in lingua it] 
+      expected: "Non puoi caricare il file perché la tua delega per l’erogazione di questo e-service non è più attiva. Torna ai tuoi e-service per vedere quelli che puoi gestire."
+       but was: null
+        at it.pagopa.interop.bff.infrastructure.cucumber.BffErrorMessageSteps.assertErrorMessage(BffErrorMessageSteps.java:66)
+        at ✽.il messaggio di errore corrisponde al caso "CATALOG_OPERATION_FORBIDDEN__POST_ESERVICES_E_SERVICE_ID_DESCRIPTORS_DESCRIPTOR_ID_DOCUMENTS"(classpath:feature-expanded/eservice/operazioni-messaggi-errore.feature:755)
+    procedure: 'Il test è annotato con NON REPLICABILE A FRONTEND'
+    result: 'Il test fallito non risulta riproducibile a FE, pertanto non si ritiene il KO impattante ai fini del rilascio della feature'
+    link_prod_bug: ''
+    link_suite_bug: ''
+  - id_test: '[ERROR_057] - Impossibilità di allegare un documento dopo la revoca della delega [Given=BFF:en,When=BFF:en,Then=BFF:en]'
+    error_log: |
+      org.opentest4j.AssertionFailedError: [userMessage per CATALOG_OPERATION_FORBIDDEN__POST_ESERVICES_E_SERVICE_ID_DESCRIPTORS_DESCRIPTOR_ID_DOCUMENTS in lingua en] 
+      expected: "You can't upload the file because your delegation for producing this e-service is no longer active. Go back to your e-services to see which ones you can manage."
+       but was: null
+        at it.pagopa.interop.bff.infrastructure.cucumber.BffErrorMessageSteps.assertErrorMessage(BffErrorMessageSteps.java:66)
+        at ✽.il messaggio di errore corrisponde al caso "CATALOG_OPERATION_FORBIDDEN__POST_ESERVICES_E_SERVICE_ID_DESCRIPTORS_DESCRIPTOR_ID_DOCUMENTS"(classpath:feature-expanded/eservice/operazioni-messaggi-errore.feature:772)
+    procedure: 'Il test è annotato con NON REPLICABILE A FRONTEND'
+    result: 'Il test fallito non risulta riproducibile a FE, pertanto non si ritiene il KO impattante ai fini del rilascio della feature'
+    link_prod_bug: ''
+    link_suite_bug: ''
+  - id_test: '[ERROR_066] - Impossibilità di modificare la configurazione di una versione dopo la revoca della delega
+      [Given=BFF,When=BFF,Then=BFF]'
+    error_log: |
+      org.opentest4j.AssertionFailedError: [userMessage per CATALOG_OPERATION_FORBIDDEN__POST_ESERVICES_E_SERVICE_ID_DESCRIPTORS_DESCRIPTOR_ID_UPDATE in lingua it] 
+      expected: "Non puoi salvare le modifiche di questa versione: la tua delega per l’erogazione di questo e-service non è più attiva. Torna ai tuoi e-service per vedere quelli che puoi gestire."
+       but was: null
+        at it.pagopa.interop.bff.infrastructure.cucumber.BffErrorMessageSteps.assertErrorMessage(BffErrorMessageSteps.java:66)
+        at ✽.il messaggio di errore corrisponde al caso "CATALOG_OPERATION_FORBIDDEN__POST_ESERVICES_E_SERVICE_ID_DESCRIPTORS_DESCRIPTOR_ID_UPDATE"(classpath:feature-expanded/eservice/operazioni-messaggi-errore.feature:1098)
+    procedure: 'Il test è annotato con NON REPLICABILE A FRONTEND'
+    result: 'Il test fallito non risulta riproducibile a FE, pertanto non si ritiene il KO impattante ai fini del rilascio della feature'
+    link_prod_bug: ''
+    link_suite_bug: ''
+  - id_test: '[ERROR_066] - Impossibilità di modificare la configurazione di una versione dopo la revoca della delega
+      [Given=BFF:en,When=BFF:en,Then=BFF:en]'
+    error_log: |
+      org.opentest4j.AssertionFailedError: [userMessage per CATALOG_OPERATION_FORBIDDEN__POST_ESERVICES_E_SERVICE_ID_DESCRIPTORS_DESCRIPTOR_ID_UPDATE in lingua en] 
+      expected: "You can’t save changes to this e-service version: your delegation for producing this e-service is no longer active. Go back to your e-services to see which ones you can manage."
+       but was: null
+        at it.pagopa.interop.bff.infrastructure.cucumber.BffErrorMessageSteps.assertErrorMessage(BffErrorMessageSteps.java:66)
+        at ✽.il messaggio di errore corrisponde al caso "CATALOG_OPERATION_FORBIDDEN__POST_ESERVICES_E_SERVICE_ID_DESCRIPTORS_DESCRIPTOR_ID_UPDATE"(classpath:feature-expanded/eservice/operazioni-messaggi-errore.feature:1117)
+    procedure: 'Il test è annotato con NON REPLICABILE A FRONTEND'
+    result: 'Il test fallito non risulta riproducibile a FE, pertanto non si ritiene il KO impattante ai fini del rilascio della feature'
+    link_prod_bug: ''
+    link_suite_bug: ''
+  - id_test: '[ERROR_081] - Rifiuto della creazione di un''istanza con un link nella parola identificativa [Given=BFF,When=BFF,Then=BFF]'
+    error_log: |
+      org.opentest4j.AssertionFailedError: [userMessage per CATALOG_HYPERLINK_DETECTION_ERROR__POST_TEMPLATES_TEMPLATE_ID_ESERVICES in lingua it] 
+      expected: "Non puoi inserire un link nella parola identificativa dell’e-service. Rimuovi il link e riprova."
+       but was: null
+        at it.pagopa.interop.bff.infrastructure.cucumber.BffErrorMessageSteps.assertErrorMessage(BffErrorMessageSteps.java:66)
+        at ✽.il messaggio di errore corrisponde al caso "CATALOG_HYPERLINK_DETECTION_ERROR__POST_TEMPLATES_TEMPLATE_ID_ESERVICES"(classpath:feature-expanded/eservice/operazioni-messaggi-errore.feature:1635)
+    procedure: 'Fix dell''errore; riesecuzione con successo del test da locale'
+    result: 'Il test è fallito in quanto la stringa che veniva passata in input, pur essendo un url valevole per hyperlink injection, superava la lunghezza massima di 12 caratteri. E'' dunque stato cambiato il test passando in input un url valido di 12 caratteri.'
+    link_prod_bug: ''
+    link_suite_bug: ''
+  - id_test: '[ERROR_081] - Rifiuto della creazione di un''istanza con un link nella parola identificativa [Given=BFF:en,When=BFF:en,Then=BFF:en]'
+    error_log: |
+      org.opentest4j.AssertionFailedError: [userMessage per CATALOG_HYPERLINK_DETECTION_ERROR__POST_TEMPLATES_TEMPLATE_ID_ESERVICES in lingua en] 
+      expected: "You can't include a link in the e-service identifier. Remove the link and try again."
+       but was: null
+        at it.pagopa.interop.bff.infrastructure.cucumber.BffErrorMessageSteps.assertErrorMessage(BffErrorMessageSteps.java:66)
+        at ✽.il messaggio di errore corrisponde al caso "CATALOG_HYPERLINK_DETECTION_ERROR__POST_TEMPLATES_TEMPLATE_ID_ESERVICES"(classpath:feature-expanded/eservice/operazioni-messaggi-errore.feature:1649)
+    procedure: 'Fix dell''errore; riesecuzione con successo del test da locale'
+    result: 'Il test è fallito in quanto la stringa che veniva passata in input, pur essendo un url valevole per hyperlink injection, superava la lunghezza massima di 12 caratteri. E'' dunque stato cambiato il test passando in input un url valido di 12 caratteri.'
+    link_prod_bug: ''
+    link_suite_bug: ''
+  - id_test: '[ERROR_207] - Rifiuto della modifica di un template finalità con un link in una risposta dell''analisi
+      del rischio [Given=BFF,When=BFF,Then=BFF]'
+    error_log: |
+      org.opentest4j.AssertionFailedError: [userMessage per PURPOSE_TEMPLATE_RISK_ANALYSIS_VALIDATION_FAILED__PUT_PURPOSE_TEMPLATES_PURPOSE_TEMPLATE_ID in lingua it] 
+      expected: "Non puoi inserire un link in una risposta dell’analisi del rischio. Rimuovi il link e riprova."
+       but was: null
+        at it.pagopa.interop.bff.infrastructure.cucumber.BffErrorMessageSteps.assertErrorMessage(BffErrorMessageSteps.java:66)
+        at ✽.il messaggio di errore corrisponde al caso "PURPOSE_TEMPLATE_RISK_ANALYSIS_VALIDATION_FAILED__PUT_PURPOSE_TEMPLATES_PURPOSE_TEMPLATE_ID"(classpath:feature-expanded/purpose-template/operazioni-messaggi-errore.feature:79)
+    procedure: 'Bug noto'
+    result: 'Il test è fallito a causa di un bug noto già segnalato in precedenza'
+    link_prod_bug: 'https://pagopa.atlassian.net/browse/PIN-11657'
+    link_suite_bug: ''
+  - id_test: '[ERROR_207] - Rifiuto della modifica di un template finalità con un link in una risposta dell''analisi
+      del rischio [Given=BFF:en,When=BFF:en,Then=BFF:en]'
+    error_log: |
+      org.opentest4j.AssertionFailedError: [userMessage per PURPOSE_TEMPLATE_RISK_ANALYSIS_VALIDATION_FAILED__PUT_PURPOSE_TEMPLATES_PURPOSE_TEMPLATE_ID in lingua en] 
+      expected: "You can't include a link in a risk analysis answer. Remove the link and try again."
+       but was: null
+        at it.pagopa.interop.bff.infrastructure.cucumber.BffErrorMessageSteps.assertErrorMessage(BffErrorMessageSteps.java:66)
+        at ✽.il messaggio di errore corrisponde al caso "PURPOSE_TEMPLATE_RISK_ANALYSIS_VALIDATION_FAILED__PUT_PURPOSE_TEMPLATES_PURPOSE_TEMPLATE_ID"(classpath:feature-expanded/purpose-template/operazioni-messaggi-errore.feature:97)
+    procedure: 'Bug noto'
+    result: 'Il test è fallito a causa di un bug noto già segnalato in precedenza'
+    link_prod_bug: 'https://pagopa.atlassian.net/browse/PIN-11657'
+    link_suite_bug: ''
+  - id_test: '[ERROR_141] - Rifiuto di un allegato all''annotazione con contenuto già presente [Given=BFF:en,When=BFF:en,Then=BFF:en]'
+    error_log: |
+      java.lang.IllegalStateException: Polling in timeout dopo 20 secondi.
+      
+        at it.pagopa.utils.async.PollingUtils.pollUntil(PollingUtils.java:68)
+        at it.pagopa.utils.async.PollingUtils.pollUntil(PollingUtils.java:93)
+        at it.pagopa.infrastructure.template.action.PollingAction.handle(PollingAction.java:32)
+        at it.pagopa.infrastructure.template.action.TestChain.withPolling(TestChain.java:23)
+        at it.pagopa.interop.bff.purpose_template.infrastructure.BffPurposeTemplateGateway.addRiskAnalysisAnswerAnnotationDocument(BffPurposeTemplateGateway.java:288)
+        at java.base/jdk.internal.reflect.NativeMethodAccessorImpl.invoke0(Native Method)
+        at java.base/jdk.internal.reflect.NativeMethodAccessorImpl.invoke(NativeMethodAccessorImpl.java:77)
+        at java.base/jdk.internal.reflect.DelegatingMethodAccessorImpl.invoke(DelegatingMethodAccessorImpl.java:43)
+        at java.base/java.lang.reflect.Method.invoke(Method.java:569)
+        at it.pagopa.infrastructure.channel.ChannelRouter.invoke(ChannelRouter.java:43)
+        at it.pagopa.interop.common.infrastructure.ChannelRoutingInterceptor.invoke(ChannelRoutingInterceptor.java:40)
+        at org.springframework.aop.framework.ReflectiveMethodInvocation.proceed(ReflectiveMethodInvocation.java:179)
+        at org.springframework.aop.framework.JdkDynamicAopProxy.invoke(JdkDynamicAopProxy.java:222)
+        at jdk.proxy2/jdk.proxy2.$Proxy172.addRiskAnalysisAnswerAnnotationDocument(Unknown Source)
+        at it.pagopa.interop.common.purpose_template.application.PurposeTemplateUseCase.addRiskAnalysisAnswerAnnotationDocument(PurposeTemplateUseCase.java:157)
+        at it.pagopa.interop.common.purpose_template.infrastructure.cucumber.PurposeTemplateSteps.pdfDocumentsAttachedToPurposeTemplateAnnotation(PurposeTemplateSteps.java:306)
+        at ✽.i seguenti documenti PDF allegati all'annotazione del template finalità:(classpath:feature-expanded/purpose-template/operazioni-messaggi-errore.feature:238)
+      Caused by: org.awaitility.core.ConditionTimeoutException: Lambda expression in it.pagopa.utils.async.PollingUtils expected the predicate to return <true> but it returned <false> for input of <it.pagopa.infrastructure.response.ApiResponse@3a1bb24d> within 20 seconds.
+        at org.awaitility.core.ConditionAwaiter.await(ConditionAwaiter.java:167)
+        at org.awaitility.core.AbstractHamcrestCondition.await(AbstractHamcrestCondition.java:86)
+        at org.awaitility.core.ConditionFactory.until(ConditionFactory.java:1160)
+        at org.awaitility.core.ConditionFactory.until(ConditionFactory.java:712)
+        at org.awaitility.core.ConditionFactory.until(ConditionFactory.java:729)
+        at it.pagopa.utils.async.PollingUtils.pollUntil(PollingUtils.java:48)
+        ... 16 more
+    procedure: 'Riesecuzione con successo del test da locale'
+    result: 'Il KO è del tutto aleatorio, dovuto a tempistiche di polling. Rieseguendo nuovamente il test, la problematica non è stata riscontrata'
+    link_prod_bug: ''
+    link_suite_bug: ''
+  - id_test: '[ERROR_144] - Impossibilità di rinominare un allegato con il nome di un altro documento [Given=BFF,When=BFF,Then=BFF]'
+    error_log: |
+      java.lang.IllegalStateException: Polling in timeout dopo 20 secondi.
+      
+        at it.pagopa.utils.async.PollingUtils.pollUntil(PollingUtils.java:68)
+        at it.pagopa.utils.async.PollingUtils.pollUntil(PollingUtils.java:93)
+        at it.pagopa.infrastructure.template.action.PollingAction.handle(PollingAction.java:32)
+        at it.pagopa.infrastructure.template.action.TestChain.withPolling(TestChain.java:23)
+        at it.pagopa.interop.bff.purpose_template.infrastructure.BffPurposeTemplateGateway.addRiskAnalysisAnswerAnnotationDocument(BffPurposeTemplateGateway.java:288)
+        at java.base/jdk.internal.reflect.NativeMethodAccessorImpl.invoke0(Native Method)
+        at java.base/jdk.internal.reflect.NativeMethodAccessorImpl.invoke(NativeMethodAccessorImpl.java:77)
+        at java.base/jdk.internal.reflect.DelegatingMethodAccessorImpl.invoke(DelegatingMethodAccessorImpl.java:43)
+        at java.base/java.lang.reflect.Method.invoke(Method.java:569)
+        at it.pagopa.infrastructure.channel.ChannelRouter.invoke(ChannelRouter.java:43)
+        at it.pagopa.interop.common.infrastructure.ChannelRoutingInterceptor.invoke(ChannelRoutingInterceptor.java:40)
+        at org.springframework.aop.framework.ReflectiveMethodInvocation.proceed(ReflectiveMethodInvocation.java:179)
+        at org.springframework.aop.framework.JdkDynamicAopProxy.invoke(JdkDynamicAopProxy.java:222)
+        at jdk.proxy2/jdk.proxy2.$Proxy172.addRiskAnalysisAnswerAnnotationDocument(Unknown Source)
+        at it.pagopa.interop.common.purpose_template.application.PurposeTemplateUseCase.addRiskAnalysisAnswerAnnotationDocument(PurposeTemplateUseCase.java:157)
+        at it.pagopa.interop.common.purpose_template.infrastructure.cucumber.PurposeTemplateSteps.pdfDocumentsAttachedToPurposeTemplateAnnotation(PurposeTemplateSteps.java:306)
+        at ✽.i seguenti documenti PDF allegati all'annotazione del template finalità:(classpath:feature-expanded/purpose-template/operazioni-messaggi-errore.feature:319)
+      Caused by: org.awaitility.core.ConditionTimeoutException: Lambda expression in it.pagopa.utils.async.PollingUtils expected the predicate to return <true> but it returned <false> for input of <it.pagopa.infrastructure.response.ApiResponse@7e67e23> within 20 seconds.
+        at org.awaitility.core.ConditionAwaiter.await(ConditionAwaiter.java:167)
+        at org.awaitility.core.AbstractHamcrestCondition.await(AbstractHamcrestCondition.java:86)
+        at org.awaitility.core.ConditionFactory.until(ConditionFactory.java:1160)
+        at org.awaitility.core.ConditionFactory.until(ConditionFactory.java:712)
+        at org.awaitility.core.ConditionFactory.until(ConditionFactory.java:729)
+        at it.pagopa.utils.async.PollingUtils.pollUntil(PollingUtils.java:48)
+        ... 16 more
+    procedure: 'Riesecuzione con successo del test da locale'
+    result: 'Il KO è del tutto aleatorio, dovuto a tempistiche di polling. Rieseguendo nuovamente il test, la problematica non è stata riscontrata'
+    link_prod_bug: ''
+    link_suite_bug: ''
+  - id_test: '[ERROR_144] - Impossibilità di rinominare un allegato con il nome di un altro documento [Given=BFF:en,When=BFF:en,Then=BFF:en]'
+    error_log: |
+      java.lang.IllegalStateException: Polling in timeout dopo 20 secondi.
+      
+        at it.pagopa.utils.async.PollingUtils.pollUntil(PollingUtils.java:68)
+        at it.pagopa.utils.async.PollingUtils.pollUntil(PollingUtils.java:93)
+        at it.pagopa.infrastructure.template.action.PollingAction.handle(PollingAction.java:32)
+        at it.pagopa.infrastructure.template.action.TestChain.withPolling(TestChain.java:23)
+        at it.pagopa.interop.bff.purpose_template.infrastructure.BffPurposeTemplateGateway.addRiskAnalysisAnswerAnnotationDocument(BffPurposeTemplateGateway.java:288)
+        at java.base/jdk.internal.reflect.NativeMethodAccessorImpl.invoke0(Native Method)
+        at java.base/jdk.internal.reflect.NativeMethodAccessorImpl.invoke(NativeMethodAccessorImpl.java:77)
+        at java.base/jdk.internal.reflect.DelegatingMethodAccessorImpl.invoke(DelegatingMethodAccessorImpl.java:43)
+        at java.base/java.lang.reflect.Method.invoke(Method.java:569)
+        at it.pagopa.infrastructure.channel.ChannelRouter.invoke(ChannelRouter.java:43)
+        at it.pagopa.interop.common.infrastructure.ChannelRoutingInterceptor.invoke(ChannelRoutingInterceptor.java:40)
+        at org.springframework.aop.framework.ReflectiveMethodInvocation.proceed(ReflectiveMethodInvocation.java:179)
+        at org.springframework.aop.framework.JdkDynamicAopProxy.invoke(JdkDynamicAopProxy.java:222)
+        at jdk.proxy2/jdk.proxy2.$Proxy172.addRiskAnalysisAnswerAnnotationDocument(Unknown Source)
+        at it.pagopa.interop.common.purpose_template.application.PurposeTemplateUseCase.addRiskAnalysisAnswerAnnotationDocument(PurposeTemplateUseCase.java:157)
+        at it.pagopa.interop.common.purpose_template.infrastructure.cucumber.PurposeTemplateSteps.pdfDocumentsAttachedToPurposeTemplateAnnotation(PurposeTemplateSteps.java:306)
+        at ✽.i seguenti documenti PDF allegati all'annotazione del template finalità:(classpath:feature-expanded/purpose-template/operazioni-messaggi-errore.feature:340)
+      Caused by: org.awaitility.core.ConditionTimeoutException: Lambda expression in it.pagopa.utils.async.PollingUtils expected the predicate to return <true> but it returned <false> for input of <it.pagopa.infrastructure.response.ApiResponse@7fe88f98> within 20 seconds.
+        at org.awaitility.core.ConditionAwaiter.await(ConditionAwaiter.java:167)
+        at org.awaitility.core.AbstractHamcrestCondition.await(AbstractHamcrestCondition.java:86)
+        at org.awaitility.core.ConditionFactory.until(ConditionFactory.java:1160)
+        at org.awaitility.core.ConditionFactory.until(ConditionFactory.java:712)
+        at org.awaitility.core.ConditionFactory.until(ConditionFactory.java:729)
+        at it.pagopa.utils.async.PollingUtils.pollUntil(PollingUtils.java:48)
+        ... 16 more
+    procedure: 'Riesecuzione con successo del test da locale'
+    result: 'Il KO è del tutto aleatorio, dovuto a tempistiche di polling. Rieseguendo nuovamente il test, la problematica non è stata riscontrata'
+    link_prod_bug: ''
+    link_suite_bug: ''
+  - id_test: '[ERROR_013] - Impossibilità di assegnare un attributo certificato già posseduto dall''ente [Given=BFF,When=BFF,Then=BFF]'
+    error_log: |
+      org.opentest4j.AssertionFailedError: [userMessage per TENANT_CERTIFIED_ATTRIBUTE_ALREADY_ASSIGNED__POST_TENANTS_TENANT_ID_ATTRIBUTES_CERTIFIED in lingua it] 
+      expected: "L’ente possiede già l'attributo certificato CERT-1. Aggiorna la pagina."
+       but was: "L’ente possiede già l'attributo certificato attribute-CERT-1-48227496-28d8-42ff-bff2-0ad8f8f0a4ff-CERTIFIED. Aggiorna la pagina."
+        at it.pagopa.interop.bff.infrastructure.cucumber.BffErrorMessageSteps.assertErrorMessage(BffErrorMessageSteps.java:66)
+        at it.pagopa.interop.bff.infrastructure.cucumber.BffErrorMessageSteps.assertErrorMessageWithValues(BffErrorMessageSteps.java:37)
+        at ✽.il messaggio di errore corrisponde al caso "TENANT_CERTIFIED_ATTRIBUTE_ALREADY_ASSIGNED__POST_TENANTS_TENANT_ID_ATTRIBUTES_CERTIFIED" con i valori:(classpath:feature-expanded/tenant/operazioni-messaggi-errore.feature:54)
+    procedure: 'Riesecuzione con successo del test da locale'
+    result: 'Il KO è del tutto aleatorio, dovuto a tempistiche di polling. Rieseguendo nuovamente il test, la problematica non è stata riscontrata'
+    link_prod_bug: ''
+    link_suite_bug: ''
+  - id_test: '[ERROR_013] - Impossibilità di assegnare un attributo certificato già posseduto dall''ente [Given=BFF:en,When=BFF:en,Then=BFF:en]'
+    error_log: |
+      org.opentest4j.AssertionFailedError: [userMessage per TENANT_CERTIFIED_ATTRIBUTE_ALREADY_ASSIGNED__POST_TENANTS_TENANT_ID_ATTRIBUTES_CERTIFIED in lingua en] 
+      expected: "The party already has the certified attribute CERT-1. Refresh the page."
+       but was: null
+        at it.pagopa.interop.bff.infrastructure.cucumber.BffErrorMessageSteps.assertErrorMessage(BffErrorMessageSteps.java:66)
+        at it.pagopa.interop.bff.infrastructure.cucumber.BffErrorMessageSteps.assertErrorMessageWithValues(BffErrorMessageSteps.java:37)
+        at ✽.il messaggio di errore corrisponde al caso "TENANT_CERTIFIED_ATTRIBUTE_ALREADY_ASSIGNED__POST_TENANTS_TENANT_ID_ATTRIBUTES_CERTIFIED" con i valori:(classpath:feature-expanded/tenant/operazioni-messaggi-errore.feature:73)
+    procedure: 'Riesecuzione con successo del test da locale'
+    result: 'Il KO è del tutto aleatorio, dovuto a tempistiche di polling. Rieseguendo nuovamente il test, la problematica non è stata riscontrata'
+    link_prod_bug: ''
+    link_suite_bug: ''
+  - id_test: '[ERROR_014] - Impossibilità di assegnare un attributo certificato discreto già posseduto dall''ente
+      [Given=BFF,When=BFF,Then=BFF]'
+    error_log: |
+      java.lang.IllegalArgumentException: Missing copy placeholder value: attributeName
+        at it.pagopa.interop.common.infrastructure.copy.CopyTemplateResolver.render(CopyTemplateResolver.java:44)
+        at it.pagopa.interop.common.infrastructure.copy.ExpectedErrorMessages.render(ExpectedErrorMessages.java:116)
+        at it.pagopa.interop.bff.infrastructure.cucumber.BffErrorMessageSteps.assertErrorMessage(BffErrorMessageSteps.java:57)
+        at ✽.il messaggio di errore corrisponde al caso "TENANT_CERTIFIED_ATTRIBUTE_ALREADY_ASSIGNED__POST_TENANTS_TENANT_ID_ATTRIBUTES_CERTIFIED_DISCRETE"(classpath:feature-expanded/tenant/operazioni-messaggi-errore.feature:91)
+    procedure: 'Il test è annotato con NON REPLICABILE A FRONTEND'
+    result: 'Il test fallito non risulta riproducibile a FE, pertanto non si ritiene il KO impattante ai fini del rilascio della feature'
+    link_prod_bug: ''
+    link_suite_bug: ''
+  - id_test: '[ERROR_014] - Impossibilità di assegnare un attributo certificato discreto già posseduto dall''ente
+      [Given=BFF:en,When=BFF:en,Then=BFF:en]'
+    error_log: |
+      java.lang.IllegalArgumentException: Missing copy placeholder value: attributeName
+        at it.pagopa.interop.common.infrastructure.copy.CopyTemplateResolver.render(CopyTemplateResolver.java:44)
+        at it.pagopa.interop.common.infrastructure.copy.ExpectedErrorMessages.render(ExpectedErrorMessages.java:116)
+        at it.pagopa.interop.bff.infrastructure.cucumber.BffErrorMessageSteps.assertErrorMessage(BffErrorMessageSteps.java:57)
+        at ✽.il messaggio di errore corrisponde al caso "TENANT_CERTIFIED_ATTRIBUTE_ALREADY_ASSIGNED__POST_TENANTS_TENANT_ID_ATTRIBUTES_CERTIFIED_DISCRETE"(classpath:feature-expanded/tenant/operazioni-messaggi-errore.feature:108)
+    procedure: 'Il test è annotato con NON REPLICABILE A FRONTEND'
+    result: 'Il test fallito non risulta riproducibile a FE, pertanto non si ritiene il KO impattante ai fini del rilascio della feature'
+    link_prod_bug: ''
+    link_suite_bug: ''
+  - id_test: '[ERROR_016] - Impossibilità per un ente non pubblico di abilitarsi alle deleghe [Given=BFF,When=BFF,Then=BFF]'
+    error_log: |
+      org.opentest4j.AssertionFailedError: [userMessage per TENANT_OPERATION_FORBIDDEN in lingua it] 
+      expected: "Non puoi aggiornare la disponibilità alle deleghe perché il tuo ente non è una Pubblica Amministrazione e quindi non è abilitato a usarle."
+       but was: null
+        at it.pagopa.interop.bff.infrastructure.cucumber.BffErrorMessageSteps.assertErrorMessage(BffErrorMessageSteps.java:66)
+        at ✽.il messaggio di errore corrisponde al caso "TENANT_OPERATION_FORBIDDEN"(classpath:feature-expanded/tenant/operazioni-messaggi-errore.feature:166)
+    procedure: 'Il test è annotato con NON REPLICABILE A FRONTEND'
+    result: 'Il test fallito non risulta riproducibile a FE, pertanto non si ritiene il KO impattante ai fini del rilascio della feature'
+    link_prod_bug: ''
+    link_suite_bug: ''
+  - id_test: '[ERROR_016] - Impossibilità per un ente non pubblico di abilitarsi alle deleghe [Given=BFF:en,When=BFF:en,Then=BFF:en]'
+    error_log: |
+      org.opentest4j.AssertionFailedError: [userMessage per TENANT_OPERATION_FORBIDDEN in lingua en] 
+      expected: "You can't update your delegation availability because your party is not a Public Administration and therefore isn't eligible to use delegations."
+       but was: null
+        at it.pagopa.interop.bff.infrastructure.cucumber.BffErrorMessageSteps.assertErrorMessage(BffErrorMessageSteps.java:66)
+        at ✽.il messaggio di errore corrisponde al caso "TENANT_OPERATION_FORBIDDEN"(classpath:feature-expanded/tenant/operazioni-messaggi-errore.feature:178)
+    procedure: 'Il test è annotato con NON REPLICABILE A FRONTEND'
+    result: 'Il test fallito non risulta riproducibile a FE, pertanto non si ritiene il KO impattante ai fini del rilascio della feature'
+    link_prod_bug: ''
+    link_suite_bug: ''
