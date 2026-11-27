@@ -166,11 +166,15 @@ def evaluate(engine, candidates, test_id, error, suite, ignore_rules=None):
             equivalent = []
             for group in compatible:
                 row = candidates.get((suite, test_id, group.group_id))
-                if row is None or not (row.get('procedure') and row.get('result')):
+                if row is None:
+                    break
+                procedure = normalized(row.get('procedure'))
+                result = normalized(row.get('result'))
+                if not procedure or not result:
                     break
                 identity = (normalized(row.get('link_prod_bug')),
                             normalized(row.get('link_suite_bug')),
-                            normalized(row['procedure']), normalized(row['result']))
+                            procedure, result)
                 equivalent.append((group, row, identity))
             if len(equivalent) == len(compatible) and len({e[2] for e in equivalent}) == 1:
                 approvals = {(a.qa_ref, a.observation.test_id)

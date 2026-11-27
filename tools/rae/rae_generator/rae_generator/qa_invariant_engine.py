@@ -357,10 +357,11 @@ def _structural_token_reasons(previous: list[str], incoming: str, pos: int) -> l
 
 def _message_reasons(historical: list[str], current: str) -> list[Reason]:
     # Order matters: this reproduces the validated 26 Nov cumulative replay.
-    stamped_history, stamped_current, _ = normalize_stamps(historical, current)
     normalized_history, normalized_current, _ = json_normalized_heads(
-        stamped_history, stamped_current, _char_family, _matches_family)
-    return _message_reasons_original(normalized_history, normalized_current)
+        historical, current, _char_family, _matches_family)
+    stamped_history, stamped_current, _ = normalize_stamps(
+        normalized_history, normalized_current)
+    return _message_reasons_original(stamped_history, stamped_current)
 
 
 @dataclass

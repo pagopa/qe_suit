@@ -12,11 +12,20 @@ from datetime import datetime
 ID_TAIL = re.compile(r'^(?P<anchor>.*?[A-Za-z][A-Za-z0-9]*(?:-[A-Za-z0-9]+)*-)(?P<value>[A-Za-z0-9]{6,})(?P<suffix>[^A-Za-z0-9]*)$')
 JSON_MARKER = re.compile(r'(?<!\S)-\s+(?P<name>responseBody|payload):\s*')
 UUID = re.compile(r'(?i)^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$')
+STAMP_VALUE = re.compile(r'^\d{4}-\d\d-\d\dT\d\d:\d\d:\d\d(?:\.\d+)?(?:Z|[+-]\d\d:?\d\d)$')
 STAMP = re.compile(r'(?P<prefix>"(?P<key>[^"\\]+)"\s*:\s*")(?P<value>\d{4}-\d\d-\d\dT\d\d:\d\d:\d\d(?:\.\d+)?(?:Z|[+-]\d\d:?\d\d))(?P<suffix>")')
 
 def extract_json(head):
     """Find JSON values after structured diagnostic labels, preserving the text around them."""
-    decoder = json.JSONDecoder()
+    def unique_keys(pairs):
+        result = {}
+        for key, value in pairs:
+            if key in result:
+                raise ValueError('Duplicate JSON object key')
+            result[key] = value
+        return result
+    # Duplicate keys make the structured representation lossy and unsafe.
+    decoder = json.JSONDecoder(object_pairs_hook=unique_keys)
     found = {}
     for match in JSON_MARKER.finditer(head):
         start = match.end()
@@ -64,6 +73,11 @@ def approved_dynamic(values, current, char_family, matches_family):
     """True only for a QA-demonstrated variation of exactly the same shape."""
     if len(set(values)) < 2 or not isinstance(current, str):
         return False
+    # A timestamp is approved only at this exact JSON label + full path,
+    # never by its leaf property name alone.
+    if all(isinstance(v, str) and STAMP_VALUE.fullmatch(v) and valid_stamp(v)
+           for v in values):
+        return bool(STAMP_VALUE.fullmatch(current) and valid_stamp(current))
     if all(UUID.fullmatch(v) for v in values):
         return bool(UUID.fullmatch(current))
     observed = [ID_TAIL.fullmatch(v) for v in values]
@@ -127,7 +141,7 @@ def json_normalized_heads(historical, current, char_family, matches_family):
             replacement = objects[name]
             if shape(original) != shape(replacement):
                 raise AssertionError('JSON normalization changed structure')
-            head = head[:start] + json.dumps(replacement, separators=(',', ':'), ensure_ascii=False,
+            head = head[:start] + json.dumps(replacement, separators=(',', ':'), ensure_ascii=True,
                                              sort_keys=True) + head[end:]
         return head
     return ([rewrite(head, parts, copied) for head, parts, copied in zip(historical, old_parts, copied_old)],
@@ -141,30 +155,45 @@ def valid_stamp(value):
         return False
 
 def normalize_stamps(history, current):
-    """Only exact aligned JSON-string fields with >=2 distinct valid ISO timestamps.
+    """Fail-closed fallback for timestamp literals *outside* parsed JSON.
 
-    This is deliberately separate from JSON object canonicalization, so it can
-    recover a field even when surrounding payload serialization differs. The
-    unchanged message matcher must still approve every *other* difference.
+    Parsed JSON timestamps are handled by json_normalized_heads() at the exact
+    diagnostic label + full path. Here we may generalize only if the entire
+    surrounding diagnostic is byte-for-byte identical after masking timestamps.
+    Every timestamp occurrence is tied to its ordinal position and context;
+    timestamp values from expected and actual cannot train each other.
     """
-    def collect(s):
-        groups={}
-        for m in STAMP.finditer(s):
-            groups.setdefault(m['key'],[]).append(m)
-        return groups
-    olds=[collect(h) for h in history]; new=collect(current)
-    if not olds or not new: return history,current,[]
-    approved=[]
-    for key,ms in new.items():
-        if len(ms)!=1 or any(len(row.get(key,[]))!=1 for row in olds):continue
-        values=[row[key][0]['value'] for row in olds]
-        if len(set(values)) < 2 or not all(valid_stamp(v) for v in values):continue
-        incoming=ms[0]['value']
-        if valid_stamp(incoming):approved.append((key,values,incoming))
-    if not approved:return history,current,[]
-    keys={x[0] for x in approved}
-    def rewrite(s):
-        def sub(m):
-            return m['prefix']+'__RAE_APPROVED_TIMESTAMP__'+m['suffix'] if m['key'] in keys else m.group()
-        return STAMP.sub(sub,s)
-    return [rewrite(h) for h in history],rewrite(current),approved
+    if not history:
+        return history, current, []
+    old_matches = [list(STAMP.finditer(head)) for head in history]
+    new_matches = list(STAMP.finditer(current))
+    if not new_matches or any(len(row) != len(new_matches) for row in old_matches):
+        return history, current, []
+
+    def skeleton(head):
+        return STAMP.sub(lambda m: m['prefix'] + '<RAE_TIMESTAMP_SLOT>' + m['suffix'], head)
+
+    if any(skeleton(head) != skeleton(current) for head in history):
+        return history, current, []
+    accepted = []
+    for i, current_match in enumerate(new_matches):
+        historic_matches = [row[i] for row in old_matches]
+        if any(m['key'] != current_match['key'] for m in historic_matches):
+            continue
+        values = [m['value'] for m in historic_matches]
+        if (len(set(values)) >= 2 and all(valid_stamp(v) for v in values)
+                and valid_stamp(current_match['value'])):
+            accepted.append((i, current_match['key'], values, current_match['value']))
+    if not accepted:
+        return history, current, []
+    accepted_slots = {item[0] for item in accepted}
+
+    def rewrite(head):
+        spans = list(STAMP.finditer(head))
+        for i in sorted(accepted_slots, reverse=True):
+            match = spans[i]
+            head = (head[:match.start('value')] + '__RAE_APPROVED_TIMESTAMP__'
+                    + head[match.end('value'):])
+        return head
+
+    return [rewrite(head) for head in history], rewrite(current), accepted
