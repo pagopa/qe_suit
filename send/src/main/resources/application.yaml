@@ -103,3 +103,7 @@ contract-report:
       label: WEB
       class-prefix: Web
       target-type: TEST_FACTORY
+    stream:
+      label: STREAM
+      class-prefix: Stream
+      target-type: TEST_FACTORY

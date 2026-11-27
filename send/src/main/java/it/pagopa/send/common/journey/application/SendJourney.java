@@ -5,5 +5,6 @@ public interface SendJourney extends
         InformalNotificationJourney<SendJourney>,
         DelegationJourney<SendJourney>,
         PtDelegationJourney<SendJourney>,
+        StreamLegacyJourney<SendJourney>,
         FinalizerJourney {
 }
