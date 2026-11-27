@@ -64,7 +64,7 @@ ko:
     	at it.pagopa.interop.common.purpose.application.PurposeUseCase.shouldFailLinkToReceiveEService(PurposeUseCase.java:24)
     	at it.pagopa.interop.common.purpose.infrastructure.cucumber.PurposeSteps.assertPurposeCreationDenied(PurposeSteps.java:373)
     	at ✽.la creazione della finalità è negata(classpath:feature-expanded/purpose/purpose-eservice.feature:19)
-  procedure: >-
+  procedure: |
     Dal report Cucumber è stato verificato che tutti gli step di preparazione,
     compresa la richiesta di fruizione attiva, fossero stati superati e che il
     fallimento riguardasse soltanto l'assert finale. Nei log HTTP è stato poi
@@ -73,7 +73,7 @@ ko:
     confermato che, al momento dell'assert, lo status ricevuto era 200. Dalla
     lettura della finalità restituita è emerso che il sistema l'aveva creata,
     quindi il KO è dovuto a un comportamento errato del prodotto e non della suite.
-  result: >-
+  result: |
     L'API ha restituito HTTP 200 anziché HTTP 400 e ha creato una finalità in
     bozza associata a un e-service in modalità RECEIVE, operazione che avrebbe
     dovuto essere negata.
