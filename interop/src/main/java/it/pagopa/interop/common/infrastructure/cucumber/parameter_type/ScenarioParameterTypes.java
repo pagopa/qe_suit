@@ -11,6 +11,8 @@ import it.pagopa.interop.common.eservice.domain.EServiceUpdateFailureReason;
 import it.pagopa.interop.common.eservice_template.domain.EServiceTemplate;
 import it.pagopa.interop.common.eservice_template.domain.EServiceTemplateUpdateFailureReason;
 import it.pagopa.interop.common.purpose.domain.Purpose;
+import it.pagopa.interop.common.purpose_template.domain.PurposeTemplate;
+import it.pagopa.interop.common.purpose_template.domain.PurposeTemplateState;
 import it.pagopa.kernel.security.DPoPProof;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -34,6 +36,11 @@ public class ScenarioParameterTypes {
     @ParameterType("purpose|purpose creata|finalità|finalità creata")
     public Purpose currentPurpose(String token) {
         return entityStore.getLastOrThrow(Purpose.class);
+    }
+
+    @ParameterType("template di finalità|template finalità|purpose template")
+    public PurposeTemplate currentPurposeTemplate(String token) {
+        return entityStore.getLastOrThrow(PurposeTemplate.class);
     }
 
     @ParameterType("client assertion|client assertion creata")
