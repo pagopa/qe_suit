@@ -3,7 +3,7 @@ package it.pagopa.interop.common.eservice.infrastructure.cucumber.dto.mapper;
 import com.fasterxml.jackson.core.JsonParser;
 import com.fasterxml.jackson.databind.DeserializationContext;
 import com.fasterxml.jackson.databind.JsonDeserializer;
-import it.pagopa.interop.common.infrastructure.cucumber.dto.ConfiguredBoolean;
+import it.pagopa.interop.common.kernel.dto.ConfiguredBoolean;
 
 import java.io.IOException;
 

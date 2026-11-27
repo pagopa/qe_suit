@@ -8,11 +8,14 @@ import it.pagopa.interop.common.purpose.domain.PurposeVersion;
 import it.pagopa.interop.common.purpose_template.domain.PurposeTemplate;
 import it.pagopa.interop.common.risk_analysis.domain.RiskAnalysisReviewMode;
 import it.pagopa.interop.common.risk_analysis.domain.RiskAnalysisForm;
+
+import it.pagopa.utils.async.PollingUtils;
 import jakarta.annotation.Nullable;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.Objects;
 import java.util.UUID;
 import java.util.function.Consumer;
 
@@ -22,12 +25,74 @@ public class PurposeUseCase {
     private final PurposeGateway purposeGateway;
     private final PurposeCommandFactory purposeCommandFactory;
 
-    public RiskAnalysisForm getRiskAnalysisForm(Purpose purpose) {
-        return purposeGateway.getRiskAnalysisForm(purpose.getRef());
+    public void shouldFailLinkToReceiveEService() {
+        purposeGateway.shouldFailLinkToReceiveEService();
     }
 
-    public void saveRiskAnalysisForm(Purpose purpose, RiskAnalysisForm form) {
-        purposeGateway.saveRiskAnalysisForm(purpose.getRef(), form);
+    public Purpose getPurpose(Purpose purpose) {
+        return purposeGateway.getPurpose(purpose.getRef());
+    }
+
+    public Purpose updatePurposeMetadata(
+            Purpose purpose, String name, String description,
+            Boolean isFreeOfCharge, String freeOfChargeReason, Integer dailyCalls) {
+        purposeGateway.updatePurposeMetadata(
+                purpose.getRef(), name, description, isFreeOfCharge, freeOfChargeReason, dailyCalls);
+
+        return pollForUpdatedMetadata(purpose, name, description, isFreeOfCharge, freeOfChargeReason, dailyCalls);
+    }
+
+    public Purpose updateReversePurposeMetadata(
+            Purpose purpose, String name, String description,
+            Boolean isFreeOfCharge, String freeOfChargeReason, Integer dailyCalls) {
+        purposeGateway.updateReversePurposeMetadata(
+                purpose.getRef(), name, description, isFreeOfCharge, freeOfChargeReason, dailyCalls);
+
+        return pollForUpdatedMetadata(purpose, name, description, isFreeOfCharge, freeOfChargeReason, dailyCalls);
+    }
+
+    public void tryToUpdatePurposeMetadata(
+            Purpose purpose, String name, String description,
+            Boolean isFreeOfCharge, String freeOfChargeReason, Integer dailyCalls) {
+        purposeGateway.tryToUpdatePurposeMetadata(
+                purpose.getRef(), name, description, isFreeOfCharge, freeOfChargeReason, dailyCalls);
+    }
+
+    public void tryToUpdateReversePurposeMetadata(
+            Purpose purpose, String name, String description,
+            Boolean isFreeOfCharge, String freeOfChargeReason, Integer dailyCalls) {
+        purposeGateway.tryToUpdateReversePurposeMetadata(
+                purpose.getRef(), name, description, isFreeOfCharge, freeOfChargeReason, dailyCalls);
+    }
+
+    public void shouldFailToUpdatePurposeMetadataAsMalformed() {
+        purposeGateway.shouldFailToUpdatePurposeMetadataAsMalformed();
+    }
+
+    public void shouldFailToUpdatePurposeMetadataAsForbidden() {
+        purposeGateway.shouldFailToUpdatePurposeMetadataAsForbidden();
+    }
+
+    public void shouldFailToUpdatePurposeMetadataAsConflict() {
+        purposeGateway.shouldFailToUpdatePurposeMetadataAsConflict();
+    }
+
+    private Purpose pollForUpdatedMetadata(
+            Purpose purpose, String name, String description,
+            Boolean isFreeOfCharge, String freeOfChargeReason, Integer dailyCalls) {
+        return PollingUtils.pollUntil(
+                () -> getPurpose(purpose),
+                refreshed -> Objects.equals(name, refreshed.getTitle())
+                        && Objects.equals(description, refreshed.getDescription())
+                        && (isFreeOfCharge == null
+                        || Objects.equals(isFreeOfCharge, refreshed.getIsFreeOfCharge()))
+                        && (freeOfChargeReason == null
+                        || Objects.equals(freeOfChargeReason, refreshed.getFreeOfChargeReason()))
+                        && (dailyCalls == null
+                        || refreshed.getLastDraftVersion() != null
+                        && Objects.equals(dailyCalls, refreshed.getLastDraftVersion().getDailyCalls())),
+                "Purpose " + purpose.getId() + " metadata did not reach the requested values"
+        );
     }
 
     public Purpose updatePurposeDailyCallsEstimateBeyondThreshold(Purpose purpose, EService eService) {
@@ -119,5 +184,24 @@ public class PurposeUseCase {
 
     public void rejectRiskAnalysis(Purpose purpose, String rejectionReason) {
         purposeGateway.rejectRiskAnalysis(purpose.getRef(), rejectionReason);
+    }
+
+    public RiskAnalysisForm getRiskAnalysisForm(Purpose purpose) {
+        return purposeGateway.getRiskAnalysisForm(purpose.getRef());
+    }
+
+    public void saveRiskAnalysisForm(Purpose purpose, RiskAnalysisForm form) {
+        purposeGateway.saveRiskAnalysisForm(purpose.getRef(), form);
+    }
+
+    // Proposta di refactor: https://pagopa.atlassian.net/browse/QA-19158
+    public Purpose tryCreatePurpose(EService eService) {
+        PurposeCreateCommand command = purposeCommandFactory.validFullPopulatedCreateCommand(eService.getRef());
+        return purposeGateway.tryCreatePurpose(command);
+    }
+
+    // Proposta di refactor: https://pagopa.atlassian.net/browse/QA-19158
+    public Purpose tryCreatePurposeFromTemplate(PurposeTemplate purposeTemplate, EService eService) {
+        return purposeGateway.tryCreatePurposeFromTemplate(purposeTemplate.getRef(), eService.getRef());
     }
 }

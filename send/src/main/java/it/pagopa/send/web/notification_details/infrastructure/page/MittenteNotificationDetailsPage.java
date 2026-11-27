@@ -42,6 +42,10 @@ public interface MittenteNotificationDetailsPage extends NotificationDetailsPage
     @XPath("//*[@data-testid=\"cancelNotificationBtn\"]")
     Button cancelNotificationButton();
 
+    // "Annulla notifica" del dialog di conferma "Vuoi annullare la notifica?"
+    @XPath("//*[@data-testid=\"cancel-notification-modal\"]//*[@data-testid=\"modalCloseAndProceedBtnId\"]")
+    Button confirmCancelNotificationButton();
+
     // titolo della sezione "Dettaglio della notifica" con l'avviso di avvenuta ricezione
     @XPath("//*[@data-testid=\"aarDownload\"]//h2")
     Readable<String> notificationDetailSectionTitle();

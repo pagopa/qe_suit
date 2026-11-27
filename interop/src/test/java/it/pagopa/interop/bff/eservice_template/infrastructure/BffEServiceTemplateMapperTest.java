@@ -4,7 +4,9 @@ import it.pagopa.interop.bff.eservice.infrastructure.BffEServiceDescriptorMapper
 import it.pagopa.interop.common.eservice.domain.EServiceMode;
 import it.pagopa.interop.common.eservice.domain.EServiceTechnology;
 import it.pagopa.interop.common.eservice_template.domain.*;
+import it.pagopa.interop.common.eservice_template.domain.EServiceTemplateInstance;
 import it.pagopa.interop.common.eservice_template.domain.EServiceTemplateVersionState;
+import it.pagopa.interop.common.kernel.domain.EServiceRef;
 import it.pagopa.interop.common.kernel.domain.EServiceTemplateRef;
 import it.pagopa.interop.common.kernel.domain.EServiceTemplateVersionRef;
 import it.pagopa.interop.generated.openapi.clients.bff.model.*;
@@ -37,6 +39,7 @@ class BffEServiceTemplateMapperTest {
 
     @Test
     void preservingVersions_keeps_version_list_mutable() {
+        var instance = new EServiceTemplateInstance("label", EServiceRef.of(UUID.randomUUID()));
         EServiceTemplateVersion existingVersion = EServiceTemplateVersion.builder()
                 .id(UUID.randomUUID())
                 .version("1")
@@ -49,6 +52,7 @@ class BffEServiceTemplateMapperTest {
                 .description("existing-description")
                 .intendedTarget("existing-target")
                 .versions(List.of(existingVersion))
+                .instance(instance)
                 .riskAnalyses(List.of())
                 .build();
 
@@ -93,6 +97,7 @@ class BffEServiceTemplateMapperTest {
         ));
 
         assertThat(mapped.getVersions()).hasSize(2);
+        assertThat(mapped.getInstances()).containsExactly(instance);
         assertThat(existingTemplate.getVersions()).hasSize(1);
     }
 
@@ -182,6 +187,7 @@ class BffEServiceTemplateMapperTest {
 
     @Test
     void merging_partial_version_reads_preserves_other_versions_and_only_matching_checksum_bytes() {
+        var instance = new EServiceTemplateInstance("label", EServiceRef.of(UUID.randomUUID()));
         UUID templateId = UUID.randomUUID();
         UUID versionOne = UUID.randomUUID();
         UUID versionTwo = UUID.randomUUID();
@@ -200,6 +206,7 @@ class BffEServiceTemplateMapperTest {
 
         EServiceTemplate existing = EServiceTemplate.builder()
                 .id(templateId)
+                .instance(instance)
                 .version(
                         EServiceTemplateVersion.builder()
                                 .id(versionOne)
@@ -244,6 +251,7 @@ class BffEServiceTemplateMapperTest {
 
         assertThat(changedChecksum.getVersion(2).getInterfaceDocument().getContent())
                 .isNull();
+        assertThat(changedChecksum.getInstances()).containsExactly(instance);
     }
 
     @Test
@@ -314,6 +322,48 @@ class BffEServiceTemplateMapperTest {
         assertThat(existingVersion.getVersion()).isEqualTo("1");
         assertThat(existingVersion.getState())
                 .isEqualTo(EServiceTemplateVersionState.DRAFT);
+    }
+
+    @Test
+    void preservingVersions_refreshes_risk_analyses_from_template_details() {
+        UUID templateId = UUID.randomUUID();
+        UUID riskAnalysisId = UUID.randomUUID();
+
+        EServiceTemplate existing = EServiceTemplate.builder()
+                .id(templateId)
+                .versions(List.of())
+                .riskAnalyses(List.of())
+                .build();
+
+        EServiceTemplateDetails source = new EServiceTemplateDetails()
+                .id(templateId)
+                .name("template")
+                .technology(
+                        it.pagopa.interop.generated.openapi.clients.bff.model
+                                .EServiceTechnology.REST
+                )
+                .mode(
+                        it.pagopa.interop.generated.openapi.clients.bff.model
+                                .EServiceMode.RECEIVE
+                )
+                .riskAnalysis(List.of(
+                        new EServiceTemplateRiskAnalysis()
+                                .id(riskAnalysisId)
+                                .name("ra-1")
+                                .riskAnalysisForm(
+                                        new RiskAnalysisForm()
+                                                .version("3.0")
+                                                .putAnswersItem("purpose", List.of("INSTITUTIONAL"))
+                                )
+                ));
+
+        EServiceTemplate mapped =
+                assembler.toEServiceTemplatePreservingVersions(source, existing);
+
+        assertThat(mapped.getRiskAnalyses()).hasSize(1);
+        assertThat(mapped.getRiskAnalyses().get(0).getId()).isEqualTo(riskAnalysisId);
+        assertThat(mapped.getRiskAnalyses().get(0).getName()).isEqualTo("ra-1");
+        assertThat(mapped.getRiskAnalyses().get(0).getRiskAnalysisForm().getVersion()).isEqualTo("3.0");
     }
 
     private static EServiceTemplateVersionDetails templateVersionDetails(

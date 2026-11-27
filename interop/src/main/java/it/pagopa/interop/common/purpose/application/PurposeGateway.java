@@ -17,15 +17,39 @@ import java.util.List;
 import java.util.UUID;
 
 public interface PurposeGateway extends Plugin<Channel> {
+    /**
+     * Verifica il rifiuto dell'ultimo tentativo di associare un e-service in ricezione.
+     * Il tentativo deve corrispondere all'ultima chiamata effettuata in piattaforma.
+     */
+    void shouldFailLinkToReceiveEService();
+
     Purpose getPurpose(PurposeRef purposeRef);
+
+    Purpose updatePurposeMetadata(
+            PurposeRef purposeRef, String name, String description,
+            @Nullable Boolean isFreeOfCharge, @Nullable String freeOfChargeReason, @Nullable Integer dailyCalls);
+
+    Purpose updateReversePurposeMetadata(
+            PurposeRef purposeRef, String name, String description,
+            @Nullable Boolean isFreeOfCharge, @Nullable String freeOfChargeReason, @Nullable Integer dailyCalls);
+
+    void tryToUpdatePurposeMetadata(
+            PurposeRef purposeRef, String name, String description,
+            @Nullable Boolean isFreeOfCharge, @Nullable String freeOfChargeReason, @Nullable Integer dailyCalls);
+
+    void tryToUpdateReversePurposeMetadata(
+            PurposeRef purposeRef, String name, String description,
+            @Nullable Boolean isFreeOfCharge, @Nullable String freeOfChargeReason, @Nullable Integer dailyCalls);
+
+    void shouldFailToUpdatePurposeMetadataAsMalformed();
+
+    void shouldFailToUpdatePurposeMetadataAsForbidden();
+
+    void shouldFailToUpdatePurposeMetadataAsConflict();
 
     Purpose updatePurposeDailyCalls(PurposeRef purposeRef, int dailyCalls);
 
     Purpose createPurpose(PurposeCreateCommand createCommand);
-
-    default void deletePurpose(PurposeRef purposeRef) {
-        throw new UnsupportedOperationException("Purpose deletion is not supported by this gateway implementation");
-    }
 
     Purpose createReversePurpose(EServiceRef eServiceRef, EServiceRiskAnalysisRef riskAnalysisRef);
 
@@ -41,9 +65,8 @@ public interface PurposeGateway extends Plugin<Channel> {
 
     Purpose suspendPurpose(PurposeRef purposeRef, PurposeVersionRef purposeVersionRef, @Nullable DelegationRef delegationRef);
 
-    default Purpose archivePurpose(PurposeRef purposeRef, PurposeVersionRef purposeVersionRef) {
-        throw new UnsupportedOperationException("Purpose archiving is not supported by this gateway implementation");
-    }
+    Purpose archivePurpose(PurposeRef purposeRef, PurposeVersionRef purposeVersionRef);
+
 
     void assignRiskAnalysisReviewers(PurposeRef purposeRef, RiskAnalysisReviewMode reviewMode, List<UUID> reviewerIds);
 
@@ -52,7 +75,9 @@ public interface PurposeGateway extends Plugin<Channel> {
     default void submitRiskAnalysis(PurposeRef purposeRef, RiskAnalysisForm form) {
         throw new UnsupportedOperationException("Submission with an explicit risk-analysis form is not supported by this gateway");
     }
-
+    default void deletePurpose(PurposeRef purposeRef) {
+        throw new UnsupportedOperationException("Purpose deletion is not supported by this gateway implementation");
+    }
     RiskAnalysisForm getRiskAnalysisForm(PurposeRef purposeRef);
 
     void saveRiskAnalysisForm(PurposeRef purposeRef, RiskAnalysisForm form);
@@ -62,4 +87,24 @@ public interface PurposeGateway extends Plugin<Channel> {
     void signRiskAnalysis(PurposeRef purposeRef);
 
     void rejectRiskAnalysis(PurposeRef purposeRef, String rejectionReason);
+    // Proposta di refactor: https://pagopa.atlassian.net/browse/QA-19158
+    /**
+     * Tenta la creazione di una finalità senza polling.
+     *
+     * @param createCommand il comando contenente i dati per la creazione della finalità
+     * @return la {@link Purpose} creata e aggiornata nel contesto se la chiamata ha esito positivo;
+     *         {@code null} se la chiamata fallisce (esito non di successo)
+     */
+    Purpose tryCreatePurpose(PurposeCreateCommand createCommand);
+
+    // Proposta di refactor: https://pagopa.atlassian.net/browse/QA-19158
+    /**
+     * Tenta la creazione di una finalità a partire da un template di finalità senza polling.
+     *
+     * @param purposeTemplateRef il riferimento al template di finalità
+     * @param eServiceRef il riferimento all'e-service da associare
+     * @return la {@link Purpose} creata e aggiornata nel contesto se la chiamata ha esito positivo;
+     *         {@code null} se la chiamata fallisce (esito non di successo)
+     */
+    Purpose tryCreatePurposeFromTemplate(PurposeTemplateRef purposeTemplateRef, EServiceRef eServiceRef);
 }

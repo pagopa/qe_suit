@@ -3,12 +3,15 @@ package it.pagopa.send.web.notification_creation.infrastructure.page.component;
 import it.frontend.e2e.framework.annotation.selector.XPath;
 import it.frontend.e2e.framework.core.capability.core.Clickable;
 import it.frontend.e2e.framework.web.domain.Component;
+import it.pagopa.infrastructure.suit.component.RadioButton;
 import it.pagopa.send.web.notification_creation.application.NotificationData;
+
+import java.util.List;
 
 /**
  * Passo del wizard "Invia una nuova notifica" usato dagli step Cucumber ({@code CreateNotificationPage}).
  */
-public interface DettaglioPosizioneDebitoriaStep extends Component {
+public interface DebtPositionStep extends Component {
 
     @XPath(".//label[@data-testid='paymentModel'][1]")
     Clickable selectPagoPa();
@@ -21,6 +24,14 @@ public interface DettaglioPosizioneDebitoriaStep extends Component {
 
     @XPath(".//label[@data-testid='paymentModel'][4]")
     Clickable selectNoPayment();
+
+    // "Nessun pagamento": un gruppo di scelte per ogni destinatario
+    @XPath(".//label[@data-testid='paymentModel'][.//input[@value='NOTHING']]")
+    List<RadioButton> noPaymentOptions();
+
+    default void selectNoPaymentForAllRecipients() {
+        noPaymentOptions().forEach(RadioButton::select);
+    }
 
     default void selectPaymentTypeAndSubmit(String paymentType) {
         switch (paymentType) {

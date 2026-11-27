@@ -29,17 +29,31 @@ public class BffPurposeRestClient extends RestClient {
         );
     }
 
-    public TestChain<CreatedResource> createPurpose(@Nonnull PurposeSeed payload) {
+    public TestChain<CreatedResource> patchUpdatePurpose(@Nonnull UUID purposeId, @Nonnull PatchPurposeUpdateContent payload) {
         return execute(
-                () -> purposesApi.createPurpose().body(payload).execute(Function.identity()),
+                () -> purposesApi.patchUpdatePurpose()
+                        .purposeIdPath(purposeId)
+                        .body(payload)
+                        .execute(Function.identity()),
                 CreatedResource.class
         );
     }
 
-    public TestChain<Void> deletePurpose(@Nonnull UUID purposeId) {
+    public TestChain<CreatedResource> patchUpdateReversePurpose(
+            @Nonnull UUID purposeId, @Nonnull PatchReversePurposeUpdateContent payload) {
         return execute(
-                () -> purposesApi.deletePurpose().purposeIdPath(purposeId).execute(Function.identity()),
-                Void.class
+                () -> purposesApi.patchUpdateReversePurpose()
+                        .purposeIdPath(purposeId)
+                        .body(payload)
+                        .execute(Function.identity()),
+                CreatedResource.class
+        );
+    }
+
+    public TestChain<CreatedResource> createPurpose(@Nonnull PurposeSeed payload) {
+        return execute(
+                () -> purposesApi.createPurpose().body(payload).execute(Function.identity()),
+                CreatedResource.class
         );
     }
 
@@ -57,6 +71,69 @@ public class BffPurposeRestClient extends RestClient {
         return execute(
                 () -> purposesApi.createPurposeForReceiveEservice().body(payload).execute(Function.identity()),
                 CreatedResource.class
+        );
+    }
+
+    public TestChain<CreatedResource> createPurposeFromTemplate(@Nonnull UUID purposeTemplateId, @Nonnull PurposeFromTemplateSeed payload) {
+        return execute(
+                () -> purposesApi.createPurposeFromTemplate()
+                        .purposeTemplateIdPath(purposeTemplateId)
+                        .body(payload)
+                        .execute(Function.identity()),
+                CreatedResource.class
+        );
+    }
+
+    public TestChain<PurposeVersionResource> activatePurposeVersion(@Nonnull UUID purposeId, @Nonnull UUID versionId, DelegationRef delegationRef) {
+        return execute(
+                () -> purposesApi.activatePurposeVersion()
+                        .purposeIdPath(purposeId)
+                        .versionIdPath(versionId)
+                        .body(delegationRef)
+                        .execute(Function.identity()),
+                PurposeVersionResource.class
+        );
+    }
+
+    public TestChain<Void> rejectPurposeVersion(@Nonnull UUID purposeId, @Nonnull UUID versionId, @Nonnull RejectPurposeVersionPayload payload) {
+        return execute(
+                () -> purposesApi.rejectPurposeVersion()
+                        .purposeIdPath(purposeId)
+                        .versionIdPath(versionId)
+                        .body(payload)
+                        .execute(Function.identity()),
+                Void.class
+        );
+    }
+
+    public TestChain<PurposeVersionResource> suspendPurposeVersion(@Nonnull UUID purposeId, @Nonnull UUID versionId, DelegationRef delegationRef) {
+        return execute(
+                () -> purposesApi.suspendPurposeVersion()
+                        .purposeIdPath(purposeId)
+                        .versionIdPath(versionId)
+                        .body(delegationRef)
+                        .execute(Function.identity()),
+                PurposeVersionResource.class
+        );
+    }
+
+    public TestChain<PurposeVersionResource> archivePurposeVersion(@Nonnull UUID purposeId, @Nonnull UUID versionId) {
+        return execute(
+                () -> purposesApi.archivePurposeVersion()
+                        .purposeIdPath(purposeId)
+                        .versionIdPath(versionId)
+                        .reqSpec(reqSpec -> reqSpec.setContentType("application/json; charset=UTF-8"))
+                        .execute(Function.identity()),
+                PurposeVersionResource.class
+        );
+    }
+
+    public TestChain<RiskAnalysisFormConfig> retrieveLatestRiskAnalysisConfiguration(TenantKind tenantKind){
+        return execute(
+                () -> purposesApi.retrieveLatestRiskAnalysisConfiguration()
+                        .tenantKindQuery(tenantKind)
+                        .execute(Function.identity()),
+                RiskAnalysisFormConfig.class
         );
     }
 
@@ -121,69 +198,6 @@ public class BffPurposeRestClient extends RestClient {
                         .body(payload)
                         .execute(Function.identity()),
                 Void.class
-        );
-    }
-
-    public TestChain<CreatedResource> createPurposeFromTemplate(@Nonnull UUID purposeTemplateId, @Nonnull PurposeFromTemplateSeed payload) {
-        return execute(
-                () -> purposesApi.createPurposeFromTemplate()
-                        .purposeTemplateIdPath(purposeTemplateId)
-                        .body(payload)
-                        .execute(Function.identity()),
-                CreatedResource.class
-        );
-    }
-
-    public TestChain<PurposeVersionResource> activatePurposeVersion(@Nonnull UUID purposeId, @Nonnull UUID versionId, DelegationRef delegationRef) {
-        return execute(
-                () -> purposesApi.activatePurposeVersion()
-                        .purposeIdPath(purposeId)
-                        .versionIdPath(versionId)
-                        .body(delegationRef)
-                        .execute(Function.identity()),
-                PurposeVersionResource.class
-        );
-    }
-
-    public TestChain<Void> rejectPurposeVersion(@Nonnull UUID purposeId, @Nonnull UUID versionId, @Nonnull RejectPurposeVersionPayload payload) {
-        return execute(
-                () -> purposesApi.rejectPurposeVersion()
-                        .purposeIdPath(purposeId)
-                        .versionIdPath(versionId)
-                        .body(payload)
-                        .execute(Function.identity()),
-                Void.class
-        );
-    }
-
-    public TestChain<PurposeVersionResource> suspendPurposeVersion(@Nonnull UUID purposeId, @Nonnull UUID versionId, DelegationRef delegationRef) {
-        return execute(
-                () -> purposesApi.suspendPurposeVersion()
-                        .purposeIdPath(purposeId)
-                        .versionIdPath(versionId)
-                        .body(delegationRef)
-                        .execute(Function.identity()),
-                PurposeVersionResource.class
-        );
-    }
-
-    public TestChain<Void> archivePurposeVersion(@Nonnull UUID purposeId, @Nonnull UUID versionId) {
-        return execute(
-                () -> purposesApi.archivePurposeVersion()
-                        .purposeIdPath(purposeId)
-                        .versionIdPath(versionId)
-                        .reqSpec(reqSpec -> reqSpec.setContentType("application/json"))
-                        .execute(Function.identity()),
-                Void.class
-        );
-    }
-
-    public TestChain<RiskAnalysisFormConfig> retrieveLatestRiskAnalysisConfiguration(TenantKind tenantKind){
-        return execute(
-                () -> purposesApi.retrieveLatestRiskAnalysisConfiguration()
-                        .tenantKindQuery(tenantKind)
-                        .execute(Function.identity()),
-                RiskAnalysisFormConfig.class
         );
     }
 }

@@ -3,7 +3,9 @@ package it.pagopa.interop.common.eservice_template.infrastructure.cucumber;
 import it.pagopa.infrastructure.channel.CurrentChannel;
 import it.pagopa.infrastructure.context.InMemoryEntityStore;
 import it.pagopa.interop.bff.eservice_template.infrastructure.BffEServiceTemplateRequestFactory;
+import it.pagopa.interop.common.eservice.application.EServiceRiskAnalysisUseCase;
 import it.pagopa.interop.common.eservice_template.application.*;
+import it.pagopa.interop.common.eservice_template.application.command.UpdateEServiceTemplateCommand;
 import it.pagopa.interop.common.eservice_template.domain.*;
 import it.pagopa.interop.common.kernel.context.AuthSession;
 import it.pagopa.interop.common.kernel.domain.*;
@@ -18,16 +20,20 @@ import static org.mockito.Mockito.*;
 class EServiceTemplateHooksTest {
     private final InMemoryEntityStore entities = new InMemoryEntityStore();
     private final EServiceTemplateUseCase templates = mock(EServiceTemplateUseCase.class);
+    private final EServiceTemplateRequestFactory factory = mock(EServiceTemplateRequestFactory.class);
     private final EServiceTemplateVersionGateway gateway = mock(EServiceTemplateVersionGateway.class);
-    private final EServiceTemplateVersionUseCase versions = new EServiceTemplateVersionUseCase(
-            gateway, new BffEServiceTemplateRequestFactory());
     private final AuthSession session = mock(AuthSession.class);
+    private final EServiceTemplateVersionUseCase versions = new EServiceTemplateVersionUseCase(
+            gateway, new BffEServiceTemplateRequestFactory(), templates, mock(EServiceRiskAnalysisUseCase.class), session);
     @SuppressWarnings("unchecked")
     private final CurrentChannel<Channel> channel = mock(CurrentChannel.class);
-    private final EServiceTemplateHooks hook = new EServiceTemplateHooks(entities, templates, versions, session, channel);
+    private final EServiceTemplateHooks hook = new EServiceTemplateHooks(entities, templates, factory, versions, session, channel);
 
     @Test
     void deletesDraftsSuspendsPublishedVersionsAndRestoresSessionAndChannel() {
+        var command = mock(UpdateEServiceTemplateCommand.class);
+        when(factory.defaultUpdateEServiceTemplateCommand(true)).thenReturn(command);
+        when(command.name(anyString())).thenReturn(command);
         var draft = version(DRAFT);
         var published = version(PUBLISHED);
         var suspended = version(SUSPENDED);
@@ -55,6 +61,9 @@ class EServiceTemplateHooksTest {
 
     @Test
     void aggregatesFailuresAndStillAttemptsOtherTemplatesAsTheirCreators() {
+        var command = mock(UpdateEServiceTemplateCommand.class);
+        when(factory.defaultUpdateEServiceTemplateCommand(true)).thenReturn(command);
+        when(command.name(anyString())).thenReturn(command);
         var first = EServiceTemplate.builder().id(UUID.randomUUID())
                 .creatorId(Tenant.COMUNE_DI_MILANO.getOrganizationId()).version(version(PUBLISHED)).build();
         var second = EServiceTemplate.builder().id(UUID.randomUUID())

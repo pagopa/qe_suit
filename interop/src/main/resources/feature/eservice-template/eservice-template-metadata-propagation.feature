@@ -1,0 +1,139 @@
+@PIN-11319
+Feature: Propagazione dei metadati del template e-service alle istanze
+  Come creatore di un template e-service
+  Voglio aggiornare i metadati ereditati dalle istanze
+  Per mantenere coerenti le istanze preservando etichette e configurazioni proprie.
+
+  @work-item:QA-19036
+  @channel:Given=BFF,When=BFF,Then=BFF
+  Scenario: [ESERVICE_TEMPLATE_PROPAGATION_1] - Propagazione dei metadati ereditati alle istanze
+  Dato un template e-service pubblicato e istanziato da erogatori diversi con etichette distinte,
+  quando il creatore ne modifica nome e descrizione,
+  allora le istanze interessate ereditano i nuovi valori e conservano etichette e configurazioni proprie.
+
+    Given i seguenti template e-service pubblicati:
+      | alias | erogatore        | nome                | tecnologia |
+      | TPL-1 | Comune di Milano | Template anagrafico | REST       |
+    And le seguenti istanze di template e-service pubblicate:
+      | alias | template | erogatore        | suffisso |
+      | EI-1  | TPL-1    | Comune di Milano | Milano   |
+      | EI-2  | TPL-1    | PagoPA           | PagoPA   |
+    When un admin del Comune di Milano richiede la modifica dei metadati del template e-service "TPL-1":
+      | campo       | valore                              |
+      | nome        | Template anagrafico aggiornato      |
+      | descrizione | Descrizione aggiornata del template |
+    Then il template e-service presenta i metadati richiesti e conserva quelli non modificati
+    And Comune di Milano verifica che le istanze e-service presentino i metadati ereditati dal template "TPL-1":
+      | EI-1 |
+    And PagoPA verifica che le istanze e-service presentino i metadati ereditati dal template "TPL-1":
+      | EI-2 |
+
+  @work-item:QA-19036 @m2m
+  @channel:Given=BFF,When=M2M,Then=BFF
+  Scenario: [ESERVICE_TEMPLATE_PROPAGATION_1_M2M] - Propagazione dei metadati ereditati alle istanze
+  Dato un template e-service pubblicato e istanziato da erogatori diversi con etichette distinte,
+  quando il creatore ne modifica nome e descrizione,
+  allora le istanze interessate ereditano i nuovi valori e conservano etichette e configurazioni proprie.
+
+    Given i seguenti template e-service pubblicati:
+      | alias | erogatore        | nome                | tecnologia |
+      | TPL-1 | Comune di Milano | Template anagrafico | REST       |
+    And le seguenti istanze di template e-service pubblicate:
+      | alias | template | erogatore        | suffisso |
+      | EI-1  | TPL-1    | Comune di Milano | Milano   |
+      | EI-2  | TPL-1    | PagoPA           | PagoPA   |
+    When un sistema informatico autenticato con ruolo M2M_ADMIN del Comune di Milano richiede la modifica dei metadati del template e-service:
+      | campo       | valore                              |
+      | nome        | Template anagrafico aggiornato      |
+      | descrizione | Descrizione aggiornata del template |
+    Then il template e-service presenta i metadati richiesti e conserva quelli non modificati
+    And Comune di Milano verifica che le istanze e-service presentino i metadati ereditati dal template "TPL-1":
+      | EI-1 |
+    And PagoPA verifica che le istanze e-service presentino i metadati ereditati dal template "TPL-1":
+      | EI-2 |
+
+  @work-item:QA-19036
+  @channel:Given=BFF,When=BFF,Then=BFF
+  Scenario: [ESERVICE_TEMPLATE_PROPAGATION_2] - Conservazione delle istanze quando cambiano soltanto i destinatari
+  Dato un template e-service pubblicato con più istanze,
+  quando il creatore modifica soltanto il testo dei destinatari,
+  allora le istanze mantengono nome, descrizione, etichetta e configurazioni.
+
+    Given i seguenti template e-service pubblicati:
+      | alias | erogatore        | nome                | tecnologia |
+      | TPL-1 | Comune di Milano | Template anagrafico | REST       |
+    And le seguenti istanze di template e-service pubblicate:
+      | alias | template | erogatore        | suffisso |
+      | EI-1  | TPL-1    | Comune di Milano | Milano   |
+    When un admin del Comune di Milano richiede la modifica dei metadati del template e-service "TPL-1":
+      | campo          | valore                           |
+      | intendedTarget | Testo dei destinatari aggiornato |
+    Then il template e-service presenta i metadati richiesti e conserva quelli non modificati
+    And Comune di Milano verifica che le istanze e-service presentino i metadati ereditati dal template "TPL-1":
+      | EI-1 |
+
+  @work-item:QA-19036 @m2m
+  @channel:Given=BFF,When=M2M,Then=BFF
+  Scenario: [ESERVICE_TEMPLATE_PROPAGATION_2_M2M] - Conservazione delle istanze quando cambiano soltanto i destinatari
+  Dato un template e-service pubblicato con più istanze,
+  quando il creatore modifica soltanto il testo dei destinatari,
+  allora le istanze mantengono nome, descrizione, etichetta e configurazioni.
+
+    Given i seguenti template e-service pubblicati:
+      | alias | erogatore        | nome                | tecnologia |
+      | TPL-1 | Comune di Milano | Template anagrafico | REST       |
+    And le seguenti istanze di template e-service pubblicate:
+      | alias | template | erogatore        | suffisso |
+      | EI-1  | TPL-1    | Comune di Milano | Milano   |
+    When un sistema informatico autenticato con ruolo M2M_ADMIN del Comune di Milano richiede la modifica dei metadati del template e-service:
+      | campo          | valore                           |
+      | intendedTarget | Testo dei destinatari aggiornato |
+    Then il template e-service presenta i metadati richiesti e conserva quelli non modificati
+    And Comune di Milano verifica che le istanze e-service presentino i metadati ereditati dal template "TPL-1":
+      | EI-1 |
+
+  @work-item:QA-19036
+  @channel:Given=BFF,When=BFF,Then=BFF
+  @clean-up
+  Scenario: [ESERVICE_TEMPLATE_PROPAGATION_3] - Rifiuto atomico della rinomina in conflitto con un'istanza
+  Dato un template e-service pubblicato con un'istanza etichettata e un e-service omonimo al nome che risulterebbe dalla rinomina,
+  quando il creatore modifica nome e descrizione del template,
+  allora la modifica viene rifiutata.
+
+    Given i seguenti template e-service pubblicati:
+      | alias | erogatore        | nome (letterale)    | tecnologia |
+      | TE-1  | Comune di Milano | Template anagrafico | REST       |
+    And le seguenti istanze di template e-service pubblicate:
+      | alias | template | suffisso (letterale) |
+      | EI-1  | TE-1     | Milano               |
+    And i seguenti e-service in bozza:
+      | alias | erogatore        | nome (letterale)                 |
+      | ES-1  | Comune di Milano | Nuovo nome in conflitto - Milano |
+    When un admin del Comune di Milano tenta la modifica dei metadati del template e-service "TE-1":
+      | campo            | valore                              |
+      | nome (letterale) | Nuovo nome in conflitto             |
+      | descrizione      | Descrizione valida ma non applicata |
+    Then la modifica dei metadati del template e-service viene rifiutata per CONFLICT
+
+  @work-item:QA-19036 @m2m
+  @channel:Given=BFF,When=M2M,Then=BFF
+  @clean-up
+  Scenario: [ESERVICE_TEMPLATE_PROPAGATION_3_M2M] - Rifiuto atomico della rinomina in conflitto con un'istanza
+  Dato un template e-service pubblicato con un'istanza etichettata e un e-service omonimo al nome che risulterebbe dalla rinomina,
+  quando il creatore modifica nome e descrizione del template,
+  allora la modifica viene rifiutata.
+
+    Given i seguenti template e-service pubblicati:
+      | alias | erogatore        | nome (letterale)    | tecnologia |
+      | TE-1  | Comune di Milano | Template anagrafico | REST       |
+    And le seguenti istanze di template e-service pubblicate:
+      | alias | template | suffisso (letterale) |
+      | EI-1  | TE-1     | Milano               |
+    And i seguenti e-service in bozza:
+      | alias | erogatore        | nome (letterale)                 |
+      | ES-1  | Comune di Milano | Nuovo nome in conflitto - Milano |
+    When un sistema informatico autenticato con ruolo M2M_ADMIN del Comune di Milano tenta la modifica dei metadati del template e-service:
+      | campo            | valore                              |
+      | nome (letterale) | Nuovo nome in conflitto             |
+      | descrizione      | Descrizione valida ma non applicata |
+    Then la modifica dei metadati del template e-service viene rifiutata per CONFLICT

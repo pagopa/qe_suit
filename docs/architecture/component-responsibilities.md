@@ -151,6 +151,14 @@ Distinguish entity state from scenario execution state: the current user/channel
 expected aliases and page traversal bookkeeping have their own scope. They are not reasons to store
 remote entity updates outside a Gateway.
 
+An instance is stored as an ordinary `EService`. The `EServiceTemplate` owns the local
+instance associations, each containing an e-service reference and the actual `instanceLabel`
+sent at creation (without the ` - ` separator). The creation Gateway records the association
+by e-service ID as soon as creation succeeds, before refreshing the service and descriptor.
+Template and template-version refreshes preserve these associations; service and descriptor
+refreshes do not manage them. Metadata propagation checks use the recorded label, and cleanup
+uses the associations to avoid renaming instances directly.
+
 ## Domain and lifecycle planning
 
 Domain entities represent the concepts needed by the test suite, not copies of every backend field.

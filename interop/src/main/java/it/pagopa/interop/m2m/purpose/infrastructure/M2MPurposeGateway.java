@@ -1,7 +1,7 @@
 package it.pagopa.interop.m2m.purpose.infrastructure;
 
-import it.pagopa.interop.common.risk_analysis.domain.RiskAnalysisForm;
-
+import it.pagopa.application.context.LastApiResponseStore;
+import it.pagopa.infrastructure.response.ApiResponse;
 import it.pagopa.infrastructure.template.action.strategy.PollingStrategy;
 import it.pagopa.interop.common.kernel.domain.Channel;
 import it.pagopa.interop.common.kernel.domain.DelegationRef;
@@ -14,8 +14,11 @@ import it.pagopa.interop.common.purpose.application.PurposeCreateCommand;
 import it.pagopa.interop.common.purpose.application.PurposeGateway;
 import it.pagopa.interop.common.purpose.domain.Purpose;
 import it.pagopa.interop.common.purpose.domain.PurposeVersionState;
-import it.pagopa.interop.common.risk_analysis.domain.RiskAnalysisReviewMode;
 import it.pagopa.interop.generated.openapi.clients.m2m.v3.model.PurposeVersionSeed;
+import it.pagopa.interop.common.risk_analysis.domain.RiskAnalysisReviewMode;
+import it.pagopa.interop.common.risk_analysis.domain.RiskAnalysisForm;
+
+
 import it.pagopa.utils.async.PollingUtils;
 import jakarta.annotation.Nullable;
 import lombok.RequiredArgsConstructor;
@@ -25,24 +28,91 @@ import org.springframework.stereotype.Service;
 import java.util.List;
 import java.util.UUID;
 
+import static org.assertj.core.api.Assertions.assertThat;
+
 @Service
 @RequiredArgsConstructor
 public class M2MPurposeGateway implements PurposeGateway {
-    @Override
-    public RiskAnalysisForm getRiskAnalysisForm(PurposeRef purposeRef) {
-        throw new UnsupportedOperationException("Risk-analysis form reads are not supported by M2M");
-    }
-
-    @Override
-    public void saveRiskAnalysisForm(
-            PurposeRef purposeRef, RiskAnalysisForm form
-    ) {
-        throw new UnsupportedOperationException("Risk-analysis form saves are not supported by M2M");
-    }
-
 
     private final M2MPurposeRestClient restClient;
     private final M2MPurposeMapper mapper;
+    private final M2MPurposeRequestFactory requestFactory;
+    private final LastApiResponseStore lastApiResponseStore;
+
+    @Override
+    public void shouldFailToUpdatePurposeMetadataAsMalformed() {
+        assertThat(lastApiResponseStore.getLastResponse())
+                .as("Risposta al tentativo di modifica dei metadati della finalita")
+                .isNotNull()
+                .extracting(ApiResponse::getStatusCode)
+                .as("Modifica dei metadati della finalita malformata")
+                .isEqualTo(400);
+    }
+
+    @Override
+    public void shouldFailToUpdatePurposeMetadataAsForbidden() {
+        assertThat(lastApiResponseStore.getLastResponse())
+                .as("Risposta al tentativo di modifica dei metadati della finalita")
+                .isNotNull()
+                .extracting(ApiResponse::getStatusCode)
+                .as("Modifica dei metadati della finalita vietata")
+                .isEqualTo(403);
+    }
+
+    @Override
+    public void shouldFailToUpdatePurposeMetadataAsConflict() {
+        assertThat(lastApiResponseStore.getLastResponse())
+                .as("Risposta al tentativo di modifica dei metadati della finalita")
+                .isNotNull()
+                .extracting(ApiResponse::getStatusCode)
+                .as("Modifica dei metadati della finalita in conflitto")
+                .isEqualTo(409);
+    }
+
+    @Override
+    public Purpose updatePurposeMetadata(
+            PurposeRef purposeRef, String name, String description,
+            Boolean isFreeOfCharge, String freeOfChargeReason, Integer dailyCalls) {
+        return restClient.updatePurposeMetadata(
+                        purposeRef.id(), name, description, isFreeOfCharge, freeOfChargeReason, dailyCalls)
+                .withPolling(PollingStrategy.UNTIL_SUCCESS)
+                .map(ignored -> getPurpose(purposeRef))
+                .updateContext()
+                .get();
+    }
+
+    @Override
+    public Purpose updateReversePurposeMetadata(
+            PurposeRef purposeRef, String name, String description,
+            Boolean isFreeOfCharge, String freeOfChargeReason, Integer dailyCalls) {
+        return restClient.updateReversePurposeMetadata(
+                        purposeRef.id(), name, description, isFreeOfCharge, freeOfChargeReason, dailyCalls)
+                .withPolling(PollingStrategy.UNTIL_SUCCESS)
+                .map(ignored -> getPurpose(purposeRef))
+                .updateContext()
+                .get();
+    }
+
+    @Override
+    public void tryToUpdatePurposeMetadata(
+            PurposeRef purposeRef, String name, String description,
+            Boolean isFreeOfCharge, String freeOfChargeReason, Integer dailyCalls) {
+        restClient.updatePurposeMetadata(
+                purposeRef.id(), name, description, isFreeOfCharge, freeOfChargeReason, dailyCalls).withoutPolling();
+    }
+
+    @Override
+    public void tryToUpdateReversePurposeMetadata(
+            PurposeRef purposeRef, String name, String description,
+            Boolean isFreeOfCharge, String freeOfChargeReason, Integer dailyCalls) {
+        restClient.updateReversePurposeMetadata(
+                purposeRef.id(), name, description, isFreeOfCharge, freeOfChargeReason, dailyCalls).withoutPolling();
+    }
+
+    @Override
+    public void shouldFailLinkToReceiveEService() {
+        throw unsupportedOperation();
+    }
 
     @Override
     public Purpose getPurpose(PurposeRef purposeRef) {
@@ -82,7 +152,14 @@ public class M2MPurposeGateway implements PurposeGateway {
 
     @Override
     public Purpose createPurposeFromTemplate(PurposeTemplateRef purposeTemplateRef, EServiceRef eServiceRef) {
-        throw unsupportedOperation();
+        return restClient.createPurposeFromTemplate(
+                        purposeTemplateRef.id(),
+                        requestFactory.creationFromTemplateRequest(eServiceRef, purposeTemplateRef)
+                )
+                .withPolling(PollingStrategy.UNTIL_SUCCESS)
+                .map(createdPurpose -> getPurpose(PurposeRef.of(createdPurpose.getId())))
+                .updateContext()
+                .get();
     }
 
     @Override
@@ -109,8 +186,15 @@ public class M2MPurposeGateway implements PurposeGateway {
 
     @Override
     public Purpose rejectPurpose(PurposeRef purposeRef, PurposeVersionRef purposeVersionRef, String rejectionReason) {
-        // TODO con il rilascio della 2.25 verrà introdotto l'endpoint per rifiutare una finalità in M2M V3
-        throw new UnsupportedOperationException("Purpose rejection is not supported on M2M v3");
+        restClient.rejectPurpose(purposeRef.id(), rejectionReason)
+                .withPolling(PollingStrategy.UNTIL_SUCCESS);
+
+        return PollingUtils.pollUntil(
+                () -> getPurpose(purposeRef),
+                purpose -> purpose.findVersionById(purposeVersionRef.id())
+                        .map(version -> version.getPurposeVersionState() == PurposeVersionState.REJECTED)
+                        .orElse(false)
+        );
     }
 
     @Override
@@ -136,6 +220,51 @@ public class M2MPurposeGateway implements PurposeGateway {
     }
 
     @Override
+    public Purpose archivePurpose(PurposeRef purposeRef, PurposeVersionRef purposeVersionRef) {
+        restClient.archivePurpose(purposeRef.id())
+                .withPolling(PollingStrategy.UNTIL_SUCCESS);
+
+        return PollingUtils.pollUntil(
+                () -> getPurpose(purposeRef),
+                purpose -> purpose.findVersionById(purposeVersionRef.id())
+                        .map(version -> version.getPurposeVersionState() == PurposeVersionState.ARCHIVED)
+                        .orElse(false)
+        );
+    }
+
+    @Override
+    public Purpose tryCreatePurpose(PurposeCreateCommand createCommand) {
+        throw unsupportedOperation();
+    }
+
+    @Override
+    public Purpose tryCreatePurposeFromTemplate(PurposeTemplateRef purposeTemplateRef,
+        EServiceRef eServiceRef) {
+        throw unsupportedOperation();
+    }
+
+    @Override
+    public boolean supports(@NonNull Channel channel) {
+        return channel == Channel.M2M_V3;
+    }
+
+    private static UnsupportedOperationException unsupportedOperation() {
+        return new UnsupportedOperationException("This purpose operation is not actually supported on M2M v3");
+    }
+
+    @Override
+    public RiskAnalysisForm getRiskAnalysisForm(PurposeRef purposeRef) {
+        throw new UnsupportedOperationException("Risk-analysis form reads are not supported by M2M");
+    }
+
+    @Override
+    public void saveRiskAnalysisForm(
+            PurposeRef purposeRef, RiskAnalysisForm form
+    ) {
+        throw new UnsupportedOperationException("Risk-analysis form saves are not supported by M2M");
+    }
+
+    @Override
     public void assignRiskAnalysisReviewers(PurposeRef purposeRef, RiskAnalysisReviewMode reviewMode, List<UUID> reviewerIds) {
         throw unsupportedOperation();
     }
@@ -158,14 +287,5 @@ public class M2MPurposeGateway implements PurposeGateway {
     @Override
     public void rejectRiskAnalysis(PurposeRef purposeRef, String rejectionReason) {
         throw unsupportedOperation();
-    }
-
-    @Override
-    public boolean supports(@NonNull Channel channel) {
-        return channel == Channel.M2M_V3;
-    }
-
-    private static UnsupportedOperationException unsupportedOperation() {
-        return new UnsupportedOperationException("This purpose operation is not supported on M2M v3");
     }
 }
