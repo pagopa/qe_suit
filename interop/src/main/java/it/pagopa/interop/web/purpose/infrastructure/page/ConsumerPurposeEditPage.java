@@ -41,7 +41,10 @@ public interface ConsumerPurposeEditPage extends Page {
     @Override
     default void assertLoaded() {
         PollingUtils.pollUntil(
-                () -> !pageTitle().read().isBlank(),
+                () -> {
+                    String title = pageTitle().read();
+                    return title != null && !title.isBlank();
+                },
                 isLoaded -> isLoaded,
                 "Purpose edit page did not load within the expected time"
         );
