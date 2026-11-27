@@ -1,7 +1,7 @@
 rae:
   release: '[Interop] Core 2.25.0'
   scope: PROMO
-  issue_jira: 'https://pagopa.atlassian.net/browse/QA-19829'
+  issue_jira: https://pagopa.atlassian.net/browse/QA-19829
   data_ora: '2026-11-26T17:34:25Z'
   durata: 00:01:27
   numero_ko: 2
