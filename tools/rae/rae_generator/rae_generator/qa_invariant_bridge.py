@@ -150,4 +150,36 @@ def evaluate(engine, candidates, test_id, error, suite, ignore_rules=None):
         historical = next((r for (s, t, gid), r in candidates.items()
                            if s == suite and t.casefold() == test_id.strip().casefold()
                            and gid == decision.group_id), None)
+    # Resolve same-ticket ambiguity only when QA-authored analyses are exactly
+    # equivalent (apart from whitespace) and >=2 independent QA approvals exist.
+    # Do NOT merge groups, train on today's KO, or suppress other veto reasons.
+    if (decision.status == 'proposed' and
+            any(r.code == 'MULTIPLE_QA_GROUPS_SAME_TICKET' for r in decision.reasons)):
+        observation = Observation(
+            suite, test_id, ignore_rules.normalize(error) if ignore_rules else error)
+        compatible = [g for g in engine.groups.values()
+                      if (g.suite, g.test_id) == (suite, test_id) and
+                      g.evaluate(observation)[0]]
+        if len(compatible) >= 2:
+            def normalized(value):
+                return ' '.join(str(value or '').split())
+            equivalent = []
+            for group in compatible:
+                row = candidates.get((suite, test_id, group.group_id))
+                if row is None:
+                    break
+                procedure = normalized(row.get('procedure'))
+                result = normalized(row.get('result'))
+                if not procedure or not result:
+                    break
+                identity = (normalized(row.get('link_prod_bug')),
+                            normalized(row.get('link_suite_bug')),
+                            procedure, result)
+                equivalent.append((group, row, identity))
+            if len(equivalent) == len(compatible) and len({e[2] for e in equivalent}) == 1:
+                approvals = {(a.qa_ref, a.observation.test_id)
+                             for group, _, _ in equivalent for a in group.approvals}
+                if len(approvals) >= 2:
+                    # Groups are ordered newest first by build_learning().
+                    return 'known', equivalent[0][1], ()
     return decision.status, historical, decision.reasons
