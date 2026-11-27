@@ -3,6 +3,7 @@ package it.pagopa.interop.common.purpose_template.infrastructure.cucumber;
 import io.cucumber.datatable.DataTable;
 import it.pagopa.application.context.EntityStore;
 import it.pagopa.interop.common.journey.application.InteropJourney;
+import it.pagopa.interop.common.kernel.context.AuthSession;
 import it.pagopa.interop.common.kernel.domain.Tenant;
 import it.pagopa.interop.common.kernel.domain.TenantKind;
 import it.pagopa.interop.common.kernel.domain.UserRole;
@@ -27,7 +28,7 @@ class PurposeTemplateStepsTest {
         var journey = mock(InteropJourney.class, RETURNS_SELF);
         var entityStore = mock(EntityStore.class);
         var useCase = mock(PurposeTemplateUseCase.class);
-        var steps = new PurposeTemplateSteps(entityStore, journey, useCase);
+        var steps = new PurposeTemplateSteps(entityStore, journey, useCase, mock(AuthSession.class));
 
         steps.createPurposeTemplate(creator, PurposeTemplateState.SUSPENDED);
 
@@ -42,7 +43,7 @@ class PurposeTemplateStepsTest {
     void publishedStepDelegatesToGenericCreationStep() {
         var journey = mock(InteropJourney.class, RETURNS_SELF);
         var steps = new PurposeTemplateSteps(
-                mock(EntityStore.class), journey, mock(PurposeTemplateUseCase.class));
+                mock(EntityStore.class), journey, mock(PurposeTemplateUseCase.class), mock(AuthSession.class));
 
         steps.createPurposeTemplate(Tenant.COMUNE_DI_MILANO);
 
@@ -57,7 +58,8 @@ class PurposeTemplateStepsTest {
     void savesARefreshedCopyOfTheCurrentPurposeTemplateAsReference() {
         var entityStore = mock(EntityStore.class);
         var useCase = mock(PurposeTemplateUseCase.class);
-        var steps = new PurposeTemplateSteps(entityStore, mock(InteropJourney.class), useCase);
+        var steps = new PurposeTemplateSteps(
+                entityStore, mock(InteropJourney.class), useCase, mock(AuthSession.class));
         var storedTemplate = PurposeTemplate.builder().id(UUID.randomUUID()).title("old").build();
         var refreshedTemplate = storedTemplate.toBuilder().title("current").build();
         when(entityStore.getLastOrThrow(PurposeTemplate.class)).thenReturn(storedTemplate);
@@ -82,7 +84,7 @@ class PurposeTemplateStepsTest {
                 .targetDescription("Destinatari iniziali")
                 .build();
         when(entityStore.getLastOrThrow(PurposeTemplate.class)).thenReturn(template);
-        var steps = new PurposeTemplateSteps(entityStore, journey, useCase);
+        var steps = new PurposeTemplateSteps(entityStore, journey, useCase, mock(AuthSession.class));
         DataTable dataTable = DataTable.create(List.of(
                 List.of("campo", "valore unico"),
                 List.of("non supportato", "valore unico")
@@ -108,7 +110,7 @@ class PurposeTemplateStepsTest {
                 .targetDescription("Destinatari iniziali")
                 .build();
         when(entityStore.getLastOrThrow(PurposeTemplate.class)).thenReturn(template);
-        var steps = new PurposeTemplateSteps(entityStore, journey, useCase);
+        var steps = new PurposeTemplateSteps(entityStore, journey, useCase, mock(AuthSession.class));
         DataTable dataTable = DataTable.create(List.of(
                 List.of("campo", "valore"),
                 List.of("purposeTitle", "Titolo aggiornato"),
@@ -144,7 +146,7 @@ class PurposeTemplateStepsTest {
                 .targetDescription("Destinatari iniziali")
                 .build();
         when(entityStore.getLastOrThrow(PurposeTemplate.class)).thenReturn(template);
-        var steps = new PurposeTemplateSteps(entityStore, journey, useCase);
+        var steps = new PurposeTemplateSteps(entityStore, journey, useCase, mock(AuthSession.class));
         DataTable dataTable = DataTable.create(List.of(
                 List.of("campo", "valore"),
                 List.of("purposeDescription", "Descrizione aggiornata")
@@ -162,7 +164,8 @@ class PurposeTemplateStepsTest {
         var useCase = mock(PurposeTemplateUseCase.class);
         var template = PurposeTemplate.builder().id(UUID.randomUUID()).build();
         when(entityStore.getLastOrThrow(PurposeTemplate.class)).thenReturn(template);
-        var steps = new PurposeTemplateSteps(entityStore, mock(InteropJourney.class), useCase);
+        var steps = new PurposeTemplateSteps(
+                entityStore, mock(InteropJourney.class), useCase, mock(AuthSession.class));
         DataTable dataTable = DataTable.create(List.of(
                 List.of("campo", "valore"),
                 List.of("purposeIsFreeOfCharge", "yes")

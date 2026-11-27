@@ -116,8 +116,7 @@ Feature: Conservazione dell'interfaccia nell'istanziazione da template e-service
       | tecnologia | stato     | interfaccia |
       | SOAP       | PUBLISHED | <fixture>   |
     When l'erogatore istanzia un nuovo e-service dal template
-    When l'erogatore tenta di configurare l'interfaccia SOAP del descrittore dell'e-service appena istanziato ottenendo un rifiuto per "numero di URL non corrispondente" con i seguenti indirizzi:
-      | servizio | porta | indirizzo |
+    When l'erogatore tenta di configurare l'interfaccia SOAP del descrittore dell'e-service appena istanziato senza indirizzi ottenendo un rifiuto per "dati dell'interfaccia non validi"
     Then non è disponibile un'interfaccia valida per il descrittore dell'e-service
     And l'interfaccia del template è rimasta invariata
 
