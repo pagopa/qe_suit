@@ -3,7 +3,12 @@ package it.pagopa.interop.bff.purpose_template.infrastructure;
 import it.pagopa.application.context.EntityStore;
 import it.pagopa.application.context.LastApiResponseStore;
 import it.pagopa.infrastructure.response.ApiResponse;
+import it.pagopa.application.context.LastApiResponseStore;
+import it.pagopa.infrastructure.context.InMemoryEntityStore;
+import it.pagopa.infrastructure.response.ApiResponse;
+import it.pagopa.infrastructure.response.RawResponse;
 import it.pagopa.infrastructure.template.action.TestChain;
+import it.pagopa.infrastructure.template.action.TestChainFactory;
 import it.pagopa.interop.common.kernel.domain.Tenant;
 import it.pagopa.interop.common.kernel.domain.EServiceRef;
 import it.pagopa.interop.common.kernel.domain.EServiceTemplateRef;
@@ -124,6 +129,54 @@ class BffPurposeTemplateGatewayTest {
     }
 
     @ParameterizedTest
+    @ValueSource(booleans = {false, true})
+    void tryLinkRefreshesLinkedResourceIdsOnSuccessAndReturnsNullOnFailure(boolean template) {
+        var mapper = mock(BffPurposeTemplateMapper.class);
+        var store = new InMemoryEntityStore();
+        var chains = new TestChainFactory(mock(LastApiResponseStore.class), store);
+        var adapter = new BffPurposeTemplateGateway(rest, mapper, mock(BffPurposeTemplateRequestFactory.class),
+                store, lastApiResponseStore);
+        var purpose = PurposeTemplate.builder().id(UUID.randomUUID()).build();
+        store.upsert("PT-1", purpose);
+        var resourceId = UUID.randomUUID();
+        var updated = purpose.toBuilder().resourceId(resourceId).build();
+
+        RawResponse successLinkResponse = mock(RawResponse.class);
+        when(successLinkResponse.isSuccess()).thenReturn(true);
+        when(successLinkResponse.as(LinkedResource.class)).thenReturn(new LinkedResource());
+
+        var page = mock(LinkableResources.class, RETURNS_DEEP_STUBS);
+        when(page.getResults()).thenReturn(List.of());
+        RawResponse pageResponse = mock(RawResponse.class);
+        when(pageResponse.as(LinkableResources.class)).thenReturn(page);
+
+        when(rest.linkResource(eq(purpose.getId()), any()))
+                .thenAnswer(invocation -> chains.build(() -> successLinkResponse, LinkedResource.class));
+        when(rest.getLinkableResources(purpose.getId(), 0, 50))
+                .thenAnswer(invocation -> chains.build(() -> pageResponse, LinkableResources.class));
+        when(mapper.toPurposeTemplateWithLinkedResources(purpose, page)).thenReturn(updated);
+
+        var result = template
+                ? adapter.tryLinkEServiceTemplate(purpose, new EServiceTemplateRef(resourceId))
+                : adapter.tryLinkEService(purpose, new EServiceRef(resourceId));
+
+        assertThat(result).isSameAs(updated);
+        assertThat(store.getByAliasOrThrow("PT-1", PurposeTemplate.class).getLinkedResourceIds())
+                .containsExactly(resourceId);
+
+        RawResponse failedLinkResponse = mock(RawResponse.class);
+        when(failedLinkResponse.isSuccess()).thenReturn(false);
+        when(rest.linkResource(eq(purpose.getId()), any()))
+                .thenAnswer(invocation -> chains.build(() -> failedLinkResponse, LinkedResource.class));
+
+        var failedResult = template
+                ? adapter.tryLinkEServiceTemplate(purpose, new EServiceTemplateRef(UUID.randomUUID()))
+                : adapter.tryLinkEService(purpose, new EServiceRef(UUID.randomUUID()));
+
+        assertThat(failedResult).isNull();
+    }
+
+    @ParameterizedTest
     @EnumSource(value = Tenant.class, names = {"PAGO_PA", "COMUNE_DI_MILANO", "SOGECAP"})
     void mapsFreeTextToSuggestionsAndKeepsChoiceAnswersFixed(Tenant tenant) {
         TestChain<CreatedResource> chain = mock(TestChain.class, RETURNS_DEEP_STUBS);
@@ -169,6 +222,13 @@ class BffPurposeTemplateGatewayTest {
                 .isInstanceOf(IllegalArgumentException.class).hasMessageContaining("versions must match");
 
         verifyNoInteractions(rest);
+    }
+
+    @Test
+    void rejectsMissingReceiveEServiceLinkResponse() {
+        assertThatThrownBy(gateway::shouldFailLinkToReceiveEService)
+                .isInstanceOf(AssertionError.class)
+                .hasMessageContaining("Risposta");
     }
 
     private static RiskAnalysisFormConfig.Question question(String id, String type) {

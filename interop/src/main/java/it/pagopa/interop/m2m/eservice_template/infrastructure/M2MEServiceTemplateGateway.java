@@ -8,7 +8,9 @@ import it.pagopa.interop.common.eservice_template.application.command.*;
 import it.pagopa.interop.common.eservice_template.domain.EServiceTemplate;
 import it.pagopa.interop.common.eservice_template.domain.EServiceTemplateUpdateFailureReason;
 import it.pagopa.interop.common.kernel.domain.Channel;
+import it.pagopa.interop.common.kernel.domain.EServiceRiskAnalysis;
 import it.pagopa.interop.common.kernel.domain.EServiceTemplateRef;
+import it.pagopa.interop.common.kernel.domain.TenantKind;
 import it.pagopa.interop.m2m.eservice_template.application.M2MUpdateEServiceTemplateCommand;
 import it.pagopa.interop.generated.openapi.clients.m2m.v3.model.EServiceTemplateDraftUpdateSeed;
 import it.pagopa.utils.async.PollingUtils;
@@ -127,6 +129,12 @@ public class M2MEServiceTemplateGateway implements EServiceTemplateGateway {
             EServiceTemplateRef templateRef,
             UpdateEServiceTemplateDescriptionCommand command
     ) {
+        throw unsupportedOperation();
+    }
+
+    @Override
+    public EServiceTemplate createEServiceTemplateRiskAnalysis(EServiceTemplateRef templateRef,
+        TenantKind targetKind, EServiceRiskAnalysis riskAnalysisForm) {
         throw unsupportedOperation();
     }
 

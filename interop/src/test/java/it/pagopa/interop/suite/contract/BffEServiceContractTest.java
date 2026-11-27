@@ -1,24 +1,30 @@
 package it.pagopa.interop.suite.contract;
 
+import com.fasterxml.jackson.core.type.TypeReference;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import io.restassured.response.Response;
 import it.pagopa.infrastructure.fuzzing.FuzzScenario;
 import it.pagopa.infrastructure.contract.http.TargetExpression;
 import it.pagopa.interop.TestBootApp;
 import it.pagopa.interop.common.infrastructure.config.JunitEnvironmentProfiles;
 import it.pagopa.interop.bff.eservice.infrastructure.BffEServiceRequestFactory;
 import it.pagopa.interop.bff.infrastructure.config.BffApiContractConfig;
+import it.pagopa.interop.bff.infrastructure.config.BffRestApiClientConfig;
 import it.pagopa.interop.common.eservice.domain.EService;
 import it.pagopa.interop.common.eservice.domain.EServiceDescriptorState;
+import it.pagopa.interop.common.eservice_template.domain.EServiceTemplateVersionState;
 import it.pagopa.interop.common.infrastructure.config.JunitContextConfig;
 import it.pagopa.interop.common.infrastructure.contract.InteropHttpContractValidator;
 import it.pagopa.interop.common.journey.application.InteropJourney;
+import it.pagopa.interop.common.kernel.context.AuthSession;
 import it.pagopa.interop.common.kernel.domain.Tenant;
+import it.pagopa.interop.common.kernel.domain.User;
 import it.pagopa.interop.common.kernel.domain.UserRole;
 import it.pagopa.interop.generated.openapi.clients.bff.ApiClient;
 import it.pagopa.interop.generated.openapi.clients.bff.model.CatalogFilterPayload;
 import it.pagopa.interop.generated.openapi.clients.bff.model.EServiceMode;
 import it.pagopa.interop.generated.openapi.clients.bff.model.EServiceTechnology;
 import it.pagopa.interop.generated.openapi.clients.bff.model.PatchUpdateEServiceSeed;
-import io.restassured.response.Response;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.junit.jupiter.api.DynamicTest;
 import org.junit.jupiter.api.Tag;
@@ -27,15 +33,21 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.TestConstructor;
 
+import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.UUID;
-import java.util.function.Consumer;
+import java.util.function.Function;
+import java.util.function.Supplier;
 import java.util.stream.Stream;
+import java.util.function.Consumer;
 
 import static it.pagopa.interop.bff.infrastructure.config.BffApiContractConfig.DEFAULT_SUCCESS_STATUS_CODE;
+import static org.hamcrest.Matchers.containsStringIgnoringCase;
 import static it.pagopa.utils.RandomUtils.randomAlphanumericName;
 import static org.hamcrest.Matchers.is;
+import static org.junit.jupiter.api.DynamicTest.dynamicTest;
 
 @ActiveProfiles(resolver = JunitEnvironmentProfiles.class)
 @SpringBootTest(classes = {TestBootApp.class, JunitContextConfig.class, BffApiContractConfig.class})
@@ -46,14 +58,21 @@ public class BffEServiceContractTest {
     private final InteropHttpContractValidator httpContractValidator;
     private final InteropJourney interopJourney;
     private final BffEServiceRequestFactory requestFactory;
+    private final AuthSession authSession;
+    private final ObjectMapper objectMapper;
+
+    private static final List<String> ATTRIBUTE_GROUPS = List.of("certified", "declared", "verified");
 
     public BffEServiceContractTest(ApiClient apiClient,
             @Qualifier("bffInteropHttpContractValidator") InteropHttpContractValidator httpContractValidator,
-            InteropJourney interopJourney, BffEServiceRequestFactory requestFactory) {
+            InteropJourney interopJourney, BffEServiceRequestFactory requestFactory,
+            @Qualifier("userAuthSession") AuthSession authSession, ObjectMapper objectMapper) {
         this.apiClient = apiClient;
         this.httpContractValidator = httpContractValidator;
         this.interopJourney = interopJourney;
         this.requestFactory = requestFactory;
+        this.authSession = authSession;
+        this.objectMapper = objectMapper;
     }
 
     @TestFactory
@@ -163,6 +182,76 @@ public class BffEServiceContractTest {
     }
 
     @TestFactory
+    Stream<DynamicTest> updateDraftDescriptorTemplateInstance() {
+        Supplier<EService> draftInstance = new LazyReference<>(this::createDraftEServiceTemplateInstance);
+
+        Stream<DynamicTest> fuzzTests = httpContractValidator
+                .as(Tenant.COMUNE_DI_MILANO, UserRole.ADMIN)
+                .apiCall(() -> {
+                    var operation = apiClient.eservices().updateDraftDescriptorTemplateInstance();
+                    operation.reqSpec(reqSpec -> reqSpec.addFilter(BffRestApiClientConfig.RETRY_ON_CONFLICT));
+                    return operation;
+                })
+                .pathParams(() -> {
+                    EService instance = draftInstance.get();
+                    return Map.of(
+                            "eServiceId", instance.getId(),
+                            "descriptorId", instance.getLatestDescriptor().getId()
+                    );
+                })
+                .payload(requestFactory::updateDraftTemplateInstanceDescriptorRequest)
+                .tests();
+
+        return Stream.concat(fuzzTests, draftInstanceAttributesTests(draftInstance));
+    }
+
+    private Stream<DynamicTest> draftInstanceAttributesTests(Supplier<EService> draftInstance) {
+        return ATTRIBUTE_GROUPS.stream().flatMap(group -> Stream.of(
+                dynamicTest(
+                        "[attributes] " + group + " empty list",
+                        () -> callUpdateDraftWithAttribute(draftInstance.get(), group, new ArrayList<>())
+                                .then().statusCode(is(DEFAULT_SUCCESS_STATUS_CODE))
+                ),
+                dynamicTest(
+                        "[attributes] " + group + " null",
+                        () -> callUpdateDraftWithAttribute(draftInstance.get(), group, null)
+                                .then().statusCode(is(400))
+                ),
+                dynamicTest(
+                        "[attributes] " + group + " list containing an empty list",
+                        () -> callUpdateDraftWithAttribute(draftInstance.get(), group, List.of(List.of()))
+                                .then().statusCode(is(400))
+                                .body(containsStringIgnoringCase("attribute"))
+                )
+        ));
+    }
+
+    private Response callUpdateDraftWithAttribute(EService draftInstance, String group, Object value) {
+        Map<String, Object> payload = objectMapper.convertValue(
+                requestFactory.updateDraftTemplateInstanceDescriptorRequest(), new TypeReference<>() {}
+        );
+        Map<String, Object> attributes = new HashMap<>();
+        ATTRIBUTE_GROUPS.forEach(name -> attributes.put(name, new ArrayList<>()));
+        attributes.put(group, value);
+        payload.put("attributes", attributes);
+
+        authSession.set(User.getTenantUser(Tenant.COMUNE_DI_MILANO, UserRole.ADMIN), Tenant.COMUNE_DI_MILANO);
+        return apiClient.eservices().updateDraftDescriptorTemplateInstance()
+                .eServiceIdPath(draftInstance.getId())
+                .descriptorIdPath(draftInstance.getLatestDescriptor().getId())
+                .reqSpec(reqSpec -> reqSpec.setContentType("application/json").setBody(payload).addFilter(BffRestApiClientConfig.RETRY_ON_CONFLICT))
+                .execute(Function.identity());
+    }
+
+    private EService createDraftEServiceTemplateInstance() {
+        return interopJourney
+                .withProducer(Tenant.COMUNE_DI_MILANO, UserRole.ADMIN)
+                .createEServiceTemplate(EServiceTemplateVersionState.PUBLISHED)
+                .createEServiceInstanceTemplate()
+                .get(EService.class);
+    }
+
+    @TestFactory
     Stream<DynamicTest> patchUpdateEServiceById() {
         return httpContractValidator
                 .as(Tenant.COMUNE_DI_MILANO, UserRole.ADMIN)
@@ -239,5 +328,22 @@ public class BffEServiceContractTest {
                 .withProducer(Tenant.COMUNE_DI_MILANO, UserRole.ADMIN)
                 .createEService(descriptorState)
                 .get(EService.class);
+    }
+
+    private static final class LazyReference<T> implements Supplier<T> {
+        private final Supplier<T> factory;
+        private T value;
+
+        private LazyReference(Supplier<T> factory) {
+            this.factory = factory;
+        }
+
+        @Override
+        public synchronized T get() {
+            if (value == null) {
+                value = factory.get();
+            }
+            return value;
+        }
     }
 }

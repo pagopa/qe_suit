@@ -1,6 +1,7 @@
 package it.pagopa.interop.common.eservice.infrastructure.cucumber;
 
 import io.cucumber.java.ParameterType;
+import it.pagopa.interop.common.eservice.domain.EServiceMode;
 import it.pagopa.interop.common.eservice.domain.GracePeriodDays;
 import it.pagopa.interop.common.eservice.domain.SoapInterfaceUploadFailureReason;
 
@@ -24,6 +25,15 @@ public class EServiceParameterTypes {
             case "file SOAP non parsabile" -> SoapInterfaceUploadFailureReason.NOT_PARSABLE_SOAP_FILE;
             case "assenza di soap:operation" -> SoapInterfaceUploadFailureReason.MISSING_SOAP_OPERATION;
             default -> throw new IllegalArgumentException("Motivo di rifiuto upload interfaccia SOAP non supportato: " + reason);
+        };
+    }
+
+    @ParameterType("ricezione|erogazione")
+    public EServiceMode eServiceMode(String mode) {
+        return switch (mode.toLowerCase()) {
+            case "ricezione" -> EServiceMode.RECEIVE;
+            case "erogazione" -> EServiceMode.DELIVER;
+            default -> throw new IllegalArgumentException("Modalità e-service non supportata: " + mode);
         };
     }
 }
