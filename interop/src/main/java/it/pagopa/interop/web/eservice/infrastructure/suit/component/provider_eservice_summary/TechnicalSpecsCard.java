@@ -1,11 +1,14 @@
 package it.pagopa.interop.web.eservice.infrastructure.suit.component.provider_eservice_summary;
 
 import it.frontend.e2e.framework.annotation.selector.XPath;
-import it.frontend.e2e.framework.web.domain.Component;
 import it.pagopa.infrastructure.suit.component.Button;
+
+import it.frontend.e2e.framework.web.domain.Component;
 import it.pagopa.infrastructure.suit.component.Label;
 
-public interface    TechnicalSpecsCard extends EServiceSummaryCard {
+import java.util.List;
+
+public interface TechnicalSpecsCard extends EServiceSummaryCard {
 
     String INTERFACE = "Interfaccia";
     String AUDIENCE = "Audience";
@@ -16,6 +19,10 @@ public interface    TechnicalSpecsCard extends EServiceSummaryCard {
     TechnicalSpecsContent content();
 
     interface TechnicalSpecsContent extends Content {
+
+        // The frontend content contains only document-download buttons.
+        @XPath(".//button")
+        List<Button> documentDownloadButtons();
 
         @XPath(".//div[contains(@class,'MuiStack-root')][./div/p[normalize-space(.)='" + INTERFACE + "']]")
         InterfaceField apiInterface();

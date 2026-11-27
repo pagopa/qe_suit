@@ -2,8 +2,10 @@ package it.pagopa.interop.suite.contract;
 
 import it.frontend.e2e.framework.core.capability.core.Readable;
 import it.pagopa.infrastructure.contract.browser.WebScenario;
+import it.pagopa.infrastructure.suit.component.Button;
 import it.pagopa.interop.TestBootApp;
 import it.pagopa.interop.common.infrastructure.config.JunitEnvironmentProfiles;
+import it.pagopa.interop.bff.eservice.infrastructure.BffEServiceDownloadFixtureFactory;
 import it.pagopa.interop.common.agreement.domain.AgreementApprovalPolicy;
 import it.pagopa.interop.common.eservice.domain.EService;
 import it.pagopa.interop.common.eservice.domain.EServiceDescriptorState;
@@ -16,15 +18,16 @@ import it.pagopa.interop.common.kernel.domain.Channel;
 import it.pagopa.interop.common.kernel.domain.Tenant;
 import it.pagopa.interop.common.kernel.domain.User;
 import it.pagopa.interop.common.kernel.domain.UserRole;
-import it.pagopa.interop.web.eservice.infrastructure.suit.page.ProducerEServiceSummaryPage;
+import it.pagopa.interop.web.eservice.infrastructure.suit.component.provider_eservice_summary.AdditionalInfoCard;
 import it.pagopa.interop.web.eservice.infrastructure.suit.component.provider_eservice_summary.EServiceSummaryCard.Field;
 import it.pagopa.interop.web.eservice.infrastructure.suit.component.provider_eservice_summary.GeneralInfoCard;
 import it.pagopa.interop.web.eservice.infrastructure.suit.component.provider_eservice_summary.TechnicalSpecsCard;
-import it.pagopa.interop.web.eservice.infrastructure.suit.component.provider_eservice_summary.AdditionalInfoCard;
-import it.pagopa.interop.web.eservice.infrastructure.suit.component.provider_eservice_summary.ThresholdsAttributesCard;
 import it.pagopa.interop.web.eservice.infrastructure.suit.component.provider_eservice_summary.ThresholdsAttributesCard.AttributeSection;
+import it.pagopa.interop.web.eservice.infrastructure.suit.component.provider_eservice_summary.ThresholdsAttributesCard;
+import it.pagopa.interop.web.eservice.infrastructure.suit.page.ProducerEServiceSummaryPage;
 import it.pagopa.interop.web.infrastructure.config.WebJUnitSuitConfig;
 import lombok.RequiredArgsConstructor;
+import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.DynamicTest;
 import org.junit.jupiter.api.TestFactory;
@@ -32,8 +35,8 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.TestConstructor;
 
-import java.util.stream.Stream;
 import java.util.List;
+import java.util.stream.Stream;
 
 import static it.pagopa.interop.web.eservice.infrastructure.suit.page.ProducerEServiceSummaryPage.*;
 import static org.assertj.core.api.Assertions.assertThat;
@@ -65,10 +68,11 @@ public class WebProducerEServiceSummaryContractTest {
     private static final int DAILY_CALLS_TOTAL = 2;
     private static final String AUDIENCE = "QA";
     private static final AgreementApprovalPolicy APPROVAL_POLICY = AgreementApprovalPolicy.AUTOMATIC;
-    private static final String INTERFACE_NAME = "Specifica API_" + ESERVICE_DESCRIPTION + "_Comune di Milano_v" + 1;
+    private String INTERFACE_NAME;
 
     private final WebBrowserContractValidator webContractValidator;
     private final InteropJourney interopJourney;
+    private final BffEServiceDownloadFixtureFactory downloadFixtureFactory;
 
     @TestFactory
     Stream<DynamicTest> summaryPageContractTests() {
@@ -94,7 +98,7 @@ public class WebProducerEServiceSummaryContractTest {
     }
 
     private EService prepareDraft() {
-        return interopJourney
+        EService eService = interopJourney
                 .switchChannel(Channel.BFF)
                 .withProducer(Tenant.COMUNE_DI_MILANO, UserRole.ADMIN)
                 .createEService(
@@ -106,16 +110,20 @@ public class WebProducerEServiceSummaryContractTest {
                                 .isClientAccessDelegable(CLIENT_ACCESS_DELEGABLE)
                                 .isSignalHubEnabled(SIGNAL_HUB_ENABLED),
                         EServiceDescriptorState.DRAFT
-                )
-                .updateDescriptor(config -> config
-                                .description(VERSION_DESCRIPTION)
-                                .audience(List.of(AUDIENCE))
-                                .voucherLifespan(60)
-                                .agreementApprovalPolicy(APPROVAL_POLICY)
-                                .dailyCallsPerConsumer(DAILY_CALLS_PER_CONSUMER)
-                                .dailyCallsTotal(DAILY_CALLS_TOTAL)
-                                .apiInterface(ApiInterface.builder()
-                                        .name(INTERFACE_NAME).path("assets/origin-interface.yaml").build()),
+                ).get(EService.class);
+
+        INTERFACE_NAME = "Specifica API_" + eService.getName() + "_Comune di Milano_v" + 1;
+
+                return interopJourney
+                        .updateDescriptor(config -> config
+                        .description(VERSION_DESCRIPTION)
+                        .audience(List.of(AUDIENCE))
+                        .voucherLifespan(60)
+                        .agreementApprovalPolicy(APPROVAL_POLICY)
+                        .dailyCallsPerConsumer(DAILY_CALLS_PER_CONSUMER)
+                        .dailyCallsTotal(DAILY_CALLS_TOTAL)
+                        .apiInterface(ApiInterface.builder()
+                        .name(INTERFACE_NAME).path("assets/origin-interface.yaml").build()),
                         EServiceDescriptorState.DRAFT
                 )
                 .get(EService.class);
@@ -279,5 +287,44 @@ public class WebProducerEServiceSummaryContractTest {
     private void assertField(Field field, String expectedLabel, String expectedValue) {
         field.label().readAndAssert(expectedLabel);
         field.value().readAndAssert(expectedValue);
+    }
+
+    @TestFactory
+    Stream<DynamicTest> shouldAnnounceDraftDocumentNameBeforeDownloadAction() {
+        Tenant producer = Tenant.COMUNE_DI_MILANO;
+        return Stream.of(false, true).flatMap(async -> {
+            var fixture = downloadFixtureFactory.create(producer, async, false);
+            return webContractValidator
+                    .as(User.getTenantAdmin(producer), producer)
+                    .on(ProducerEServiceSummaryPage.class,
+                            fixture.resourceId().toString(), fixture.versionId().toString())
+                    .tests(Stream.of(
+                            new WebScenario<>("Accessibilità - specifiche tecniche bozza, async=" + async,
+                                    page -> page.technicalSpecsCard().expand(),
+                                    page -> assertDownloadNames(
+                                            page.technicalSpecsCard().content().documentDownloadButtons(),
+                                            fixture.technicalSpecificationNames(), "Specifiche tecniche")),
+                            new WebScenario<>("Accessibilità - allegati aggiuntivi bozza, async=" + async,
+                                    page -> page.additionalInfoCard().expand(),
+                                    page -> assertDownloadNames(
+                                            page.additionalInfoCard().content().documentDownloadButtons(),
+                                            fixture.additionalDocumentNames(), "Informazioni aggiuntive"))
+                    ));
+        });
+    }
+
+    private void assertDownloadNames(List<Button> buttons, List<String> expected, String section) {
+        Assertions.assertThat(buttons).as(section + " - numero documenti").hasSize(expected.size());
+        Assertions.assertThat(buttons.stream().map(Button::read).toList())
+                .as(section + " - nomi visibili")
+                .containsExactlyInAnyOrderElementsOf(expected);
+        for (String name : expected) {
+            Assertions.assertThat(buttons).filteredOn(button -> name.equals(button.read()))
+                    .as(section + " - controllo del documento " + name)
+                    .singleElement()
+                    .satisfies(button -> Assertions.assertThat(button.readAccessibleName())
+                            .as(section + " - nome accessibile di " + name)
+                            .isEqualTo(name + ", scarica l'allegato"));
+        }
     }
 }

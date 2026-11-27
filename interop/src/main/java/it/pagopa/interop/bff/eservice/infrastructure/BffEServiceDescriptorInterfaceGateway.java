@@ -6,9 +6,9 @@ import it.pagopa.interop.common.eservice.domain.*;
 import it.pagopa.interop.common.kernel.domain.DocumentKind;
 import it.pagopa.interop.common.kernel.domain.EServiceDescriptorRef;
 import it.pagopa.interop.common.kernel.domain.EServiceRef;
+import it.pagopa.interop.common.kernel.domain.Tenant;
 import it.pagopa.interop.generated.openapi.clients.bff.model.ProducerEServiceDescriptor;
 import it.pagopa.utils.FileUtils;
-import it.pagopa.utils.RandomUtils;
 import it.pagopa.utils.async.DelayUtils;
 import it.pagopa.utils.async.PollingUtils;
 import jakarta.annotation.Nullable;
@@ -115,7 +115,12 @@ public class BffEServiceDescriptorInterfaceGateway {
     ) {
         File document = FileUtils.loadClasspathResourceAsTempFile(path);
         String fileName;
-        fileName = Objects.requireNonNullElseGet(name, () -> RandomUtils.randomAlphanumericName("interface") + ".yaml");
+//        fileName = Objects.requireNonNullElseGet(name, () -> RandomUtils.randomAlphanumericName("interface") + ".yaml");
+        EService eService = entityStore.getById(serviceRef.id(), EService.class).orElse(null);
+        EServiceDescriptor eServiceDescriptor = Objects.requireNonNull(eService).findDescriptor(descriptorRef.id());
+        Tenant producer = Tenant.fromOrganizationId(UUID.fromString(Objects.requireNonNull(eService).getProducerId()));
+        String separator = "_";
+        fileName = "Specifica API" + separator + Objects.requireNonNull(eService).getName() + separator + producer.getName() + separator + "v" + Objects.requireNonNull(eServiceDescriptor).getVersion();
         DelayUtils.waitForSeconds(1);
         return restClient.addDocument(serviceRef.id(), descriptorRef.id(), kind.name(), fileName, document)
                 .withPolling(PollingStrategy.UNTIL_SUCCESS)

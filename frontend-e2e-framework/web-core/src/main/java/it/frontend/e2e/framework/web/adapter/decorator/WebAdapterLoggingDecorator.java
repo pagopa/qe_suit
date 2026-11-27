@@ -20,6 +20,12 @@ public class WebAdapterLoggingDecorator extends AbstractAdapterLoggingDecorator<
     }
 
     @Override
+    public String getAccessibleName(XPathSelector selector) {
+        logger.logDebug("Get computed accessible name by selector: " + selector);
+        return webAdapter.getAccessibleName(selector);
+    }
+
+    @Override
     public Optional<String> getCookieValue(String name) {
         logger.logDebug("Get cookie value by name: " + name);
         return webAdapter.getCookieValue(name);
